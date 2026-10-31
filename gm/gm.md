@@ -23,7 +23,7 @@
      ```powershell
      git add --renormalize .
      ```
-- **Prioridad en Edición**: Si a pesar de esto `edit_file` no coincide por caracteres invisibles residuales en Windows, usa prioritario `write_file` para actualizar el archivo limpiamente sin detenerse.
+
 
 ## Lectura y Edición de Archivos Estilo Editor (Regla Estricta de Lectura en Lotes)
 - **Lectura directa tipo VS Code**: Prohibido usar comandos de consola para leer o inspeccionar código (nada de `Get-Content`, `Select-String`, `type` o scripts). Usa exclusivamente la herramienta nativa `read_file` para leer el archivo tal cual como en un editor.
