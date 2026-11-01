@@ -107,6 +107,19 @@ const translations = {
     eth_desc: "Interfaces RJ-45 para cable de par trenzado (Ethernet) e interfaces de radiofrecuencia (Wi-Fi) conectadas mediante el bus PCIe.",
     flow_title: "Flujo de Datos en el Host",
     flow_desc: "Los paquetes viajan desde la memoria RAM, son procesados por la CPU y enviados al controlador NIC para su modulación y transmisión en el medio físico.",
+    switch3d_title: "Switch en 3D: conexión y flujo de señal",
+    switch3d_desc: "Conecta los equipos a los puertos del switch, activa el enlace y observa cómo la trama Ethernet encuentra su destino dentro de la LAN.",
+    switch3d_badge: "Laboratorio L2",
+    switch3d_how_title: "¿Cómo fluye la señal?",
+    switch3d_step_1: "Conecta el cable Ethernet desde la NIC del PC a un puerto RJ-45.",
+    switch3d_step_2: "El puerto negocia velocidad y enlace; el LED cambia a verde.",
+    switch3d_step_3: "El switch aprende la MAC y reenvía la trama solo por el puerto correcto.",
+    switch3d_btn_on: "Activar señal",
+    switch3d_btn_off: "Desactivar señal",
+    switch3d_status_off: "ENLACE DESACTIVADO",
+    switch3d_status_on: "SEÑAL FLUYENDO",
+    switch3d_readout_off: "Los puertos están esperando una conexión física.",
+    switch3d_readout_on: "Puerto 01 activo · MAC aprendida · Trama reenviada hacia el gateway.",
 
     // Topologías de Redes
     nav_topologies: "Topologías",
@@ -394,6 +407,19 @@ const translations = {
     eth_desc: "RJ-45 interfaces for twisted pair Ethernet cables and wireless RF adapters interconnected through the PCIe bus.",
     flow_title: "Host Data Flow Architecture",
     flow_desc: "Data packets stream from RAM buffers, undergo CPU processing, and are dispatched to the NIC controller for physical signal modulation.",
+    switch3d_title: "3D Switch: connection and signal flow",
+    switch3d_desc: "Connect the devices to the switch ports, activate the link, and watch the Ethernet frame find its destination inside the LAN.",
+    switch3d_badge: "Layer 2 Lab",
+    switch3d_how_title: "How does the signal flow?",
+    switch3d_step_1: "Connect the Ethernet cable from the PC NIC to an RJ-45 port.",
+    switch3d_step_2: "The port negotiates speed and link; the LED turns green.",
+    switch3d_step_3: "The switch learns the MAC and forwards the frame only through the correct port.",
+    switch3d_btn_on: "Activate signal",
+    switch3d_btn_off: "Deactivate signal",
+    switch3d_status_off: "LINK DISABLED",
+    switch3d_status_on: "SIGNAL FLOWING",
+    switch3d_readout_off: "Ports are waiting for a physical connection.",
+    switch3d_readout_on: "Port 01 active · MAC learned · Frame forwarded to the gateway.",
 
     // Network Topologies
     nav_topologies: "Topologies",
@@ -927,6 +953,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupPcExplorer();
   setupMaintenanceToolImages();
   setupNetworkSimulator();
+  setupSwitch3D();
   applyLanguage(currentLang);
 });
 
@@ -1114,6 +1141,39 @@ function setupMaintenanceToolImages() {
     if (replacement) image.src = replacement;
     if (image.alt === 'Brochas de limpieza' || image.alt === 'Bridas organizadoras') {
       card.hidden = true;
+    }
+  });
+}
+
+function setupSwitch3D() {
+  const stage = document.getElementById('switch3d-stage');
+  const toggle = document.getElementById('switch3d-toggle');
+  const status = document.getElementById('switch3d-status');
+  const indicator = document.getElementById('switch3d-indicator');
+  const readout = document.getElementById('switch3d-readout');
+  const buttonText = toggle?.querySelector('[data-i18n]');
+
+  if (!stage || !toggle) return;
+
+  let isActive = false;
+  toggle.addEventListener('click', () => {
+    isActive = !isActive;
+    stage.classList.toggle('is-flowing', isActive);
+    indicator?.classList.toggle('is-on', isActive);
+    if (status) {
+      const key = isActive ? 'switch3d_status_on' : 'switch3d_status_off';
+      status.textContent = translations[currentLang]?.[key] || key;
+      status.dataset.i18n = key;
+    }
+    if (readout) {
+      const key = isActive ? 'switch3d_readout_on' : 'switch3d_readout_off';
+      readout.textContent = translations[currentLang]?.[key] || key;
+      readout.dataset.i18n = key;
+    }
+    if (buttonText) {
+      const key = isActive ? 'switch3d_btn_off' : 'switch3d_btn_on';
+      buttonText.textContent = translations[currentLang]?.[key] || key;
+      buttonText.dataset.i18n = key;
     }
   });
 }

@@ -808,6 +808,82 @@
         </div>
       </div>
     </section>
+<section id="switch-3d" class="container">
+      <h2 class="section-title">
+        <span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="7" width="18" height="10" rx="2"></rect><path d="M7 11h.01M11 11h.01M15 11h.01M19 11h.01M7 15h.01M11 15h.01M15 15h.01"></path></svg></span> <span data-i18n="switch3d_title">Switch en 3D: conexión y flujo de señal</span>
+      </h2>
+      <p class="section-desc" data-i18n="switch3d_desc">
+        Conecta los equipos a los puertos del switch, activa el enlace y observa cómo la trama Ethernet encuentra su destino dentro de la LAN.
+      </p>
+
+      <div class="switch3d-wrapper">
+        <div class="switch3d-stage" id="switch3d-stage" aria-label="Simulación 3D del funcionamiento de un switch">
+          <div class="switch3d-grid"></div>
+          <div class="switch3d-link link-pc"></div>
+          <div class="switch3d-link link-router"></div>
+          <div class="switch3d-link link-server"></div>
+
+          <div class="switch3d-node switch3d-host">
+            <span class="switch3d-node-icon">PC</span>
+            <strong>HOST A</strong>
+            <small>192.168.1.10</small>
+          </div>
+
+          <div class="switch3d-device" id="switch3d-device">
+            <div class="switch3d-top"></div>
+            <div class="switch3d-face">
+              <span class="switch3d-brand">NV-SW 08</span>
+              <span class="switch3d-led power-led"></span>
+              <span class="switch3d-port port-1"></span>
+              <span class="switch3d-port port-2"></span>
+              <span class="switch3d-port port-3"></span>
+              <span class="switch3d-port port-4"></span>
+              <span class="switch3d-port port-5"></span>
+              <span class="switch3d-port port-6"></span>
+              <span class="switch3d-port port-7"></span>
+              <span class="switch3d-port port-8"></span>
+            </div>
+            <strong class="switch3d-label">SWITCH L2</strong>
+            <small class="switch3d-cam">CAM TABLE: APRENDIENDO MAC</small>
+          </div>
+
+          <div class="switch3d-node switch3d-router">
+            <span class="switch3d-node-icon">GW</span>
+            <strong>ROUTER</strong>
+            <small>192.168.1.1</small>
+          </div>
+
+          <div class="switch3d-node switch3d-server">
+            <span class="switch3d-node-icon">WEB</span>
+            <strong>SERVIDOR</strong>
+            <small>10.0.0.80</small>
+          </div>
+
+          <span class="switch3d-packet packet-pc">01</span>
+          <span class="switch3d-packet packet-router">10</span>
+          <span class="switch3d-packet packet-server">80</span>
+          <div class="switch3d-status" id="switch3d-status" aria-live="polite" data-i18n="switch3d_status_off">ENLACE DESACTIVADO</div>
+        </div>
+
+        <aside class="switch3d-panel">
+          <div class="switch3d-panel-heading">
+            <span class="network-badge" data-i18n="switch3d_badge">Laboratorio L2</span>
+            <span class="switch3d-indicator" id="switch3d-indicator"></span>
+          </div>
+          <h3 data-i18n="switch3d_how_title">¿Cómo fluye la señal?</h3>
+          <ol class="switch3d-steps">
+            <li><span>01</span><p data-i18n="switch3d_step_1">Conecta el cable Ethernet desde la NIC del PC a un puerto RJ-45.</p></li>
+            <li><span>02</span><p data-i18n="switch3d_step_2">El puerto negocia velocidad y enlace; el LED cambia a verde.</p></li>
+            <li><span>03</span><p data-i18n="switch3d_step_3">El switch aprende la MAC y reenvía la trama solo por el puerto correcto.</p></li>
+          </ol>
+          <button type="button" class="sim-btn-run switch3d-toggle" id="switch3d-toggle">
+            <span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z"></path></svg></span>
+            <span data-i18n="switch3d_btn_on">Activar señal</span>
+          </button>
+          <p class="switch3d-readout" id="switch3d-readout" data-i18n="switch3d_readout_off">Los puertos están esperando una conexión física.</p>
+        </aside>
+      </div>
+    </section>
 </main>
 
   <!-- Footer -->
