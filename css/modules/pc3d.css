@@ -27,6 +27,7 @@
 .pc3d-part-card:nth-child(6)::before { background-image: url('https://www.cyberpuerta.mx/img/product/XL/CP-ASUS-ROG-THOR-1200P2-GAMING-cpscrap-01-34b084.jpg'); }
 .pc3d-part-card:nth-child(7)::before { background-image: url('https://www.ntcompatible.com/data/publish/209/5d0c1169af1e2c8df653222b2a49ebe69a190a/7ee3aa2c7be4d778242b52d683b83f38dc2bfb45.jpg'); }
 .pc3d-part-card:nth-child(8)::before { background-image: url('https://images.unsplash.com/photo-1605192020788-24d8eae86e59?auto=format&fit=crop&w=800&q=80'); }
+.pc3d-part-card:nth-child(9)::before { background-image: url('https://www.legionmac.com/wp-content/uploads/2022/07/Unidad-Optica.jpg'); }
 .pc3d-part-card:hover { transform: translateY(-4px); border-color: var(--border-hover); box-shadow: var(--shadow-md); }
 .pc3d-part-number { width: 48px; height: 48px; display: grid; place-items: center; border: 1px solid rgba(56,189,248,.35); border-radius: 50%; color: var(--accent-cyan); font: 700 .75rem 'JetBrains Mono', monospace; }
 .pc3d-part-card h3 { margin: .1rem 0 .35rem; color: var(--text-primary); font-size: 1.05rem; }
