@@ -25,3 +25,14 @@
 
 /* 8. Sistema de Iconos SVG y Paleta Tecnológica */
 @import url('modules/icons.css');
+
+/* PRUEBA TEMPORAL: tiñe toda la página de azul. Eliminar este bloque para revertirla. */
+body::after {
+   content: '';
+   position: fixed;
+   inset: 0;
+   z-index: 2147483647;
+   pointer-events: none;
+   background: #006eff;
+   mix-blend-mode: color;
+}
