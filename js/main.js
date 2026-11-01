@@ -186,6 +186,19 @@ const translations = {
     code_arp_desc: "Lista los dispositivos de tu red local con su IP y su MAC: los equipos que el tuyo ya conoce.",
     code_renew_title: "Renueva tu IP",
     code_renew_desc: "Suelta tu IP actual y pide una nueva al router. Es el arreglo clásico cuando el internet se pone raro (ejecuta PowerShell como administrador).",
+    detect_title: "Detecta mi equipo",
+    detect_desc: "Sin instalar nada ni ejecutar código: esto es lo único que tu navegador puede ver de tu equipo. Para el diagnóstico completo (modelo exacto del procesador y de la placa) usa el código de PowerShell.",
+    detect_btn: "Detectar mi equipo",
+    detect_os: "Sistema operativo",
+    detect_browser: "Navegador",
+    detect_cores: "Núcleos del procesador",
+    detect_ram: "RAM aproximada",
+    detect_gpu: "Tarjeta gráfica",
+    detect_screen: "Pantalla",
+    detect_battery: "Batería",
+    detect_network: "Red",
+    detect_na: "No disponible",
+    detect_charging: "cargando",
 
     // Clasificación de Redes por Alcance (Tabla y Tarjetas BAN a GAN)
     nav_scope: "Clasificación de Redes",
@@ -460,6 +473,19 @@ const translations = {
     code_arp_desc: "Lists the devices on your local network with their IP and MAC: the machines yours already knows.",
     code_renew_title: "Renew your IP",
     code_renew_desc: "Releases your current IP and asks the router for a new one. The classic fix when the internet acts weird (run PowerShell as administrator).",
+    detect_title: "Detect my device",
+    detect_desc: "No installs and no code to run: this is all your browser is allowed to see about your device. For the full diagnostics (exact processor and motherboard model) use the PowerShell code.",
+    detect_btn: "Detect my device",
+    detect_os: "Operating system",
+    detect_browser: "Browser",
+    detect_cores: "Processor cores",
+    detect_ram: "Approximate RAM",
+    detect_gpu: "Graphics card",
+    detect_screen: "Screen",
+    detect_battery: "Battery",
+    detect_network: "Network",
+    detect_na: "Not available",
+    detect_charging: "charging",
 
     // Network Scope Classification (Table and Cards BAN to GAN)
     nav_scope: "Network Scopes",
@@ -662,6 +688,79 @@ function setupCopyButton() {
   });
 }
 
+function setupDetector() {
+  const btn = document.getElementById('detect-btn');
+  const box = document.getElementById('detect-results');
+  if (!btn || !box) return;
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+
+  btn.addEventListener('click', async () => {
+    const t = translations[currentLang];
+    const na = t.detect_na;
+    let os = na, browser = na;
+    const ua = navigator.userAgent || '';
+
+    if (navigator.userAgentData) {
+      try {
+        const hints = await navigator.userAgentData.getHighEntropyValues(['platform']);
+        if (hints.platform) os = hints.platform;
+        const brands = navigator.userAgentData.brands || [];
+        const main = brands.find(b => /Chrome|Edge|Opera/i.test(b.brand));
+        if (main) browser = main.brand.replace('Google ', '') + ' ' + main.version;
+      } catch (e) { /* se usa el UA clasico */ }
+    }
+    if (os === na) {
+      if (/Windows NT 10/.test(ua)) os = 'Windows 10/11';
+      else if (/Windows/.test(ua)) os = 'Windows';
+      else if (/Android/.test(ua)) os = 'Android';
+      else if (/iPhone|iPad/.test(ua)) os = 'iOS';
+      else if (/Mac OS X/.test(ua)) os = 'macOS';
+      else if (/Linux/.test(ua)) os = 'Linux';
+    }
+    if (browser === na) {
+      let m;
+      if ((m = ua.match(/Edg\/([\d.]+)/))) browser = 'Edge ' + m[1].split('.')[0];
+      else if ((m = ua.match(/OPR\/([\d.]+)/))) browser = 'Opera ' + m[1].split('.')[0];
+      else if ((m = ua.match(/Chrome\/([\d.]+)/))) browser = 'Chrome ' + m[1].split('.')[0];
+      else if ((m = ua.match(/Firefox\/([\d.]+)/))) browser = 'Firefox ' + m[1].split('.')[0];
+      else if (/Safari\//.test(ua)) browser = 'Safari';
+    }
+    set('det-os', os);
+    set('det-browser', browser);
+    set('det-cores', navigator.hardwareConcurrency ? String(navigator.hardwareConcurrency) : na);
+    set('det-ram', navigator.deviceMemory ? '\u2248 ' + navigator.deviceMemory + ' GB' : na);
+
+    let gpu = na;
+    try {
+      const cv = document.createElement('canvas');
+      const gl = cv.getContext('webgl') || cv.getContext('experimental-webgl');
+      if (gl) {
+        const ext = gl.getExtension('WEBGL_debug_renderer_info');
+        const raw = ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER);
+        if (raw) {
+          let g = String(raw).replace(/^ANGLE \(/, '').replace(/\)$/, '');
+          const parts = g.split(',').map(x => x.trim());
+          g = (parts[1] || parts[0] || g).replace(/\s*\(0x[0-9a-fA-F]+\)/, '').replace(/\s+Direct3D.*$/, '').replace(/\s+OpenGL.*$/, '').trim();
+          if (g) gpu = g;
+        }
+      }
+    } catch (e) { /* sin WebGL */ }
+    set('det-gpu', gpu);
+    set('det-screen', screen.width + ' \u00d7 ' + screen.height + ' px');
+
+    if (navigator.getBattery) {
+      navigator.getBattery()
+        .then(b => set('det-battery', Math.round(b.level * 100) + '%' + (b.charging ? ' (' + t.detect_charging + ')' : '')))
+        .catch(() => set('det-battery', na));
+    } else set('det-battery', na);
+
+    const conn = navigator.connection;
+    set('det-network', conn && conn.downlink ? '\u2248 ' + conn.downlink + ' Mbps (' + (conn.effectiveType || '') + ')' : na);
+
+    box.hidden = false;
+  });
+}
+
 function setupMobileMenu() {
   const menuBtn = document.getElementById('menu-toggle');
   const navMenu = document.getElementById('nav-menu');
@@ -818,6 +917,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupThemeToggle();
   setupLanguageDropdown();
   setupCopyButton();
+  setupDetector();
   setupMobileMenu();
   setupSectionNavigation();
   setupNavigationDropdowns();

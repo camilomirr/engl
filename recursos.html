@@ -196,6 +196,25 @@
             </div>
           </div>
         </div>
+        <!-- Detector en el navegador -->
+        <div class="lab-card">
+          <span class="lab-status">En vivo</span>
+          <h3 data-i18n="detect_title">Detecta mi equipo</h3>
+          <p data-i18n="detect_desc">Sin instalar nada ni ejecutar código: esto es lo único que tu navegador puede ver de tu equipo. Para el diagnóstico completo (modelo exacto del procesador y de la placa) usa el código de PowerShell.</p>
+          <div>
+            <button id="detect-btn" class="copy-btn" type="button" data-i18n="detect_btn">Detectar mi equipo</button>
+          </div>
+          <div id="detect-results" class="detect-results" hidden>
+            <div class="detect-row"><span data-i18n="detect_os">Sistema operativo</span><strong id="det-os">—</strong></div>
+            <div class="detect-row"><span data-i18n="detect_browser">Navegador</span><strong id="det-browser">—</strong></div>
+            <div class="detect-row"><span data-i18n="detect_cores">Núcleos del procesador</span><strong id="det-cores">—</strong></div>
+            <div class="detect-row"><span data-i18n="detect_ram">RAM aproximada</span><strong id="det-ram">—</strong></div>
+            <div class="detect-row"><span data-i18n="detect_gpu">Tarjeta gráfica</span><strong id="det-gpu">—</strong></div>
+            <div class="detect-row"><span data-i18n="detect_screen">Pantalla</span><strong id="det-screen">—</strong></div>
+            <div class="detect-row"><span data-i18n="detect_battery">Batería</span><strong id="det-battery">—</strong></div>
+            <div class="detect-row"><span data-i18n="detect_network">Red</span><strong id="det-network">—</strong></div>
+          </div>
+        </div>
         <!-- Código: ipmac -->
         <div class="lab-card">
           <span class="lab-status">Código</span>
