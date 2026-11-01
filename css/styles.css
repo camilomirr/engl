@@ -19,6 +19,7 @@
 
 /* 6. Explorador 3D de componentes internos */
 @import url('modules/pc-explorer.css');
+@import url('modules/pc3d.css');
 
 /* 7. Redes, Topologías, Simulador de Ping y Cobertura */
 @import url('modules/networks.css');

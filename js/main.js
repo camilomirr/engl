@@ -39,6 +39,10 @@ const translations = {
     nav_back: "Volver",
     nav_grp_networks: "Redes",
     nav_grp_resources: "Recursos",
+    nav_grp_pc3d: "PC3D y más",
+    nav_pc3d_viewer: "Visor 3D",
+    nav_pc3d_parts: "Componentes y tipos",
+    nav_pc3d_maintenance: "Mantenimiento del PC",
     
     // Historia
     hist_title: "Computadores Históricos (Antes de 1980)",
@@ -308,6 +312,10 @@ const translations = {
     nav_back: "Back",
     nav_grp_networks: "Networks",
     nav_grp_resources: "Resources",
+    nav_grp_pc3d: "PC3D and more",
+    nav_pc3d_viewer: "3D viewer",
+    nav_pc3d_parts: "Components and types",
+    nav_pc3d_maintenance: "PC maintenance",
 
     // History
     hist_title: "Historical Computers (Pre-1980s)",
