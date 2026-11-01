@@ -1265,3 +1265,282 @@
 [data-theme="light"] .table-tag.man { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
 [data-theme="light"] .table-tag.wan { background: #d1fae5; color: #047857; border: 1px solid #a7f3d0; }
 [data-theme="light"] .table-tag.gan { background: #e0e7ff; color: #4338ca; border: 1px solid #c7d2fe; }
+
+
+/* =========================================================
+   TARJETAS LANDING — ESTILO NVIDIA ENTERPRISE (NV-CARDS)
+   ========================================================= */
+
+.nv-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.75rem;
+}
+
+/* ── Tarjeta base ── */
+.nv-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  background: #0b0f17;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 4px;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  isolation: isolate;
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+              border-color 0.28s ease,
+              box-shadow 0.28s ease;
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  min-height: 320px;
+  cursor: pointer;
+}
+
+/* ── SVG circuito de fondo ── */
+.nv-card-circuit {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  transition: opacity 0.3s ease;
+  opacity: 0.8;
+}
+
+/* ── Número de producto top-right ── */
+.nv-card-num {
+  position: absolute;
+  top: 1rem;
+  right: 1.15rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(118, 185, 0, 0.5);
+  z-index: 2;
+  transition: color 0.25s ease;
+}
+
+/* ── Ícono técnico ── */
+.nv-card-icon {
+  position: relative;
+  z-index: 2;
+  padding: 1.75rem 1.75rem 0;
+  width: 52px;
+  height: 52px;
+  padding: 0;
+  margin: 1.75rem 0 0 1.75rem;
+  color: rgba(255, 255, 255, 0.55);
+  transition: color 0.25s ease;
+}
+
+.nv-card-icon svg {
+  width: 48px;
+  height: 48px;
+  display: block;
+}
+
+/* ── Cuerpo de contenido ── */
+.nv-card-body {
+  position: relative;
+  z-index: 2;
+  padding: 1.25rem 1.75rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  flex: 1;
+}
+
+/* Label tipo modelo NVIDIA */
+.nv-card-label {
+  font-size: 0.62rem;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #76b900;
+  opacity: 0.75;
+  transition: opacity 0.25s ease;
+}
+
+/* Título grande */
+.nv-card-title {
+  font-size: 1.55rem;
+  font-weight: 800;
+  line-height: 1.18;
+  letter-spacing: -0.025em;
+  color: #f8fafc;
+  transition: color 0.25s ease;
+}
+
+/* Descripción */
+.nv-card-desc {
+  font-size: 0.875rem;
+  color: #64748b;
+  line-height: 1.65;
+  transition: color 0.25s ease;
+}
+
+/* ── Footer de la tarjeta ── */
+.nv-card-footer {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.1rem 1.75rem 1.5rem;
+  margin-top: auto;
+}
+
+.nv-card-tag {
+  font-size: 0.68rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.22);
+  transition: color 0.25s ease;
+}
+
+.nv-card-arrow {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid rgba(118, 185, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(118, 185, 0, 0.5);
+  flex-shrink: 0;
+  transition: all 0.25s ease;
+}
+
+.nv-card-arrow svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ── Barra inferior de acento verde NVIDIA ── */
+.nv-card-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0%;
+  height: 2px;
+  background: #76b900;
+  box-shadow: 0 0 8px rgba(118, 185, 0, 0.6);
+  transition: width 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: 3;
+}
+
+/* ── Estados HOVER ── */
+.nv-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(118, 185, 0, 0.35);
+  box-shadow:
+    0 16px 40px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(118, 185, 0, 0.12),
+    0 0 30px rgba(118, 185, 0, 0.08);
+}
+
+.nv-card:hover .nv-card-bar {
+  width: 100%;
+}
+
+.nv-card:hover .nv-card-num {
+  color: rgba(118, 185, 0, 0.85);
+}
+
+.nv-card:hover .nv-card-label {
+  opacity: 1;
+}
+
+.nv-card:hover .nv-card-icon {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.nv-card:hover .nv-card-desc {
+  color: #94a3b8;
+}
+
+.nv-card:hover .nv-card-tag {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.nv-card:hover .nv-card-arrow {
+  border-color: #76b900;
+  color: #76b900;
+  background: rgba(118, 185, 0, 0.1);
+  transform: translateX(3px);
+}
+
+.nv-card:hover .nv-card-circuit {
+  opacity: 1.4;
+}
+
+.nv-card:active {
+  transform: translateY(-2px);
+}
+
+/* ── Modo Claro ── */
+[data-theme="light"] .nv-card {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  box-shadow:
+    0 2px 8px rgba(15, 23, 42, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+[data-theme="light"] .nv-card-title {
+  color: #0f172a;
+}
+
+[data-theme="light"] .nv-card-desc {
+  color: #64748b;
+}
+
+[data-theme="light"] .nv-card-tag {
+  color: rgba(15, 23, 42, 0.3);
+}
+
+[data-theme="light"] .nv-card-icon {
+  color: rgba(15, 23, 42, 0.5);
+}
+
+[data-theme="light"] .nv-card:hover {
+  border-color: rgba(118, 185, 0, 0.45);
+  background: #fafafa;
+  box-shadow:
+    0 12px 32px rgba(15, 23, 42, 0.1),
+    0 0 0 1px rgba(118, 185, 0, 0.18);
+}
+
+[data-theme="light"] .nv-card:hover .nv-card-icon {
+  color: rgba(15, 23, 42, 0.85);
+}
+
+[data-theme="light"] .nv-card:hover .nv-card-desc {
+  color: #475569;
+}
+
+[data-theme="light"] .nv-card:hover .nv-card-tag {
+  color: rgba(15, 23, 42, 0.5);
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .nv-cards-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .nv-card-title {
+    font-size: 1.3rem;
+  }
+}
