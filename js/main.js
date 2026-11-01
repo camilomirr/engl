@@ -196,7 +196,6 @@ const translations = {
     detect_gpu: "Tarjeta gráfica",
     detect_screen: "Pantalla",
     detect_battery: "Batería",
-    detect_network: "Red",
     detect_na: "No disponible",
     detect_charging: "cargando",
 
@@ -483,7 +482,6 @@ const translations = {
     detect_gpu: "Graphics card",
     detect_screen: "Screen",
     detect_battery: "Battery",
-    detect_network: "Network",
     detect_na: "Not available",
     detect_charging: "charging",
 
@@ -673,7 +671,9 @@ function setupLanguageDropdown() {
 
 function setupCopyButton() {
   document.querySelectorAll('.copy-btn').forEach((copyBtn) => {
-    const codeElem = document.getElementById(copyBtn.dataset.copyTarget || 'ps-code');
+    const targetId = copyBtn.dataset.copyTarget || (copyBtn.id === 'copy-code-btn' ? 'ps-code' : null);
+    if (!targetId) return;
+    const codeElem = document.getElementById(targetId);
     if (!codeElem) return;
 
     copyBtn.addEventListener('click', () => {
@@ -753,9 +753,6 @@ function setupDetector() {
         .then(b => set('det-battery', Math.round(b.level * 100) + '%' + (b.charging ? ' (' + t.detect_charging + ')' : '')))
         .catch(() => set('det-battery', na));
     } else set('det-battery', na);
-
-    const conn = navigator.connection;
-    set('det-network', conn && conn.downlink ? '\u2248 ' + conn.downlink + ' Mbps (' + (conn.effectiveType || '') + ')' : na);
 
     box.hidden = false;
   });
