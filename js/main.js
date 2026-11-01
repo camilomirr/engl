@@ -125,6 +125,7 @@ const translations = {
     nav_topologies: "Topologías",
     topol_title: "Topologías de Redes",
     nav_switch3d: "Switch 3D: flujo de señal",
+    nav_wifi: "WiFi Avanzado",
     assistant_title: "Asistente NVISION",
     assistant_status: "Búsqueda local",
     assistant_welcome: "Busca un tema del sitio, por ejemplo: RAM, redes, switch o ENIAC.",
@@ -433,6 +434,7 @@ const translations = {
     nav_topologies: "Topologies",
     topol_title: "Network Topologies",
     nav_switch3d: "3D Switch: signal flow",
+    nav_wifi: "Advanced WiFi",
     assistant_title: "NVISION Assistant",
     assistant_status: "Local search",
     assistant_welcome: "Search the site, for example: RAM, networks, switch, or ENIAC.",
@@ -1014,7 +1016,8 @@ function setupLocalAssistant() {
     { title: ['Glosario técnico', 'Technical glossary'], text: ['Definiciones de bandwidth, throughput, packet y NIC', 'Definitions for bandwidth, throughput, packet and NIC'], terms: 'glosario bandwidth throughput packet nic', href: 'recursos.html#glosario' },
     { title: ['Laboratorio de códigos', 'Code lab'], text: ['PowerShell, IP, MAC, ping y diagnóstico del equipo', 'PowerShell, IP, MAC, ping and device diagnostics'], terms: 'laboratorio powershell ip mac diagnostico codigo', href: 'recursos.html#laboratorio' },
     { title: ['Explorador 3D del PC', '3D PC explorer'], text: ['Recorre la torre y reconoce sus piezas internas', 'Explore the tower and identify its internal parts'], terms: 'pc pc3d 3d torre computador componentes piezas visor escena', href: 'pc3d.html#visor-3d' },
-    { title: ['Mantenimiento del PC', 'PC maintenance'], text: ['Limpieza, cuidado y mantenimiento preventivo del computador', 'Cleaning, care and preventive computer maintenance'], terms: 'mantenimiento limpieza cuidado soporte ventilador polvo pasta termica pc', href: 'pc3d.html#mantenimiento' }
+    { title: ['Mantenimiento del PC', 'PC maintenance'], text: ['Limpieza, cuidado y mantenimiento preventivo del computador', 'Cleaning, care and preventive computer maintenance'], terms: 'mantenimiento limpieza cuidado soporte ventilador polvo pasta termica pc', href: 'pc3d.html#mantenimiento' },
+    { title: ['Configuraciones avanzadas de WiFi', 'Advanced WiFi configuration'], text: ['Instalación de módem/router Movistar, repetidor, WPS, seguridad y cobertura', 'Movistar modem/router setup, repeater, WPS, security and coverage'], terms: 'wifi wi fi modem router movistar repetidor extensor wps cobertura internet ssid contraseña seguridad', href: 'wifi.html#instalar-modem' }
   ];
 
   const renderResults = (query) => {

@@ -36,3 +36,6 @@
 /* 10. Efecto de seguimiento del cursor */
 @import url('modules/cursor-effect.css');
 
+/* 11. Guía de configuración avanzada de WiFi */
+@import url('modules/wifi.css');
+
