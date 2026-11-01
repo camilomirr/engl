@@ -887,14 +887,15 @@ function setupPcExplorer() {
     airflow: { title: 'scene_airflow_title', desc: 'scene_airflow_desc' }
   };
   const parts = [
-    { selector: '.pc-motherboard', key: 'part_motherboard' },
-    { selector: '.pc-ram', key: 'part_ram' },
-    { selector: '.pc-cpu', key: 'part_cpu' },
-    { selector: '.pc-gpu', key: 'part_gpu' },
-    { selector: '.pc-storage', key: 'part_storage' },
-    { selector: '.pc-psu', key: 'part_psu' }
+    { selector: '.pc-motherboard', key: 'part_motherboard', functionText: 'Conecta todos los componentes y permite que intercambien datos.', types: 'ATX · Micro-ATX · Mini-ITX' },
+    { selector: '.pc-ram', key: 'part_ram', functionText: 'Mantiene temporalmente los datos de los programas que están en uso.', types: 'DDR3 · DDR4 · DDR5 · DIMM' },
+    { selector: '.pc-cpu', key: 'part_cpu', functionText: 'Ejecuta instrucciones, cálculos y coordina las operaciones del computador.', types: 'Intel · AMD · x86 · x64' },
+    { selector: '.pc-gpu', key: 'part_gpu', functionText: 'Procesa gráficos, video, renderizado 3D e inteligencia artificial.', types: 'Integrada · Dedicada · GDDR6 · PCIe' },
+    { selector: '.pc-storage', key: 'part_storage', functionText: 'Guarda el sistema operativo, las aplicaciones y los archivos de forma permanente.', types: 'HDD · SSD SATA · M.2 NVMe' },
+    { selector: '.pc-psu', key: 'part_psu', functionText: 'Convierte la corriente y entrega voltajes estables a cada pieza.', types: 'ATX · SFX · Bronze · Silver · Gold · Platinum · Titanium' }
   ];
   let activeScene = 'overview';
+  let selectedPart = null;
 
   function getText(key) {
     return translations[currentLang]?.[key] || translations.es[key] || key;
@@ -907,6 +908,20 @@ function setupPcExplorer() {
       partName.setAttribute('data-i18n', part.key);
     }
     if (partIndex) partIndex.textContent = `${String(parts.indexOf(part) + 1).padStart(2, '0')} / 06`;
+  }
+
+  function showPart(part) {
+    selectedPart = part;
+    document.querySelectorAll('.pc-layer').forEach((layer) => {
+      layer.classList.toggle('is-selected', layer.matches(part.selector));
+    });
+    updateReadout(parts.indexOf(part));
+    if (sceneTitle) sceneTitle.textContent = getText(part.key);
+    if (sceneDesc) sceneDesc.textContent = part.functionText;
+    if (partName) partName.textContent = part.types;
+    if (sceneTitle) sceneTitle.removeAttribute('data-i18n');
+    if (sceneDesc) sceneDesc.removeAttribute('data-i18n');
+    if (partName) partName.removeAttribute('data-i18n');
   }
 
   function setScene(sceneName) {
@@ -932,7 +947,7 @@ function setupPcExplorer() {
     scene.style.transform = `translate(-50%, -50%) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
     updateReadout(Math.floor(x * parts.length));
 
-    setScene(x < 0.34 ? 'overview' : x < 0.68 ? 'core' : 'airflow');
+    if (!selectedPart) setScene(x < 0.34 ? 'overview' : x < 0.68 ? 'core' : 'airflow');
   }
 
   shell.addEventListener('pointermove', updatePerspective);
@@ -940,7 +955,22 @@ function setupPcExplorer() {
     scene.style.transform = 'translate(-50%, -50%) rotateX(10deg) rotateY(-16deg)';
   });
   sceneButtons.forEach((button) => {
-    button.addEventListener('click', () => setScene(button.dataset.scene));
+    button.addEventListener('click', () => {
+      selectedPart = null;
+      document.querySelectorAll('.pc-layer').forEach((layer) => layer.classList.remove('is-selected'));
+      setScene(button.dataset.scene);
+    });
+  });
+  parts.forEach((part) => {
+    document.querySelectorAll(part.selector).forEach((layer) => {
+      layer.addEventListener('click', () => showPart(part));
+      layer.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          showPart(part);
+        }
+      });
+    });
   });
   setScene('overview');
   updateReadout(0);

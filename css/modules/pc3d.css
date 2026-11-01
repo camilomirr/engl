@@ -18,6 +18,15 @@
 .pc3d-viewer .pc-explorer-panel { min-height: 600px; }
 .pc3d-part-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 1rem; }
 .pc3d-part-card { display: grid; grid-template-columns: 58px 1fr; gap: .85rem; padding: 1.3rem; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); box-shadow: var(--shadow-sm); transition: var(--transition); }
+.pc3d-part-card::before { content: ''; grid-column: 1 / -1; height: 145px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); background-position: center; background-size: cover; background-repeat: no-repeat; filter: saturate(.82); }
+.pc3d-part-card:nth-child(1)::before { background-image: url('https://th.bing.com/th/id/OIP.pos0kN3-I5Oy6bl8r_T-PgHaEn?w=600&h=370&c=7&r=0&o=7&pid=1.7&rm=3'); }
+.pc3d-part-card:nth-child(2)::before { background-image: url('https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?auto=format&fit=crop&w=800&q=80'); }
+.pc3d-part-card:nth-child(3)::before { background-image: url('https://images.unsplash.com/photo-1562976540-1502c2145186?auto=format&fit=crop&w=800&q=80'); }
+.pc3d-part-card:nth-child(4)::before { background-image: url('https://pisces.bbystatic.com/image2/BestBuy_US/images/products/6467/6467838cv11d.jpg'); }
+.pc3d-part-card:nth-child(5)::before { background-image: url('https://placaschinas.com/wp-content/uploads/2023/10/almacenamiento-SSD-vs-HD.jpg'); }
+.pc3d-part-card:nth-child(6)::before { background-image: url('https://www.cyberpuerta.mx/img/product/XL/CP-ASUS-ROG-THOR-1200P2-GAMING-cpscrap-01-34b084.jpg'); }
+.pc3d-part-card:nth-child(7)::before { background-image: url('https://www.ntcompatible.com/data/publish/209/5d0c1169af1e2c8df653222b2a49ebe69a190a/7ee3aa2c7be4d778242b52d683b83f38dc2bfb45.jpg'); }
+.pc3d-part-card:nth-child(8)::before { background-image: url('https://images.unsplash.com/photo-1605192020788-24d8eae86e59?auto=format&fit=crop&w=800&q=80'); }
 .pc3d-part-card:hover { transform: translateY(-4px); border-color: var(--border-hover); box-shadow: var(--shadow-md); }
 .pc3d-part-number { width: 48px; height: 48px; display: grid; place-items: center; border: 1px solid rgba(56,189,248,.35); border-radius: 50%; color: var(--accent-cyan); font: 700 .75rem 'JetBrains Mono', monospace; }
 .pc3d-part-card h3 { margin: .1rem 0 .35rem; color: var(--text-primary); font-size: 1.05rem; }
