@@ -192,6 +192,8 @@ const translations = {
     code_arp_desc: "Lista los dispositivos de tu red local con su IP y su MAC: los equipos que el tuyo ya conoce.",
     code_renew_title: "Renueva tu IP",
     code_renew_desc: "Suelta tu IP actual y pide una nueva al router. Es el arreglo clásico cuando el internet se pone raro (ejecuta PowerShell como administrador).",
+    code_netstat_title: "¿Con quién está hablando tu PC?",
+    code_netstat_desc: "Muestra las conexiones activas de tu equipo: a qué direcciones IP está conectado y por cuáles puertos. La última columna (PID) es el número del programa que hace cada conexión.",
 
     // Clasificación de Redes por Alcance (Tabla y Tarjetas BAN a GAN)
     nav_scope: "Clasificación de Redes",
@@ -472,6 +474,8 @@ const translations = {
     code_arp_desc: "Lists the devices on your local network with their IP and MAC: the machines yours already knows.",
     code_renew_title: "Renew your IP",
     code_renew_desc: "Releases your current IP and asks the router for a new one. The classic fix when the internet acts weird (run PowerShell as administrator).",
+    code_netstat_title: "Who is your PC talking to?",
+    code_netstat_desc: "Shows your computer's active connections: which IP addresses it is connected to and through which ports. The last column (PID) is the number of the program making each connection.",
 
     // Network Scope Classification (Table and Cards BAN to GAN)
     nav_scope: "Network Scopes",
