@@ -107,24 +107,37 @@ const translations = {
     eth_desc: "Interfaces RJ-45 para cable de par trenzado (Ethernet) e interfaces de radiofrecuencia (Wi-Fi) conectadas mediante el bus PCIe.",
     flow_title: "Flujo de Datos en el Host",
     flow_desc: "Los paquetes viajan desde la memoria RAM, son procesados por la CPU y enviados al controlador NIC para su modulación y transmisión en el medio físico.",
-    switch3d_title: "Switch en 3D: conexión y flujo de señal",
-    switch3d_desc: "Conecta los equipos a los puertos del switch, activa el enlace y observa cómo la trama Ethernet encuentra su destino dentro de la LAN.",
+    switch3d_title: "El switch por dentro: cómo decide a dónde va cada trama",
+    switch3d_desc: "Envía tramas entre los equipos y observa, paso a paso, cómo el switch aprende las direcciones MAC y decide por qué puerto sale cada trama. Compáralo con un hub y verás la diferencia.",
     switch3d_badge: "Laboratorio L2",
-    switch3d_how_title: "¿Cómo fluye la señal?",
-    switch3d_step_1: "Conecta el cable Ethernet desde la NIC del PC a un puerto RJ-45.",
-    switch3d_step_2: "El puerto negocia velocidad y enlace; el LED cambia a verde.",
-    switch3d_step_3: "El switch aprende la MAC y reenvía la trama solo por el puerto correcto.",
-    switch3d_btn_on: "Activar señal",
-    switch3d_btn_off: "Desactivar señal",
-    switch3d_status_off: "ENLACE DESACTIVADO",
-    switch3d_status_on: "SEÑAL FLUYENDO",
-    switch3d_readout_off: "Los puertos están esperando una conexión física.",
-    switch3d_readout_on: "Puerto 01 activo · MAC aprendida · Trama reenviada hacia el gateway.",
+    swl_caption_idle: "Elige quién envía y quién recibe, y pulsa «Enviar trama». Mira cómo el switch va aprendiendo las MAC en su tabla.",
+    swl_caption_hub_idle: "Modo HUB activado: envía una trama y compara qué pasa con lo que hace el switch.",
+    swl_mode_switch: "Modo switch",
+    swl_mode_hub: "Modo hub",
+    swl_from: "Envía",
+    swl_to: "Recibe",
+    swl_send: "Enviar trama",
+    swl_reset: "Borrar tabla MAC",
+    swl_table_title: "Tabla MAC (lo que el switch ha aprendido)",
+    swl_col_port: "Puerto",
+    swl_col_mac: "MAC",
+    swl_table_empty: "Vacía: todavía no aprende ninguna MAC.",
+    swl_table_hub: "Un hub no tiene tabla MAC: no aprende nada.",
+    swl_cap_send: "{from} envía una trama destinada a {to}.",
+    swl_cap_enter: "La trama entra al switch por el puerto {port}.",
+    swl_cap_learn: "El switch aprende: anota en su tabla que la MAC de {from} está en el puerto {port}.",
+    swl_cap_lookup: "Ahora busca la MAC de {to} en su tabla…",
+    swl_cap_forward: "¡La tiene, puerto {port}! Reenvía la trama SOLO por ese puerto: los demás equipos ni se enteran.",
+    swl_cap_flood: "Todavía no conoce la MAC de {to}: envía la trama por TODOS los puertos (flooding) a ver quién responde.",
+    swl_cap_reply: "Los demás la ignoran; solo {to} responde. Con su respuesta, el switch aprende también la MAC de {to}: puerto {port}.",
+    swl_cap_done: "✔ Trama entregada a {to}. Y ojo a la tabla: la próxima vez entre estos dos equipos el envío será directo, sin flooding.",
+    swl_cap_hub: "El hub no piensa ni aprende: repite la trama por TODOS los puertos, siempre.",
+    swl_cap_hub_done: "Todos recibieron la trama aunque era solo para {to}: más tráfico y cero privacidad. Por eso los hubs desaparecieron y hoy todo es switch.",
 
     // Topologías de Redes
     nav_topologies: "Topologías",
     topol_title: "Topologías de Redes",
-    nav_switch3d: "Switch 3D: flujo de señal",
+    nav_switch3d: "El switch por dentro",
     nav_wifi: "WiFi Avanzado",
     assistant_title: "Asistente NVISION",
     assistant_status: "Búsqueda local",
@@ -416,24 +429,37 @@ const translations = {
     eth_desc: "RJ-45 interfaces for twisted pair Ethernet cables and wireless RF adapters interconnected through the PCIe bus.",
     flow_title: "Host Data Flow Architecture",
     flow_desc: "Data packets stream from RAM buffers, undergo CPU processing, and are dispatched to the NIC controller for physical signal modulation.",
-    switch3d_title: "3D Switch: connection and signal flow",
-    switch3d_desc: "Connect the devices to the switch ports, activate the link, and watch the Ethernet frame find its destination inside the LAN.",
+    switch3d_title: "Inside a switch: how it decides where each frame goes",
+    switch3d_desc: "Send frames between the computers and watch, step by step, how the switch learns MAC addresses and decides which port each frame leaves through. Compare it with a hub and see the difference.",
     switch3d_badge: "Layer 2 Lab",
-    switch3d_how_title: "How does the signal flow?",
-    switch3d_step_1: "Connect the Ethernet cable from the PC NIC to an RJ-45 port.",
-    switch3d_step_2: "The port negotiates speed and link; the LED turns green.",
-    switch3d_step_3: "The switch learns the MAC and forwards the frame only through the correct port.",
-    switch3d_btn_on: "Activate signal",
-    switch3d_btn_off: "Deactivate signal",
-    switch3d_status_off: "LINK DISABLED",
-    switch3d_status_on: "SIGNAL FLOWING",
-    switch3d_readout_off: "Ports are waiting for a physical connection.",
-    switch3d_readout_on: "Port 01 active · MAC learned · Frame forwarded to the gateway.",
+    swl_caption_idle: "Choose who sends and who receives, then press \"Send frame\". Watch how the switch learns MAC addresses into its table.",
+    swl_caption_hub_idle: "HUB mode on: send a frame and compare what happens with what the switch does.",
+    swl_mode_switch: "Switch mode",
+    swl_mode_hub: "Hub mode",
+    swl_from: "Sends",
+    swl_to: "Receives",
+    swl_send: "Send frame",
+    swl_reset: "Clear MAC table",
+    swl_table_title: "MAC table (what the switch has learned)",
+    swl_col_port: "Port",
+    swl_col_mac: "MAC",
+    swl_table_empty: "Empty: it has not learned any MAC yet.",
+    swl_table_hub: "A hub has no MAC table: it learns nothing.",
+    swl_cap_send: "{from} sends a frame addressed to {to}.",
+    swl_cap_enter: "The frame enters the switch through port {port}.",
+    swl_cap_learn: "The switch learns: it writes down that {from}'s MAC is on port {port}.",
+    swl_cap_lookup: "Now it looks up {to}'s MAC in its table…",
+    swl_cap_forward: "Found it, port {port}! It forwards the frame ONLY through that port: the other computers never see it.",
+    swl_cap_flood: "It does not know {to}'s MAC yet: it sends the frame out through ALL ports (flooding) to see who answers.",
+    swl_cap_reply: "The others ignore it; only {to} replies. With that reply, the switch also learns {to}'s MAC: port {port}.",
+    swl_cap_done: "✔ Frame delivered to {to}. And check the table: next time between these two computers the delivery will be direct, no flooding.",
+    swl_cap_hub: "The hub does not think or learn: it repeats the frame through ALL ports, always.",
+    swl_cap_hub_done: "Everyone received the frame even though it was only for {to}: more traffic and zero privacy. That is why hubs disappeared and everything is a switch today.",
 
     // Network Topologies
     nav_topologies: "Topologies",
     topol_title: "Network Topologies",
-    nav_switch3d: "3D Switch: signal flow",
+    nav_switch3d: "Inside a switch",
     nav_wifi: "Advanced WiFi",
     assistant_title: "NVISION Assistant",
     assistant_status: "Local search",
@@ -1111,7 +1137,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupPcExplorer();
   setupMaintenanceToolImages();
   setupNetworkSimulator();
-  setupSwitch3D();
+  setupSwitchLab();
   setupLocalAssistant();
   setupCursorEffect();
   applyLanguage(currentLang);
@@ -1305,37 +1331,215 @@ function setupMaintenanceToolImages() {
   });
 }
 
-function setupSwitch3D() {
-  const stage = document.getElementById('switch3d-stage');
-  const toggle = document.getElementById('switch3d-toggle');
-  const status = document.getElementById('switch3d-status');
-  const indicator = document.getElementById('switch3d-indicator');
-  const readout = document.getElementById('switch3d-readout');
-  const buttonText = toggle?.querySelector('[data-i18n]');
+function setupSwitchLab() {
+  const svg = document.getElementById('swl-svg');
+  if (!svg) return;
+  const fromSel = document.getElementById('swl-from');
+  const toSel = document.getElementById('swl-to');
+  const sendBtn = document.getElementById('swl-send');
+  const resetBtn = document.getElementById('swl-reset');
+  const caption = document.getElementById('swl-caption');
+  const tbody = document.getElementById('swl-mac-body');
+  const modeSwitchBtn = document.getElementById('swl-mode-switch');
+  const modeHubBtn = document.getElementById('swl-mode-hub');
+  const deviceName = document.getElementById('swl-device-name');
+  const framesLayer = document.getElementById('swl-frames');
+  const NS = 'http://www.w3.org/2000/svg';
+  const PCS = [
+    { x: 290, mac: 'AA:BB:CC:00:00:01' },
+    { x: 357, mac: 'AA:BB:CC:00:00:02' },
+    { x: 423, mac: 'AA:BB:CC:00:00:03' },
+    { x: 490, mac: 'AA:BB:CC:00:00:04' }
+  ];
+  const MID_Y = 70, PC_Y = 292;
+  const learned = new Map(); // puerto -> indice de PC
+  let mode = 'switch';
+  let busy = false;
 
-  if (!stage || !toggle) return;
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  const t = key => translations[currentLang]?.[key] || key;
+  function cap(key, params = {}) {
+    let txt = t(key);
+    for (const k in params) txt = txt.replaceAll('{' + k + '}', params[k]);
+    caption.textContent = txt;
+  }
+  const pcName = i => 'PC' + (i + 1);
 
-  let isActive = false;
-  toggle.addEventListener('click', () => {
-    isActive = !isActive;
-    stage.classList.toggle('is-flowing', isActive);
-    indicator?.classList.toggle('is-on', isActive);
-    if (status) {
-      const key = isActive ? 'switch3d_status_on' : 'switch3d_status_off';
-      status.textContent = translations[currentLang]?.[key] || key;
-      status.dataset.i18n = key;
+  function renderTable(hiPort = null) {
+    tbody.innerHTML = '';
+    const row = cells => {
+      const tr = document.createElement('tr');
+      cells.forEach(c => { const td = document.createElement('td'); td.textContent = c; tr.appendChild(td); });
+      return tr;
+    };
+    if (mode === 'hub') {
+      const tr = row([t('swl_table_hub')]);
+      tr.firstChild.colSpan = 3; tr.className = 'swl-note-row';
+      tbody.appendChild(tr); return;
     }
-    if (readout) {
-      const key = isActive ? 'switch3d_readout_on' : 'switch3d_readout_off';
-      readout.textContent = translations[currentLang]?.[key] || key;
-      readout.dataset.i18n = key;
+    if (!learned.size) {
+      const tr = row([t('swl_table_empty')]);
+      tr.firstChild.colSpan = 3; tr.className = 'swl-note-row';
+      tbody.appendChild(tr); return;
     }
-    if (buttonText) {
-      const key = isActive ? 'switch3d_btn_off' : 'switch3d_btn_on';
-      buttonText.textContent = translations[currentLang]?.[key] || key;
-      buttonText.dataset.i18n = key;
+    [...learned.entries()].sort((a, b) => a[0] - b[0]).forEach(([port, pc]) => {
+      const tr = row(['P' + port, PCS[pc].mac, pcName(pc)]);
+      if (port === hiPort) tr.className = 'is-new';
+      tbody.appendChild(tr);
+    });
+  }
+
+  function flashPc(i) {
+    const el = document.getElementById('swl-pc-' + i);
+    if (!el) return;
+    el.classList.add('is-hit');
+    setTimeout(() => el.classList.remove('is-hit'), 1100);
+  }
+  function flashPort(p) {
+    const el = document.getElementById('swl-port-' + p);
+    if (!el) return;
+    el.classList.add('is-active-port');
+    setTimeout(() => el.classList.remove('is-active-port'), 900);
+  }
+
+  function makeDot() {
+    const c = document.createElementNS(NS, 'circle');
+    c.setAttribute('r', '9');
+    c.setAttribute('class', 'swl-frame');
+    framesLayer.appendChild(c);
+    return c;
+  }
+  function moveAlong(dot, pts) {
+    return new Promise(res => {
+      const segs = []; let total = 0;
+      for (let i = 1; i < pts.length; i++) {
+        const len = Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]);
+        segs.push({ a: pts[i - 1], b: pts[i], len }); total += len;
+      }
+      const dur = Math.max(260, total / 0.42);
+      const t0 = performance.now();
+      (function frame(now) {
+        const p = Math.min(1, (now - t0) / dur);
+        let d = p * total;
+        for (const sg of segs) {
+          if (d <= sg.len) {
+            const k = sg.len ? d / sg.len : 0;
+            dot.setAttribute('cx', sg.a[0] + (sg.b[0] - sg.a[0]) * k);
+            dot.setAttribute('cy', sg.a[1] + (sg.b[1] - sg.a[1]) * k);
+            break;
+          }
+          d -= sg.len;
+        }
+        if (p < 1) requestAnimationFrame(frame); else res();
+      })(t0);
+    });
+  }
+
+  async function travel(from, to) {
+    const dot = makeDot();
+    flashPort(from + 1);
+    await moveAlong(dot, [[PCS[from].x, PC_Y], [PCS[from].x, MID_Y], [PCS[to].x, MID_Y], [PCS[to].x, PC_Y]]);
+    flashPort(to + 1); flashPc(to);
+    dot.remove();
+  }
+  async function upToSwitch(from) {
+    const dot = makeDot();
+    flashPort(from + 1);
+    await moveAlong(dot, [[PCS[from].x, PC_Y], [PCS[from].x, MID_Y]]);
+    return dot;
+  }
+  async function floodFromSwitch(from) {
+    const jobs = [];
+    for (let i = 0; i < 4; i++) {
+      if (i === from) continue;
+      const dot = makeDot();
+      jobs.push((async () => {
+        await moveAlong(dot, [[PCS[from].x, MID_Y], [PCS[i].x, MID_Y], [PCS[i].x, PC_Y]]);
+        flashPort(i + 1); flashPc(i);
+        dot.remove();
+      })());
     }
-  });
+    await Promise.all(jobs);
+  }
+
+  async function send() {
+    if (busy) return;
+    const from = parseInt(fromSel.value, 10);
+    const to = parseInt(toSel.value, 10);
+    if (from === to) return;
+    busy = true; sendBtn.disabled = true;
+
+    if (mode === 'hub') {
+      cap('swl_cap_send', { from: pcName(from), to: pcName(to) });
+      await sleep(650);
+      cap('swl_cap_hub');
+      const hdot = await upToSwitch(from);
+      await floodFromSwitch(from);
+      hdot.remove();
+      cap('swl_cap_hub_done', { to: pcName(to) });
+      busy = false; sendBtn.disabled = false;
+      return;
+    }
+
+    cap('swl_cap_send', { from: pcName(from), to: pcName(to) });
+    await sleep(650);
+    cap('swl_cap_enter', { from: pcName(from), port: from + 1 });
+    // La trama sube hasta el switch y espera ahi mientras decide
+    const dot = await upToSwitch(from);
+
+    // Aprende el origen
+    if (!learned.has(from + 1)) {
+      learned.set(from + 1, from);
+      renderTable(from + 1);
+      cap('swl_cap_learn', { from: pcName(from), port: from + 1 });
+      await sleep(1500);
+    }
+    cap('swl_cap_lookup', { to: pcName(to) });
+    await sleep(1000);
+
+    if (learned.has(to + 1)) {
+      cap('swl_cap_forward', { port: to + 1 });
+      await sleep(900);
+      await moveAlong(dot, [[PCS[from].x, MID_Y], [PCS[to].x, MID_Y], [PCS[to].x, PC_Y]]);
+      flashPort(to + 1); flashPc(to);
+      dot.remove();
+      cap('swl_cap_done', { to: pcName(to) });
+    } else {
+      cap('swl_cap_flood', { to: pcName(to) });
+      await sleep(1000);
+      await floodFromSwitch(from);
+      dot.remove();
+      // Aprende el destino con la respuesta
+      learned.set(to + 1, to);
+      renderTable(to + 1);
+      cap('swl_cap_reply', { to: pcName(to), port: to + 1 });
+      await sleep(1600);
+      await travel(to, from);
+      cap('swl_cap_done', { to: pcName(to) });
+    }
+    busy = false; sendBtn.disabled = false;
+  }
+
+  function setMode(m) {
+    mode = m;
+    modeSwitchBtn.classList.toggle('is-active', m === 'switch');
+    modeHubBtn.classList.toggle('is-active', m === 'hub');
+    deviceName.textContent = m === 'hub' ? 'HUB' : 'SWITCH';
+    renderTable();
+    cap(m === 'hub' ? 'swl_caption_hub_idle' : 'swl_caption_idle');
+  }
+
+  [fromSel, toSel].forEach(sel => sel.addEventListener('change', () => {
+    if (fromSel.value === toSel.value) {
+      const other = sel === fromSel ? toSel : fromSel;
+      other.value = String((parseInt(sel.value, 10) + 1) % 4);
+    }
+  }));
+  sendBtn.addEventListener('click', send);
+  resetBtn.addEventListener('click', () => { learned.clear(); renderTable(); cap('swl_caption_idle'); });
+  modeSwitchBtn.addEventListener('click', () => setMode('switch'));
+  modeHubBtn.addEventListener('click', () => setMode('hub'));
+  renderTable();
 }
 
 /* =========================================================

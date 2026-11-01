@@ -44,7 +44,7 @@
               <li><a href="redes.html#alcance-redes" data-i18n="nav_scope">Clasificación PAN/LAN/WAN</a></li>
               <li><a href="redes.html#topologias" data-i18n="nav_topologies">Topologías de Red</a></li>
               <li><a href="redes.html#simulador-red" data-i18n="nav_simulator">Simulador Ping & Tránsito</a></li>
-              <li><a href="redes.html#switch-3d" data-i18n="nav_switch3d">Switch 3D: flujo de señal</a></li>
+              <li><a href="redes.html#switch-3d" data-i18n="nav_switch3d">El switch por dentro</a></li>
             </ul>
           </li>
 
@@ -812,77 +812,116 @@
     </section>
 <section id="switch-3d" class="container">
       <h2 class="section-title">
-        <span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="7" width="18" height="10" rx="2"></rect><path d="M7 11h.01M11 11h.01M15 11h.01M19 11h.01M7 15h.01M11 15h.01M15 15h.01"></path></svg></span> <span data-i18n="switch3d_title">Switch en 3D: conexión y flujo de señal</span>
+        <span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="7" width="18" height="10" rx="2"></rect><path d="M7 11h.01M11 11h.01M15 11h.01M19 11h.01M7 15h.01M11 15h.01M15 15h.01"></path></svg></span> <span data-i18n="switch3d_title">El switch por dentro: cómo decide a dónde va cada trama</span>
       </h2>
       <p class="section-desc" data-i18n="switch3d_desc">
-        Conecta los equipos a los puertos del switch, activa el enlace y observa cómo la trama Ethernet encuentra su destino dentro de la LAN.
+        Envía tramas entre los equipos y observa, paso a paso, cómo el switch aprende las direcciones MAC y decide por qué puerto sale cada trama. Compáralo con un hub y verás la diferencia.
       </p>
 
-      <div class="switch3d-wrapper">
-        <div class="switch3d-stage" id="switch3d-stage" aria-label="Simulación 3D del funcionamiento de un switch">
-          <div class="switch3d-grid"></div>
-          <div class="switch3d-link link-pc"></div>
-          <div class="switch3d-link link-router"></div>
-          <div class="switch3d-link link-server"></div>
-
-          <div class="switch3d-node switch3d-host">
-            <span class="switch3d-node-icon">PC</span>
-            <strong>HOST A</strong>
-            <small>192.168.1.10</small>
-          </div>
-
-          <div class="switch3d-device" id="switch3d-device">
-            <div class="switch3d-top"></div>
-            <div class="switch3d-face">
-              <span class="switch3d-brand">NV-SW 08</span>
-              <span class="switch3d-led power-led"></span>
-              <span class="switch3d-port port-1"></span>
-              <span class="switch3d-port port-2"></span>
-              <span class="switch3d-port port-3"></span>
-              <span class="switch3d-port port-4"></span>
-              <span class="switch3d-port port-5"></span>
-              <span class="switch3d-port port-6"></span>
-              <span class="switch3d-port port-7"></span>
-              <span class="switch3d-port port-8"></span>
-            </div>
-            <strong class="switch3d-label">SWITCH L2</strong>
-            <small class="switch3d-cam">CAM TABLE: APRENDIENDO MAC</small>
-          </div>
-
-          <div class="switch3d-node switch3d-router">
-            <span class="switch3d-node-icon">GW</span>
-            <strong>ROUTER</strong>
-            <small>192.168.1.1</small>
-          </div>
-
-          <div class="switch3d-node switch3d-server">
-            <span class="switch3d-node-icon">WEB</span>
-            <strong>SERVIDOR</strong>
-            <small>10.0.0.80</small>
-          </div>
-
-          <span class="switch3d-packet packet-pc">01</span>
-          <span class="switch3d-packet packet-router">10</span>
-          <span class="switch3d-packet packet-server">80</span>
-          <div class="switch3d-status" id="switch3d-status" aria-live="polite" data-i18n="switch3d_status_off">ENLACE DESACTIVADO</div>
+      <div class="swl-wrapper">
+        <div class="swl-stage">
+          <svg id="swl-svg" viewBox="0 0 760 420" role="img" aria-label="Switch con cuatro computadores conectados por cable">
+            <g class="swl-device">
+              <rect x="230" y="30" width="300" height="80" rx="12"></rect>
+              <text id="swl-device-name" class="swl-device-title" x="380" y="64" text-anchor="middle">SWITCH</text>
+              <text class="swl-device-sub" x="380" y="86" text-anchor="middle">NV-SW 08 · capa 2</text>
+              <g class="swl-port" id="swl-port-1">
+                <text class="swl-port-num" x="290" y="100" text-anchor="middle">1</text>
+                <rect x="277" y="104" width="26" height="16" rx="3"></rect>
+              </g>
+              <g class="swl-port" id="swl-port-2">
+                <text class="swl-port-num" x="357" y="100" text-anchor="middle">2</text>
+                <rect x="344" y="104" width="26" height="16" rx="3"></rect>
+              </g>
+              <g class="swl-port" id="swl-port-3">
+                <text class="swl-port-num" x="423" y="100" text-anchor="middle">3</text>
+                <rect x="410" y="104" width="26" height="16" rx="3"></rect>
+              </g>
+              <g class="swl-port" id="swl-port-4">
+                <text class="swl-port-num" x="490" y="100" text-anchor="middle">4</text>
+                <rect x="477" y="104" width="26" height="16" rx="3"></rect>
+              </g>
+            </g>
+            <line class="swl-cable" x1="290" y1="120" x2="290" y2="298"></line>
+            <line class="swl-cable" x1="357" y1="120" x2="357" y2="298"></line>
+            <line class="swl-cable" x1="423" y1="120" x2="423" y2="298"></line>
+            <line class="swl-cable" x1="490" y1="120" x2="490" y2="298"></line>
+            <g class="swl-pc" id="swl-pc-0">
+              <rect class="swl-pc-body" x="236" y="298" width="108" height="62" rx="8"></rect>
+              <rect class="swl-pc-screen" x="244" y="306" width="92" height="38" rx="4"></rect>
+              <text class="swl-pc-name" x="290" y="331" text-anchor="middle">PC1</text>
+              <line class="swl-pc-stand" x1="290" y1="360" x2="290" y2="372"></line>
+              <line class="swl-pc-stand" x1="270" y1="374" x2="310" y2="374"></line>
+              <text class="swl-pc-mac" x="290" y="396" text-anchor="middle">AA:BB:CC:00:00:01</text>
+            </g>
+            <g class="swl-pc" id="swl-pc-1">
+              <rect class="swl-pc-body" x="303" y="298" width="108" height="62" rx="8"></rect>
+              <rect class="swl-pc-screen" x="311" y="306" width="92" height="38" rx="4"></rect>
+              <text class="swl-pc-name" x="357" y="331" text-anchor="middle">PC2</text>
+              <line class="swl-pc-stand" x1="357" y1="360" x2="357" y2="372"></line>
+              <line class="swl-pc-stand" x1="337" y1="374" x2="377" y2="374"></line>
+              <text class="swl-pc-mac" x="357" y="396" text-anchor="middle">AA:BB:CC:00:00:02</text>
+            </g>
+            <g class="swl-pc" id="swl-pc-2">
+              <rect class="swl-pc-body" x="369" y="298" width="108" height="62" rx="8"></rect>
+              <rect class="swl-pc-screen" x="377" y="306" width="92" height="38" rx="4"></rect>
+              <text class="swl-pc-name" x="423" y="331" text-anchor="middle">PC3</text>
+              <line class="swl-pc-stand" x1="423" y1="360" x2="423" y2="372"></line>
+              <line class="swl-pc-stand" x1="403" y1="374" x2="443" y2="374"></line>
+              <text class="swl-pc-mac" x="423" y="396" text-anchor="middle">AA:BB:CC:00:00:03</text>
+            </g>
+            <g class="swl-pc" id="swl-pc-3">
+              <rect class="swl-pc-body" x="436" y="298" width="108" height="62" rx="8"></rect>
+              <rect class="swl-pc-screen" x="444" y="306" width="92" height="38" rx="4"></rect>
+              <text class="swl-pc-name" x="490" y="331" text-anchor="middle">PC4</text>
+              <line class="swl-pc-stand" x1="490" y1="360" x2="490" y2="372"></line>
+              <line class="swl-pc-stand" x1="470" y1="374" x2="510" y2="374"></line>
+              <text class="swl-pc-mac" x="490" y="396" text-anchor="middle">AA:BB:CC:00:00:04</text>
+            </g>
+            <g id="swl-frames"></g>
+          </svg>
+          <div class="swl-caption" id="swl-caption" aria-live="polite" data-i18n="swl_caption_idle">Elige quién envía y quién recibe, y pulsa «Enviar trama». Mira cómo el switch va aprendiendo las MAC en su tabla.</div>
         </div>
 
-        <aside class="switch3d-panel">
-          <div class="switch3d-panel-heading">
+        <aside class="swl-panel">
+          <div class="swl-panel-head">
             <span class="network-badge" data-i18n="switch3d_badge">Laboratorio L2</span>
-            <span class="switch3d-indicator" id="switch3d-indicator"></span>
+            <div class="swl-mode" role="group" aria-label="Modo del dispositivo">
+              <button type="button" id="swl-mode-switch" class="swl-mode-btn is-active" data-i18n="swl_mode_switch">Modo switch</button>
+              <button type="button" id="swl-mode-hub" class="swl-mode-btn" data-i18n="swl_mode_hub">Modo hub</button>
+            </div>
           </div>
-          <h3 data-i18n="switch3d_how_title">¿Cómo fluye la señal?</h3>
-          <ol class="switch3d-steps">
-            <li><span>01</span><p data-i18n="switch3d_step_1">Conecta el cable Ethernet desde la NIC del PC a un puerto RJ-45.</p></li>
-            <li><span>02</span><p data-i18n="switch3d_step_2">El puerto negocia velocidad y enlace; el LED cambia a verde.</p></li>
-            <li><span>03</span><p data-i18n="switch3d_step_3">El switch aprende la MAC y reenvía la trama solo por el puerto correcto.</p></li>
-          </ol>
-          <button type="button" class="sim-btn-run switch3d-toggle" id="switch3d-toggle">
-            <span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z"></path></svg></span>
-            <span data-i18n="switch3d_btn_on">Activar señal</span>
-          </button>
-          <p class="switch3d-readout" id="switch3d-readout" data-i18n="switch3d_readout_off">Los puertos están esperando una conexión física.</p>
+
+          <div class="swl-controls">
+            <label><span data-i18n="swl_from">Envía</span>
+              <select id="swl-from">
+                <option value="0" selected>PC1</option>
+                <option value="1">PC2</option>
+                <option value="2">PC3</option>
+                <option value="3">PC4</option>
+              </select>
+            </label>
+            <label><span data-i18n="swl_to">Recibe</span>
+              <select id="swl-to">
+                <option value="0">PC1</option>
+                <option value="1">PC2</option>
+                <option value="2" selected>PC3</option>
+                <option value="3">PC4</option>
+              </select>
+            </label>
+          </div>
+
+          <button type="button" class="sim-btn-run" id="swl-send"><span data-i18n="swl_send">Enviar trama</span></button>
+
+          <div class="swl-table-wrap">
+            <h3 data-i18n="swl_table_title">Tabla MAC (lo que el switch ha aprendido)</h3>
+            <table class="swl-table">
+              <thead><tr><th data-i18n="swl_col_port">Puerto</th><th data-i18n="swl_col_mac">MAC</th><th>PC</th></tr></thead>
+              <tbody id="swl-mac-body"></tbody>
+            </table>
+          </div>
+
+          <button type="button" class="swl-reset" id="swl-reset" data-i18n="swl_reset">Borrar tabla MAC</button>
         </aside>
       </div>
     </section>
