@@ -807,6 +807,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupHistoryToggle();
   setupComponentToggles();
   setupPcExplorer();
+  setupMaintenanceToolImages();
   setupNetworkSimulator();
   applyLanguage(currentLang);
 });
@@ -977,6 +978,23 @@ function setupPcExplorer() {
   });
   setScene('overview');
   updateReadout(0);
+}
+
+function setupMaintenanceToolImages() {
+  const toolImages = {
+    'Juego de destornilladores': 'https://loremflickr.com/900/550/screwdriver,tools?lock=41',
+    'Pulsera antiestática': 'https://loremflickr.com/900/550/wristband,electronics?lock=42',
+    'Lata de aire comprimido': 'https://loremflickr.com/900/550/compressed-air,cleaning?lock=43',
+    'Brochas de limpieza': 'https://loremflickr.com/900/550/cleaning-brush,tools?lock=44',
+    'Pasta térmica para procesador': 'https://loremflickr.com/900/550/thermal-paste,computer?lock=45',
+    'Paño de microfibra': 'https://loremflickr.com/900/550/microfiber-cloth,cleaning?lock=46',
+    'Bridas organizadoras de cables': 'https://loremflickr.com/900/550/cable-management,computer?lock=47'
+  };
+
+  document.querySelectorAll('.pc3d-tool-card img').forEach((image) => {
+    const replacement = toolImages[image.alt];
+    if (replacement) image.src = replacement;
+  });
 }
 
 /* =========================================================
