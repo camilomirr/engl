@@ -984,7 +984,7 @@ function setupMaintenanceToolImages() {
   const toolImages = {
     'Juego de destornilladores': 'https://jensa.vtexassets.com/arquivos/ids/161306-800-800?v=638188042753000000&width=800&height=800&aspect=true',
     'Pulsera antiestática': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHIlvAxb8SWQnWT1tSrBmRa3LFzUeqdscmSiBerjNlcg&s=10',
-    'Lata de aire comprimido': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqSPbG2H8ImniMSLt5Xm3rwyTiNe8bgjbbZchfrYN19A&s=10',
+    'Aire comprimido': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqSPbG2H8ImniMSLt5Xm3rwyTiNe8bgjbbZchfrYN19A&s=10',
     'Pasta térmica': 'https://acf.geeknetic.es/imgri/imagenes/auto/20/06/17/eaj-jgv-71t7np6iz6l-sl1500.jpg?f=webp',
     'Paño de microfibra': 'https://www.esmero.com.co/wp-content/uploads/2020/06/esmero_panos_microfibra_azul_task.jpg'
   };
