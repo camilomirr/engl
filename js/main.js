@@ -34,6 +34,7 @@ const translations = {
     nav_network: "Hardware & Redes",
     nav_glossary: "Glosario",
     nav_lab: "Laboratorio",
+    nav_explorer_3d: "Explorador 3D del PC",
     nav_grp_hardware: "Hardware",
     nav_back: "Volver",
     nav_grp_networks: "Redes",
@@ -249,7 +250,29 @@ const translations = {
     insp_l3_title: "Capa 3 - Paquete IP (Protocolo 1 ICMP)",
     insp_stat_title: "Métricas de Conectividad",
     lang_select_title: "Seleccionar Idioma",
-    footer_text: "NVISION"
+    footer_text: "NVISION",
+    explorer_title: "Explorador 3D del computador",
+    explorer_desc: "Mueve el cursor sobre la escena para recorrer el interior de una torre y reconocer cómo se conectan sus piezas.",
+    explorer_status: "ESCENA INTERACTIVA",
+    explorer_kicker: "CINEMÁTICA ACTIVA",
+    explorer_hint: "Mueve el ratón para cambiar la perspectiva",
+    scene_overview_title: "Vista general",
+    scene_overview_desc: "La torre abierta revela la ruta principal de energía, datos y procesamiento.",
+    scene_core_title: "Núcleo de cálculo",
+    scene_core_desc: "CPU y RAM toman el foco: aquí las instrucciones se convierten en trabajo útil.",
+    scene_airflow_title: "Flujo y energía",
+    scene_airflow_desc: "La fuente y la tarjeta gráfica muestran cómo circulan energía y calor dentro del equipo.",
+    scene_overview_btn: "Vista general",
+    scene_core_btn: "Núcleo de cálculo",
+    scene_airflow_btn: "Flujo y energía",
+    part_motherboard: "Placa madre",
+    part_ram: "Memoria RAM",
+    part_cpu: "Procesador CPU",
+    part_gpu: "Tarjeta gráfica GPU",
+    part_storage: "Almacenamiento SSD",
+    part_psu: "Fuente de poder",
+    explorer_parts: "PIEZAS EN CAPA",
+    explorer_view: "VISTA DINÁMICA"
   },
   en: {
     badge_hero: "Network Structure",
@@ -280,6 +303,7 @@ const translations = {
     nav_network: "Hardware & Networks",
     nav_glossary: "Glossary",
     nav_lab: "Lab",
+    nav_explorer_3d: "3D PC Explorer",
     nav_grp_hardware: "Hardware",
     nav_back: "Back",
     nav_grp_networks: "Networks",
@@ -487,7 +511,29 @@ const translations = {
     insp_l3_title: "Layer 3 - IP Packet (Protocol 1 ICMP)",
     insp_stat_title: "Connectivity Metrics",
     lang_select_title: "Select Language",
-    footer_text: "NVISION"
+    footer_text: "NVISION",
+    explorer_title: "3D computer explorer",
+    explorer_desc: "Move across the scene to travel through a tower and see how its internal parts connect.",
+    explorer_status: "INTERACTIVE SCENE",
+    explorer_kicker: "ACTIVE CINEMATIC",
+    explorer_hint: "Move the mouse to change perspective",
+    scene_overview_title: "Overview",
+    scene_overview_desc: "The open tower reveals the main route for power, data and processing.",
+    scene_core_title: "Compute core",
+    scene_core_desc: "CPU and RAM take focus: this is where instructions become useful work.",
+    scene_airflow_title: "Airflow and power",
+    scene_airflow_desc: "The power supply and graphics card show how energy and heat move through the machine.",
+    scene_overview_btn: "Overview",
+    scene_core_btn: "Compute core",
+    scene_airflow_btn: "Airflow and power",
+    part_motherboard: "Motherboard",
+    part_ram: "RAM memory",
+    part_cpu: "CPU processor",
+    part_gpu: "GPU graphics card",
+    part_storage: "SSD storage",
+    part_psu: "Power supply",
+    explorer_parts: "LAYERED PARTS",
+    explorer_view: "DYNAMIC VIEW"
   }
 };
 
@@ -750,6 +796,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupNavigationDropdowns();
   setupHistoryToggle();
   setupComponentToggles();
+  setupPcExplorer();
   setupNetworkSimulator();
   applyLanguage(currentLang);
 });
@@ -813,6 +860,82 @@ function setupComponentToggles() {
       }
     });
   });
+}
+
+function setupPcExplorer() {
+  const shell = document.getElementById('pc-scene-shell');
+  const scene = document.getElementById('pc-scene');
+  const sceneTitle = document.getElementById('pc-scene-title');
+  const sceneDesc = document.getElementById('pc-scene-desc');
+  const partName = document.getElementById('pc-part-name');
+  const partIndex = document.getElementById('pc-part-index');
+  const sceneButtons = document.querySelectorAll('.pc-scene-btn');
+
+  if (!shell || !scene) return;
+
+  const scenes = {
+    overview: { title: 'scene_overview_title', desc: 'scene_overview_desc' },
+    core: { title: 'scene_core_title', desc: 'scene_core_desc' },
+    airflow: { title: 'scene_airflow_title', desc: 'scene_airflow_desc' }
+  };
+  const parts = [
+    { selector: '.pc-motherboard', key: 'part_motherboard' },
+    { selector: '.pc-ram', key: 'part_ram' },
+    { selector: '.pc-cpu', key: 'part_cpu' },
+    { selector: '.pc-gpu', key: 'part_gpu' },
+    { selector: '.pc-storage', key: 'part_storage' },
+    { selector: '.pc-psu', key: 'part_psu' }
+  ];
+  let activeScene = 'overview';
+
+  function getText(key) {
+    return translations[currentLang]?.[key] || translations.es[key] || key;
+  }
+
+  function updateReadout(partPosition) {
+    const part = parts[Math.min(parts.length - 1, Math.max(0, partPosition))];
+    if (partName) {
+      partName.textContent = getText(part.key);
+      partName.setAttribute('data-i18n', part.key);
+    }
+    if (partIndex) partIndex.textContent = `${String(parts.indexOf(part) + 1).padStart(2, '0')} / 06`;
+  }
+
+  function setScene(sceneName) {
+    if (!scenes[sceneName]) return;
+    activeScene = sceneName;
+    scene.dataset.scene = sceneName;
+    sceneButtons.forEach((button) => {
+      button.classList.toggle('is-active', button.dataset.scene === sceneName);
+    });
+    if (sceneTitle) sceneTitle.textContent = getText(scenes[sceneName].title);
+    if (sceneDesc) sceneDesc.textContent = getText(scenes[sceneName].desc);
+    if (sceneTitle) sceneTitle.dataset.i18n = scenes[sceneName].title;
+    if (sceneDesc) sceneDesc.dataset.i18n = scenes[sceneName].desc;
+  }
+
+  function updatePerspective(event) {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const bounds = shell.getBoundingClientRect();
+    const x = (event.clientX - bounds.left) / bounds.width;
+    const y = (event.clientY - bounds.top) / bounds.height;
+    const rotateY = (x - 0.5) * 32;
+    const rotateX = 12 - (y - 0.5) * 16;
+    scene.style.transform = `translate(-50%, -50%) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+    updateReadout(Math.floor(x * parts.length));
+
+    setScene(x < 0.34 ? 'overview' : x < 0.68 ? 'core' : 'airflow');
+  }
+
+  shell.addEventListener('pointermove', updatePerspective);
+  shell.addEventListener('pointerleave', () => {
+    scene.style.transform = 'translate(-50%, -50%) rotateX(10deg) rotateY(-16deg)';
+  });
+  sceneButtons.forEach((button) => {
+    button.addEventListener('click', () => setScene(button.dataset.scene));
+  });
+  setScene('overview');
+  updateReadout(0);
 }
 
 /* =========================================================

@@ -17,7 +17,10 @@
 /* 5. Cuadrícula de Componentes de Hardware y Modales */
 @import url('modules/components-grid.css');
 
-/* 6. Redes, Topologías, Simulador de Ping y Cobertura */
+/* 6. Explorador 3D de componentes internos */
+@import url('modules/pc-explorer.css');
+
+/* 7. Redes, Topologías, Simulador de Ping y Cobertura */
 @import url('modules/networks.css');
 
 /* 7. Glosario de Términos, Laboratorio y Footer */
