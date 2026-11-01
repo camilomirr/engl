@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NVISION - WiFi Avanzado</title>
+  <!-- Hojas de estilo modular -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Encabezado y Barra de Navegación Adaptativa -->
+  <header class="site-header">
+    <div class="header-container">
+      <!-- Marca / Nombre de la página -->
+      <a href="index.html" class="brand-logo" aria-label="NVISION Home">
+        <span class="brand-text">NVISION</span>
+      </a>
+
+      <nav id="nav-menu" class="nav-menu">
+        <ul class="nav-links">
+          <!-- Menú 1: Hardware & Computadores -->
+          <li class="nav-item-dropdown">
+            <button type="button" class="nav-dropdown-trigger" aria-expanded="false">
+              <span data-i18n="nav_grp_hardware">Hardware</span>
+              <span class="nav-arrow mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+            </button>
+            <ul class="nav-submenu">
+              <li class="nav-mobile-back"><button type="button"><span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></span><span data-i18n="nav_back">Volver</span></button></li>
+              <li><a href="hardware.html#historia" data-i18n="nav_history">Historia & Evolución</a></li>
+              <li><a href="hardware.html#componentes" data-i18n="nav_components">Componentes de PC</a></li>
+              <li><a href="redes.html#redes" data-i18n="nav_network">Del Hardware a la Red</a></li>
+            </ul>
+          </li>
+
+          <!-- Menú 2: Redes & Topologías -->
+          <li class="nav-item-dropdown">
+            <button type="button" class="nav-dropdown-trigger" aria-expanded="false">
+              <span data-i18n="nav_grp_networks">Redes</span>
+              <span class="nav-arrow mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+            </button>
+            <ul class="nav-submenu">
+              <li class="nav-mobile-back"><button type="button"><span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></span><span data-i18n="nav_back">Volver</span></button></li>
+              <li><a href="redes.html#alcance-redes" data-i18n="nav_scope">Clasificación PAN/LAN/WAN</a></li>
+              <li><a href="redes.html#topologias" data-i18n="nav_topologies">Topologías de Red</a></li>
+              <li><a href="redes.html#simulador-red" data-i18n="nav_simulator">Simulador Ping & Tránsito</a></li>
+              <li><a href="redes.html#switch-3d" data-i18n="nav_switch3d">El switch por dentro</a></li>
+            </ul>
+          </li>
+
+          <!-- Menú 3: Recursos & Práctica -->
+          <li class="nav-item-dropdown">
+            <button type="button" class="nav-dropdown-trigger" aria-expanded="false">
+              <span data-i18n="nav_grp_resources">Recursos</span>
+              <span class="nav-arrow mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+            </button>
+            <ul class="nav-submenu">
+              <li class="nav-mobile-back"><button type="button"><span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></span><span data-i18n="nav_back">Volver</span></button></li>
+              <li><a href="recursos.html#glosario" data-i18n="nav_glossary">Glosario Técnico</a></li>
+              <li><a href="recursos.html#laboratorio" data-i18n="nav_lab">Laboratorio & PowerShell</a></li>
+            </ul>
+          </li>
+          <li class="nav-item-dropdown">
+            <button type="button" class="nav-dropdown-trigger" aria-expanded="false">
+              <span data-i18n="nav_grp_pc3d">PC3D y más</span>
+              <span class="nav-arrow mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+            </button>
+            <ul class="nav-submenu">
+              <li class="nav-mobile-back"><button type="button"><span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></span><span data-i18n="nav_back">Volver</span></button></li>
+              <li><a href="pc3d.html#visor-3d" data-i18n="nav_pc3d_viewer">Visor 3D</a></li>
+              <li><a href="pc3d.html#componentes-3d" data-i18n="nav_pc3d_parts">Componentes y tipos</a></li>
+              <li><a href="pc3d.html#mantenimiento" data-i18n="nav_pc3d_maintenance">Mantenimiento del PC</a></li>
+            </ul>
+          </li>
+          <li><a href="wifi.html" data-i18n="nav_wifi">WiFi Avanzado</a></li>
+        </ul>
+      </nav>
+
+      <!-- Botones de acción: Idioma y Menú Hamburguesa en móvil -->
+      <div class="header-actions">
+        <!-- Boton Modo Claro / Oscuro -->
+        <button id="theme-toggle" class="theme-switch-btn" title="Modo Claro / Oscuro" aria-label="Cambiar tema">
+          <span id="theme-icon" class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span>
+        </button>
+        <!-- Selector desplegable bilingüe de Idioma (Español / Inglés) -->
+        <div class="lang-dropdown-wrapper" id="lang-dropdown-wrapper">
+          <button id="lang-toggle" class="lang-dropdown-btn" type="button" aria-haspopup="true" aria-expanded="false" title="Seleccionar idioma / Select language">
+            <span class="mono-icon globe-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg></span>
+            <span id="lang-label" class="lang-label-text">ES</span>
+            <span class="lang-chevron mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+          </button>
+          <div class="lang-dropdown-menu" id="lang-dropdown-menu" role="menu">
+            <div class="lang-dropdown-header" data-i18n="lang_select_title">Seleccionar Idioma</div>
+            <button type="button" class="lang-dropdown-item active" data-lang="es" role="menuitem">
+              <span class="item-code">ES</span>
+              <div class="item-info">
+                <span class="item-name">Español</span>
+                <span class="item-native">Spanish</span>
+              </div>
+              <span class="item-check mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+            </button>
+            <button type="button" class="lang-dropdown-item" data-lang="en" role="menuitem">
+              <span class="item-code">EN</span>
+              <div class="item-info">
+                <span class="item-name">English</span>
+                <span class="item-native">Inglés</span>
+              </div>
+              <span class="item-check mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Botón de tres rayitas (Hamburguesa) para celulares -->
+        <button id="menu-toggle" class="menu-toggle-btn" aria-label="Abrir menú" aria-expanded="false">
+          <span class="menu-icon-inner mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Contenido WiFi Avanzado -->
+  <main>
+    <section class="container">
+      <div class="wifi-hero">
+        <div class="wifi-hero-copy">
+          <span class="wifi-kicker" data-i18n="wifi_kicker">Guía práctica · Redes inalámbricas</span>
+          <h1 data-i18n="wifi_h1">WiFi avanzado, explicado paso a paso</h1>
+          <p data-i18n="wifi_hero_p">De la caja a una red rápida y segura: instala el módem/router, entra a su panel, cambia la clave, suma un repetidor y gana cobertura. Todo en orden y sin vueltas.</p>
+        </div>
+        <div class="wifi-hero-map" aria-hidden="true">
+          <span class="wifi-signal one"></span>
+          <span class="wifi-signal two"></span>
+          <span class="wifi-node modem" data-i18n="wifi_node_modem">MÓDEM</span>
+          <span class="wifi-node repeater" data-i18n="wifi_node_repeater">REPETIDOR</span>
+          <span class="wifi-node device" data-i18n="wifi_node_device">EQUIPO</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="instalar-modem" class="container">
+      <div class="wifi-section-heading">
+        <h2 data-i18n="wifi_instal_title">Instalar el módem/router</h2>
+        <p data-i18n="wifi_instal_sub">El orden importa: primero la conexión física, después el panel de configuración.</p>
+      </div>
+
+      <div class="wifi-grid">
+        <article class="wifi-card">
+          <div class="wifi-card-header"><span class="wifi-number">01</span><h3 data-i18n="wifi_c1_t">Conecta y enciende</h3></div>
+          <p data-i18n="wifi_c1_p">La instalación física es la mitad del trabajo. En orden:</p>
+          <ol>
+            <li data-i18n="wifi_c1_1">Conecta el cable del proveedor (la fibra/ONT o el cable coaxial/DSL) al puerto de entrada del equipo.</li>
+            <li data-i18n="wifi_c1_2">Enciéndelo y espera unos 2 minutos: las luces de encendido e internet deben quedar fijas.</li>
+            <li data-i18n="wifi_c1_3">Conéctate por cable Ethernet si puedes; si no, entra al WiFi usando el nombre (SSID) y la clave impresos en la etiqueta del equipo.</li>
+            <li data-i18n="wifi_c1_4">Con esa conexión lista, ya puedes abrir el panel de configuración (siguiente tarjeta).</li>
+          </ol>
+        </article>
+
+        <article class="wifi-card">
+          <div class="wifi-card-header"><span class="wifi-number">02</span><h3 data-i18n="wifi_c2_t">Entra al panel y cambia lo importante</h3></div>
+          <p data-i18n="wifi_c2_p">El panel es el centro de control de tu red:</p>
+          <ol>
+            <li data-i18n="wifi_c2_1">En el navegador escribe 192.168.1.1 (si no abre, prueba 192.168.0.1). El usuario y la clave del panel están en la etiqueta del equipo.</li>
+            <li data-i18n="wifi_c2_2">Cambia el nombre de la red (SSID) por uno reconocible, pero sin datos personales.</li>
+            <li data-i18n="wifi_c2_3">Pon una contraseña nueva y larga (más de 12 caracteres): es la llave de tu casa digital.</li>
+            <li data-i18n="wifi_c2_4">Seguridad en WPA2 o WPA3. Nunca dejes la red abierta ni con el viejo WEP.</li>
+          </ol>
+        </article>
+
+        <article class="wifi-card wifi-card-wide">
+          <div class="wifi-card-header"><span class="wifi-number">03</span><h3 data-i18n="wifi_c3_t">Suma un repetidor y gana cobertura</h3></div>
+          <p data-i18n="wifi_c3_p">Si el WiFi no llega a un cuarto, un repetidor recibe la señal y la reemite. La clave está en ubicarlo a mitad de camino, en un punto donde todavía llegue buena señal del módem (si lo pones donde ya no hay señal, repetirá... nada). Hay dos formas de enlazarlo:</p>
+          <div class="wifi-methods">
+            <div class="wifi-method">
+              <h4 data-i18n="wifi_m1_t">Método WPS (el rápido)</h4>
+              <p data-i18n="wifi_m1_p">Pulsa el botón WPS del módem y, dentro de 2 minutos, el del repetidor. Se enlazan solos y el repetidor copia tu misma red y clave.</p>
+            </div>
+            <div class="wifi-method">
+              <h4 data-i18n="wifi_m2_t">Método manual (el que controlas)</h4>
+              <p data-i18n="wifi_m2_p">Conéctate a la red temporal del repetidor, entra a su panel, elige tu WiFi de la lista, escribe la clave y guarda. Tarda más, pero ves cada paso.</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="wifi-card">
+          <div class="wifi-card-header"><span class="wifi-number">04</span><h3 data-i18n="wifi_c4_t">2.4 GHz o 5 GHz: usa las dos bandas</h3></div>
+          <ul>
+            <li data-i18n="wifi_c4_1">2.4 GHz: llega más lejos y atraviesa paredes, pero es más lenta y se satura fácil.</li>
+            <li data-i18n="wifi_c4_2">5 GHz: mucho más rápida; ideal cerca del módem para jugar, estudiar y ver streaming.</li>
+            <li data-i18n="wifi_c4_3">Si el módem permite un solo nombre para ambas bandas, déjalo así: cada equipo elige la mejor solo.</li>
+            <li data-i18n="wifi_c4_4">En edificios con muchas redes, cambiar el canal ayuda: en 2.4 GHz usa 1, 6 u 11 para esquivar a los vecinos.</li>
+          </ul>
+        </article>
+
+        <article class="wifi-card">
+          <div class="wifi-card-header"><span class="wifi-number">05</span><h3 data-i18n="wifi_c5_t">Dónde poner el módem</h3></div>
+          <p data-i18n="wifi_c5_p">La ubicación vale más que muchos repetidores:</p>
+          <ul>
+            <li data-i18n="wifi_c5_1">En un punto central y elevado de la casa; nunca en el piso ni dentro de un mueble cerrado.</li>
+            <li data-i18n="wifi_c5_2">Lejos de microondas, bases de teléfonos inalámbricos y objetos grandes de metal.</li>
+            <li data-i18n="wifi_c5_3">Un muro grueso o una pecera entre el módem y tú debilita la señal: a veces mover el equipo un metro lo arregla todo.</li>
+          </ul>
+        </article>
+      </div>
+
+      <div class="wifi-checklist" style="margin-top:1.1rem;">
+        <h3 data-i18n="wifi_cl_t">Lista de verificación final</h3>
+        <ul>
+          <li data-i18n="wifi_cl_1">Luces del módem fijas (encendido e internet)</li>
+          <li data-i18n="wifi_cl_2">SSID cambiado y contraseña nueva guardada</li>
+          <li data-i18n="wifi_cl_3">Seguridad en WPA2 o WPA3</li>
+          <li data-i18n="wifi_cl_4">Firmware del módem actualizado</li>
+          <li data-i18n="wifi_cl_5">Red de invitados activa para las visitas</li>
+          <li data-i18n="wifi_cl_6">Señal probada en todos los cuartos</li>
+          <li data-i18n="wifi_cl_7">Repetidor ubicado donde aún hay buena señal</li>
+          <li data-i18n="wifi_cl_8">Foto de la etiqueta del módem en el celular</li>
+        </ul>
+      </div>
+
+      <div class="wifi-warning">
+        <strong data-i18n="wifi_warn_t">Ojo con esto:</strong>
+        <p data-i18n="wifi_warn_p">Nunca dejes el usuario y la clave de fábrica del panel (tipo admin/admin): es la primera combinación que prueba cualquier intruso. Cámbiala y guarda la nueva en un lugar seguro, lejos del alcance de las visitas.</p>
+      </div>
+    </section>
+
+    <section class="container">
+      <div class="wifi-section-heading">
+        <h2 data-i18n="wifi_faq_title">Preguntas frecuentes</h2>
+        <p data-i18n="wifi_faq_sub">Los tres problemas que le pasan a todo el mundo, resueltos.</p>
+      </div>
+      <div class="wifi-faq">
+        <details>
+          <summary data-i18n="wifi_f1_q">El 192.168.1.1 no abre, ¿qué hago?</summary>
+          <p data-i18n="wifi_f1_p">Confirma que estás conectado a ESE módem (por cable o a su WiFi) y prueba también 192.168.0.1. En el celular desactiva los datos móviles mientras configuras: a veces el teléfono se escapa por la red móvil y nunca toca el panel.</p>
+        </details>
+        <details>
+          <summary data-i18n="wifi_f2_q">¿Por qué el WiFi llega débil a mi cuarto?</summary>
+          <p data-i18n="wifi_f2_p">Distancia, muros y electrodomésticos se comen la señal. Sube el módem a un punto central y alto, y si aun así falta, pon el repetidor a mitad del camino (no dentro del cuarto sin señal, porque ahí no tiene qué repetir).</p>
+        </details>
+        <details>
+          <summary data-i18n="wifi_f3_q">¿El WPS es seguro?</summary>
+          <p data-i18n="wifi_f3_p">El botón físico WPS es práctico para enlazar el repetidor, pero el WPS por código PIN es vulnerable. Si tu panel lo permite, desactiva el WPS por PIN y deja solo el botón.</p>
+        </details>
+      </div>
+    </section>
+</main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <p>© 2026 - <span data-i18n="footer_text">NVISION</span></p>
+  </footer>
+
+  <!-- Script interactivo bilingüe y menú móvil -->
+  <script src="js/main.js"></script>
+</body>
+</html>
