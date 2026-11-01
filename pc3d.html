@@ -20,7 +20,32 @@
       </nav>
       <div class="header-actions">
         <button id="theme-toggle" class="theme-switch-btn" title="Cambiar tema" aria-label="Cambiar tema"><span id="theme-icon" class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span></button>
-        <div class="lang-dropdown-wrapper" id="lang-dropdown-wrapper"><button id="lang-toggle" class="lang-dropdown-btn" type="button" aria-haspopup="true" aria-expanded="false"><span class="mono-icon globe-icon">◎</span><span id="lang-label" class="lang-label-text">ES</span><span class="lang-chevron mono-icon">⌄</span></button><div class="lang-dropdown-menu" id="lang-dropdown-menu" role="menu"><div class="lang-dropdown-header" data-i18n="lang_select_title">Seleccionar Idioma</div><button type="button" class="lang-dropdown-item active" data-lang="es" role="menuitem"><span class="item-code">ES</span><div class="item-info"><span class="item-name">Español</span></div></button><button type="button" class="lang-dropdown-item" data-lang="en" role="menuitem"><span class="item-code">EN</span><div class="item-info"><span class="item-name">English</span></div></button></div></div>
+        <div class="lang-dropdown-wrapper" id="lang-dropdown-wrapper">
+          <button id="lang-toggle" class="lang-dropdown-btn" type="button" aria-haspopup="true" aria-expanded="false" title="Seleccionar idioma / Select language">
+            <span class="mono-icon globe-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg></span>
+            <span id="lang-label" class="lang-label-text">ES</span>
+            <span class="lang-chevron mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+          </button>
+          <div class="lang-dropdown-menu" id="lang-dropdown-menu" role="menu">
+            <div class="lang-dropdown-header" data-i18n="lang_select_title">Seleccionar Idioma</div>
+            <button type="button" class="lang-dropdown-item active" data-lang="es" role="menuitem">
+              <span class="item-code">ES</span>
+              <div class="item-info">
+                <span class="item-name">Español</span>
+                <span class="item-native">Spanish</span>
+              </div>
+              <span class="item-check mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+            </button>
+            <button type="button" class="lang-dropdown-item" data-lang="en" role="menuitem">
+              <span class="item-code">EN</span>
+              <div class="item-info">
+                <span class="item-name">English</span>
+                <span class="item-native">Inglés</span>
+              </div>
+              <span class="item-check mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+            </button>
+          </div>
+        </div>
         <button id="menu-toggle" class="menu-toggle-btn" aria-label="Abrir menú" aria-expanded="false"><span class="menu-icon-inner mono-icon">☰</span></button>
       </div>
     </div>
