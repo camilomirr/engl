@@ -33,3 +33,6 @@
 /* 9. Asistente de búsqueda local */
 @import url('modules/local-assistant.css');
 
+/* 10. Efecto de seguimiento del cursor */
+@import url('modules/cursor-effect.css');
+

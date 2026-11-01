@@ -1072,6 +1072,29 @@ function setupLocalAssistant() {
   });
 }
 
+function setupCursorEffect() {
+  if (window.matchMedia('(pointer: coarse)').matches || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const effect = document.createElement('div');
+  effect.className = 'cursor-effect';
+  effect.setAttribute('aria-hidden', 'true');
+  effect.innerHTML = '<span class="cursor-aura"></span><span class="cursor-dot"></span>';
+  document.body.appendChild(effect);
+
+  let frame = 0;
+  window.addEventListener('pointermove', (event) => {
+    if (frame) cancelAnimationFrame(frame);
+    frame = requestAnimationFrame(() => {
+      effect.style.setProperty('--cursor-x', `${event.clientX}px`);
+      effect.style.setProperty('--cursor-y', `${event.clientY}px`);
+      effect.classList.add('is-visible');
+      frame = 0;
+    });
+  }, { passive: true });
+
+  document.documentElement.addEventListener('mouseleave', () => effect.classList.remove('is-visible'));
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   setupThemeToggle();
   setupLanguageDropdown();
@@ -1087,6 +1110,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupNetworkSimulator();
   setupSwitch3D();
   setupLocalAssistant();
+  setupCursorEffect();
   applyLanguage(currentLang);
 });
 

@@ -1,0 +1,42 @@
+.cursor-effect {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.cursor-effect.is-visible { opacity: 1; }
+
+.cursor-aura,
+.cursor-dot {
+  position: absolute;
+  left: var(--cursor-x, -200px);
+  top: var(--cursor-y, -200px);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.cursor-aura {
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.14), rgba(56, 189, 248, 0.04) 34%, transparent 70%);
+  filter: blur(2px);
+  transition: left 0.16s ease-out, top 0.16s ease-out;
+}
+
+.cursor-dot {
+  width: 9px;
+  height: 9px;
+  border: 1px solid #a5f3fc;
+  border-radius: 50%;
+  background: #22d3ee;
+  box-shadow: 0 0 0 5px rgba(34, 211, 238, 0.12), 0 0 18px rgba(34, 211, 238, 0.85);
+  transition: left 0.05s linear, top 0.05s linear;
+}
+
+@media (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .cursor-effect { display: none; }
+}
