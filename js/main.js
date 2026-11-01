@@ -982,18 +982,21 @@ function setupPcExplorer() {
 
 function setupMaintenanceToolImages() {
   const toolImages = {
-    'Juego de destornilladores': 'https://loremflickr.com/900/550/screwdriver,tools?lock=41',
-    'Pulsera antiestática': 'https://loremflickr.com/900/550/wristband,electronics?lock=42',
-    'Lata de aire comprimido': 'https://loremflickr.com/900/550/compressed-air,cleaning?lock=43',
-    'Brochas de limpieza': 'https://loremflickr.com/900/550/cleaning-brush,tools?lock=44',
-    'Pasta térmica para procesador': 'https://loremflickr.com/900/550/thermal-paste,computer?lock=45',
-    'Paño de microfibra': 'https://loremflickr.com/900/550/microfiber-cloth,cleaning?lock=46',
-    'Bridas organizadoras de cables': 'https://loremflickr.com/900/550/cable-management,computer?lock=47'
+    'Juego de destornilladores': 'https://jensa.vtexassets.com/arquivos/ids/161306-800-800?v=638188042753000000&width=800&height=800&aspect=true',
+    'Pulsera antiestática': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHIlvAxb8SWQnWT1tSrBmRa3LFzUeqdscmSiBerjNlcg&s=10',
+    'Lata de aire comprimido': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqSPbG2H8ImniMSLt5Xm3rwyTiNe8bgjbbZchfrYN19A&s=10',
+    'Pasta térmica': 'https://acf.geeknetic.es/imgri/imagenes/auto/20/06/17/eaj-jgv-71t7np6iz6l-sl1500.jpg?f=webp',
+    'Paño de microfibra': 'https://www.esmero.com.co/wp-content/uploads/2020/06/esmero_panos_microfibra_azul_task.jpg'
   };
 
-  document.querySelectorAll('.pc3d-tool-card img').forEach((image) => {
+  document.querySelectorAll('.pc3d-tool-card').forEach((card) => {
+    const image = card.querySelector('img');
+    if (!image) return;
     const replacement = toolImages[image.alt];
     if (replacement) image.src = replacement;
+    if (image.alt === 'Brochas de limpieza' || image.alt === 'Bridas organizadoras') {
+      card.hidden = true;
+    }
   });
 }
 
