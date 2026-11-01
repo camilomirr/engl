@@ -56,7 +56,7 @@
             <ul class="nav-submenu">
               <li class="nav-mobile-back"><button type="button"><span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></span><span data-i18n="nav_back">Volver</span></button></li>
               <li><a href="recursos.html#glosario" data-i18n="nav_glossary">Glosario Técnico</a></li>
-              <li><a href="recursos.html#laboratorio" data-i18n="nav_lab">Laboratorio & PowerShell</a></li>
+              <li><a href="recursos.html#laboratorio" data-i18n="nav_lab">Laboratorio de Códigos</a></li>
             </ul>
           </li>
           <li class="nav-item-dropdown">
@@ -158,10 +158,10 @@
     </section>
 <section id="laboratorio" class="container">
       <h2 class="section-title">
-        <span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 2v7.31M14 2v7.31M8.5 2h7M14 9.3a6.5 6.5 0 1 1-4 0"></path></svg></span> <span data-i18n="lab_title">Área de Innovación & Expansiones</span>
+        <span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 2v7.31M14 2v7.31M8.5 2h7M14 9.3a6.5 6.5 0 1 1-4 0"></path></svg></span> <span data-i18n="lab_title">Laboratorio de Códigos</span>
       </h2>
       <p class="section-desc" data-i18n="lab_desc">
-        Módulos experimentales preparados para futuras entregas del equipo.
+        Códigos listos para copiar y probar en tu propio equipo: abre PowerShell, pega el código y observa qué pasa.
       </p>
 
       <div class="lab-grid">
@@ -193,6 +193,112 @@
             </div>
             <div class="powershell-box">
               <code id="ps-code">Get-ComputerInfo | Select-Object CsManufacturer, CsModel, CsProcessors, CsTotalPhysicalMemory</code>
+            </div>
+          </div>
+        </div>
+        <!-- Código: ipmac -->
+        <div class="lab-card">
+          <span class="lab-status">Código</span>
+          <h3 data-i18n="code_ipmac_title">Tu IP y tu MAC</h3>
+          <p data-i18n="code_ipmac_desc">Muestra la dirección IP de tu equipo y la dirección física (MAC) de tu tarjeta de red: los dos datos que te identifican en la red.</p>
+          <div>
+            <div class="code-header">
+              <span class="code-title">powershell</span>
+              <button class="copy-btn" data-copy-target="code-ipmac" data-i18n="copy_code">Copiar</button>
+            </div>
+            <div class="powershell-box">
+              <code id="code-ipmac">ipconfig /all</code>
+            </div>
+          </div>
+        </div>
+        <!-- Código: ping -->
+        <div class="lab-card">
+          <span class="lab-status">Código</span>
+          <h3 data-i18n="code_ping_title">¿Hay conexión? Haz ping</h3>
+          <p data-i18n="code_ping_desc">Envía paquetes al servidor de Google (8.8.8.8). Si responde, tu conexión funciona; si todo se pierde, el problema está en tu red local.</p>
+          <div>
+            <div class="code-header">
+              <span class="code-title">powershell</span>
+              <button class="copy-btn" data-copy-target="code-ping" data-i18n="copy_code">Copiar</button>
+            </div>
+            <div class="powershell-box">
+              <code id="code-ping">ping 8.8.8.8</code>
+            </div>
+          </div>
+        </div>
+        <!-- Código: gateway -->
+        <div class="lab-card">
+          <span class="lab-status">Código</span>
+          <h3 data-i18n="code_gateway_title">Ping a tu router</h3>
+          <p data-i18n="code_gateway_desc">Prueba la conexión con tu puerta de enlace. Cambia 192.168.1.1 por la puerta de enlace que viste con el código de IP y MAC.</p>
+          <div>
+            <div class="code-header">
+              <span class="code-title">powershell</span>
+              <button class="copy-btn" data-copy-target="code-gateway" data-i18n="copy_code">Copiar</button>
+            </div>
+            <div class="powershell-box">
+              <code id="code-gateway">ping 192.168.1.1</code>
+            </div>
+          </div>
+        </div>
+        <!-- Código: tracert -->
+        <div class="lab-card">
+          <span class="lab-status">Código</span>
+          <h3 data-i18n="code_tracert_title">La ruta de un paquete</h3>
+          <p data-i18n="code_tracert_desc">Muestra cada salto que da un paquete hasta llegar a google.com, con el tiempo de cada tramo: así viaja la información por internet.</p>
+          <div>
+            <div class="code-header">
+              <span class="code-title">powershell</span>
+              <button class="copy-btn" data-copy-target="code-tracert" data-i18n="copy_code">Copiar</button>
+            </div>
+            <div class="powershell-box">
+              <code id="code-tracert">tracert google.com</code>
+            </div>
+          </div>
+        </div>
+        <!-- Código: dns -->
+        <div class="lab-card">
+          <span class="lab-status">Código</span>
+          <h3 data-i18n="code_dns_title">Pregúntale al DNS</h3>
+          <p data-i18n="code_dns_desc">Traduce un nombre como google.com a su dirección IP real: ese es el trabajo del servidor DNS.</p>
+          <div>
+            <div class="code-header">
+              <span class="code-title">powershell</span>
+              <button class="copy-btn" data-copy-target="code-dns" data-i18n="copy_code">Copiar</button>
+            </div>
+            <div class="powershell-box">
+              <code id="code-dns">nslookup google.com</code>
+            </div>
+          </div>
+        </div>
+        <!-- Código: arp -->
+        <div class="lab-card">
+          <span class="lab-status">Código</span>
+          <h3 data-i18n="code_arp_title">¿Quién está en tu red?</h3>
+          <p data-i18n="code_arp_desc">Lista los dispositivos de tu red local con su IP y su MAC: los equipos que el tuyo ya conoce.</p>
+          <div>
+            <div class="code-header">
+              <span class="code-title">powershell</span>
+              <button class="copy-btn" data-copy-target="code-arp" data-i18n="copy_code">Copiar</button>
+            </div>
+            <div class="powershell-box">
+              <code id="code-arp">arp -a</code>
+            </div>
+          </div>
+        </div>
+        <!-- Código: renew -->
+        <div class="lab-card">
+          <span class="lab-status">Código</span>
+          <h3 data-i18n="code_renew_title">Renueva tu IP</h3>
+          <p data-i18n="code_renew_desc">Suelta tu IP actual y pide una nueva al router. Es el arreglo clásico cuando el internet se pone raro (ejecuta PowerShell como administrador).</p>
+          <div>
+            <div class="code-header">
+              <span class="code-title">powershell</span>
+              <button class="copy-btn" data-copy-target="code-renew" data-i18n="copy_code">Copiar</button>
+            </div>
+            <div class="powershell-box">
+              <code id="code-renew">ipconfig /release
+ipconfig /renew</code>
             </div>
           </div>
         </div>

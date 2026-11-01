@@ -33,7 +33,7 @@ const translations = {
     nav_components: "Componentes",
     nav_network: "Hardware & Redes",
     nav_glossary: "Glosario",
-    nav_lab: "Laboratorio",
+    nav_lab: "Laboratorio de Códigos",
     nav_explorer_3d: "Explorador 3D del PC",
     nav_grp_hardware: "Hardware",
     nav_back: "Volver",
@@ -169,8 +169,8 @@ const translations = {
     desc_packet: "Unidad de datos formateada con encabezados de origen, destino y carga útil que viaja por la red.",
 
     // Laboratorio
-    lab_title: "Área de Innovación & Expansiones",
-    lab_desc: "Módulos experimentales preparados para futuras entregas del equipo.",
+    lab_title: "Laboratorio de Códigos",
+    lab_desc: "Códigos listos para copiar y probar en tu propio equipo: abre PowerShell, pega el código y observa qué pasa.",
     model3d_title: "Simulación de Torre 3D",
     model3d_desc: "Espacio reservado para integrar Three.js o un visor 3D interactivo que permita rotar y desarmar una torre de PC virtual.",
     model3d_wait: "Modelo 3D en desarrollo (Three.js / WebGL)",
@@ -178,6 +178,20 @@ const translations = {
     ps_desc: "Código nativo en Windows para consultar los componentes reales del equipo en el que se ejecuta la práctica de laboratorio:",
     copy_code: "Copiar",
     copied_code: "¡Copiado!",
+    code_ipmac_title: "Tu IP y tu MAC",
+    code_ipmac_desc: "Muestra la dirección IP de tu equipo y la dirección física (MAC) de tu tarjeta de red: los dos datos que te identifican en la red.",
+    code_ping_title: "¿Hay conexión? Haz ping",
+    code_ping_desc: "Envía paquetes al servidor de Google (8.8.8.8). Si responde, tu conexión funciona; si todo se pierde, el problema está en tu red local.",
+    code_gateway_title: "Ping a tu router",
+    code_gateway_desc: "Prueba la conexión con tu puerta de enlace. Cambia 192.168.1.1 por la puerta de enlace que viste con el código de IP y MAC.",
+    code_tracert_title: "La ruta de un paquete",
+    code_tracert_desc: "Muestra cada salto que da un paquete hasta llegar a google.com, con el tiempo de cada tramo: así viaja la información por internet.",
+    code_dns_title: "Pregúntale al DNS",
+    code_dns_desc: "Traduce un nombre como google.com a su dirección IP real: ese es el trabajo del servidor DNS.",
+    code_arp_title: "¿Quién está en tu red?",
+    code_arp_desc: "Lista los dispositivos de tu red local con su IP y su MAC: los equipos que el tuyo ya conoce.",
+    code_renew_title: "Renueva tu IP",
+    code_renew_desc: "Suelta tu IP actual y pide una nueva al router. Es el arreglo clásico cuando el internet se pone raro (ejecuta PowerShell como administrador).",
 
     // Clasificación de Redes por Alcance (Tabla y Tarjetas BAN a GAN)
     nav_scope: "Clasificación de Redes",
@@ -307,7 +321,7 @@ const translations = {
     nav_components: "Components",
     nav_network: "Hardware & Networks",
     nav_glossary: "Glossary",
-    nav_lab: "Lab",
+    nav_lab: "Code Lab",
     nav_explorer_3d: "3D PC Explorer",
     nav_grp_hardware: "Hardware",
     nav_back: "Back",
@@ -435,8 +449,8 @@ const translations = {
     desc_packet: "A structured unit of data formatted with headers containing source, destination, and payload.",
 
     // Lab
-    lab_title: "Innovation Lab & Expansions",
-    lab_desc: "Experimental modules prepared for team milestones and advanced presentations.",
+    lab_title: "Code Lab",
+    lab_desc: "Codes ready to copy and try on your own computer: open PowerShell, paste the code and watch what happens.",
     model3d_title: "3D PC Case Simulation",
     model3d_desc: "Reserved space to integrate Three.js or WebGL models to inspect and disassemble a virtual PC tower.",
     model3d_wait: "3D model placeholder (Three.js / WebGL)",
@@ -444,6 +458,20 @@ const translations = {
     ps_desc: "Native Windows code to inspect the physical hardware specifications during lab sessions:",
     copy_code: "Copy",
     copied_code: "Copied!",
+    code_ipmac_title: "Your IP and Your MAC",
+    code_ipmac_desc: "Shows your computer's IP address and the physical address (MAC) of your network card: the two values that identify you on the network.",
+    code_ping_title: "Is there a connection? Ping it",
+    code_ping_desc: "Sends packets to Google's server (8.8.8.8). If it replies, your connection works; if everything is lost, the problem is on your local network.",
+    code_gateway_title: "Ping your router",
+    code_gateway_desc: "Tests the connection to your gateway. Replace 192.168.1.1 with the gateway you saw with the IP and MAC code.",
+    code_tracert_title: "The route of a packet",
+    code_tracert_desc: "Shows every hop a packet takes to reach google.com, with the time of each step: that is how information travels across the internet.",
+    code_dns_title: "Ask the DNS",
+    code_dns_desc: "Translates a name like google.com into its real IP address: that is the DNS server's job.",
+    code_arp_title: "Who is on your network?",
+    code_arp_desc: "Lists the devices on your local network with their IP and MAC: the machines yours already knows.",
+    code_renew_title: "Renew your IP",
+    code_renew_desc: "Releases your current IP and asks the router for a new one. The classic fix when the internet acts weird (run PowerShell as administrator).",
 
     // Network Scope Classification (Table and Cards BAN to GAN)
     nav_scope: "Network Scopes",
@@ -630,17 +658,18 @@ function setupLanguageDropdown() {
 }
 
 function setupCopyButton() {
-  const copyBtn = document.getElementById('copy-code-btn');
-  const codeElem = document.getElementById('ps-code');
-  if (!copyBtn || !codeElem) return;
+  document.querySelectorAll('.copy-btn').forEach((copyBtn) => {
+    const codeElem = document.getElementById(copyBtn.dataset.copyTarget || 'ps-code');
+    if (!codeElem) return;
 
-  copyBtn.addEventListener('click', () => {
-    const textToCopy = codeElem.textContent.trim();
-    navigator.clipboard.writeText(textToCopy).then(() => {
-      copyBtn.textContent = translations[currentLang].copied_code;
-      setTimeout(() => {
-        copyBtn.textContent = translations[currentLang].copy_code;
-      }, 2000);
+    copyBtn.addEventListener('click', () => {
+      const textToCopy = codeElem.textContent.trim();
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        copyBtn.textContent = translations[currentLang].copied_code;
+        setTimeout(() => {
+          copyBtn.textContent = translations[currentLang].copy_code;
+        }, 2000);
+      });
     });
   });
 }
