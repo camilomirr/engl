@@ -124,6 +124,7 @@ const translations = {
     // Topologías de Redes
     nav_topologies: "Topologías",
     topol_title: "Topologías de Redes",
+    nav_switch3d: "Switch 3D: flujo de señal",
     topol_desc: "La distribución física y lógica que define cómo se interconectan los nodos, hosts y enlaces de transmisión en una infraestructura de comunicaciones.",
     lbl_typical_use: "Uso común:",
 
@@ -424,6 +425,7 @@ const translations = {
     // Network Topologies
     nav_topologies: "Topologies",
     topol_title: "Network Topologies",
+    nav_switch3d: "3D Switch: signal flow",
     topol_desc: "The physical and logical layout that defines how nodes, devices, and transmission links are interconnected in a telecommunications infrastructure.",
     lbl_typical_use: "Common use:",
 
