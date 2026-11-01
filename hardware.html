@@ -29,7 +29,6 @@
               <li class="nav-mobile-back"><button type="button"><span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></span><span data-i18n="nav_back">Volver</span></button></li>
               <li><a href="hardware.html#historia" data-i18n="nav_history">Historia & Evolución</a></li>
               <li><a href="hardware.html#componentes" data-i18n="nav_components">Componentes de PC</a></li>
-              <li><a href="hardware.html#explorador-3d" data-i18n="nav_explorer_3d">Explorador 3D del PC</a></li>
               <li><a href="redes.html#redes" data-i18n="nav_network">Del Hardware a la Red</a></li>
             </ul>
           </li>
@@ -633,50 +632,6 @@
       </div>
     </section>
 
-    <section id="explorador-3d" class="container pc-explorer-section">
-      <div class="pc-explorer-heading">
-        <div>
-          <h2 class="section-title">
-            <span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 3 7l9 5 9-5-9-5Z"></path><path d="m3 12 9 5 9-5M3 17l9 5 9-5"></path></svg></span>
-            <span data-i18n="explorer_title">Explorador 3D del computador</span>
-          </h2>
-          <p class="section-desc" data-i18n="explorer_desc">Mueve el cursor sobre la escena para recorrer el interior de una torre y reconocer cómo se conectan sus piezas.</p>
-        </div>
-        <span class="pc-explorer-status"><span class="status-pulse"></span><span data-i18n="explorer_status">ESCENA INTERACTIVA</span></span>
-      </div>
-
-      <div class="pc-explorer-layout">
-        <div class="pc-scene-shell" id="pc-scene-shell">
-          <div class="pc-scene-grid"></div>
-          <div class="pc-scene" id="pc-scene" aria-label="Modelo 3D de un computador abierto">
-            <div class="pc-shadow"></div>
-            <div class="pc-tower-back"></div>
-            <div class="pc-layer pc-motherboard" data-part="motherboard"><img src="https://th.bing.com/th/id/OIP.pos0kN3-I5Oy6bl8r_T-PgHaEn?w=305&h=190&c=7&r=0&o=7&pid=1.7&rm=3" alt="Placa madre" loading="lazy"></div>
-            <div class="pc-layer pc-ram" data-part="ram"><img src="https://images.unsplash.com/photo-1562976540-1502c2145186?auto=format&fit=crop&w=800&q=80" alt="Memoria RAM" loading="lazy"></div>
-            <div class="pc-layer pc-cpu" data-part="cpu"><img src="https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?auto=format&fit=crop&w=800&q=80" alt="Procesador" loading="lazy"></div>
-            <div class="pc-layer pc-gpu" data-part="gpu"><img src="https://pisces.bbystatic.com/image2/BestBuy_US/images/products/6467/6467838cv11d.jpg" alt="Tarjeta gráfica" loading="lazy"></div>
-            <div class="pc-layer pc-storage" data-part="storage"><img src="https://placaschinas.com/wp-content/uploads/2023/10/almacenamiento-SSD-vs-HD.jpg" alt="Almacenamiento SSD" loading="lazy"></div>
-            <div class="pc-layer pc-psu" data-part="psu"><img src="https://www.cyberpuerta.mx/img/product/XL/CP-ASUS-ROG-THOR-1200P2-GAMING-cpscrap-01-34b084.jpg" alt="Fuente de poder" loading="lazy"></div>
-            <div class="pc-glass-front"></div>
-            <div class="pc-scanline"></div>
-          </div>
-          <div class="pc-scene-hint"><span class="mono-icon">↔</span><span data-i18n="explorer_hint">Mueve el ratón para cambiar la perspectiva</span></div>
-        </div>
-
-        <aside class="pc-explorer-panel" aria-live="polite">
-          <span class="pc-panel-kicker" data-i18n="explorer_kicker">CINEMÁTICA ACTIVA</span>
-          <h3 id="pc-scene-title" data-i18n="scene_overview_title">Vista general</h3>
-          <p id="pc-scene-desc" data-i18n="scene_overview_desc">La torre abierta revela la ruta principal de energía, datos y procesamiento.</p>
-          <div class="pc-part-readout"><span class="readout-dot"></span><span id="pc-part-name" data-i18n="part_motherboard">Placa madre</span><span class="readout-line"></span><span id="pc-part-index">01 / 06</span></div>
-          <div class="pc-scene-controls" role="group" aria-label="Escenas del modelo 3D">
-            <button type="button" class="pc-scene-btn is-active" data-scene="overview"><span>01</span><span data-i18n="scene_overview_btn">Vista general</span></button>
-            <button type="button" class="pc-scene-btn" data-scene="core"><span>02</span><span data-i18n="scene_core_btn">Núcleo de cálculo</span></button>
-            <button type="button" class="pc-scene-btn" data-scene="airflow"><span>03</span><span data-i18n="scene_airflow_btn">Flujo y energía</span></button>
-          </div>
-          <div class="pc-spec-strip"><span><strong>06</strong><small data-i18n="explorer_parts">PIEZAS EN CAPA</small></span><span><strong>360°</strong><small data-i18n="explorer_view">VISTA DINÁMICA</small></span></div>
-        </aside>
-      </div>
-    </section>
 </main>
 
   <!-- Footer -->
