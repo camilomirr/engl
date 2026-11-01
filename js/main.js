@@ -197,6 +197,7 @@ const translations = {
     detect_screen: "Pantalla",
     detect_battery: "Batería",
     detect_na: "No disponible",
+    detect_gpu_private: "Oculta por el navegador (privacidad)",
     detect_charging: "cargando",
 
     // Clasificación de Redes por Alcance (Tabla y Tarjetas BAN a GAN)
@@ -483,6 +484,7 @@ const translations = {
     detect_screen: "Screen",
     detect_battery: "Battery",
     detect_na: "Not available",
+    detect_gpu_private: "Hidden by the browser (privacy)",
     detect_charging: "charging",
 
     // Network Scope Classification (Table and Cards BAN to GAN)
@@ -737,7 +739,9 @@ function setupDetector() {
       if (gl) {
         const ext = gl.getExtension('WEBGL_debug_renderer_info');
         const raw = ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER);
-        if (raw) {
+        if (raw && /brave/i.test(String(raw))) {
+          gpu = t.detect_gpu_private;
+        } else if (raw) {
           let g = String(raw).replace(/^ANGLE \(/, '').replace(/\)$/, '');
           const parts = g.split(',').map(x => x.trim());
           g = (parts[1] || parts[0] || g).replace(/\s*\(0x[0-9a-fA-F]+\)/, '').replace(/\s+Direct3D.*$/, '').replace(/\s+OpenGL.*$/, '').trim();
