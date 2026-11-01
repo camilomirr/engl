@@ -10,6 +10,11 @@ git pull origin main
 
 echo.
 echo ======================================================
-echo   Proceso finalizado.
+echo   Abriendo la pagina en el navegador...
 echo ======================================================
-pause
+
+start "" "index.html"
+
+echo.
+echo Repositorio actualizado y pagina abierta correctamente.
+timeout /t 3 >nul
