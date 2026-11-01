@@ -33,6 +33,10 @@
   - Si el archivo supera las 700 líneas, lee siempre en lotes grandes de mínimo 700 líneas a la vez (por ejemplo de 700 a 800 líneas: `StartLine: 1, EndLine: 750`, `StartLine: 751, EndLine: 1500`, etc.) para obtener el contexto completo y exacto de las líneas antes de editar.
 - **Edición precisa con `edit_file`**: Al editar como en un editor de código (VS Code), copia el bloque exacto obtenido de la lectura de lotes grandes en el `Target` (incluyendo su sangría y saltos de línea exactos) y proporciona el `Replacement` de forma limpia y directa.
 
+## Alcance y Eficiencia de Exploración
+- Localiza e inspecciona **únicamente** los archivos estrictamente involucrados en la solicitud concreta.
+- No inspecciones ni leas archivos secundarios, complementarios o módulos CSS/JS no relacionados a menos que sea estrictamente indispensable para resolver el cambio solicitado.
+
 ## Autenticación de GitHub CLI (Al Iniciar Cada Chat)
 - Cada vez que comience una nueva conversación o sesión de chat, la IA debe consultar y verificar el token activo de GitHub CLI ejecutando:
   ```powershell
