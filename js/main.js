@@ -275,6 +275,7 @@ const translations = {
     part_gpu: "Tarjeta gráfica GPU",
     part_storage: "Almacenamiento SSD",
     part_psu: "Fuente de poder",
+    part_optical: "Unidad óptica",
     explorer_parts: "PIEZAS EN CAPA",
     explorer_view: "VISTA DINÁMICA"
   },
@@ -540,6 +541,7 @@ const translations = {
     part_gpu: "GPU graphics card",
     part_storage: "SSD storage",
     part_psu: "Power supply",
+    part_optical: "Optical drive",
     explorer_parts: "LAYERED PARTS",
     explorer_view: "DYNAMIC VIEW"
   }
@@ -892,7 +894,8 @@ function setupPcExplorer() {
     { selector: '.pc-cpu', key: 'part_cpu', functionText: 'Ejecuta instrucciones, cálculos y coordina las operaciones del computador.', types: 'Intel · AMD · x86 · x64' },
     { selector: '.pc-gpu', key: 'part_gpu', functionText: 'Procesa gráficos, video, renderizado 3D e inteligencia artificial.', types: 'Integrada · Dedicada · GDDR6 · PCIe' },
     { selector: '.pc-storage', key: 'part_storage', functionText: 'Guarda el sistema operativo, las aplicaciones y los archivos de forma permanente.', types: 'HDD · SSD SATA · M.2 NVMe' },
-    { selector: '.pc-psu', key: 'part_psu', functionText: 'Convierte la corriente y entrega voltajes estables a cada pieza.', types: 'ATX · SFX · Bronze · Silver · Gold · Platinum · Titanium' }
+    { selector: '.pc-psu', key: 'part_psu', functionText: 'Convierte la corriente y entrega voltajes estables a cada pieza.', types: 'ATX · SFX · Bronze · Silver · Gold · Platinum · Titanium' },
+    { selector: '.pc-optical', key: 'part_optical', functionText: 'Lee y graba datos en discos CD, DVD y Blu-ray mediante un láser óptico.', types: 'CD · DVD · Blu-ray · SATA' }
   ];
   let activeScene = 'overview';
   let selectedPart = null;
@@ -907,7 +910,7 @@ function setupPcExplorer() {
       partName.textContent = getText(part.key);
       partName.setAttribute('data-i18n', part.key);
     }
-    if (partIndex) partIndex.textContent = `${String(parts.indexOf(part) + 1).padStart(2, '0')} / 06`;
+    if (partIndex) partIndex.textContent = `${String(parts.indexOf(part) + 1).padStart(2, '0')} / ${String(parts.length).padStart(2, '0')}`;
   }
 
   function showPart(part) {
