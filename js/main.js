@@ -1003,23 +1003,25 @@ function setupLocalAssistant() {
   const input = assistant.querySelector('.local-assistant-input');
   const results = assistant.querySelector('.local-assistant-results');
   const language = () => translations[currentLang] || translations.es;
-  const normalize = (value) => value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  const normalize = (value) => value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, ' ').trim();
   const catalog = [
     { title: ['Historia del ENIAC', 'ENIAC history'], text: ['Computador electrónico, historia y pioneros', 'Electronic computer, history and pioneers'], terms: 'eniac historia computador pioneros', href: 'hardware.html#historia' },
-    { title: ['Componentes del computador', 'Computer components'], text: ['CPU, RAM, GPU, placa madre, fuente de poder, almacenamiento y NIC', 'CPU, RAM, GPU, motherboard, power supply, storage and NIC'], terms: 'componentes hardware cpu ram memoria gpu placa madre nic fuente poder psu alimentacion energia electricidad suministro power supply unit', href: 'hardware.html#componentes' },
+    { title: ['Componentes del computador', 'Computer components'], text: ['CPU, RAM, GPU, placa madre, fuente de poder, almacenamiento y NIC', 'CPU, RAM, GPU, motherboard, power supply, storage and NIC'], terms: 'componentes hardware cpu ram memoria gpu placa madre nic fuente poder psu alimentacion energia electricidad suministro power supply unit refrigeracion liquida cooler tarjeta grafica video optico disco ssd hdd motherboard', href: 'hardware.html#componentes' },
+    { title: ['Clasificación de redes', 'Network scopes'], text: ['BAN, PAN, LAN, WLAN, CAN, MAN, WAN y GAN según su cobertura', 'BAN, PAN, LAN, WLAN, CAN, MAN, WAN and GAN by coverage'], terms: 'alcance redes clasificacion cobertura ban pan lan wlan can man wan gan area corporal personal local campus metropolitana amplia global', href: 'redes.html#alcance-redes' },
     { title: ['Redes y topologías', 'Networks and topologies'], text: ['LAN, WAN, estrella, bus, anillo y malla', 'LAN, WAN, star, bus, ring and mesh'], terms: 'red redes lan wan topologia estrella bus anillo malla', href: 'redes.html#topologias' },
     { title: ['Simulador Ping', 'Ping simulator'], text: ['Observa cómo viaja un paquete ICMP por la red', 'Watch an ICMP packet travel across the network'], terms: 'ping icmp paquete trafico router switch', href: 'redes.html#simulador-red' },
     { title: ['Switch 3D y flujo de señal', '3D switch and signal flow'], text: ['Conexión RJ-45, puertos, MAC y activación del enlace', 'RJ-45 connection, ports, MAC learning and link activation'], terms: 'switch conmutador 3d señal cable puerto mac ethernet', href: 'redes.html#switch-3d' },
     { title: ['Glosario técnico', 'Technical glossary'], text: ['Definiciones de bandwidth, throughput, packet y NIC', 'Definitions for bandwidth, throughput, packet and NIC'], terms: 'glosario bandwidth throughput packet nic', href: 'recursos.html#glosario' },
     { title: ['Laboratorio de códigos', 'Code lab'], text: ['PowerShell, IP, MAC, ping y diagnóstico del equipo', 'PowerShell, IP, MAC, ping and device diagnostics'], terms: 'laboratorio powershell ip mac diagnostico codigo', href: 'recursos.html#laboratorio' },
-    { title: ['Explorador 3D del PC', '3D PC explorer'], text: ['Recorre la torre y reconoce sus piezas internas', 'Explore the tower and identify its internal parts'], terms: 'pc 3d torre componentes piezas', href: 'pc3d.html#visor-3d' }
+    { title: ['Explorador 3D del PC', '3D PC explorer'], text: ['Recorre la torre y reconoce sus piezas internas', 'Explore the tower and identify its internal parts'], terms: 'pc pc3d 3d torre computador componentes piezas visor escena', href: 'pc3d.html#visor-3d' },
+    { title: ['Mantenimiento del PC', 'PC maintenance'], text: ['Limpieza, cuidado y mantenimiento preventivo del computador', 'Cleaning, care and preventive computer maintenance'], terms: 'mantenimiento limpieza cuidado soporte ventilador polvo pasta termica pc', href: 'pc3d.html#mantenimiento' }
   ];
 
   const renderResults = (query) => {
     const currentLanguage = currentLang === 'en' ? 1 : 0;
     const needle = normalize(query.trim());
     const stopWords = new Set(['que', 'quiero', 'saber', 'sobre', 'como', 'donde', 'esta', 'the', 'what', 'where', 'about', 'need', 'find']);
-    const terms = needle.split(/\s+/).filter((term) => term.length > 2 && !stopWords.has(term));
+    const terms = needle.split(/\s+/).filter((term) => term.length > 1 && !stopWords.has(term));
     results.replaceChildren();
     if (!terms.length) return;
     const matches = catalog
