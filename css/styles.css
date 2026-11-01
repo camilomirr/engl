@@ -30,3 +30,6 @@
 /* 8. Sistema de Iconos SVG y Paleta Tecnológica */
 @import url('modules/icons.css');
 
+/* 9. Asistente de búsqueda local */
+@import url('modules/local-assistant.css');
+

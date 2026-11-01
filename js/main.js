@@ -125,6 +125,13 @@ const translations = {
     nav_topologies: "Topologías",
     topol_title: "Topologías de Redes",
     nav_switch3d: "Switch 3D: flujo de señal",
+    assistant_title: "Asistente NVISION",
+    assistant_status: "Búsqueda local",
+    assistant_welcome: "Busca un tema del sitio, por ejemplo: RAM, redes, switch o ENIAC.",
+    assistant_placeholder: "¿Qué necesitas encontrar?",
+    assistant_search: "Buscar",
+    assistant_empty: "No encontré una coincidencia. Prueba con otra palabra clave.",
+    assistant_open: "Abrir sección",
     topol_desc: "La distribución física y lógica que define cómo se interconectan los nodos, hosts y enlaces de transmisión en una infraestructura de comunicaciones.",
     lbl_typical_use: "Uso común:",
 
@@ -426,6 +433,13 @@ const translations = {
     nav_topologies: "Topologies",
     topol_title: "Network Topologies",
     nav_switch3d: "3D Switch: signal flow",
+    assistant_title: "NVISION Assistant",
+    assistant_status: "Local search",
+    assistant_welcome: "Search the site, for example: RAM, networks, switch, or ENIAC.",
+    assistant_placeholder: "What do you need to find?",
+    assistant_search: "Search",
+    assistant_empty: "I could not find a match. Try another keyword.",
+    assistant_open: "Open section",
     topol_desc: "The physical and logical layout that defines how nodes, devices, and transmission links are interconnected in a telecommunications infrastructure.",
     lbl_typical_use: "Common use:",
 
@@ -633,6 +647,19 @@ function applyLanguage(lang) {
     const key = el.getAttribute('data-i18n');
     if (translations[lang] && translations[lang][key]) {
       el.textContent = translations[lang][key];
+    }
+  });
+
+  document.querySelectorAll('[data-i18n-placeholder]').forEach((el) => {
+    const key = el.getAttribute('data-i18n-placeholder');
+    if (translations[lang] && translations[lang][key]) el.setAttribute('placeholder', translations[lang][key]);
+  });
+
+  document.querySelectorAll('[data-i18n-title]').forEach((el) => {
+    const key = el.getAttribute('data-i18n-title');
+    if (translations[lang] && translations[lang][key]) {
+      el.setAttribute('title', translations[lang][key]);
+      el.setAttribute('aria-label', translations[lang][key]);
     }
   });
 
@@ -942,6 +969,107 @@ function setupThemeToggle() {
   }
 }
 
+function setupLocalAssistant() {
+  if (document.querySelector('.local-assistant')) return;
+
+  const assistant = document.createElement('aside');
+  assistant.className = 'local-assistant';
+  assistant.innerHTML = `
+    <div class="local-assistant-panel" id="local-assistant-panel" hidden>
+      <div class="local-assistant-header">
+        <div><strong data-i18n="assistant_title">Asistente NVISION</strong><small data-i18n="assistant_status">Búsqueda local</small></div>
+        <button class="local-assistant-close" type="button" aria-label="Cerrar">×</button>
+      </div>
+      <div class="local-assistant-body">
+        <p class="local-assistant-welcome" data-i18n="assistant_welcome">Busca un tema del sitio, por ejemplo: RAM, redes, switch o ENIAC.</p>
+        <form class="local-assistant-form">
+          <input class="local-assistant-input" type="search" autocomplete="off" data-i18n-placeholder="assistant_placeholder" placeholder="¿Qué necesitas encontrar?">
+          <button class="local-assistant-submit" type="submit" data-i18n-title="assistant_search" title="Buscar" aria-label="Buscar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
+          </button>
+        </form>
+        <div class="local-assistant-results" aria-live="polite"></div>
+      </div>
+    </div>
+    <button class="local-assistant-toggle" type="button" aria-controls="local-assistant-panel" aria-expanded="false" title="Abrir asistente" aria-label="Abrir asistente">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11.5a7.5 7.5 0 0 1-8 7.5 8.5 8.5 0 0 1-4-.9L4 19l1.2-3.1A7.4 7.4 0 0 1 4.5 12 7.5 7.5 0 0 1 12 4.5a7.5 7.5 0 0 1 8 7z"></path><path d="M8 11h.01M12 11h.01M16 11h.01"></path></svg>
+    </button>`;
+  document.body.appendChild(assistant);
+
+  const panel = assistant.querySelector('.local-assistant-panel');
+  const toggle = assistant.querySelector('.local-assistant-toggle');
+  const close = assistant.querySelector('.local-assistant-close');
+  const form = assistant.querySelector('.local-assistant-form');
+  const input = assistant.querySelector('.local-assistant-input');
+  const results = assistant.querySelector('.local-assistant-results');
+  const language = () => translations[currentLang] || translations.es;
+  const normalize = (value) => value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  const catalog = [
+    { title: ['Historia del ENIAC', 'ENIAC history'], text: ['Computador electrónico, historia y pioneros', 'Electronic computer, history and pioneers'], terms: 'eniac historia computador pioneros', href: 'hardware.html#historia' },
+    { title: ['Componentes del computador', 'Computer components'], text: ['CPU, RAM, GPU, placa madre, almacenamiento y NIC', 'CPU, RAM, GPU, motherboard, storage and NIC'], terms: 'componentes hardware cpu ram memoria gpu placa madre nic', href: 'hardware.html#componentes' },
+    { title: ['Redes y topologías', 'Networks and topologies'], text: ['LAN, WAN, estrella, bus, anillo y malla', 'LAN, WAN, star, bus, ring and mesh'], terms: 'red redes lan wan topologia estrella bus anillo malla', href: 'redes.html#topologias' },
+    { title: ['Simulador Ping', 'Ping simulator'], text: ['Observa cómo viaja un paquete ICMP por la red', 'Watch an ICMP packet travel across the network'], terms: 'ping icmp paquete trafico router switch', href: 'redes.html#simulador-red' },
+    { title: ['Switch 3D y flujo de señal', '3D switch and signal flow'], text: ['Conexión RJ-45, puertos, MAC y activación del enlace', 'RJ-45 connection, ports, MAC learning and link activation'], terms: 'switch conmutador 3d señal cable puerto mac ethernet', href: 'redes.html#switch-3d' },
+    { title: ['Glosario técnico', 'Technical glossary'], text: ['Definiciones de bandwidth, throughput, packet y NIC', 'Definitions for bandwidth, throughput, packet and NIC'], terms: 'glosario bandwidth throughput packet nic', href: 'recursos.html#glosario' },
+    { title: ['Laboratorio de códigos', 'Code lab'], text: ['PowerShell, IP, MAC, ping y diagnóstico del equipo', 'PowerShell, IP, MAC, ping and device diagnostics'], terms: 'laboratorio powershell ip mac diagnostico codigo', href: 'recursos.html#laboratorio' },
+    { title: ['Explorador 3D del PC', '3D PC explorer'], text: ['Recorre la torre y reconoce sus piezas internas', 'Explore the tower and identify its internal parts'], terms: 'pc 3d torre componentes piezas', href: 'pc3d.html#visor-3d' }
+  ];
+
+  const renderResults = (query) => {
+    const currentLanguage = currentLang === 'en' ? 1 : 0;
+    const needle = normalize(query.trim());
+    const stopWords = new Set(['que', 'quiero', 'saber', 'sobre', 'como', 'donde', 'esta', 'the', 'what', 'where', 'about', 'need', 'find']);
+    const terms = needle.split(/\s+/).filter((term) => term.length > 2 && !stopWords.has(term));
+    results.replaceChildren();
+    if (!terms.length) return;
+    const matches = catalog
+      .map((item) => {
+        const searchable = normalize(`${item.title.join(' ')} ${item.text.join(' ')} ${item.terms}`);
+        const score = terms.reduce((total, term) => total + (searchable.includes(term) ? 1 : 0), 0);
+        return { item, score };
+      })
+      .filter((entry) => entry.score > 0)
+      .sort((left, right) => right.score - left.score)
+      .slice(0, 4)
+      .map((entry) => entry.item);
+    if (!matches.length) {
+      const empty = document.createElement('p');
+      empty.className = 'local-assistant-result';
+      empty.textContent = language().assistant_empty;
+      results.appendChild(empty);
+      return;
+    }
+    matches.forEach((item) => {
+      const card = document.createElement('article');
+      card.className = 'local-assistant-result';
+      const title = document.createElement('strong');
+      title.textContent = item.title[currentLanguage];
+      const description = document.createElement('p');
+      description.textContent = item.text[currentLanguage];
+      const link = document.createElement('a');
+      link.href = item.href;
+      link.textContent = language().assistant_open;
+      card.append(title, description, link);
+      results.appendChild(card);
+    });
+  };
+
+  toggle.addEventListener('click', () => {
+    const isOpen = !panel.hidden;
+    panel.hidden = isOpen;
+    toggle.setAttribute('aria-expanded', String(!isOpen));
+    if (!isOpen) input.focus();
+  });
+  close.addEventListener('click', () => {
+    panel.hidden = true;
+    toggle.setAttribute('aria-expanded', 'false');
+  });
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    renderResults(input.value);
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   setupThemeToggle();
   setupLanguageDropdown();
@@ -956,6 +1084,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupMaintenanceToolImages();
   setupNetworkSimulator();
   setupSwitch3D();
+  setupLocalAssistant();
   applyLanguage(currentLang);
 });
 
