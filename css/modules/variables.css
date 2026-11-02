@@ -68,40 +68,6 @@
   --shadow-lg: 0 10px 24px rgba(15, 23, 42, 0.08);
 }
 
-/* Modo Morado Claro (Purple Theme) — prueba: editado directo en GitHub con el conector de Muse */
-[data-theme="purple"] {
-  --bg-deep: #e9d5ff;
-  --bg-surface: rgba(245, 240, 255, 0.92);
-  --bg-card: #faf5ff;
-  --bg-card-hover: #f3e8ff;
-  --header-bg: rgba(233, 213, 255, 0.94);
-  --footer-bg: #ddd6fe;
-
-  --border-subtle: #d8b4fe;
-  --border-hover: #c084fc;
-  --border-glow: rgba(168, 85, 247, 0.35);
-
-  --text-primary: #3b0764;
-  --text-secondary: #6b21a8;
-  --text-muted: #7e22ce;
-
-  --accent-cyan: #7c3aed;
-  --accent-blue: #6d28d9;
-  --accent-indigo: #7c3aed;
-  --accent-emerald: #059669;
-  --accent-amber: #d97706;
-
-  --shadow-sm: 0 1px 3px rgba(88, 28, 135, 0.08);
-  --shadow-md: 0 4px 12px rgba(88, 28, 135, 0.1);
-  --shadow-lg: 0 10px 24px rgba(88, 28, 135, 0.12);
-}
-
-[data-theme="purple"] body {
-  background-image:
-    linear-gradient(rgba(233, 213, 255, 0.86), rgba(221, 214, 254, 0.95)),
-    url('../../assets/tech-bg.jpg');
-}
-
 * {
   margin: 0;
   padding: 0;
