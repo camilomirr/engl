@@ -195,12 +195,50 @@ const translations = {
     wifi_f3_q: "¿El WPS es seguro?",
     wifi_f3_p: "El botón físico WPS es práctico para enlazar el repetidor, pero el WPS por código PIN es vulnerable. Si tu panel lo permite, desactiva el WPS por PIN y deja solo el botón.",
     assistant_title: "Asistente NVISION",
-    assistant_status: "Búsqueda local",
-    assistant_welcome: "Busca un tema del sitio, por ejemplo: RAM, redes, switch o ENIAC.",
-    assistant_placeholder: "¿Qué necesitas encontrar?",
-    assistant_search: "Buscar",
+    assistant_status: "Chat entrenado",
+    assistant_welcome: "Pregúntame sobre el contenido del sitio. Si no sé algo, puedes enseñármelo en la pestaña Entrenar.",
+    assistant_placeholder: "Escribe tu pregunta…",
+    assistant_search: "Enviar",
     assistant_empty: "No encontré una coincidencia. Prueba con otra palabra clave.",
     assistant_open: "Abrir sección",
+    assistant_tab_chat: "Chat",
+    assistant_tab_train: "Entrenar",
+    assistant_fallback: "Todavía no sé responder eso 🤔. Prueba con otras palabras, o enséñame la respuesta para que la próxima vez la sepa.",
+    assistant_teach_title: "Enseñar una respuesta nueva",
+    assistant_teach_q: "Formas de preguntarlo (una por línea)",
+    assistant_teach_a: "Respuesta",
+    assistant_teach_cat: "Categoría",
+    assistant_save: "Guardar",
+    assistant_cancel_edit: "Cancelar edición",
+    assistant_edit_title: "Editar respuesta",
+    assistant_stats_base: "respuestas base",
+    assistant_stats_learned: "enseñadas por ti",
+    assistant_test_title: "Probar al asistente",
+    assistant_test_ph: "Escribe una pregunta para ver qué entiende",
+    assistant_missed_title: "Preguntas sin respuesta",
+    assistant_learned_title: "Lo que le has enseñado",
+    assistant_backup_title: "Respaldo",
+    assistant_export: "Exportar",
+    assistant_import: "Importar",
+    assistant_reset: "Borrar lo aprendido",
+    assistant_saved_toast: "¡Aprendido! Ya conozco esta respuesta.",
+    assistant_need_both: "Escribe al menos una pregunta y la respuesta.",
+    assistant_thanks: "¡Gracias! 💚",
+    assistant_teach_this: "Enséñame esta respuesta",
+    assistant_up: "Me sirvió",
+    assistant_down: "Mejorar",
+    assistant_no_match: "Sin coincidencia clara",
+    assistant_match: "Coincide con",
+    assistant_missed_empty: "Aún no hay preguntas pendientes.",
+    assistant_learned_empty: "Todavía no has enseñado nada.",
+    assistant_teach_btn: "Enseñar",
+    assistant_remove_btn: "Quitar",
+    assistant_edit_btn: "Editar",
+    assistant_delete_btn: "Borrar",
+    assistant_confirm_delete: "¿Borrar esta respuesta?",
+    assistant_confirm_reset: "¿Borrar todo lo que le has enseñado?",
+    assistant_imported: "respuestas importadas",
+    assistant_import_bad: "El respaldo no tiene un formato válido.",
     topol_desc: "La distribución física y lógica que define cómo se interconectan los nodos, hosts y enlaces de transmisión en una infraestructura de comunicaciones.",
     lbl_typical_use: "Uso común:",
 
@@ -572,12 +610,50 @@ const translations = {
     wifi_f3_q: "Is WPS safe?",
     wifi_f3_p: "The physical WPS button is handy for linking the repeater, but PIN-based WPS is vulnerable. If your panel allows it, disable PIN WPS and keep only the button.",
     assistant_title: "NVISION Assistant",
-    assistant_status: "Local search",
-    assistant_welcome: "Search the site, for example: RAM, networks, switch, or ENIAC.",
-    assistant_placeholder: "What do you need to find?",
-    assistant_search: "Search",
+    assistant_status: "Trained chat",
+    assistant_welcome: "Ask me about the site content. If I miss something, you can teach me in the Train tab.",
+    assistant_placeholder: "Type your question…",
+    assistant_search: "Send",
     assistant_empty: "I could not find a match. Try another keyword.",
     assistant_open: "Open section",
+    assistant_tab_chat: "Chat",
+    assistant_tab_train: "Train",
+    assistant_fallback: "I do not know how to answer that yet 🤔. Try other words, or teach me the answer so I know it next time.",
+    assistant_teach_title: "Teach a new answer",
+    assistant_teach_q: "Ways to ask it (one per line)",
+    assistant_teach_a: "Answer",
+    assistant_teach_cat: "Category",
+    assistant_save: "Save",
+    assistant_cancel_edit: "Cancel editing",
+    assistant_edit_title: "Edit answer",
+    assistant_stats_base: "base answers",
+    assistant_stats_learned: "taught by you",
+    assistant_test_title: "Test the assistant",
+    assistant_test_ph: "Type a question to see what it understands",
+    assistant_missed_title: "Unanswered questions",
+    assistant_learned_title: "What you have taught it",
+    assistant_backup_title: "Backup",
+    assistant_export: "Export",
+    assistant_import: "Import",
+    assistant_reset: "Erase learned",
+    assistant_saved_toast: "Learned! I know this answer now.",
+    assistant_need_both: "Write at least one question and the answer.",
+    assistant_thanks: "Thanks! 💚",
+    assistant_teach_this: "Teach me this answer",
+    assistant_up: "It helped",
+    assistant_down: "Improve",
+    assistant_no_match: "No clear match",
+    assistant_match: "Matches",
+    assistant_missed_empty: "No pending questions yet.",
+    assistant_learned_empty: "You have not taught anything yet.",
+    assistant_teach_btn: "Teach",
+    assistant_remove_btn: "Remove",
+    assistant_edit_btn: "Edit",
+    assistant_delete_btn: "Delete",
+    assistant_confirm_delete: "Delete this answer?",
+    assistant_confirm_reset: "Erase everything you have taught it?",
+    assistant_imported: "imported answers",
+    assistant_import_bad: "The backup format is not valid.",
     topol_desc: "The physical and logical layout that defines how nodes, devices, and transmission links are interconnected in a telecommunications infrastructure.",
     lbl_typical_use: "Common use:",
 
@@ -1110,23 +1186,140 @@ function setupThemeToggle() {
 function setupLocalAssistant() {
   if (document.querySelector('.local-assistant')) return;
 
+  /* ===== Base de conocimiento entrenada (modelo tipo FinBot) =====
+     c = categoría · k = formas de preguntar (ES/EN) · r = respuesta [ES, EN] · href = sección del sitio */
+  const KB = [
+    { c: 'Otro', k: ['hola', 'buenas', 'buenos dias', 'hey', 'saludos', 'hello', 'hi'], r: ['¡Hola! Soy el asistente de **NVISION** 🤖. Pregúntame de hardware, redes, el switch, los códigos del laboratorio o el WiFi. Toca una sugerencia o escribe tu duda.', 'Hi! I am the **NVISION** assistant 🤖. Ask me about hardware, networks, the switch, the code lab or WiFi. Tap a suggestion or type your question.'] },
+    { c: 'Otro', k: ['quien eres', 'que eres', 'que haces', 'para que sirves', 'ayuda', 'help', 'who are you', 'what can you do'], r: ['Soy un asistente **entrenado con el contenido de NVISION**: respondo desde una base de conocimiento guardada en la página, sin internet y sin IA externa. Si algo no lo sé, puedes **enseñármelo** en la pestaña «Entrenar» y lo aprendo en este navegador.', 'I am an assistant **trained on NVISION content**: I answer from a knowledge base stored in the page, no internet and no external AI. If I miss something, you can **teach me** in the "Train" tab and I learn it in this browser.'], },
+    { c: 'Hardware', k: ['que es la cpu', 'procesador', 'cpu', 'cerebro del computador', 'what is the cpu', 'processor'], r: ['La **CPU** es el cerebro del PC: ejecuta las instrucciones de los programas. Se mide en núcleos e hilos (procesadores lógicos) y en GHz. En el detector del laboratorio puedes ver cuántos hilos tiene tu equipo.', 'The **CPU** is the brain of the PC: it runs program instructions. It is measured in cores and threads (logical processors) and in GHz. In the lab detector you can see how many threads your machine has.'], href: 'hardware.html#componentes' },
+    { c: 'Hardware', k: ['que es la ram', 'memoria ram', 'ram', 'para que sirve la ram', 'what is ram'], r: ['La **RAM** es la memoria de trabajo: guarda lo que el PC está usando ahora mismo y se borra al apagar. Más RAM = más programas abiertos sin que el equipo se ponga lento.', '**RAM** is the working memory: it holds what the PC is using right now and it clears when you shut down. More RAM = more open programs without slowdowns.'], href: 'hardware.html#componentes' },
+    { c: 'Hardware', k: ['tarjeta grafica', 'gpu', 'tarjeta de video', 'graphics card'], r: ['La **GPU** (tarjeta gráfica) dibuja todo lo que ves: pantalla, videos y juegos. Puede venir integrada en el procesador o ser una tarjeta dedicada con su propia memoria.', 'The **GPU** (graphics card) draws everything you see: screen, videos and games. It can be integrated into the processor or be a dedicated card with its own memory.'], href: 'hardware.html#componentes' },
+    { c: 'Hardware', k: ['placa madre', 'motherboard', 'mainboard', 'tarjeta madre'], r: ['La **placa madre** es la tarjeta principal donde se conecta TODO: procesador, RAM, almacenamiento y tarjetas. Es como el sistema nervioso del PC.', 'The **motherboard** is the main board where EVERYTHING connects: processor, RAM, storage and cards. It is like the nervous system of the PC.'], href: 'hardware.html#componentes' },
+    { c: 'Hardware', k: ['ssd', 'hdd', 'disco duro', 'almacenamiento', 'nvme', 'storage', 'hard drive'], r: ['El **almacenamiento** guarda tus archivos de forma permanente. El **SSD** (y su versión rápida NVMe) no tiene partes móviles y es mucho más veloz que el viejo disco duro **HDD**.', '**Storage** keeps your files permanently. The **SSD** (and its fast NVMe version) has no moving parts and is much faster than the old **HDD** hard drive.'], href: 'hardware.html#componentes' },
+    { c: 'Hardware', k: ['tarjeta de red', 'nic', 'tarjeta ethernet', 'network card'], r: ['La **NIC** es la tarjeta de red: el puente físico y lógico entre el PC y el cable (o la antena WiFi). Cada NIC tiene su dirección **MAC** única.', 'The **NIC** is the network card: the physical and logical bridge between the PC and the cable (or the WiFi antenna). Every NIC has its own unique **MAC** address.'], href: 'hardware.html#componentes' },
+    { c: 'Hardware', k: ['fuente de poder', 'psu', 'fuente de alimentacion', 'power supply'], r: ['La **fuente de poder (PSU)** convierte la corriente del enchufe en la energía que cada pieza necesita. Si es de mala calidad o queda corta de vatios, el PC se apaga o falla.', 'The **power supply (PSU)** turns wall power into the energy each part needs. A weak or low-quality one makes the PC shut down or fail.'], href: 'hardware.html#componentes' },
+    { c: 'Hardware', k: ['refrigeracion', 'refrigeracion liquida', 'cooler', 'ventilador', 'se calienta', 'cooling', 'overheating'], r: ['La **refrigeración** saca el calor del procesador: por aire (ventilador) o **líquida AIO** (bloque, mangueras y radiador). Sin ella, el PC baja su rendimiento para no quemarse.', '**Cooling** removes heat from the processor: by air (fan) or **liquid AIO** (block, tubes and radiator). Without it, the PC slows itself down to avoid burning up.'], href: 'hardware.html#componentes' },
+    { c: 'Hardware', k: ['unidad optica', 'lector de cd', 'dvd', 'bluray', 'optical drive'], r: ['La **unidad de disco óptico (ODD)** lee y graba CD, DVD y Blu-ray con un láser. Hoy es poco común porque casi todo llega por internet o USB.', 'The **optical disc drive (ODD)** reads and burns CDs, DVDs and Blu-ray with a laser. It is rare today because almost everything arrives over the internet or USB.'], href: 'hardware.html#componentes' },
+    { c: 'Recursos', k: ['eniac', 'historia del computador', 'primer computador', 'pioneros', 'history of computers'], r: ['El **ENIAC** (1945) fue uno de los primeros computadores electrónicos: ocupaba una habitación y trabajaba con tubos de vacío. En la sección de historia ves la evolución hasta el PC actual.', 'The **ENIAC** (1945) was one of the first electronic computers: it filled a room and ran on vacuum tubes. In the history section you can see the evolution up to today\u2019s PC.'], href: 'hardware.html#historia' },
+    { c: 'Redes', k: ['tipos de red', 'pan lan wan', 'clasificacion de redes', 'alcance de redes', 'que es una lan', 'que es una wan', 'network types', 'network scopes'], r: ['Las redes se clasifican por **alcance**: **PAN** (personal, unos metros), **LAN** (local, una casa u oficina), **MAN** (una ciudad) y **WAN** (países; internet es la WAN más grande). También están BAN, WLAN, CAN y GAN.', 'Networks are classified by **scope**: **PAN** (personal, a few meters), **LAN** (local, a home or office), **MAN** (a city) and **WAN** (countries; the internet is the biggest WAN). There are also BAN, WLAN, CAN and GAN.'], href: 'redes.html#alcance-redes' },
+    { c: 'Redes', k: ['topologias', 'topologia estrella', 'bus', 'anillo', 'malla', 'topologies', 'star topology'], r: ['La **topología** es la forma en que se conectan los equipos: **estrella** (todos a un switch central, la más usada), **bus** (un solo cable), **anillo** (un círculo) y **malla** (todos con todos, muy resistente).', 'A **topology** is the shape of the connections: **star** (everyone to a central switch, the most common), **bus** (one single cable), **ring** (a circle) and **mesh** (everyone to everyone, very resilient).'], href: 'redes.html#topologias' },
+    { c: 'Redes', k: ['como funciona un switch', 'switch', 'tabla mac', 'flooding', 'como aprende el switch', 'conmutador', 'how does a switch work'], r: ['El **switch** aprende en qué puerto está la MAC de cada equipo y anota eso en su **tabla MAC**. Cuando llega una trama, la reenvía **solo por el puerto correcto**. Si aún no conoce el destino, la envía por todos los puertos (**flooding**) y aprende con la respuesta. ¡Pruébalo en el laboratorio del switch!', 'The **switch** learns which port each MAC address lives on and writes it in its **MAC table**. When a frame arrives, it forwards it **only through the right port**. If it does not know the destination yet, it sends it through all ports (**flooding**) and learns from the reply. Try it in the switch lab!'], href: 'redes.html#switch-3d' },
+    { c: 'Redes', k: ['hub', 'diferencia hub switch', 'hub vs switch', 'concentrador'], r: ['El **hub** es el antepasado tonto del switch: **no aprende nada** y repite cada trama por **todos** los puertos, siempre. El switch, en cambio, aprende las MAC y entrega cada trama solo a su destino: menos tráfico y más privacidad.', 'The **hub** is the switch\u2019s dumb ancestor: it **learns nothing** and repeats every frame through **all** ports, always. The switch instead learns MAC addresses and delivers each frame only to its destination: less traffic and more privacy.'], href: 'redes.html#switch-3d' },
+    { c: 'Redes', k: ['simulador ping', 'ping', 'icmp', 'como hacer ping', 'ping simulator'], r: ['El **ping** envía paquetes **ICMP** a otro equipo y mide si responde y cuánto tarda: es la primera prueba para saber si hay conexión. En el simulador de Redes ves el paquete viajar paso a paso.', '**Ping** sends **ICMP** packets to another device and measures whether it answers and how long it takes: it is the first test to check a connection. In the Networks simulator you watch the packet travel step by step.'], href: 'redes.html#simulador-red' },
+    { c: 'Recursos', k: ['ver mi ip', 'mi mac', 'ipconfig', 'como saber mi ip', 'direccion fisica', 'my ip address', 'my mac'], r: ['Con el código **ipconfig /all** en PowerShell ves la **IP** de tu equipo y su **dirección física (MAC)**. Está en el Laboratorio de Códigos, con botón para copiarlo.', 'With the code **ipconfig /all** in PowerShell you see your computer\u2019s **IP** and its **physical address (MAC)**. It lives in the Code Lab, with a copy button.'], href: 'recursos.html#laboratorio' },
+    { c: 'Recursos', k: ['quien esta en mi red', 'arp', 'dispositivos de mi red', 'who is on my network'], r: ['El código **arp -a** lista los dispositivos que tu equipo conoce en la red local, con su IP y su MAC. Está en el Laboratorio de Códigos.', 'The code **arp -a** lists the devices your computer knows on the local network, with their IP and MAC. It lives in the Code Lab.'], href: 'recursos.html#laboratorio' },
+    { c: 'Recursos', k: ['renovar ip', 'ipconfig renew', 'internet se puso raro', 'sin internet', 'renew ip', 'no internet'], r: ['Si el internet se pone raro, el código **ipconfig /release** + **ipconfig /renew** suelta tu IP y pide una nueva al router. Es el arreglo clásico; está en el Laboratorio de Códigos (PowerShell como administrador).', 'If the internet acts weird, the code **ipconfig /release** + **ipconfig /renew** drops your IP and asks the router for a new one. The classic fix; it lives in the Code Lab (PowerShell as administrator).'], href: 'recursos.html#laboratorio' },
+    { c: 'Recursos', k: ['detectar mi equipo', 'datos de mi pc', 'especificaciones de mi pc', 'detect my device', 'my specs'], r: ['En el Laboratorio hay una tarjeta **«Detecta mi equipo»**: sin instalar nada muestra lo que el navegador puede ver: sistema, navegador, procesadores lógicos, RAM aproximada, gráfica, pantalla y batería. Son 7 datos; el modelo exacto del procesador solo sale con el código de PowerShell.', 'In the Lab there is a **"Detect my device"** card: with no installs it shows what the browser can see: system, browser, logical processors, approximate RAM, graphics, screen and battery. That is 7 items; the exact processor model only comes from the PowerShell code.'], href: 'recursos.html#laboratorio' },
+    { c: 'Recursos', k: ['que es throughput', 'throughput', 'rendimiento de red'], r: ['**Throughput**: volumen real de datos que sí logran pasar entre dos puntos en un tiempo dado. Es lo que de verdad recibes, no lo que promete el papel.', '**Throughput**: the real volume of data that actually gets through between two points in a given time. It is what you truly receive, not what the paper promises.'], href: 'recursos.html#glosario' },
+    { c: 'Recursos', k: ['que es bandwidth', 'bandwidth', 'ancho de banda', 'what is bandwidth'], r: ['**Bandwidth** (ancho de banda): capacidad máxima teórica de un canal, en bps. Una cosa es el ancho de la tubería y otra el agua que de verdad pasa (**throughput**).', '**Bandwidth**: the maximum theoretical capacity of a channel, in bps. One thing is the width of the pipe and another the water that actually flows (**throughput**).'], href: 'recursos.html#glosario' },
+    { c: 'Recursos', k: ['que es un paquete', 'packet', 'paquete de datos', 'what is a packet'], r: ['Un **paquete** es la unidad de datos que viaja por la red: lleva encabezados con origen y destino, y la carga útil (tus datos). Todo en internet viaja en paquetes.', 'A **packet** is the unit of data that travels the network: it carries headers with source and destination, plus the payload (your data). Everything on the internet travels in packets.'], href: 'recursos.html#glosario' },
+    { c: 'Hardware', k: ['limpiar mi pc', 'mantenimiento', 'polvo', 'pasta termica', 'cada cuanto limpiar', 'clean my pc', 'maintenance'], r: ['El **mantenimiento** básico: soplar el polvo con **aire comprimido**, trabajar con **manilla antiestática** y cambiar la **pasta térmica** de vez en cuando. En PC3D tienes la guía con las herramientas y sus fotos.', 'Basic **maintenance**: blow dust out with **compressed air**, work with an **anti-static wrist strap** and replace the **thermal paste** from time to time. In PC3D you have the guide with the tools and their photos.'], href: 'pc3d.html#mantenimiento' },
+    { c: 'Hardware', k: ['herramientas', 'manilla antiestatica', 'aire comprimido', 'destornillador', 'tools', 'anti static wrist strap'], r: ['Las **herramientas indispensables** del mantenimiento: destornillador de precisión, manilla antiestática, aire comprimido en lata, brocha suave y bridas para ordenar cables. Están en la sección de herramientas de PC3D.', 'The essential **maintenance tools**: precision screwdriver, anti-static wrist strap, canned compressed air, soft brush and cable ties. They are in the PC3D tools section.'], href: 'pc3d.html#mantenimiento' },
+    { c: 'Hardware', k: ['explorador 3d', 'visor 3d', 'torre 3d', 'ver el pc por dentro', 'pc3d', '3d explorer'], r: ['El **explorador 3D** de PC3D te deja recorrer la torre por capas y reconocer cada pieza: placa, CPU, RAM, GPU, almacenamiento, fuente, red y hasta la unidad óptica.', 'The PC3D **3D explorer** lets you walk through the tower layer by layer and recognize each part: board, CPU, RAM, GPU, storage, PSU, networking and even the optical drive.'], href: 'pc3d.html#visor-3d' },
+    { c: 'WiFi', k: ['instalar modem', 'configurar router', 'movistar', 'entrar al router', '192.168.1.1', 'install modem', 'router setup'], r: ['Para **instalar el módem/router**: conecta el cable del proveedor, enciende y espera las luces fijas; luego entra al panel en **192.168.1.1** con los datos de la etiqueta y cambia SSID, contraseña y seguridad WPA2/WPA3. La guía completa está en WiFi Avanzado.', 'To **install the modem/router**: plug the provider cable, power on and wait for solid lights; then open the panel at **192.168.1.1** with the label credentials and change SSID, password and WPA2/WPA3 security. The full guide is in Advanced WiFi.'], href: 'wifi.html#instalar-modem' },
+    { c: 'WiFi', k: ['repetidor', 'extensor', 'no llega el wifi', 'ampliar cobertura', 'wps', 'repeater', 'wifi coverage'], r: ['Un **repetidor** recibe el WiFi y lo reemite: ponlo a **mitad de camino**, donde aún llegue buena señal. Se enlaza por **WPS** (botón en ambos equipos) o a mano desde su panel. Si lo pones donde no hay señal, no tiene nada que repetir.', 'A **repeater** picks up WiFi and rebroadcasts it: place it **halfway**, where signal is still good. Link it by **WPS** (button on both devices) or manually from its panel. If you place it where there is no signal, it has nothing to repeat.'], href: 'wifi.html#instalar-modem' },
+    { c: 'WiFi', k: ['cambiar clave wifi', 'contraseña del router', 'seguridad wifi', 'wpa2 wpa3', 'change wifi password'], r: ['Cambia la clave del WiFi desde el panel del router (**192.168.1.1**): contraseña nueva de más de 12 caracteres y seguridad **WPA2 o WPA3**. Y nunca dejes el usuario admin de fábrica del panel.', 'Change the WiFi password from the router panel (**192.168.1.1**): a new password over 12 characters and **WPA2 or WPA3** security. And never keep the panel factory admin user.'], href: 'wifi.html#instalar-modem' },
+    { c: 'WiFi', k: ['2.4 o 5 ghz', 'banda wifi', 'wifi lento', 'canal wifi', 'wifi slow', 'wifi band'], r: ['**2.4 GHz** llega más lejos y cruza paredes, pero es más lenta; **5 GHz** es mucho más rápida cerca del módem. Si el WiFi va lento en un edificio lleno de redes, cambia el canal (1, 6 u 11 en 2.4 GHz).', '**2.4 GHz** reaches farther and crosses walls, but it is slower; **5 GHz** is much faster near the modem. If WiFi is slow in a building full of networks, change the channel (1, 6 or 11 on 2.4 GHz).'], href: 'wifi.html#instalar-modem' },
+    { c: 'Otro', k: ['por donde empiezo', 'ruta de aprendizaje', 'que ver primero', 'como usar el sitio', 'donde empiezo', 'learning path', 'where do i start'], r: ['Ruta sugerida: **1)** Historia y componentes en Hardware, **2)** el explorador 3D de PC3D, **3)** tipos de red y topologías en Redes, **4)** el laboratorio del switch y el simulador ping, **5)** los códigos y el glosario en Recursos, y **6)** la guía WiFi. En ese orden todo encaja.', 'Suggested path: **1)** History and components in Hardware, **2)** the PC3D 3D explorer, **3)** network types and topologies in Networks, **4)** the switch lab and the ping simulator, **5)** the codes and glossary in Resources, and **6)** the WiFi guide. In that order everything clicks.'] },
+    { c: 'Otro', k: ['gracias', 'muchas gracias', 'te agradezco', 'thanks', 'thank you'], r: ['¡Con gusto! 💚 Si te queda otra duda del sitio, pregúntame; y si alguna vez no sé algo, puedes enseñármelo en la pestaña «Entrenar».', 'You are welcome! 💚 If you have another question about the site, ask me; and if I ever miss something, you can teach me in the "Train" tab.'] },
+    { c: 'Otro', k: ['chao', 'adios', 'hasta luego', 'nos vemos', 'bye', 'see you'], r: ['¡Hasta pronto! 👋 Recuerda: el switch aprende solo si le envías tramas… y yo también aprendo si me enseñas.', 'See you soon! 👋 Remember: the switch only learns if you send it frames… and I learn too if you teach me.'] }
+  ];
+  const SUGGEST = [
+    ['¿Qué es la RAM?', 'What is RAM?'],
+    ['¿Cómo trabaja un switch?', 'How does a switch work?'],
+    ['¿Cómo veo mi IP y mi MAC?', 'How do I see my IP and MAC?'],
+    ['Instalar un repetidor WiFi', 'Set up a WiFi repeater'],
+    ['¿Qué es throughput?', 'What is throughput?'],
+    ['¿Cómo limpio mi PC?', 'How do I clean my PC?']
+  ];
+  const CATS = ['Hardware', 'Redes', 'WiFi', 'Recursos', 'Otro'];
+
+  /* ===== Persistencia (lo enseñado y lo no respondido vive en este navegador) ===== */
+  const loadArr = (k, d) => { try { const v = JSON.parse(localStorage.getItem(k)); return Array.isArray(v) ? v : d; } catch (e) { return d; } };
+  const storeArr = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+  let learned = loadArr('nvision_bot_learned', []);
+  let missed = loadArr('nvision_bot_missed', []);
+  let editIdx = -1;
+
+  /* ===== Motor de coincidencia (mismo modelo que FinBot) ===== */
+  const STOP = new Set('de la el los las un una unos unas y o u que en es por para con como se mi mis me a al del lo su sus te tu yo si no mas muy cual cuales cuanto quiero puedo debo hay ser son esta este eso esa the a an of to in is are what how do does can i you it and or for on with my me'.split(' '));
+  const norm = (s) => (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9\s]/g, ' ');
+  const stem = (w) => (w.length > 5 ? w.slice(0, 5) : w);
+  const toks = (s) => [...new Set(norm(s).split(/\s+/).filter((w) => w && !STOP.has(w)).map(stem))];
+  function bestMatch(q) {
+    const qt = toks(q);
+    let top = { score: 0, e: null, key: '' };
+    if (!qt.length) return top;
+    const all = [...learned.map((e) => ({ c: e.c, k: e.k, r: [e.r, e.r], href: null })), ...KB];
+    for (const e of all) for (const key of e.k) {
+      const kt = toks(key);
+      if (!kt.length) continue;
+      const inter = kt.filter((w) => qt.includes(w)).length;
+      if (!inter) continue;
+      const score = (inter / kt.length + inter / qt.length) / 2;
+      if (score > top.score + 1e-9) top = { score, e, key };
+    }
+    return top;
+  }
+
+  /* ===== Construcción del panel ===== */
   const assistant = document.createElement('aside');
   assistant.className = 'local-assistant';
   assistant.innerHTML = `
     <div class="local-assistant-panel" id="local-assistant-panel" hidden>
       <div class="local-assistant-header">
-        <div><strong data-i18n="assistant_title">Asistente NVISION</strong><small data-i18n="assistant_status">Búsqueda local</small></div>
+        <div><strong data-i18n="assistant_title">Asistente NVISION</strong><small data-i18n="assistant_status">Chat entrenado</small></div>
         <button class="local-assistant-close" type="button" aria-label="Cerrar">×</button>
       </div>
       <div class="local-assistant-body">
-        <p class="local-assistant-welcome" data-i18n="assistant_welcome">Busca un tema del sitio, por ejemplo: RAM, redes, switch o ENIAC.</p>
-        <form class="local-assistant-form">
-          <input class="local-assistant-input" type="search" autocomplete="off" data-i18n-placeholder="assistant_placeholder" placeholder="¿Qué necesitas encontrar?">
-          <button class="local-assistant-submit" type="submit" data-i18n-title="assistant_search" title="Buscar" aria-label="Buscar">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
-          </button>
-        </form>
-        <div class="local-assistant-results" aria-live="polite"></div>
+        <div class="la-tabs" role="tablist">
+          <button type="button" class="la-tab is-active" data-tab="chat" data-i18n="assistant_tab_chat">Chat</button>
+          <button type="button" class="la-tab" data-tab="train" data-i18n="assistant_tab_train">Entrenar</button>
+        </div>
+        <div class="la-view la-view-chat">
+          <p class="local-assistant-welcome" data-i18n="assistant_welcome">Pregúntame sobre el contenido del sitio. Si no sé algo, puedes enseñármelo en la pestaña Entrenar.</p>
+          <div class="la-log" aria-live="polite"></div>
+          <div class="la-chips"></div>
+          <form class="local-assistant-form">
+            <input class="local-assistant-input" type="text" autocomplete="off" maxlength="300" data-i18n-placeholder="assistant_placeholder" placeholder="Escribe tu pregunta…">
+            <button class="local-assistant-submit" type="submit" data-i18n-title="assistant_search" title="Enviar" aria-label="Enviar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"></path><path d="M22 2 11 13"></path></svg>
+            </button>
+          </form>
+        </div>
+        <div class="la-view la-view-train" hidden>
+          <div class="la-stats"><span><b class="la-n-base">0</b> <span data-i18n="assistant_stats_base">respuestas base</span></span><span><b class="la-n-learn">0</b> <span data-i18n="assistant_stats_learned">enseñadas por ti</span></span></div>
+          <div class="la-card">
+            <h3 class="la-form-title" data-i18n="assistant_teach_title">Enseñar una respuesta nueva</h3>
+            <label data-i18n="assistant_teach_q">Formas de preguntarlo (una por línea)</label>
+            <textarea class="la-tk" rows="3" placeholder="qué es un switch&#10;cómo trabaja un switch"></textarea>
+            <label data-i18n="assistant_teach_a">Respuesta</label>
+            <textarea class="la-tr" rows="3"></textarea>
+            <label data-i18n="assistant_teach_cat">Categoría</label>
+            <select class="la-tc"></select>
+            <div class="la-row">
+              <button type="button" class="la-btn la-save" data-i18n="assistant_save">Guardar</button>
+              <button type="button" class="la-btn la-alt la-cancel" data-i18n="assistant_cancel_edit" hidden>Cancelar edición</button>
+            </div>
+            <div class="la-toast" role="status"></div>
+          </div>
+          <div class="la-card">
+            <h3 data-i18n="assistant_test_title">Probar al asistente</h3>
+            <input class="la-test" type="text" data-i18n-placeholder="assistant_test_ph" placeholder="Escribe una pregunta para ver qué entiende">
+            <div class="la-test-out la-hint"></div>
+          </div>
+          <div class="la-card"><h3 data-i18n="assistant_missed_title">Preguntas sin respuesta</h3><div class="la-missed"></div></div>
+          <div class="la-card"><h3 data-i18n="assistant_learned_title">Lo que le has enseñado</h3><div class="la-learned"></div></div>
+          <div class="la-card">
+            <h3 data-i18n="assistant_backup_title">Respaldo</h3>
+            <textarea class="la-bk" rows="3" placeholder="JSON"></textarea>
+            <div class="la-row">
+              <button type="button" class="la-btn la-alt la-exp" data-i18n="assistant_export">Exportar</button>
+              <button type="button" class="la-btn la-alt la-imp" data-i18n="assistant_import">Importar</button>
+              <button type="button" class="la-btn la-alt la-reset" data-i18n="assistant_reset">Borrar lo aprendido</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <button class="local-assistant-toggle" type="button" aria-controls="local-assistant-panel" aria-expanded="false" title="Abrir asistente" aria-label="Abrir asistente">
@@ -1134,80 +1327,234 @@ function setupLocalAssistant() {
     </button>`;
   document.body.appendChild(assistant);
 
-  const panel = assistant.querySelector('.local-assistant-panel');
-  const toggle = assistant.querySelector('.local-assistant-toggle');
-  const close = assistant.querySelector('.local-assistant-close');
-  const form = assistant.querySelector('.local-assistant-form');
-  const input = assistant.querySelector('.local-assistant-input');
-  const results = assistant.querySelector('.local-assistant-results');
-  const language = () => translations[currentLang] || translations.es;
-  const normalize = (value) => value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, ' ').trim();
-  const catalog = [
-    { title: ['Historia del ENIAC', 'ENIAC history'], text: ['Computador electrónico, historia y pioneros', 'Electronic computer, history and pioneers'], terms: 'eniac historia computador pioneros', href: 'hardware.html#historia' },
-    { title: ['Componentes del computador', 'Computer components'], text: ['CPU, RAM, GPU, placa madre, fuente de poder, almacenamiento y NIC', 'CPU, RAM, GPU, motherboard, power supply, storage and NIC'], terms: 'componentes hardware cpu ram memoria gpu placa madre nic fuente poder psu alimentacion energia electricidad suministro power supply unit refrigeracion liquida cooler tarjeta grafica video optico disco ssd hdd motherboard', href: 'hardware.html#componentes' },
-    { title: ['Clasificación de redes', 'Network scopes'], text: ['BAN, PAN, LAN, WLAN, CAN, MAN, WAN y GAN según su cobertura', 'BAN, PAN, LAN, WLAN, CAN, MAN, WAN and GAN by coverage'], terms: 'alcance redes clasificacion cobertura ban pan lan wlan can man wan gan area corporal personal local campus metropolitana amplia global', href: 'redes.html#alcance-redes' },
-    { title: ['Redes y topologías', 'Networks and topologies'], text: ['LAN, WAN, estrella, bus, anillo y malla', 'LAN, WAN, star, bus, ring and mesh'], terms: 'red redes lan wan topologia estrella bus anillo malla', href: 'redes.html#topologias' },
-    { title: ['Simulador Ping', 'Ping simulator'], text: ['Observa cómo viaja un paquete ICMP por la red', 'Watch an ICMP packet travel across the network'], terms: 'ping icmp paquete trafico router switch', href: 'redes.html#simulador-red' },
-    { title: ['Switch 3D y flujo de señal', '3D switch and signal flow'], text: ['Conexión RJ-45, puertos, MAC y activación del enlace', 'RJ-45 connection, ports, MAC learning and link activation'], terms: 'switch conmutador 3d señal cable puerto mac ethernet', href: 'redes.html#switch-3d' },
-    { title: ['Glosario técnico', 'Technical glossary'], text: ['Definiciones de bandwidth, throughput, packet y NIC', 'Definitions for bandwidth, throughput, packet and NIC'], terms: 'glosario bandwidth throughput packet nic', href: 'recursos.html#glosario' },
-    { title: ['Laboratorio de códigos', 'Code lab'], text: ['PowerShell, IP, MAC, ping y diagnóstico del equipo', 'PowerShell, IP, MAC, ping and device diagnostics'], terms: 'laboratorio powershell ip mac diagnostico codigo', href: 'recursos.html#laboratorio' },
-    { title: ['Explorador 3D del PC', '3D PC explorer'], text: ['Recorre la torre y reconoce sus piezas internas', 'Explore the tower and identify its internal parts'], terms: 'pc pc3d 3d torre computador componentes piezas visor escena', href: 'pc3d.html#visor-3d' },
-    { title: ['Mantenimiento del PC', 'PC maintenance'], text: ['Limpieza, cuidado y mantenimiento preventivo del computador', 'Cleaning, care and preventive computer maintenance'], terms: 'mantenimiento limpieza cuidado soporte ventilador polvo pasta termica pc', href: 'pc3d.html#mantenimiento' },
-    { title: ['Configuraciones avanzadas de WiFi', 'Advanced WiFi configuration'], text: ['Instalación de módem/router Movistar, repetidor, WPS, seguridad y cobertura', 'Movistar modem/router setup, repeater, WPS, security and coverage'], terms: 'wifi wi fi modem router movistar repetidor extensor wps cobertura internet ssid contraseña seguridad', href: 'wifi.html#instalar-modem' }
-  ];
+  const $ = (sel) => assistant.querySelector(sel);
+  const panel = $('.local-assistant-panel');
+  const toggle = $('.local-assistant-toggle');
+  const closeBtn = $('.local-assistant-close');
+  const form = $('.local-assistant-form');
+  const input = $('.local-assistant-input');
+  const log = $('.la-log');
+  const chipsBox = $('.la-chips');
+  const L = () => (currentLang === 'en' ? 1 : 0);
+  const T = () => translations[currentLang] || translations.es;
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const fmt = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
 
-  const renderResults = (query) => {
-    const currentLanguage = currentLang === 'en' ? 1 : 0;
-    const needle = normalize(query.trim());
-    const stopWords = new Set(['que', 'quiero', 'saber', 'sobre', 'como', 'donde', 'esta', 'the', 'what', 'where', 'about', 'need', 'find']);
-    const terms = needle.split(/\s+/).filter((term) => term.length > 1 && !stopWords.has(term));
-    results.replaceChildren();
-    if (!terms.length) return;
-    const matches = catalog
-      .map((item) => {
-        const searchable = normalize(`${item.title.join(' ')} ${item.text.join(' ')} ${item.terms}`);
-        const score = terms.reduce((total, term) => total + (searchable.includes(term) ? 1 : 0), 0);
-        return { item, score };
-      })
-      .filter((entry) => entry.score > 0)
-      .sort((left, right) => right.score - left.score)
-      .slice(0, 4)
-      .map((entry) => entry.item);
-    if (!matches.length) {
-      const empty = document.createElement('p');
-      empty.className = 'local-assistant-result';
-      empty.textContent = language().assistant_empty;
-      results.appendChild(empty);
-      return;
+  /* ===== Chat ===== */
+  function addMsg(role, text, q, href) {
+    const d = document.createElement('div');
+    d.className = 'la-msg ' + role;
+    d.innerHTML = fmt(text);
+    if (href) {
+      const a = document.createElement('a');
+      a.className = 'la-open';
+      a.href = href;
+      a.textContent = T().assistant_open;
+      d.appendChild(a);
     }
-    matches.forEach((item) => {
-      const card = document.createElement('article');
-      card.className = 'local-assistant-result';
-      const title = document.createElement('strong');
-      title.textContent = item.title[currentLanguage];
-      const description = document.createElement('p');
-      description.textContent = item.text[currentLanguage];
-      const link = document.createElement('a');
-      link.href = item.href;
-      link.textContent = language().assistant_open;
-      card.append(title, description, link);
-      results.appendChild(card);
+    if (role === 'bot' && q) {
+      const f = document.createElement('div');
+      f.className = 'la-fb';
+      const up = document.createElement('button');
+      up.type = 'button'; up.textContent = '👍'; up.title = T().assistant_up;
+      up.addEventListener('click', () => { f.textContent = T().assistant_thanks; });
+      const down = document.createElement('button');
+      down.type = 'button'; down.textContent = '👎 ' + T().assistant_down;
+      down.addEventListener('click', () => goTeach(q));
+      f.append(up, down);
+      d.appendChild(f);
+    }
+    log.appendChild(d);
+    log.scrollTop = log.scrollHeight;
+    return d;
+  }
+  function say(text, q, teachQ, href) {
+    setTimeout(() => {
+      addMsg('bot', text, q, href);
+      if (teachQ) {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'la-chip';
+        b.textContent = T().assistant_teach_this;
+        b.addEventListener('click', () => goTeach(teachQ));
+        log.lastChild.appendChild(b);
+      }
+    }, 350);
+  }
+  function ask(text) {
+    text = (text || '').trim();
+    if (!text) return;
+    addMsg('user', text);
+    const b = bestMatch(text);
+    if (b.score >= 0.4) { say(b.e.r[L()], text, null, b.e.href); return; }
+    if (!missed.includes(text)) {
+      missed.unshift(text);
+      missed = missed.slice(0, 30);
+      storeArr('nvision_bot_missed', missed);
+    }
+    say(T().assistant_fallback, null, text, null);
+  }
+  function renderChips() {
+    chipsBox.replaceChildren();
+    SUGGEST.forEach((pair) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'la-chip';
+      b.textContent = pair[L()];
+      b.addEventListener('click', () => ask(pair[L()]));
+      chipsBox.appendChild(b);
     });
-  };
+  }
 
+  /* ===== Pestañas ===== */
+  function showTab(name) {
+    assistant.querySelectorAll('.la-tab').forEach((t) => t.classList.toggle('is-active', t.dataset.tab === name));
+    $('.la-view-chat').hidden = name !== 'chat';
+    $('.la-view-train').hidden = name !== 'train';
+    if (name === 'train') renderTrain();
+  }
+  assistant.querySelectorAll('.la-tab').forEach((t) => t.addEventListener('click', () => showTab(t.dataset.tab)));
+  function goTeach(q) {
+    showTab('train');
+    resetTeachForm();
+    $('.la-tk').value = q || '';
+    $('.la-tr').focus();
+  }
+
+  /* ===== Entrenamiento ===== */
+  const tcSel = $('.la-tc');
+  CATS.forEach((c) => { const o = document.createElement('option'); o.textContent = c; tcSel.appendChild(o); });
+  function toast(msg) {
+    const el = $('.la-toast');
+    el.textContent = msg;
+    setTimeout(() => { if (el.textContent === msg) el.textContent = ''; }, 3000);
+  }
+  function resetTeachForm() {
+    editIdx = -1;
+    $('.la-tk').value = '';
+    $('.la-tr').value = '';
+    tcSel.value = 'Otro';
+    $('.la-cancel').hidden = true;
+    $('.la-form-title').textContent = T().assistant_teach_title;
+  }
+  $('.la-cancel').addEventListener('click', resetTeachForm);
+  $('.la-save').addEventListener('click', () => {
+    const k = $('.la-tk').value.split('\n').map((s) => s.trim()).filter(Boolean);
+    const r = $('.la-tr').value.trim();
+    if (!k.length || !r) { toast(T().assistant_need_both); return; }
+    const entry = { c: tcSel.value, k, r };
+    if (editIdx >= 0) learned[editIdx] = entry; else learned.unshift(entry);
+    missed = missed.filter((m) => !k.some((x) => norm(x) === norm(m)));
+    storeArr('nvision_bot_learned', learned);
+    storeArr('nvision_bot_missed', missed);
+    resetTeachForm();
+    renderTrain();
+    toast(T().assistant_saved_toast);
+  });
+  function itemRow(mainHtml, buttons) {
+    const row = document.createElement('div');
+    row.className = 'la-item';
+    const main = document.createElement('div');
+    main.innerHTML = mainHtml;
+    const btns = document.createElement('span');
+    btns.className = 'la-item-btns';
+    buttons.forEach(([label, fn]) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'la-btn la-sm';
+      b.textContent = label;
+      b.addEventListener('click', fn);
+      btns.appendChild(b);
+    });
+    row.append(main, btns);
+    return row;
+  }
+  function renderTrain() {
+    $('.la-n-base').textContent = KB.length;
+    $('.la-n-learn').textContent = learned.length;
+    const missedBox = $('.la-missed');
+    missedBox.replaceChildren();
+    if (!missed.length) {
+      const p = document.createElement('p'); p.className = 'la-hint'; p.textContent = T().assistant_missed_empty; missedBox.appendChild(p);
+    }
+    missed.forEach((m, i) => {
+      missedBox.appendChild(itemRow(esc(m), [
+        [T().assistant_teach_btn, () => goTeach(m)],
+        [T().assistant_remove_btn, () => { missed.splice(i, 1); storeArr('nvision_bot_missed', missed); renderTrain(); }]
+      ]));
+    });
+    const learnedBox = $('.la-learned');
+    learnedBox.replaceChildren();
+    if (!learned.length) {
+      const p = document.createElement('p'); p.className = 'la-hint'; p.textContent = T().assistant_learned_empty; learnedBox.appendChild(p);
+    }
+    learned.forEach((e, i) => {
+      const head = `<span class="la-tag">${esc(e.c)}</span> <b>${esc(e.k[0])}</b>${e.k.length > 1 ? ` <small>+${e.k.length - 1}</small>` : ''}<br><small>${esc(e.r.slice(0, 110))}${e.r.length > 110 ? '…' : ''}</small>`;
+      learnedBox.appendChild(itemRow(head, [
+        [T().assistant_edit_btn, () => { editIdx = i; $('.la-tk').value = e.k.join('\n'); $('.la-tr').value = e.r; tcSel.value = e.c; $('.la-cancel').hidden = false; $('.la-form-title').textContent = T().assistant_edit_title; }],
+        [T().assistant_delete_btn, () => { if (confirm(T().assistant_confirm_delete)) { learned.splice(i, 1); storeArr('nvision_bot_learned', learned); resetTeachForm(); renderTrain(); } }]
+      ]));
+    });
+  }
+  $('.la-test').addEventListener('input', (ev) => {
+    const q = ev.target.value;
+    const out = $('.la-test-out');
+    if (!q.trim()) { out.textContent = ''; return; }
+    const b = bestMatch(q);
+    const p = Math.round(b.score * 100);
+    out.innerHTML = b.score >= 0.4
+      ? `${esc(T().assistant_match)} «<b>${esc(b.key)}</b>» (${p} %).<br>${fmt(b.e.r[L()].slice(0, 160))}…`
+      : `${esc(T().assistant_no_match)} (${p} %).`;
+  });
+  $('.la-exp').addEventListener('click', () => {
+    const bk = $('.la-bk');
+    bk.value = JSON.stringify(learned, null, 1);
+    bk.select();
+    try { navigator.clipboard.writeText(bk.value); } catch (e) {}
+  });
+  $('.la-imp').addEventListener('click', () => {
+    try {
+      const a = JSON.parse($('.la-bk').value);
+      if (!Array.isArray(a)) throw new Error('bad');
+      const ok = a.filter((x) => x && Array.isArray(x.k) && x.k.length && typeof x.r === 'string' && x.r.trim())
+        .map((x) => ({ c: CATS.includes(x.c) ? x.c : 'Otro', k: x.k.map(String), r: x.r }));
+      learned = [...ok, ...learned];
+      storeArr('nvision_bot_learned', learned);
+      renderTrain();
+      toast(ok.length + ' ' + T().assistant_imported);
+    } catch (e) { toast(T().assistant_import_bad); }
+  });
+  $('.la-reset').addEventListener('click', () => {
+    if (!confirm(T().assistant_confirm_reset)) return;
+    learned = [];
+    missed = [];
+    storeArr('nvision_bot_learned', learned);
+    storeArr('nvision_bot_missed', missed);
+    resetTeachForm();
+    renderTrain();
+  });
+
+  /* ===== Abrir / cerrar y primer saludo ===== */
+  let greeted = false;
   toggle.addEventListener('click', () => {
     const isOpen = !panel.hidden;
     panel.hidden = isOpen;
     toggle.setAttribute('aria-expanded', String(!isOpen));
-    if (!isOpen) input.focus();
+    if (!isOpen) {
+      renderChips();
+      if (!greeted) { greeted = true; say(KB[0].r[L()], null, null, null); }
+      input.focus();
+    }
   });
-  close.addEventListener('click', () => {
+  closeBtn.addEventListener('click', () => {
     panel.hidden = true;
     toggle.setAttribute('aria-expanded', 'false');
   });
   form.addEventListener('submit', (event) => {
     event.preventDefault();
-    renderResults(input.value);
+    const v = input.value;
+    input.value = '';
+    ask(v);
   });
 }
 
