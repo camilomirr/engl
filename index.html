@@ -81,6 +81,10 @@
         <button id="theme-toggle" class="theme-switch-btn" title="Modo Claro / Oscuro" aria-label="Cambiar tema">
           <span id="theme-icon" class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span>
         </button>
+        <!-- Boton Modo Morado Claro (prueba: editado directo en GitHub con el conector) -->
+        <button id="purple-toggle" class="theme-switch-btn" title="Modo morado claro / Light purple mode" aria-label="Activar modo morado claro">
+          <span class="mono-icon"><svg viewBox="0 0 24 24" fill="#a855f7" stroke="#7c3aed" stroke-width="1.5"><circle cx="12" cy="12" r="9"></circle></svg></span>
+        </button>
         <!-- Selector desplegable bilingüe de Idioma (Español / Inglés) -->
         <div class="lang-dropdown-wrapper" id="lang-dropdown-wrapper">
           <button id="lang-toggle" class="lang-dropdown-btn" type="button" aria-haspopup="true" aria-expanded="false" title="Seleccionar idioma / Select language">
@@ -269,5 +273,18 @@
 
   <!-- Script interactivo bilingüe y menú móvil -->
   <script src="js/main.js"></script>
+  <script>
+    // Modo morado claro: el botón alterna data-theme="purple" (tema definido en css/modules/variables.css)
+    (function () {
+      var btn = document.getElementById('purple-toggle');
+      if (!btn) return;
+      btn.addEventListener('click', function () {
+        var root = document.documentElement;
+        var next = root.getAttribute('data-theme') === 'purple' ? 'light' : 'purple';
+        root.setAttribute('data-theme', next);
+        try { localStorage.setItem('user_theme', next); } catch (e) {}
+      });
+    })();
+  </script>
 </body>
 </html>
