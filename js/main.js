@@ -512,7 +512,22 @@ const translations = {
     pc3d_parttypes_gpu: "Integrada · Dedicada · GDDR6 · PCIe",
     pc3d_parttypes_storage: "HDD · SSD SATA · M.2 NVMe",
     pc3d_parttypes_psu: "ATX · SFX · Bronze · Silver · Gold · Platinum · Titanium",
-    pc3d_parttypes_optical: "CD · DVD · Blu-ray · SATA"
+    pc3d_parttypes_optical: "CD · DVD · Blu-ray · SATA",
+    page_title_index: "NVISION - Hardware y Computadores",
+    page_title_hardware: "NVISION - Hardware y Evolución",
+    page_title_redes: "NVISION - Redes y Simulación",
+    page_title_recursos: "NVISION - Recursos de Aprendizaje",
+    page_title_pc3d: "NVISION - PC3D y más",
+    page_title_wifi: "NVISION - WiFi Avanzado",
+    pc3d_footer: "© 2026 - NVISION / PC3D y más",
+    pc3d_type_integrated: "Integrada",
+    pc3d_type_dedicated: "Dedicada",
+    pc3d_type_aircooler: "Disipador de aire",
+    pc3d_type_aio: "AIO líquida",
+    theme_toggle_title: "Cambiar tema",
+    menu_toggle_title: "Abrir menú",
+    assistant_toggle_title: "Abrir asistente",
+    assistant_close_title: "Cerrar"
   },
   en: {
     badge_hero: "Network Structure",
@@ -1021,7 +1036,22 @@ const translations = {
     caption_nic: "PCIe network interface card (NIC) with Gigabit Ethernet RJ45 port and controller chip.",
     caption_psu: "Modular ATX power supply with cooling fan and power connectors for motherboard and components.",
     btn_view_component_img: "View image and info",
-    btn_hide_component_img: "Hide image"
+    btn_hide_component_img: "Hide image",
+    page_title_index: "NVISION - Hardware and Computers",
+    page_title_hardware: "NVISION - Hardware and Evolution",
+    page_title_redes: "NVISION - Networks and Simulation",
+    page_title_recursos: "NVISION - Learning Resources",
+    page_title_pc3d: "NVISION - PC3D and more",
+    page_title_wifi: "NVISION - Advanced WiFi",
+    pc3d_footer: "© 2026 - NVISION / PC3D and more",
+    pc3d_type_integrated: "Integrated",
+    pc3d_type_dedicated: "Dedicated",
+    pc3d_type_aircooler: "Air cooler",
+    pc3d_type_aio: "Liquid AIO",
+    theme_toggle_title: "Change theme",
+    menu_toggle_title: "Open menu",
+    assistant_toggle_title: "Open assistant",
+    assistant_close_title: "Close"
   }
 };
 
@@ -1533,7 +1563,7 @@ function setupLocalAssistant() {
     <div class="local-assistant-panel" id="local-assistant-panel" hidden>
       <div class="local-assistant-header">
         <div><strong data-i18n="assistant_title">Asistente NVISION</strong><small data-i18n="assistant_status">Chat entrenado</small></div>
-        <button class="local-assistant-close" type="button" aria-label="Cerrar">×</button>
+        <button class="local-assistant-close" type="button" aria-label="Cerrar" data-i18n-title="assistant_close_title">×</button>
       </div>
       <div class="local-assistant-body">
         <div class="la-tabs" role="tablist">
@@ -1586,7 +1616,7 @@ function setupLocalAssistant() {
         </div>
       </div>
     </div>
-    <button class="local-assistant-toggle" type="button" aria-controls="local-assistant-panel" aria-expanded="false" title="Abrir asistente" aria-label="Abrir asistente">
+    <button class="local-assistant-toggle" type="button" aria-controls="local-assistant-panel" aria-expanded="false" title="Abrir asistente" aria-label="Abrir asistente" data-i18n-title="assistant_toggle_title">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11.5a7.5 7.5 0 0 1-8 7.5 8.5 8.5 0 0 1-4-.9L4 19l1.2-3.1A7.4 7.4 0 0 1 4.5 12 7.5 7.5 0 0 1 12 4.5a7.5 7.5 0 0 1 8 7z"></path><path d="M8 11h.01M12 11h.01M16 11h.01"></path></svg>
     </button>`;
   document.body.appendChild(assistant);
