@@ -375,3 +375,41 @@
     padding: 2.5rem 1rem;
   }
 }
+
+/* Podio y tabla de programas recomendados */
+.ms-rank-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.4rem;
+  margin: 0 0 1.6rem;
+}
+.ms-rank-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-top: 4px solid var(--accent-cyan);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+.ms-rank-card:hover { transform: translateY(-4px); border-color: var(--border-hover); box-shadow: var(--shadow-md); }
+.ms-rank-cost { border-top-color: var(--accent-emerald); }
+.ms-rank-eff { border-top-color: var(--accent-amber); }
+.ms-rank-badge {
+  display: inline-block;
+  font: 700 0.72rem 'JetBrains Mono', monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent-cyan);
+  margin-bottom: 0.7rem;
+}
+.ms-rank-cost .ms-rank-badge { color: var(--accent-emerald); }
+.ms-rank-eff .ms-rank-badge { color: var(--accent-amber); }
+.ms-rank-card h3 { color: var(--text-primary); font-size: 1.15rem; margin-bottom: 0.5rem; }
+.ms-rank-card p { color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6; }
+.ms-rank-tag { margin-top: 0.9rem; padding-top: 0.8rem; border-top: 1px solid var(--border-subtle); font-size: 0.83rem; }
+.ms-prog-table td:first-child { white-space: normal; color: var(--text-primary); }
+.ms-prog-table td:nth-child(3) { color: var(--accent-amber); letter-spacing: 0.08em; white-space: nowrap; }
+@media (max-width: 820px) {
+  .ms-rank-grid { grid-template-columns: 1fr; }
+}
