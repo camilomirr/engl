@@ -231,6 +231,27 @@
   transform: translateX(3px);
 }
 
+/* Botón Redes Challenge dentro del menú (gama rojo / blanco / gris) */
+.nav-submenu a.btn-challenge {
+  background: linear-gradient(120deg, #e50914, #8f060d);
+  color: #ffffff;
+  text-align: center;
+  font-weight: 800;
+  border: 1px solid #ff2b2b;
+  border-radius: 999px;
+  padding: 0.55rem 1rem;
+  margin: 0.3rem 0.35rem;
+  box-shadow: 0 4px 14px rgba(229, 9, 20, 0.4);
+}
+
+.nav-submenu a.btn-challenge:hover {
+  background: linear-gradient(120deg, #ff1f2c, #b00610);
+  color: #ffffff;
+  border-color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(229, 9, 20, 0.55);
+}
+
 /* Botón cambio de tema */
 .theme-switch-btn {
   display: inline-flex;
