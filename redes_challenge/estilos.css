@@ -31,3 +31,14 @@ footer{color:#6f6f6f}
 .router:after{color:#e50914;text-shadow:0 0 8px #ff8080}
 #lang-toggle{padding:10px 18px;font-size:14px;border-radius:999px;white-space:nowrap;text-align:center}
 html{overflow-x:hidden}
+
+/* ===== Efecto 3D para las imágenes del juego ===== */
+.diagram{perspective:900px}
+.diagram svg{transition:transform .3s ease;transform-style:preserve-3d;will-change:transform}
+svg .node{filter:drop-shadow(0 10px 10px #00000055)}
+svg .switch{fill:url(#switchgrad);filter:drop-shadow(0 10px 10px #00000055)}
+svg .nodebase{fill:#000000;opacity:.26;stroke:none;filter:blur(3px)}
+.options button{box-shadow:0 6px 0 #c6c6c6,0 12px 20px #00000022}
+.options button:active{transform:translateY(3px);box-shadow:0 2px 0 #c6c6c6,0 6px 12px #00000022}
+.globe{box-shadow:0 24px 28px -12px #00000059,0 0 30px #e5091440,inset -22px -14px 38px #00000038,inset 10px 10px 24px #ffffff90}
+.router{box-shadow:0 26px 24px -10px #00000055,0 0 20px #e5091430}
