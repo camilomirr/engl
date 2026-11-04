@@ -47,3 +47,14 @@ svg .nodebase{fill:#000000;opacity:.26;stroke:none;filter:blur(3px)}
 .diagram{box-shadow:inset 0 1px 0 #ffffff,inset 0 -18px 30px #00000010,0 18px 30px -18px #00000045}
 svg .floor{fill:#000000;opacity:.13;filter:blur(5px)}
 svg .linkshadow{stroke:#5f0207;stroke-width:5;opacity:.35;filter:blur(1.5px)}
+
+/* ===== Neón en la zona de la topología ===== */
+.diagram{background:radial-gradient(ellipse at center,#2b0609 0,#150507 60%,#0a0a0a 100%);border-color:#ff073a;box-shadow:inset 0 0 45px #ff073a33,0 0 24px #ff073a45}
+.diagram:before{background:linear-gradient(transparent 96%,#ff073a2e 97%),linear-gradient(90deg,transparent 96%,#ff073a2e 97%)}
+svg line{stroke:#ff2442;filter:drop-shadow(0 0 6px #ff073a) drop-shadow(0 0 16px #ff073a88)}
+svg .linkshadow{stroke:#ff073a;stroke-width:9;opacity:.55;filter:blur(4px)}
+svg .node{stroke:#ff6b6b;filter:drop-shadow(0 0 12px #ff073a) drop-shadow(0 10px 12px #00000088)}
+svg .switch{stroke:#ff6b6b;filter:drop-shadow(0 0 12px #ff073a) drop-shadow(0 10px 12px #00000088)}
+svg .nodebase{fill:#ff073a;opacity:.35}
+svg .floor{fill:#ff073a;opacity:.18;filter:blur(6px)}
+svg text.nodelabel{fill:#ffe9e9;text-shadow:0 0 6px #ff073a}
