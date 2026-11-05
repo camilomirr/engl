@@ -226,6 +226,7 @@ function init() {
     group.userData.explodeRate = 2.0 + PARTS.findIndex((p) => p.id === id) * 0.45;
     group.userData.freePos = null; // posición libre al arrastrarla suelta
     group.userData.dragging = false;
+    group.userData.magnetArmed = false; // el imán solo se arma al sacar la pieza de su sitio
     group.userData.ghost = null;
     const mats = new Set();
     group.traverse((o) => {
@@ -507,7 +508,8 @@ function init() {
   // Guía de recorrido: línea roja punteada hasta el sitio de la pieza
   const SNAP_DIST = 0.6; // distancia a la que la pieza se incrusta sola al acercarla
   const MAGNET_RADIUS = 2.0; // radio en el que el imán empieza a atraerla hacia su sitio
-  const RELEASE_SNAP_DIST = 1.0; // al soltarla dentro de este radio, encaja sola
+  const MAGNET_ARM_DIST = 1.2; // el imán se arma solo cuando la pieza ya está fuera de su sitio
+  const RELEASE_SNAP_DIST = 1.2; // al soltarla dentro de este radio, encaja sola
   const guideGeo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]);
   const guideMat = new THREE.LineDashedMaterial({ color: 0xef4444, dashSize: 0.18, gapSize: 0.12, transparent: true, opacity: 0.95 });
   const guideLine = new THREE.Line(guideGeo, guideMat);
@@ -595,8 +597,9 @@ function init() {
     pos.needsUpdate = true;
     guideLine.computeLineDistances();
     const d = guideV.distanceTo(home);
-    const inSnap = d < SNAP_DIST;
-    const inMagnet = d < MAGNET_RADIUS;
+    const armed = g.userData.magnetArmed;
+    const inSnap = armed && d < SNAP_DIST;
+    const inMagnet = armed && d < MAGNET_RADIUS;
     guideMat.color.setHex(inSnap ? 0x22c55e : inMagnet ? 0xf59e0b : 0xef4444);
     homeMarker.material.color.setHex(inSnap ? 0x22c55e : inMagnet ? 0xf59e0b : 0xef4444);
     if (g.userData.ghostMat) g.userData.ghostMat.color.setHex(inSnap ? 0x22c55e : inMagnet ? 0xf59e0b : 0x38bdf8);
@@ -608,6 +611,7 @@ function init() {
     dragId = id;
     dragCandidate = null;
     g.userData.dragging = true;
+    g.userData.magnetArmed = g.userData.removed; // el imán solo se arma si la pieza ya estaba suelta
     selectPart(id); // el panel sigue a la pieza que se agarra
     if (!g.userData.removed) {
       g.userData.removed = true; // al agarrarla se suelta de su sitio
@@ -754,8 +758,10 @@ function init() {
         const home = g.userData.base;
         const raw = tower.worldToLocal(dragHit.clone());
         const d = raw.distanceTo(home);
+        // el imán se arma solo cuando la pieza ya está fuera de su sitio
+        if (d > MAGNET_ARM_DIST) g.userData.magnetArmed = true;
         let target = raw;
-        if (d < MAGNET_RADIUS) {
+        if (g.userData.magnetArmed && d < MAGNET_RADIUS) {
           const pull = 1 - d / MAGNET_RADIUS;
           const strength = Math.pow(pull, 1.5) * 0.85;
           target = raw.clone().lerp(home, strength);
@@ -764,9 +770,9 @@ function init() {
         g.position.copy(target);
       }
       updateGuide();
-      // si llega muy cerca, se incrusta sola en su sitio
+      // si vuelve muy cerca de su sitio, se incrusta sola
       const g = partGroups[dragId];
-      if (g) {
+      if (g && g.userData.magnetArmed) {
         g.getWorldPosition(guideV);
         if (guideV.distanceTo(g.userData.base) < SNAP_DIST) snapIn(dragId);
       }
@@ -811,7 +817,10 @@ function init() {
     if (tooltip) tooltip.hidden = true;
     canvas.style.cursor = 'grab';
   });
+  // El menú del navegador nunca debe aparecer sobre el visor (clic derecho = panorámica)
+  canvas.addEventListener('contextmenu', (event) => event.preventDefault());
   canvas.addEventListener('pointerdown', (event) => {
+    controls.enabled = true; // red de seguridad: la órbita nunca queda apagada
     downPos = { x: event.clientX, y: event.clientY };
     camTween = null;
     controls.autoRotate = false;
@@ -827,6 +836,8 @@ function init() {
   });
   let clickTimer = null;
   canvas.addEventListener('pointerup', (event) => {
+    // La órbita siempre vuelve a quedar activa al soltar, pase lo que pase
+    controls.enabled = true;
     if (dragId) {
       // Soltar la pieza: si quedó cerca de su sitio, encaja sola; si no, queda flotando
       const g = partGroups[dragId];
@@ -837,7 +848,6 @@ function init() {
       const id = g.userData.partId;
       dragId = null;
       dragCandidate = null;
-      controls.enabled = true;
       guideLine.visible = false;
       homeMarker.visible = false;
       canvas.style.cursor = 'grab';
@@ -849,12 +859,16 @@ function init() {
       // fue un clic sobre la pieza: solo seleccionarla, no quitarla
       const id = dragCandidate;
       dragCandidate = null;
-      controls.enabled = true;
+      guideLine.visible = false;
+      homeMarker.visible = false;
+      canvas.style.cursor = 'grab';
       downPos = null;
       if (clickTimer) clearTimeout(clickTimer);
       clickTimer = setTimeout(() => { selectPart(id); clickTimer = null; }, 260);
       return;
     }
+    guideLine.visible = false;
+    homeMarker.visible = false;
     if (!downPos) return;
     const moved = Math.hypot(event.clientX - downPos.x, event.clientY - downPos.y);
     downPos = null;
