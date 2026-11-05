@@ -91,9 +91,11 @@ function init() {
   controls.target.set(...SCENES.overview.tgt);
   controls.enableDamping = true;
   controls.dampingFactor = 0.08;
-  controls.minDistance = 3.5;
+  controls.minDistance = 4.0;
   controls.maxDistance = 18;
   controls.maxPolarAngle = Math.PI * 0.55;
+  controls.zoomSpeed = 0.35; // zoom suave, de a poquito con la rueda
+  controls.rotateSpeed = 0.85;
   controls.autoRotate = !reduceMotion;
   controls.autoRotateSpeed = 0.9;
 
@@ -218,6 +220,9 @@ function init() {
     group.userData.removeK = 0;
     group.userData.explodeK = 1; // arranca desarmada y se ensambla sola en la intro
     group.userData.explodeRate = 2.0 + PARTS.findIndex((p) => p.id === id) * 0.45;
+    group.userData.freePos = null; // posición libre al arrastrarla suelta
+    group.userData.dragging = false;
+    group.userData.ghost = null;
     const mats = new Set();
     group.traverse((o) => {
       if (o.isMesh) {
@@ -232,6 +237,34 @@ function init() {
     });
     partMats[id] = [...mats];
     partGroups[id] = group;
+  }
+
+  // Fantasma del hueco: marca translúcida donde va la pieza retirada
+  function ensureGhost(id) {
+    const g = partGroups[id];
+    if (g.userData.ghost) return g.userData.ghost;
+    const ghost = g.clone(true);
+    const ghostMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.16, depthWrite: false });
+    ghost.traverse((o) => {
+      if (o.isMesh) {
+        o.material = ghostMat;
+        o.castShadow = false;
+        o.receiveShadow = false;
+      }
+    });
+    ghost.position.copy(g.userData.base);
+    ghost.rotation.set(0, 0, 0);
+    ghost.visible = false;
+    tower.add(ghost);
+    g.userData.ghost = ghost;
+    g.userData.ghostMat = ghostMat;
+    return ghost;
+  }
+  function syncGhost(id) {
+    const g = partGroups[id];
+    if (!g.userData.removed && !g.userData.ghost) return;
+    const ghost = ensureGhost(id);
+    ghost.visible = g.userData.removed;
   }
 
   // --- Torre: chasis (panel lateral abierto, sin vidrio) ---
@@ -304,6 +337,10 @@ function init() {
   const trace = box(0.02, 2.6, 0.1, mat(0x0f172a, { emissive: 0x0ea5e9, emissiveIntensity: 0.5 }));
   trace.position.set(0.06, 0.2, -1.2);
   motherboard.add(trace);
+  // conector ATX de 24 pines en el borde derecho de la placa
+  const atxConnector = box(0.12, 0.5, 0.3, mat(0xe5e7eb, { metal: 0.3, rough: 0.5 }));
+  atxConnector.position.set(0.1, 0.1, 1.55);
+  motherboard.add(atxConnector);
   tower.add(motherboard);
   registerPart(motherboard, 'motherboard', [0, 0, 0]);
 
@@ -348,12 +385,16 @@ function init() {
   gpu.position.set(-0.55, 1.75, 0.1);
   const gpuBody = box(0.42, 0.55, 2.7, mat(0x1f2937, { metal: 0.6, rough: 0.4 }));
   gpu.add(gpuBody);
-  const gpuAccent = box(0.44, 0.09, 2.7, mat(0x7f1d1d, { emissive: 0xef4444, emissiveIntensity: 0.7 }));
+  const gpuAccent = box(0.5, 0.09, 2.7, mat(0x7f1d1d, { emissive: 0xef4444, emissiveIntensity: 0.7 }));
   gpuAccent.position.y = 0.28;
   gpu.add(gpuAccent);
   const gpuPlate = box(0.05, 0.5, 2.6, METAL_MAT);
   gpuPlate.position.x = -0.22;
   gpu.add(gpuPlate);
+  // conector de poder de 8 pines en el borde superior de la gráfica
+  const gpuPower = box(0.3, 0.12, 0.4, DARK_MAT);
+  gpuPower.position.set(0, 0.32, 1.05);
+  gpu.add(gpuPower);
   [-0.62, 0.62].forEach((dz) => {
     const fan = makeFan(0.42, 0xef4444);
     fan.rotation.y = Math.PI / 2;
@@ -386,6 +427,10 @@ function init() {
   const ssdLabel = box(0.02, 0.2, 0.6, mat(0x0f172a, { emissive: 0x38bdf8, emissiveIntensity: 0.5 }));
   ssdLabel.position.x = 0.04;
   storage.add(ssdLabel);
+  // conector SATA del SSD
+  const sataConnector = box(0.08, 0.2, 0.15, mat(0xe5e7eb, { metal: 0.3, rough: 0.5 }));
+  sataConnector.position.set(0.05, 0, -0.4);
+  storage.add(sataConnector);
   tower.add(storage);
   registerPart(storage, 'storage', [1.3, 0, 0.5]);
 
@@ -413,8 +458,9 @@ function init() {
     caseFans.push(fan);
   });
 
-  // --- Cables ---
-  function cable(points, radius, color) {
+  // --- Cables (cada uno pertenece a su pieza y se desvanece con ella) ---
+  const cables = [];
+  function cable(points, radius, color, partId) {
     const curve = new THREE.CatmullRomCurve3(points.map((p) => new THREE.Vector3(...p)));
     const mesh = new THREE.Mesh(
       new THREE.TubeGeometry(curve, 24, radius, 8, false),
@@ -422,11 +468,15 @@ function init() {
     );
     mesh.castShadow = true;
     tower.add(mesh);
+    cables.push({ mesh, partId });
     return mesh;
   }
-  cable([[0.3, 0.95, -0.9], [0.7, 1.3, -0.2], [-0.2, 1.7, 0.5], [-0.85, 2.1, 0.9]], 0.06, 0x991b1b);
-  cable([[0.3, 0.95, -0.6], [0.5, 1.4, 0.1], [-0.45, 2.0, 0.55]], 0.045, 0xd97706);
-  cable([[-0.2, 0.95, -1.0], [-0.5, 1.0, 0.2], [-0.85, 1.05, 0.85]], 0.03, 0x2563eb);
+  // 24 pines: de la fuente al conector ATX del borde de la placa
+  cable([[0.5, 0.7, -0.55], [0.95, 1.0, 0.2], [0.7, 1.9, 1.1], [0.0, 2.4, 1.45], [-0.74, 2.6, 1.45]], 0.06, 0x991b1b, 'motherboard');
+  // poder de GPU: de la fuente al conector de 8 pines del borde superior
+  cable([[0.0, 0.8, -0.55], [0.75, 1.3, 0.3], [0.4, 1.9, 0.95], [-0.5, 2.12, 1.15]], 0.045, 0xd97706, 'gpu');
+  // SATA: de la fuente al conector del SSD
+  cable([[-0.3, 0.7, -0.55], [-0.55, 0.9, 0.0], [-0.78, 1.05, 0.48]], 0.03, 0x2563eb, 'storage');
 
   // --- Partículas de flujo de aire ---
   const P_COUNT = 140;
@@ -450,6 +500,24 @@ function init() {
   particles.frustumCulled = false;
   scene.add(particles);
 
+  // Guía de recorrido: línea roja punteada hasta el sitio de la pieza
+  const SNAP_DIST = 1.0;
+  const guideGeo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]);
+  const guideMat = new THREE.LineDashedMaterial({ color: 0xef4444, dashSize: 0.18, gapSize: 0.12, transparent: true, opacity: 0.95 });
+  const guideLine = new THREE.Line(guideGeo, guideMat);
+  guideLine.visible = false;
+  guideLine.frustumCulled = false;
+  scene.add(guideLine);
+  const homeMarker = new THREE.Mesh(
+    new THREE.TorusGeometry(0.34, 0.04, 10, 40),
+    new THREE.MeshBasicMaterial({ color: 0xef4444, transparent: true, opacity: 0.9 })
+  );
+  homeMarker.visible = false;
+  scene.add(homeMarker);
+  const dragPlane = new THREE.Plane();
+  const dragHit = new THREE.Vector3();
+  const guideV = new THREE.Vector3();
+
   // --- Estado ---
   let activeScene = 'overview';
   let selectedPart = null;
@@ -459,6 +527,7 @@ function init() {
   let explodeTarget = 0;
   let lastInteract = 0;
   let hddOn = true;
+  let dragId = null; // pieza que se está arrastrando suelta
   const clock = new THREE.Clock();
 
   function setEmissive(id, hex, intensity) {
@@ -502,14 +571,35 @@ function init() {
   function toggleRemove(id) {
     const g = partGroups[id];
     g.userData.removed = !g.userData.removed;
+    if (!g.userData.removed) g.userData.freePos = null;
+    syncGhost(id);
     updateStatus();
     updateAllButton();
     applyDim();
   }
+  function updateGuide() {
+    if (!dragId) return;
+    const g = partGroups[dragId];
+    const home = g.userData.base;
+    g.getWorldPosition(guideV);
+    const pos = guideGeo.attributes.position;
+    pos.setXYZ(0, guideV.x, guideV.y, guideV.z);
+    pos.setXYZ(1, home.x, home.y, home.z);
+    pos.needsUpdate = true;
+    guideLine.computeLineDistances();
+    const inRange = guideV.distanceTo(home) < SNAP_DIST;
+    guideMat.color.setHex(inRange ? 0x22c55e : 0xef4444);
+    homeMarker.material.color.setHex(inRange ? 0x22c55e : 0xef4444);
+    homeMarker.position.copy(home);
+    homeMarker.lookAt(camera.position);
+  }
   function setAllRemoved(remove) {
     PARTS.forEach((p, i) => {
       setTimeout(() => {
-        partGroups[p.id].userData.removed = remove;
+        const g = partGroups[p.id];
+        g.userData.removed = remove;
+        if (!remove) g.userData.freePos = null;
+        syncGhost(p.id);
         if (selectedPart === p.id) updateStatus();
         updateAllButton();
         applyDim();
@@ -597,6 +687,21 @@ function init() {
   }
   canvas.addEventListener('pointermove', (event) => {
     pointerClient = { x: event.clientX, y: event.clientY };
+    if (dragId) {
+      // Arrastrar la pieza suelta sobre el plano que mira a la cámara
+      const rect = canvas.getBoundingClientRect();
+      pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+      raycaster.setFromCamera(pointer, camera);
+      if (raycaster.ray.intersectPlane(dragPlane, dragHit)) {
+        const g = partGroups[dragId];
+        const local = tower.worldToLocal(dragHit.clone());
+        g.userData.freePos = local;
+        g.position.copy(local);
+      }
+      updateGuide();
+      return;
+    }
     if (event.pointerType !== 'mouse') return;
     const id = pickPart(event);
     if (id !== hoveredPart) {
@@ -618,6 +723,13 @@ function init() {
     }
   });
   canvas.addEventListener('pointerleave', () => {
+    if (dragId) {
+      partGroups[dragId].userData.dragging = false;
+      dragId = null;
+      controls.enabled = true;
+      guideLine.visible = false;
+      homeMarker.visible = false;
+    }
     if (hoveredPart && hoveredPart !== selectedPart) restoreEmissive(hoveredPart);
     hoveredPart = null;
     if (tooltip) tooltip.hidden = true;
@@ -628,9 +740,58 @@ function init() {
     camTween = null;
     controls.autoRotate = false;
     lastInteract = clock.elapsedTime;
+    // Si la pieza ya está suelta, se puede arrastrar: se apaga la órbita
+    const id = pickPart(event);
+    if (id && partGroups[id].userData.removed) {
+      dragId = id;
+      partGroups[id].userData.dragging = true;
+      controls.enabled = false;
+      const p = new THREE.Vector3();
+      partGroups[id].getWorldPosition(p);
+      const n = new THREE.Vector3();
+      camera.getWorldDirection(n);
+      dragPlane.setFromNormalAndCoplanarPoint(n, p);
+      guideLine.visible = true;
+      homeMarker.visible = true;
+      ensureGhost(id);
+      updateGuide();
+      canvas.style.cursor = 'grabbing';
+    }
   });
   let clickTimer = null;
   canvas.addEventListener('pointerup', (event) => {
+    if (dragId) {
+      // Soltar la pieza suelta
+      const g = partGroups[dragId];
+      const moved = downPos ? Math.hypot(event.clientX - downPos.x, event.clientY - downPos.y) : 999;
+      const wasDrag = moved > 8;
+      g.userData.dragging = false;
+      const id = g.userData.partId;
+      dragId = null;
+      controls.enabled = true;
+      guideLine.visible = false;
+      homeMarker.visible = false;
+      canvas.style.cursor = 'grab';
+      downPos = null;
+      if (!wasDrag) {
+        // fue un clic, no un arrastre: desmontar/instalar con el flujo normal
+        if (clickTimer) clearTimeout(clickTimer);
+        clickTimer = setTimeout(() => { selectPart(id); clickTimer = null; }, 260);
+        return;
+      }
+      // si quedó cerca de su sitio, encaja sola
+      const p = new THREE.Vector3();
+      g.getWorldPosition(p);
+      if (p.distanceTo(g.userData.base) < SNAP_DIST) {
+        g.userData.freePos = null;
+        g.userData.removed = false;
+        syncGhost(id);
+        updateStatus();
+        updateAllButton();
+        applyDim();
+      }
+      return;
+    }
     if (!downPos) return;
     const moved = Math.hypot(event.clientX - downPos.x, event.clientY - downPos.y);
     downPos = null;
@@ -652,6 +813,9 @@ function init() {
       [target.x, target.y, target.z],
       1.1
     );
+    guideLine.visible = false;
+    homeMarker.visible = false;
+    controls.enabled = true;
     controls.autoRotate = false;
     lastInteract = clock.elapsedTime;
   });
@@ -670,7 +834,7 @@ function init() {
     resetBtn.addEventListener('click', () => {
       if (explodeInput) { explodeInput.value = '0'; explodeTarget = 0; }
       if (explodeVal) explodeVal.textContent = '0%';
-      PARTS.forEach((p) => { partGroups[p.id].userData.removed = false; });
+      PARTS.forEach((p) => { partGroups[p.id].userData.removed = false; partGroups[p.id].userData.freePos = null; syncGhost(p.id); });
       updateAllButton();
       selectPart(null);
       setScene('overview');
@@ -767,10 +931,24 @@ function init() {
       const ud = g.userData;
       ud.explodeK += (explodeTarget - ud.explodeK) * Math.min(1, dt * ud.explodeRate);
       ud.removeK += ((ud.removed ? 1 : 0) - ud.removeK) * Math.min(1, dt * 5);
-      g.position.copy(ud.base).addScaledVector(ud.dir, ud.explodeK * 1.6 + ud.removeK * 2.1);
-      g.position.y += Math.sin(elapsed * 2 + ud.explodeRate) * 0.05 * ud.removeK;
+      if (ud.dragging) {
+        // la posición la fija el puntero directamente
+      } else if (ud.freePos) {
+        g.position.lerp(ud.freePos, Math.min(1, dt * 8));
+        g.position.y += Math.sin(elapsed * 2 + ud.explodeRate) * 0.04;
+      } else {
+        g.position.copy(ud.base).addScaledVector(ud.dir, ud.explodeK * 1.6 + ud.removeK * 2.1);
+        g.position.y += Math.sin(elapsed * 2 + ud.explodeRate) * 0.05 * ud.removeK;
+      }
       g.rotation.y = ud.removeK * 0.7;
     });
+    // los cables se desvanecen cuando su pieza está retirada
+    cables.forEach((c) => {
+      const target = partGroups[c.partId].userData.removed ? 0 : 1;
+      c.mesh.material.opacity += (target - c.mesh.material.opacity) * Math.min(1, dt * 6);
+      c.mesh.visible = c.mesh.material.opacity > 0.02;
+    });
+    if (homeMarker.visible) homeMarker.scale.setScalar(1 + 0.15 * Math.sin(elapsed * 5));
     frontPanel.userData.explodeK += (explodeTarget - frontPanel.userData.explodeK) * Math.min(1, dt * frontPanel.userData.explodeRate);
     frontPanel.position.copy(frontPanel.userData.base).addScaledVector(frontPanel.userData.dir, frontPanel.userData.explodeK * 1.6);
 
