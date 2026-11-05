@@ -182,15 +182,22 @@ function init() {
   scene.add(particles);
 
   // --- Guía de recorrido: línea punteada hasta el sitio de la pieza ---
-  const SNAP_DIST = 0.8; // distancia a la que la pieza se incrusta sola al acercarla
   const MAGNET_RADIUS = 2.0; // radio en el que el imán empieza a atraerla hacia su sitio
   const RELEASE_SNAP_DIST = 1.2; // al soltarla dentro de este radio, encaja sola
   const guideGeo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]);
-  const guideMat = new THREE.LineDashedMaterial({ color: 0xef4444, dashSize: 0.18, gapSize: 0.12, transparent: true, opacity: 0.95 });
+  const guideMat = new THREE.LineDashedMaterial({ color: 0xef4444, dashSize: 0.22, gapSize: 0.1, transparent: true, opacity: 1 });
   const guideLine = new THREE.Line(guideGeo, guideMat);
   guideLine.visible = false;
   guideLine.frustumCulled = false;
   scene.add(guideLine);
+  // Pulso que viaja por la guía: hace visible el recorrido hasta el sitio
+  const guidePulse = new THREE.Mesh(
+    new THREE.SphereGeometry(0.07, 12, 12),
+    new THREE.MeshBasicMaterial({ color: 0xef4444 })
+  );
+  guidePulse.visible = false;
+  scene.add(guidePulse);
+  const pulseV = new THREE.Vector3();
   const homeMarker = new THREE.Mesh(
     new THREE.TorusGeometry(0.34, 0.04, 10, 40),
     new THREE.MeshBasicMaterial({ color: 0xef4444, transparent: true, opacity: 0.9 })
@@ -313,7 +320,7 @@ function init() {
     guideLine.computeLineDistances();
     const d = guideV.distanceTo(home);
     const armed = g.userData.magnetArmed;
-    const inSnap = armed && d < SNAP_DIST;
+    const inSnap = armed && d < RELEASE_SNAP_DIST; // verde: si la sueltas aquí, se pega
     const inMagnet = armed && d < MAGNET_RADIUS;
     guideMat.color.setHex(inSnap ? 0x22c55e : inMagnet ? 0xf59e0b : 0xef4444);
     homeMarker.material.color.setHex(inSnap ? 0x22c55e : inMagnet ? 0xf59e0b : 0xef4444);
@@ -470,12 +477,7 @@ function init() {
         g.position.copy(target);
       }
       updateGuide();
-      // si vuelve muy cerca de su sitio, se incrusta sola
-      const g = partGroups[dragId];
-      if (g && g.userData.magnetArmed) {
-        g.getWorldPosition(guideV);
-        if (guideV.distanceTo(g.userData.base) < SNAP_DIST) snapIn(dragId);
-      }
+      // la pieza NO se pega sola al acercarla: solo se encaja al soltar el clic
       return;
     }
     if (dragCandidate) return; // botón sostenido sobre una pieza, sin arrastre aún
@@ -538,6 +540,7 @@ function init() {
   canvas.addEventListener('pointerup', (event) => {
     // La órbita siempre vuelve a quedar activa al soltar, pase lo que pase
     controls.enabled = true;
+    if (event.button !== 0) { downPos = null; return; } // solo el botón izquierdo termina arrastres o clics
     if (dragId) {
       // Soltar la pieza: si quedó cerca de su sitio, encaja sola; si no, queda flotando
       const g = partGroups[dragId];
@@ -733,6 +736,17 @@ function init() {
       c.mesh.visible = c.mesh.material.opacity > 0.02;
     });
     if (homeMarker.visible) homeMarker.scale.setScalar(1 + 0.15 * Math.sin(elapsed * 5));
+    // pulso que viaja por la línea de guía mientras se arrastra una pieza
+    if (guideLine.visible && dragId) {
+      const g = partGroups[dragId];
+      g.getWorldPosition(pulseV);
+      const k = (elapsed * 1.2) % 1;
+      guidePulse.position.lerpVectors(pulseV, g.userData.base, k);
+      guidePulse.material.color.copy(guideMat.color);
+      guidePulse.visible = true;
+    } else {
+      guidePulse.visible = false;
+    }
     frontPanel.userData.explodeK += (explodeTarget - frontPanel.userData.explodeK) * Math.min(1, dt * frontPanel.userData.explodeRate);
     frontPanel.position.copy(frontPanel.userData.base).addScaledVector(frontPanel.userData.dir, frontPanel.userData.explodeK * 1.6);
 
