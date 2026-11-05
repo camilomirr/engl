@@ -88,10 +88,10 @@ function init() {
   controls.target.set(...SCENES.overview.tgt);
   controls.enableDamping = true;
   controls.dampingFactor = 0.08;
-  controls.minDistance = 4.0;
-  controls.maxDistance = 18;
+  controls.minDistance = 5.0;
+  controls.maxDistance = 16;
   controls.maxPolarAngle = Math.PI * 0.55;
-  controls.zoomSpeed = 0.35; // zoom suave, de a poquito con la rueda
+  controls.zoomSpeed = 0.35; // solo para el pellizco táctil; la rueda tiene su propio zoom
   controls.rotateSpeed = 0.85;
   controls.mouseButtons = { LEFT: THREE.MOUSE.ROTATE, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.PAN };
   controls.touches = { ONE: THREE.TOUCH.ROTATE, TWO: THREE.TOUCH.DOLLY_PAN };
@@ -600,7 +600,29 @@ function init() {
     controls.autoRotate = false;
     lastInteract = clock.elapsedTime;
   });
-  canvas.addEventListener('wheel', () => { controls.autoRotate = false; lastInteract = clock.elapsedTime; }, { passive: true });
+  // --- Zoom de rueda propio: proporcional a cuánto se gira y con suavizado ---
+  // El zoom de OrbitControls da un paso fijo por CADA evento de rueda, sin mirar
+  // cuánto se giró: una rueda que dispara muchos eventos (o un trackpad) salta de
+  // muy lejos a muy cerca sin punto medio. Aquí el cambio es proporcional a deltaY
+  // (un giro corto acerca poco, un giro largo acerca más) y la cámara se acerca a
+  // la distancia objetivo poco a poco. Se escucha en el contenedor, en fase de
+  // captura, y se frena el evento para que OrbitControls no aplique su zoom encima.
+  const ZOOM_MIN = 5.0;
+  const ZOOM_MAX = 16;
+  let targetRadius = new THREE.Vector3(...SCENES.overview.cam)
+    .distanceTo(new THREE.Vector3(...SCENES.overview.tgt));
+  let lastWheelAt = -10;
+  mount.addEventListener('wheel', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    let dy = event.deltaY;
+    if (event.deltaMode === 1) dy *= 33; // Firefox: líneas → píxeles
+    else if (event.deltaMode === 2) dy *= 500; // páginas → píxeles
+    targetRadius = THREE.MathUtils.clamp(targetRadius * Math.exp(dy * 0.0009), ZOOM_MIN, ZOOM_MAX);
+    controls.autoRotate = false;
+    lastInteract = clock.elapsedTime;
+    lastWheelAt = clock.elapsedTime;
+  }, { passive: false, capture: true });
 
   // --- Botones del panel ---
   sceneButtons.forEach((button) => {
@@ -689,6 +711,21 @@ function init() {
       camera.position.lerpVectors(camTween.p0, camTween.p1, s);
       controls.target.lerpVectors(camTween.t0, camTween.t1, s);
       if (k >= 1) camTween = null;
+    }
+    // zoom de rueda suave: la cámara se acerca a la distancia objetivo poco a poco
+    if (camTween) {
+      targetRadius = camera.position.distanceTo(controls.target);
+    } else {
+      const curR = camera.position.distanceTo(controls.target);
+      if (clock.elapsedTime - lastWheelAt > 0.5) {
+        // la distancia cambió por otro medio (pellizco, cinemática): el objetivo la sigue
+        targetRadius = curR;
+      } else if (Math.abs(targetRadius - curR) > 0.001) {
+        const k = 1 - Math.exp(-dt * 9);
+        const nextR = curR + (targetRadius - curR) * k;
+        const dir = camera.position.clone().sub(controls.target).normalize();
+        camera.position.copy(controls.target).addScaledVector(dir, nextR);
+      }
     }
     controls.update();
 
