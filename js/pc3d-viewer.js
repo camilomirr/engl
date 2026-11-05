@@ -1,8 +1,10 @@
 // =========================================================
-// NVISION — Visor 3D real de la torre (Three.js)
-// Reemplaza el antiguo "visor" de fotos apiladas por un modelo
-// 3D de verdad: órbita, zoom, piezas clicables, cinemáticas,
-// vista desarmada y flujo de aire animado.
+// NVISION — Visor 3D de la torre (Three.js)
+// Reescrito desde cero: cámara, luces, postproceso,
+// cinemáticas, etiquetas, explosión y el sistema de
+// arrastre con imán. El modelo 3D vive en pc3d-model.js.
+// Three.js corre desde los archivos del repo
+// (js/vendor/three), sin CDN.
 // =========================================================
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
@@ -11,11 +13,13 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { PARTS, buildPcModel } from './pc3d-model.js';
 
 const mount = document.getElementById('pc-viewer3d');
 if (mount) init();
 
 function init() {
+  // --- Referencias del DOM ---
   const canvas = document.getElementById('pc-canvas');
   const loadingEl = document.getElementById('pc-viewer-loading');
   const errorEl = document.getElementById('pc-viewer-error');
@@ -47,15 +51,6 @@ function init() {
     return key;
   };
 
-  const PARTS = [
-    { id: 'motherboard', key: 'part_motherboard', funcKey: 'pc3d_partfunc_motherboard', typesKey: 'pc3d_parttypes_motherboard' },
-    { id: 'ram', key: 'part_ram', funcKey: 'pc3d_partfunc_ram', typesKey: 'pc3d_parttypes_ram' },
-    { id: 'cpu', key: 'part_cpu', funcKey: 'pc3d_partfunc_cpu', typesKey: 'pc3d_parttypes_cpu' },
-    { id: 'gpu', key: 'part_gpu', funcKey: 'pc3d_partfunc_gpu', typesKey: 'pc3d_parttypes_gpu' },
-    { id: 'storage', key: 'part_storage', funcKey: 'pc3d_partfunc_storage', typesKey: 'pc3d_parttypes_storage' },
-    { id: 'psu', key: 'part_psu', funcKey: 'pc3d_partfunc_psu', typesKey: 'pc3d_parttypes_psu' },
-    { id: 'optical', key: 'part_optical', funcKey: 'pc3d_partfunc_optical', typesKey: 'pc3d_parttypes_optical' }
-  ];
   const partById = Object.fromEntries(PARTS.map((p) => [p.id, p]));
 
   const SCENES = {
@@ -64,6 +59,7 @@ function init() {
     airflow: { cam: [6.4, 5.4, 7.4], tgt: [0, 2.0, 0], focus: ['psu', 'gpu'], particles: true, fanBoost: 2.4 }
   };
 
+  // --- Renderizador ---
   let renderer;
   try {
     renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
@@ -87,6 +83,7 @@ function init() {
   const pmrem = new THREE.PMREMGenerator(renderer);
   scene.environment = pmrem.fromScene(new RoomEnvironment(renderer), 0.04).texture;
 
+  // --- Controles: izquierdo agarra/gira · derecho mueve la vista · rueda zoom suave ---
   const controls = new OrbitControls(camera, canvas);
   controls.target.set(...SCENES.overview.tgt);
   controls.enableDamping = true;
@@ -96,14 +93,13 @@ function init() {
   controls.maxPolarAngle = Math.PI * 0.55;
   controls.zoomSpeed = 0.35; // zoom suave, de a poquito con la rueda
   controls.rotateSpeed = 0.85;
-  // Izquierdo: agarrar piezas (y girar en vacío) · Derecho: mover la vista
   controls.mouseButtons = { LEFT: THREE.MOUSE.ROTATE, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.PAN };
   controls.touches = { ONE: THREE.TOUCH.ROTATE, TWO: THREE.TOUCH.DOLLY_PAN };
   controls.enablePan = true;
   controls.autoRotate = !reduceMotion;
   controls.autoRotateSpeed = 0.9;
 
-  // Postproceso: bloom suave para que brillen los LED y el RGB
+  // --- Postproceso: bloom suave para que brillen los LED y el RGB ---
   const composer = new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene, camera));
   const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.5, 0.45, 0.85);
@@ -126,7 +122,7 @@ function init() {
   fillLight.position.set(-4, 2, -5);
   scene.add(fillLight);
 
-  // --- Suelo: sombra + anillo ---
+  // --- Suelo: sombra + anillos luminosos ---
   const ground = new THREE.Mesh(
     new THREE.CircleGeometry(8, 48),
     new THREE.ShadowMaterial({ opacity: 0.32 })
@@ -157,335 +153,13 @@ function init() {
   outerRing.position.y = 0.01;
   scene.add(outerRing);
 
-  // --- Materiales y helpers ---
-  const mat = (color, opts = {}) => new THREE.MeshStandardMaterial({
-    color, metalness: opts.metal ?? 0.55, roughness: opts.rough ?? 0.45,
-    emissive: opts.emissive ?? 0x000000, emissiveIntensity: opts.emissiveIntensity ?? 0,
-    transparent: true
-  });
-  const box = (w, h, d, material) => {
-    const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), material);
-    m.castShadow = true; m.receiveShadow = true;
-    return m;
-  };
-  const cyl = (rt, rb, h, material, seg = 24) => {
-    const m = new THREE.Mesh(new THREE.CylinderGeometry(rt, rb, h, seg), material);
-    m.castShadow = true; m.receiveShadow = true;
-    return m;
-  };
-
-  const CASE_MAT = mat(0x2a3648, { metal: 0.7, rough: 0.35 });
-  const DARK_MAT = mat(0x0f172a, { metal: 0.5, rough: 0.5 });
-  const PCB_MAT = mat(0x166534, { metal: 0.2, rough: 0.55 });
-  const METAL_MAT = mat(0xb8c4d4, { metal: 0.9, rough: 0.25 });
-  const COPPER_MAT = mat(0xb87333, { metal: 0.9, rough: 0.3 });
-
-  const spinners = []; // ventiladores que giran { group, speed }
-  function makeFan(radius, ringColor = 0x22d3ee) {
-    const group = new THREE.Group();
-    const spinner = new THREE.Group();
-    const ringMesh = new THREE.Mesh(
-      new THREE.TorusGeometry(radius, 0.055, 10, 40),
-      mat(0x1e293b, { metal: 0.7, rough: 0.35 })
-    );
-    group.add(ringMesh);
-    const hub = cyl(radius * 0.28, radius * 0.28, 0.1, mat(0x334155, { metal: 0.6, rough: 0.4 }), 20);
-    hub.rotation.x = Math.PI / 2;
-    group.add(hub);
-    for (let i = 0; i < 5; i++) {
-      const blade = box(radius * 0.78, radius * 0.34, 0.03, mat(0x0f172a, { metal: 0.4, rough: 0.5 }));
-      const holder = new THREE.Group();
-      blade.position.x = radius * 0.52;
-      blade.rotation.x = 0.5;
-      holder.add(blade);
-      holder.rotation.z = (i / 5) * Math.PI * 2;
-      spinner.add(holder);
-    }
-    group.add(spinner);
-    const glow = new THREE.Mesh(
-      new THREE.TorusGeometry(radius * 0.94, 0.02, 8, 40),
-      new THREE.MeshBasicMaterial({ color: ringColor })
-    );
-    group.add(glow);
-    spinners.push({ group: spinner, speed: 6 + Math.random() * 2 });
-    return group;
-  }
-
-  // --- Registro de piezas clicables ---
-  const partGroups = {};
-  const partMeshes = [];
-  const partMats = {};
-  function registerPart(group, id, dir) {
-    group.userData.partId = id;
-    group.userData.base = group.position.clone();
-    group.userData.dir = new THREE.Vector3(...dir);
-    group.userData.targetOpacity = 1;
-    group.userData.removed = false;
-    group.userData.removeK = 0;
-    group.userData.explodeK = 1; // arranca desarmada y se ensambla sola en la intro
-    group.userData.explodeRate = 2.0 + PARTS.findIndex((p) => p.id === id) * 0.45;
-    group.userData.freePos = null; // posición libre al arrastrarla suelta
-    group.userData.dragging = false;
-    group.userData.magnetArmed = false; // el imán solo ayuda al acercarla a su sitio
-    group.userData.lastDragD = 0; // distancia al sitio en el movimiento anterior
-    group.userData.grabOffset = new THREE.Vector3(); // agarre sin salto
-    group.userData.ghost = null;
-    const mats = new Set();
-    group.traverse((o) => {
-      if (o.isMesh) {
-        o.userData.partId = id;
-        partMeshes.push(o);
-        if (o.material && o.material.isMeshStandardMaterial) {
-          mats.add(o.material);
-          o.material.userData.baseEmissive = o.material.emissive.getHex();
-          o.material.userData.baseEmissiveIntensity = o.material.emissiveIntensity;
-        }
-      }
-    });
-    partMats[id] = [...mats];
-    partGroups[id] = group;
-  }
-
-  // Fantasma del hueco: marca translúcida donde va la pieza retirada
-  function ensureGhost(id) {
-    const g = partGroups[id];
-    if (g.userData.ghost) return g.userData.ghost;
-    const ghost = g.clone(true);
-    const ghostMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.16, depthWrite: false });
-    ghost.traverse((o) => {
-      if (o.isMesh) {
-        o.material = ghostMat;
-        o.castShadow = false;
-        o.receiveShadow = false;
-      }
-    });
-    ghost.position.copy(g.userData.base);
-    ghost.rotation.set(0, 0, 0);
-    ghost.visible = false;
-    tower.add(ghost);
-    g.userData.ghost = ghost;
-    g.userData.ghostMat = ghostMat;
-    return ghost;
-  }
-  function syncGhost(id) {
-    const g = partGroups[id];
-    if (!g.userData.removed && !g.userData.ghost) return;
-    const ghost = ensureGhost(id);
-    ghost.visible = g.userData.removed;
-  }
-
-  // --- Torre: chasis (panel lateral abierto, sin vidrio) ---
-  const tower = new THREE.Group();
+  // --- Modelo 3D (torre, piezas, cables, LED) ---
+  const model = buildPcModel();
+  const { tower, frontPanel, rgbStrip, powerLedMat, hddLedMat } = model;
+  const { partGroups, partMeshes, partMats, spinners, cables } = model;
   scene.add(tower);
-  const caseParts = [];
-  function caseBox(w, h, d, x, y, z, material = CASE_MAT) {
-    const m = box(w, h, d, material);
-    m.position.set(x, y, z);
-    tower.add(m);
-    caseParts.push(m);
-    return m;
-  }
-  caseBox(0.08, 4.6, 4.0, -1.1, 2.3, 0);          // pared izquierda (placa madre)
-  caseBox(2.28, 4.6, 0.08, 0, 2.3, -2);           // trasera
-  caseBox(2.28, 0.08, 4.08, 0, 4.6, 0);           // techo
-  caseBox(2.28, 0.08, 4.08, 0, 0.04, 0);          // piso
-  const frontPanel = caseBox(2.28, 4.6, 0.08, 0, 2.3, 2); // frontal
-  frontPanel.userData.base = frontPanel.position.clone();
-  frontPanel.userData.dir = new THREE.Vector3(0, 0, 1.6);
-  frontPanel.userData.explodeK = 1;
-  frontPanel.userData.explodeRate = 2.2;
-  // marco del lado abierto (+X)
-  caseBox(0.08, 0.12, 4.0, 1.1, 4.55, 0);
-  caseBox(0.08, 0.12, 4.0, 1.1, 0.12, 0);
-  caseBox(0.08, 4.6, 0.12, 1.1, 2.3, 1.95);
-  caseBox(0.08, 4.6, 0.12, 1.1, 2.3, -1.95);
-  // patas
-  [[-0.9, -1.8], [0.9, -1.8], [-0.9, 1.8], [0.9, 1.8]].forEach(([x, z]) => {
-    const foot = cyl(0.09, 0.11, 0.12, DARK_MAT, 12);
-    foot.position.set(x, -0.04, z);
-    tower.add(foot);
-  });
-  // tira RGB vertical en el frontal
-  const rgbStrip = new THREE.Mesh(
-    new THREE.BoxGeometry(0.06, 4.1, 0.06),
-    new THREE.MeshBasicMaterial({ color: 0x22d3ee })
-  );
-  rgbStrip.position.set(1.06, 2.3, 1.9);
-  tower.add(rgbStrip);
-  // LED de encendido y de actividad (parpadean como un equipo real)
-  const powerLedMat = new THREE.MeshBasicMaterial({ color: 0x22c55e });
-  const powerLed = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.06, 0.03), powerLedMat);
-  powerLed.position.set(0.72, 4.35, 2.05);
-  tower.add(powerLed);
-  const hddLedMat = new THREE.MeshBasicMaterial({ color: 0xf59e0b });
-  const hddLed = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.06, 0.03), hddLedMat);
-  hddLed.position.set(0.92, 4.35, 2.05);
-  tower.add(hddLed);
 
-  // --- Placa madre ---
-  const motherboard = new THREE.Group();
-  motherboard.position.set(-0.94, 2.5, -0.1);
-  const board = box(0.08, 3.5, 3.4, PCB_MAT);
-  motherboard.add(board);
-  const chipset = box(0.1, 0.5, 0.5, DARK_MAT);
-  chipset.position.set(0.08, -0.9, -0.6);
-  motherboard.add(chipset);
-  [-1.15, -0.55].forEach((y) => {
-    const slot = box(0.1, 0.12, 2.4, mat(0x111827, { metal: 0.4, rough: 0.55 }));
-    slot.position.set(0.08, y, 0.1);
-    motherboard.add(slot);
-  });
-  for (let i = 0; i < 6; i++) {
-    const cap = cyl(0.05, 0.05, 0.16, COPPER_MAT, 10);
-    cap.rotation.z = Math.PI / 2;
-    cap.position.set(0.1, 1.35 - i * 0.22, 1.45);
-    motherboard.add(cap);
-  }
-  const trace = box(0.02, 2.6, 0.1, mat(0x0f172a, { emissive: 0x0ea5e9, emissiveIntensity: 0.5 }));
-  trace.position.set(0.06, 0.2, -1.2);
-  motherboard.add(trace);
-  // conector ATX de 24 pines en el borde derecho de la placa
-  const atxConnector = box(0.12, 0.5, 0.3, mat(0xe5e7eb, { metal: 0.3, rough: 0.5 }));
-  atxConnector.position.set(0.1, 0.1, 1.55);
-  motherboard.add(atxConnector);
-  tower.add(motherboard);
-  registerPart(motherboard, 'motherboard', [0, 0, 0]);
-
-  // --- CPU + disipador con ventilador ---
-  const cpu = new THREE.Group();
-  cpu.position.set(-0.86, 3.45, -0.7);
-  const socket = box(0.1, 0.72, 0.72, DARK_MAT);
-  cpu.add(socket);
-  const chip = box(0.12, 0.5, 0.5, METAL_MAT);
-  chip.position.x = 0.08;
-  cpu.add(chip);
-  const heatsink = cyl(0.52, 0.52, 0.3, COPPER_MAT, 28);
-  heatsink.rotation.z = Math.PI / 2;
-  heatsink.position.x = 0.32;
-  cpu.add(heatsink);
-  const cpuFan = makeFan(0.5);
-  cpuFan.rotation.y = Math.PI / 2;
-  cpuFan.position.x = 0.52;
-  cpu.add(cpuFan);
-  tower.add(cpu);
-  registerPart(cpu, 'cpu', [1.6, 0.2, 0]);
-
-  // --- RAM (2 módulos) ---
-  const ram = new THREE.Group();
-  ram.position.set(-0.82, 3.3, 0.75);
-  [0, 0.4].forEach((dz, i) => {
-    const stick = box(0.1, 1.15, 0.22, mat(0x1f2937, { metal: 0.5, rough: 0.45 }));
-    stick.position.set(0, 0, dz);
-    ram.add(stick);
-    const rgb = box(0.11, 0.09, 0.22, mat(0x0f172a, { emissive: i === 0 ? 0x22d3ee : 0xd946ef, emissiveIntensity: 0.9 }));
-    rgb.position.set(0, 0.6, dz);
-    ram.add(rgb);
-  });
-  const ramSlot = box(0.12, 0.1, 0.85, DARK_MAT);
-  ramSlot.position.set(0, -0.62, 0.2);
-  ram.add(ramSlot);
-  tower.add(ram);
-  registerPart(ram, 'ram', [1.6, 0.3, 0.2]);
-
-  // --- GPU ---
-  const gpu = new THREE.Group();
-  gpu.position.set(-0.55, 1.75, 0.1);
-  const gpuBody = box(0.42, 0.55, 2.7, mat(0x1f2937, { metal: 0.6, rough: 0.4 }));
-  gpu.add(gpuBody);
-  const gpuAccent = box(0.5, 0.09, 2.7, mat(0x7f1d1d, { emissive: 0xef4444, emissiveIntensity: 0.7 }));
-  gpuAccent.position.y = 0.28;
-  gpu.add(gpuAccent);
-  const gpuPlate = box(0.05, 0.5, 2.6, METAL_MAT);
-  gpuPlate.position.x = -0.22;
-  gpu.add(gpuPlate);
-  // conector de poder de 8 pines en el borde superior de la gráfica
-  const gpuPower = box(0.3, 0.12, 0.4, DARK_MAT);
-  gpuPower.position.set(0, 0.32, 1.05);
-  gpu.add(gpuPower);
-  [-0.62, 0.62].forEach((dz) => {
-    const fan = makeFan(0.42, 0xef4444);
-    fan.rotation.y = Math.PI / 2;
-    fan.position.set(0.24, 0, dz);
-    gpu.add(fan);
-  });
-  tower.add(gpu);
-  registerPart(gpu, 'gpu', [1.8, 0, 0]);
-
-  // --- Fuente de poder ---
-  const psu = new THREE.Group();
-  psu.position.set(0.25, 0.5, -1.25);
-  const psuBody = box(1.5, 0.85, 1.4, mat(0x111827, { metal: 0.6, rough: 0.45 }));
-  psu.add(psuBody);
-  const psuGrill = cyl(0.32, 0.32, 0.03, mat(0x334155, { metal: 0.7, rough: 0.4 }), 24);
-  psuGrill.position.set(0, 0.44, 0);
-  psu.add(psuGrill);
-  const psuLabel = box(0.5, 0.3, 0.02, mat(0x0f172a, { emissive: 0x10b981, emissiveIntensity: 0.6 }));
-  psuLabel.position.set(0.76, 0.1, 0.3);
-  psuLabel.rotation.y = Math.PI / 2;
-  psu.add(psuLabel);
-  tower.add(psu);
-  registerPart(psu, 'psu', [0, -0.8, -0.5]);
-
-  // --- Almacenamiento (SSD M.2 en placa) ---
-  const storage = new THREE.Group();
-  storage.position.set(-0.85, 1.05, 0.9);
-  const ssd = box(0.06, 0.28, 0.95, mat(0x1d4ed8, { metal: 0.6, rough: 0.4 }));
-  storage.add(ssd);
-  const ssdLabel = box(0.02, 0.2, 0.6, mat(0x0f172a, { emissive: 0x38bdf8, emissiveIntensity: 0.5 }));
-  ssdLabel.position.x = 0.04;
-  storage.add(ssdLabel);
-  // conector SATA del SSD
-  const sataConnector = box(0.08, 0.2, 0.15, mat(0xe5e7eb, { metal: 0.3, rough: 0.5 }));
-  sataConnector.position.set(0.05, 0, -0.4);
-  storage.add(sataConnector);
-  tower.add(storage);
-  registerPart(storage, 'storage', [1.3, 0, 0.5]);
-
-  // --- Unidad óptica (bahía frontal superior) ---
-  const optical = new THREE.Group();
-  optical.position.set(0, 4.25, 1.55);
-  const oddBody = box(1.8, 0.28, 1.3, mat(0x9aa7b8, { metal: 0.8, rough: 0.35 }));
-  optical.add(oddBody);
-  const oddBezel = box(1.82, 0.28, 0.06, DARK_MAT);
-  oddBezel.position.z = 0.66;
-  optical.add(oddBezel);
-  const oddSlot = box(1.2, 0.03, 0.02, mat(0x000000, { metal: 0.2, rough: 0.8 }));
-  oddSlot.position.set(0, 0.02, 0.7);
-  optical.add(oddSlot);
-  tower.add(optical);
-  registerPart(optical, 'optical', [0, 0.8, 1.3]);
-
-  // --- Ventiladores del chasis (no clicables) ---
-  const caseFans = [];
-  [[0, 3.5, 1.92, 0, 0x22d3ee], [0, 1.3, 1.92, 0, 0x22d3ee], [0, 3.9, -1.92, Math.PI, 0x34d399]].forEach(([x, y, z, ry, color]) => {
-    const fan = makeFan(0.55, color);
-    fan.position.set(x, y, z);
-    fan.rotation.y = ry;
-    tower.add(fan);
-    caseFans.push(fan);
-  });
-
-  // --- Cables (cada uno pertenece a su pieza y se desvanece con ella) ---
-  const cables = [];
-  function cable(points, radius, color, partId) {
-    const curve = new THREE.CatmullRomCurve3(points.map((p) => new THREE.Vector3(...p)));
-    const mesh = new THREE.Mesh(
-      new THREE.TubeGeometry(curve, 24, radius, 8, false),
-      mat(color, { metal: 0.2, rough: 0.7 })
-    );
-    mesh.castShadow = true;
-    tower.add(mesh);
-    cables.push({ mesh, partId });
-    return mesh;
-  }
-  // 24 pines: de la fuente al conector ATX del borde de la placa
-  cable([[0.5, 0.7, -0.55], [0.95, 1.0, 0.2], [0.7, 1.9, 1.1], [0.0, 2.4, 1.45], [-0.74, 2.6, 1.45]], 0.06, 0x991b1b, 'motherboard');
-  // poder de GPU: de la fuente al conector de 8 pines del borde superior
-  cable([[0.0, 0.8, -0.55], [0.75, 1.3, 0.3], [0.4, 1.9, 0.95], [-0.5, 2.12, 1.15]], 0.045, 0xd97706, 'gpu');
-  // SATA: de la fuente al conector del SSD
-  cable([[-0.3, 0.7, -0.55], [-0.55, 0.9, 0.0], [-0.78, 1.05, 0.48]], 0.03, 0x2563eb, 'storage');
-
-  // --- Partículas de flujo de aire ---
+  // --- Partículas de flujo de aire (cinemática 03) ---
   const P_COUNT = 140;
   const pGeo = new THREE.BufferGeometry();
   const pPos = new Float32Array(P_COUNT * 3);
@@ -507,7 +181,7 @@ function init() {
   particles.frustumCulled = false;
   scene.add(particles);
 
-  // Guía de recorrido: línea roja punteada hasta el sitio de la pieza
+  // --- Guía de recorrido: línea punteada hasta el sitio de la pieza ---
   const SNAP_DIST = 0.8; // distancia a la que la pieza se incrusta sola al acercarla
   const MAGNET_RADIUS = 2.0; // radio en el que el imán empieza a atraerla hacia su sitio
   const RELEASE_SNAP_DIST = 1.2; // al soltarla dentro de este radio, encaja sola
@@ -536,10 +210,11 @@ function init() {
   let explodeTarget = 0;
   let lastInteract = 0;
   let hddOn = true;
-  let dragId = null; // pieza que se está arrastrando suelta
+  let dragId = null; // pieza que se está arrastrando
   let dragCandidate = null; // pieza bajo el cursor al presionar (posible arrastre)
   const clock = new THREE.Clock();
 
+  // --- Ayudas de resaltado y panel ---
   function setEmissive(id, hex, intensity) {
     (partMats[id] || []).forEach((m) => {
       m.emissive.setHex(hex);
@@ -577,110 +252,6 @@ function init() {
     const allRemoved = PARTS.every((p) => partGroups[p.id].userData.removed);
     allBtnLabel.textContent = t(allRemoved ? 'pc3d_assemble_all' : 'pc3d_disassemble_all');
     allBtnLabel.dataset.i18n = allRemoved ? 'pc3d_assemble_all' : 'pc3d_disassemble_all';
-  }
-  function toggleRemove(id) {
-    const g = partGroups[id];
-    g.userData.removed = !g.userData.removed;
-    if (!g.userData.removed) g.userData.freePos = null;
-    syncGhost(id);
-    updateStatus();
-    updateAllButton();
-    applyDim();
-  }
-  function updateGuide() {
-    if (!dragId) return;
-    const g = partGroups[dragId];
-    const home = g.userData.base;
-    g.getWorldPosition(guideV);
-    const pos = guideGeo.attributes.position;
-    pos.setXYZ(0, guideV.x, guideV.y, guideV.z);
-    pos.setXYZ(1, home.x, home.y, home.z);
-    pos.needsUpdate = true;
-    guideLine.computeLineDistances();
-    const d = guideV.distanceTo(home);
-    const armed = g.userData.magnetArmed;
-    const inSnap = armed && d < SNAP_DIST;
-    const inMagnet = armed && d < MAGNET_RADIUS;
-    guideMat.color.setHex(inSnap ? 0x22c55e : inMagnet ? 0xf59e0b : 0xef4444);
-    homeMarker.material.color.setHex(inSnap ? 0x22c55e : inMagnet ? 0xf59e0b : 0xef4444);
-    if (g.userData.ghostMat) g.userData.ghostMat.color.setHex(inSnap ? 0x22c55e : inMagnet ? 0xf59e0b : 0x38bdf8);
-    homeMarker.position.copy(home);
-    homeMarker.lookAt(camera.position);
-  }
-  function startDrag(id) {
-    const g = partGroups[id];
-    dragId = id;
-    dragCandidate = null;
-    g.userData.dragging = true;
-    g.userData.magnetArmed = g.userData.removed; // el imán solo se arma si la pieza ya estaba suelta
-    selectPart(id); // el panel sigue a la pieza que se agarra
-    if (!g.userData.removed) {
-      g.userData.removed = true; // al agarrarla se suelta de su sitio
-      g.userData.freePos = null;
-      syncGhost(id);
-      updateStatus();
-      updateAllButton();
-      applyDim();
-    }
-    const p = new THREE.Vector3();
-    g.getWorldPosition(p);
-    const n = new THREE.Vector3();
-    camera.getWorldDirection(n);
-    // El plano de arrastre pasa POR LA ZONA ROJA (su sitio), no por la pieza:
-    // así la pieza sí puede llegar hasta su sitio con el cursor
-    const homeWorld = tower.localToWorld(g.userData.base.clone());
-    dragPlane.setFromNormalAndCoplanarPoint(n, homeWorld);
-    // Agarre sin salto: guardar el desplazamiento entre el centro y el punto del cursor
-    if (pointerClient) {
-      const rect = canvas.getBoundingClientRect();
-      pointer.x = ((pointerClient.x - rect.left) / rect.width) * 2 - 1;
-      pointer.y = -((pointerClient.y - rect.top) / rect.height) * 2 + 1;
-      raycaster.setFromCamera(pointer, camera);
-      const hit = new THREE.Vector3();
-      if (raycaster.ray.intersectPlane(dragPlane, hit)) {
-        const off = p.clone().sub(hit);
-        off.addScaledVector(n, -off.dot(n)); // solo la parte dentro del plano
-        g.userData.grabOffset = off;
-      } else {
-        g.userData.grabOffset = new THREE.Vector3();
-      }
-    }
-    g.userData.lastDragD = p.distanceTo(homeWorld);
-    guideLine.visible = true;
-    homeMarker.visible = true;
-    ensureGhost(id);
-    updateGuide();
-    canvas.style.cursor = 'grabbing';
-  }
-  function snapIn(id) {
-    const g = partGroups[id];
-    g.userData.freePos = null;
-    g.userData.removed = false;
-    g.userData.dragging = false;
-    dragId = null;
-    dragCandidate = null;
-    guideLine.visible = false;
-    homeMarker.visible = false;
-    canvas.style.cursor = 'grab';
-    if (g.userData.ghostMat) g.userData.ghostMat.color.setHex(0x38bdf8);
-    syncGhost(id);
-    updateStatus();
-    updateAllButton();
-    applyDim();
-    // los controles se reactivan en el pointerup, no aquí
-  }
-  function setAllRemoved(remove) {
-    PARTS.forEach((p, i) => {
-      setTimeout(() => {
-        const g = partGroups[p.id];
-        g.userData.removed = remove;
-        if (!remove) g.userData.freePos = null;
-        syncGhost(p.id);
-        if (selectedPart === p.id) updateStatus();
-        updateAllButton();
-        applyDim();
-      }, i * 90);
-    });
   }
   function updatePanelForPart(part, index) {
     if (titleEl) {
@@ -728,6 +299,105 @@ function init() {
       descEl.dataset.i18n = `scene_${name}_desc`;
     }
   }
+
+  // --- Guía, arrastre e imán ---
+  function updateGuide() {
+    if (!dragId) return;
+    const g = partGroups[dragId];
+    const home = g.userData.base;
+    g.getWorldPosition(guideV);
+    const pos = guideGeo.attributes.position;
+    pos.setXYZ(0, guideV.x, guideV.y, guideV.z);
+    pos.setXYZ(1, home.x, home.y, home.z);
+    pos.needsUpdate = true;
+    guideLine.computeLineDistances();
+    const d = guideV.distanceTo(home);
+    const armed = g.userData.magnetArmed;
+    const inSnap = armed && d < SNAP_DIST;
+    const inMagnet = armed && d < MAGNET_RADIUS;
+    guideMat.color.setHex(inSnap ? 0x22c55e : inMagnet ? 0xf59e0b : 0xef4444);
+    homeMarker.material.color.setHex(inSnap ? 0x22c55e : inMagnet ? 0xf59e0b : 0xef4444);
+    if (g.userData.ghostMat) g.userData.ghostMat.color.setHex(inSnap ? 0x22c55e : inMagnet ? 0xf59e0b : 0x38bdf8);
+    homeMarker.position.copy(home);
+    homeMarker.lookAt(camera.position);
+  }
+  function startDrag(id) {
+    const g = partGroups[id];
+    dragId = id;
+    dragCandidate = null;
+    g.userData.dragging = true;
+    g.userData.magnetArmed = g.userData.removed; // el imán solo se arma si la pieza ya estaba suelta
+    selectPart(id); // el panel sigue a la pieza que se agarra
+    if (!g.userData.removed) {
+      g.userData.removed = true; // al agarrarla se suelta de su sitio
+      g.userData.freePos = null;
+      model.syncGhost(id);
+      updateStatus();
+      updateAllButton();
+      applyDim();
+    }
+    const p = new THREE.Vector3();
+    g.getWorldPosition(p);
+    const n = new THREE.Vector3();
+    camera.getWorldDirection(n);
+    // El plano de arrastre pasa POR LA ZONA ROJA (su sitio), no por la pieza:
+    // así la pieza sí puede llegar hasta su sitio con el cursor
+    const homeWorld = tower.localToWorld(g.userData.base.clone());
+    dragPlane.setFromNormalAndCoplanarPoint(n, homeWorld);
+    // Agarre sin salto: guardar el desplazamiento entre el centro y el punto del cursor
+    if (pointerClient) {
+      const rect = canvas.getBoundingClientRect();
+      pointer.x = ((pointerClient.x - rect.left) / rect.width) * 2 - 1;
+      pointer.y = -((pointerClient.y - rect.top) / rect.height) * 2 + 1;
+      raycaster.setFromCamera(pointer, camera);
+      const hit = new THREE.Vector3();
+      if (raycaster.ray.intersectPlane(dragPlane, hit)) {
+        const off = p.clone().sub(hit);
+        off.addScaledVector(n, -off.dot(n)); // solo la parte dentro del plano
+        g.userData.grabOffset = off;
+      } else {
+        g.userData.grabOffset = new THREE.Vector3();
+      }
+    }
+    g.userData.lastDragD = p.distanceTo(homeWorld);
+    guideLine.visible = true;
+    homeMarker.visible = true;
+    model.ensureGhost(id);
+    updateGuide();
+    canvas.style.cursor = 'grabbing';
+  }
+  function snapIn(id) {
+    const g = partGroups[id];
+    g.userData.freePos = null;
+    g.userData.removed = false;
+    g.userData.dragging = false;
+    dragId = null;
+    dragCandidate = null;
+    guideLine.visible = false;
+    homeMarker.visible = false;
+    canvas.style.cursor = 'grab';
+    if (g.userData.ghostMat) g.userData.ghostMat.color.setHex(0x38bdf8);
+    model.syncGhost(id);
+    updateStatus();
+    updateAllButton();
+    applyDim();
+    // los controles se reactivan en el pointerup, no aquí
+  }
+  function setAllRemoved(remove) {
+    PARTS.forEach((p, i) => {
+      setTimeout(() => {
+        const g = partGroups[p.id];
+        g.userData.removed = remove;
+        if (!remove) g.userData.freePos = null;
+        model.syncGhost(p.id);
+        if (selectedPart === p.id) updateStatus();
+        updateAllButton();
+        applyDim();
+      }, i * 90);
+    });
+  }
+
+  // --- Cámara y cinemáticas ---
   function flyTo(pos, tgt, dur = 1.0) {
     camTween = {
       p0: camera.position.clone(), p1: new THREE.Vector3(...pos),
@@ -748,9 +418,16 @@ function init() {
   }
 
   // --- Interacción ---
+  // Reglas del modelo (aprendidas a pulso):
+  // · Izquierdo sobre pieza = agarrarla y arrastrarla; clic solo la selecciona.
+  // · Izquierdo en vacío = girar la cámara · Derecho = mover la vista (pan).
+  // · El menú del navegador nunca aparece sobre el visor.
+  // · La órbita SIEMPRE vuelve a quedar activa al soltar o al presionar:
+  //   si se apaga y no se vuelve a encender, la vista se congela y el
+  //   clic derecho muestra el menú del navegador en vez de mover la vista.
   const raycaster = new THREE.Raycaster();
   const pointer = new THREE.Vector2();
-  let pointerClient = { x: 0, y: 0 };
+  let pointerClient = null;
   let downPos = null;
 
   function pickPart(event) {
@@ -768,7 +445,7 @@ function init() {
       if (Math.hypot(event.clientX - downPos.x, event.clientY - downPos.y) > 8) startDrag(dragCandidate);
     }
     if (dragId) {
-      // Arrastrar la pieza sobre el plano que mira a la cámara, con imán hacia su sitio
+      // Arrastrar la pieza sobre el plano de su sitio, con imán al acercarla
       const rect = canvas.getBoundingClientRect();
       pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
       pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
@@ -922,6 +599,7 @@ function init() {
   });
   canvas.addEventListener('wheel', () => { controls.autoRotate = false; lastInteract = clock.elapsedTime; }, { passive: true });
 
+  // --- Botones del panel ---
   sceneButtons.forEach((button) => {
     button.addEventListener('click', () => setScene(button.dataset.scene));
   });
@@ -935,7 +613,11 @@ function init() {
     resetBtn.addEventListener('click', () => {
       if (explodeInput) { explodeInput.value = '0'; explodeTarget = 0; }
       if (explodeVal) explodeVal.textContent = '0%';
-      PARTS.forEach((p) => { partGroups[p.id].userData.removed = false; partGroups[p.id].userData.freePos = null; syncGhost(p.id); });
+      PARTS.forEach((p) => {
+        partGroups[p.id].userData.removed = false;
+        partGroups[p.id].userData.freePos = null;
+        model.syncGhost(p.id);
+      });
       updateAllButton();
       selectPart(null);
       setScene('overview');
@@ -996,6 +678,7 @@ function init() {
     const dt = Math.min(clock.getDelta(), 0.05);
     const elapsed = clock.elapsedTime;
 
+    // vuelo de cámara (intro y cinemáticas)
     if (camTween) {
       camTween.k += dt / camTween.dur;
       const k = Math.min(camTween.k, 1);

@@ -8,8 +8,8 @@
   <script type="importmap">
     {
       "imports": {
-        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+        "three": "./js/vendor/three/three.module.min.js",
+        "three/addons/": "./js/vendor/three/addons/"
       }
     }
   </script>
@@ -91,7 +91,7 @@
   <footer class="site-footer"><p data-i18n="pc3d_footer">© 2026 - NVISION / PC3D y más</p></footer>
   <script src="js/main.js"></script>
   <script>
-    // Si el visor 3D no arranca (sin WebGL o sin conexión al CDN), muestra el aviso.
+    // Si el visor 3D no arranca (sin WebGL), muestra el aviso.
     setTimeout(function () {
       if (!window.__pcViewerReady) {
         var loading = document.getElementById('pc-viewer-loading');
