@@ -410,7 +410,11 @@ const translations = {
     explorer_desc: "Mueve el cursor sobre la escena para recorrer el interior de una torre y reconocer cómo se conectan sus piezas.",
     explorer_status: "ESCENA INTERACTIVA",
     explorer_kicker: "CINEMÁTICA ACTIVA",
-    explorer_hint: "Mueve el ratón para cambiar la perspectiva",
+    explorer_hint: "Arrastra para girar · Rueda para zoom · Toca una pieza",
+    pc3d_viewer_loading: "Cargando modelo 3D…",
+    pc3d_viewer_error: "No se pudo cargar el visor 3D. Revisa tu conexión e inténtalo de nuevo.",
+    pc3d_explode_label: "Desarmar",
+    pc3d_reset_view: "Restablecer vista",
     scene_overview_title: "Vista general",
     scene_overview_desc: "La torre abierta revela la ruta principal de energía, datos y procesamiento.",
     scene_core_title: "Núcleo de cálculo",
@@ -427,13 +431,13 @@ const translations = {
     part_storage: "Almacenamiento SSD",
     part_psu: "Fuente de poder",
     part_optical: "Unidad óptica",
-    explorer_parts: "PIEZAS EN CAPA",
+    explorer_parts: "PIEZAS EN 3D",
     explorer_view: "VISTA DINÁMICA",
     pc3d_hero_title: "Conoce tu PC por dentro y mantenlo en forma.",
     pc3d_hero_desc: "Una guía visual para identificar cada componente, entender sus tipos y aplicar mantenimiento sin improvisar.",
     pc3d_viewer_kicker: "01 / Vista interactiva",
     pc3d_viewer_title: "Desarma la torre con la mirada",
-    pc3d_viewer_desc: "Mueve el cursor sobre la escena o selecciona una cinemática. Cada capa representa una pieza real del computador.",
+    pc3d_viewer_desc: "Arrastra para girar la torre, usa la rueda para acercar y toca una pieza para ver sus detalles. Todo el modelo es 3D de verdad.",
     pc3d_parts_kicker: "02 / Lectura técnica",
     pc3d_parts_title: "Qué hace cada componente y qué tipos existen",
     pc3d_parts_desc: "Las variantes importan: cambian el rendimiento, el consumo, la compatibilidad y el precio de un equipo.",
@@ -1130,7 +1134,11 @@ const translations = {
     explorer_desc: "Move across the scene to travel through a tower and see how its internal parts connect.",
     explorer_status: "INTERACTIVE SCENE",
     explorer_kicker: "ACTIVE CINEMATIC",
-    explorer_hint: "Move the mouse to change perspective",
+    explorer_hint: "Drag to rotate · Scroll to zoom · Tap a part",
+    pc3d_viewer_loading: "Loading 3D model…",
+    pc3d_viewer_error: "The 3D viewer couldn't load. Check your connection and try again.",
+    pc3d_explode_label: "Explode",
+    pc3d_reset_view: "Reset view",
     scene_overview_title: "Overview",
     scene_overview_desc: "The open tower reveals the main route for power, data and processing.",
     scene_core_title: "Compute core",
@@ -1147,13 +1155,13 @@ const translations = {
     part_storage: "SSD storage",
     part_psu: "Power supply",
     part_optical: "Optical drive",
-    explorer_parts: "LAYERED PARTS",
+    explorer_parts: "3D PARTS",
     explorer_view: "DYNAMIC VIEW",
     pc3d_hero_title: "Get to know your PC inside and keep it in shape.",
     pc3d_hero_desc: "A visual guide to identify every component, understand its types and do maintenance without improvising.",
     pc3d_viewer_kicker: "01 / Interactive view",
     pc3d_viewer_title: "Take the tower apart with your eyes",
-    pc3d_viewer_desc: "Move the cursor over the scene or pick a cinematic. Each layer is a real computer part.",
+    pc3d_viewer_desc: "Drag to rotate the tower, scroll to zoom in and tap a part to see its details. The whole model is real 3D.",
     pc3d_parts_kicker: "02 / Technical reading",
     pc3d_parts_title: "What each component does and which types exist",
     pc3d_parts_desc: "Variants matter: they change performance, power use, compatibility and price.",
@@ -2489,7 +2497,6 @@ document.addEventListener('DOMContentLoaded', () => {
   setupNavigationDropdowns();
   setupHistoryToggle();
   setupComponentToggles();
-  setupPcExplorer();
   setupMaintenanceToolImages();
   setupNetworkSimulator();
   setupSwitchLab();
@@ -2559,111 +2566,6 @@ function setupComponentToggles() {
   });
 }
 
-function setupPcExplorer() {
-  const shell = document.getElementById('pc-scene-shell');
-  const scene = document.getElementById('pc-scene');
-  const sceneTitle = document.getElementById('pc-scene-title');
-  const sceneDesc = document.getElementById('pc-scene-desc');
-  const partName = document.getElementById('pc-part-name');
-  const partIndex = document.getElementById('pc-part-index');
-  const sceneButtons = document.querySelectorAll('.pc-scene-btn');
-
-  if (!shell || !scene) return;
-
-  const scenes = {
-    overview: { title: 'scene_overview_title', desc: 'scene_overview_desc' },
-    core: { title: 'scene_core_title', desc: 'scene_core_desc' },
-    airflow: { title: 'scene_airflow_title', desc: 'scene_airflow_desc' }
-  };
-  const parts = [
-    { selector: '.pc-motherboard', key: 'part_motherboard', funcKey: 'pc3d_partfunc_motherboard', typesKey: 'pc3d_parttypes_motherboard' },
-    { selector: '.pc-ram', key: 'part_ram', funcKey: 'pc3d_partfunc_ram', typesKey: 'pc3d_parttypes_ram' },
-    { selector: '.pc-cpu', key: 'part_cpu', funcKey: 'pc3d_partfunc_cpu', typesKey: 'pc3d_parttypes_cpu' },
-    { selector: '.pc-gpu', key: 'part_gpu', funcKey: 'pc3d_partfunc_gpu', typesKey: 'pc3d_parttypes_gpu' },
-    { selector: '.pc-storage', key: 'part_storage', funcKey: 'pc3d_partfunc_storage', typesKey: 'pc3d_parttypes_storage' },
-    { selector: '.pc-psu', key: 'part_psu', funcKey: 'pc3d_partfunc_psu', typesKey: 'pc3d_parttypes_psu' },
-    { selector: '.pc-optical', key: 'part_optical', funcKey: 'pc3d_partfunc_optical', typesKey: 'pc3d_parttypes_optical' }
-  ];
-  let activeScene = 'overview';
-  let selectedPart = null;
-
-  function getText(key) {
-    return translations[currentLang]?.[key] || translations.es[key] || key;
-  }
-
-  function updateReadout(partPosition) {
-    const part = parts[Math.min(parts.length - 1, Math.max(0, partPosition))];
-    if (partName) {
-      partName.textContent = getText(part.key);
-      partName.setAttribute('data-i18n', part.key);
-    }
-    if (partIndex) partIndex.textContent = `${String(parts.indexOf(part) + 1).padStart(2, '0')} / ${String(parts.length).padStart(2, '0')}`;
-  }
-
-  function showPart(part) {
-    selectedPart = part;
-    document.querySelectorAll('.pc-layer').forEach((layer) => {
-      layer.classList.toggle('is-selected', layer.matches(part.selector));
-    });
-    updateReadout(parts.indexOf(part));
-    if (sceneTitle) sceneTitle.textContent = getText(part.key);
-    if (sceneDesc) sceneDesc.textContent = getText(part.funcKey);
-    if (sceneDesc) sceneDesc.dataset.i18n = part.funcKey;
-    if (partName) partName.textContent = getText(part.typesKey);
-    if (partName) partName.dataset.i18n = part.typesKey;
-  }
-
-  function setScene(sceneName) {
-    if (!scenes[sceneName]) return;
-    activeScene = sceneName;
-    scene.dataset.scene = sceneName;
-    sceneButtons.forEach((button) => {
-      button.classList.toggle('is-active', button.dataset.scene === sceneName);
-    });
-    if (sceneTitle) sceneTitle.textContent = getText(scenes[sceneName].title);
-    if (sceneDesc) sceneDesc.textContent = getText(scenes[sceneName].desc);
-    if (sceneTitle) sceneTitle.dataset.i18n = scenes[sceneName].title;
-    if (sceneDesc) sceneDesc.dataset.i18n = scenes[sceneName].desc;
-  }
-
-  function updatePerspective(event) {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const bounds = shell.getBoundingClientRect();
-    const x = (event.clientX - bounds.left) / bounds.width;
-    const y = (event.clientY - bounds.top) / bounds.height;
-    const rotateY = (x - 0.5) * 32;
-    const rotateX = 12 - (y - 0.5) * 16;
-    scene.style.transform = `translate(-50%, -50%) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-    updateReadout(Math.floor(x * parts.length));
-
-    if (!selectedPart) setScene(x < 0.34 ? 'overview' : x < 0.68 ? 'core' : 'airflow');
-  }
-
-  shell.addEventListener('pointermove', updatePerspective);
-  shell.addEventListener('pointerleave', () => {
-    scene.style.transform = 'translate(-50%, -50%) rotateX(10deg) rotateY(-16deg)';
-  });
-  sceneButtons.forEach((button) => {
-    button.addEventListener('click', () => {
-      selectedPart = null;
-      document.querySelectorAll('.pc-layer').forEach((layer) => layer.classList.remove('is-selected'));
-      setScene(button.dataset.scene);
-    });
-  });
-  parts.forEach((part) => {
-    document.querySelectorAll(part.selector).forEach((layer) => {
-      layer.addEventListener('click', () => showPart(part));
-      layer.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault();
-          showPart(part);
-        }
-      });
-    });
-  });
-  setScene('overview');
-  updateReadout(0);
-}
 
 function setupMaintenanceToolImages() {
   const toolImages = {

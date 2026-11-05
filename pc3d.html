@@ -5,6 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title data-i18n="page_title_pc3d">NVISION - PC3D y más</title>
   <link rel="stylesheet" href="css/styles.css">
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+  <script type="module" src="js/pc3d-viewer.js"></script>
 </head>
 <body>
   <header class="site-header">
@@ -56,10 +65,10 @@
     <section class="pc3d-hero"><div class="pc3d-hero-inner"><span class="pc3d-eyebrow">PC3D / HARDWARE LAB</span><h1 data-i18n="pc3d_hero_title">Conoce tu PC por dentro y mantenlo en forma.</h1><p data-i18n="pc3d_hero_desc">Una guía visual para identificar cada componente, entender sus tipos y aplicar mantenimiento sin improvisar.</p></div></section>
 
     <section id="visor-3d" class="pc3d-section pc3d-viewer">
-      <div class="pc3d-section-heading"><div><span class="pc3d-kicker" data-i18n="pc3d_viewer_kicker">01 / Vista interactiva</span><h2 data-i18n="pc3d_viewer_title">Desarma la torre con la mirada</h2><p data-i18n="pc3d_viewer_desc">Mueve el cursor sobre la escena o selecciona una cinemática. Cada capa representa una pieza real del computador.</p></div></div>
+      <div class="pc3d-section-heading"><div><span class="pc3d-kicker" data-i18n="pc3d_viewer_kicker">01 / Vista interactiva</span><h2 data-i18n="pc3d_viewer_title">Desarma la torre con la mirada</h2><p data-i18n="pc3d_viewer_desc">Arrastra para girar la torre, usa la rueda para acercar y toca una pieza para ver sus detalles. Todo el modelo es 3D de verdad.</p></div></div>
       <div class="pc-explorer-layout">
-        <div class="pc-scene-shell" id="pc-scene-shell"><div class="pc-scene-grid"></div><div class="pc-scene" id="pc-scene" aria-label="Modelo 3D de computador abierto"><div class="pc-shadow"></div><div class="pc-tower-back"></div><div class="pc-layer pc-motherboard" data-part="motherboard"><img src="https://th.bing.com/th/id/OIP.pos0kN3-I5Oy6bl8r_T-PgHaEn?w=305&h=190&c=7&r=0&o=7&pid=1.7&rm=3" alt="Placa madre"></div><div class="pc-layer pc-ram" data-part="ram"><img src="https://images.unsplash.com/photo-1562976540-1502c2145186?auto=format&fit=crop&w=800&q=80" alt="Memoria RAM"></div><div class="pc-layer pc-cpu" data-part="cpu"><img src="https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?auto=format&fit=crop&w=800&q=80" alt="CPU"></div><div class="pc-layer pc-gpu" data-part="gpu"><img src="https://pisces.bbystatic.com/image2/BestBuy_US/images/products/6467/6467838cv11d.jpg" alt="GPU"></div><div class="pc-layer pc-storage" data-part="storage"><img src="https://placaschinas.com/wp-content/uploads/2023/10/almacenamiento-SSD-vs-HD.jpg" alt="Almacenamiento"></div><div class="pc-layer pc-psu" data-part="psu"><img src="https://www.cyberpuerta.mx/img/product/XL/CP-ASUS-ROG-THOR-1200P2-GAMING-cpscrap-01-34b084.jpg" alt="Fuente de poder"></div><div class="pc-layer pc-optical" data-part="optical"><img src="https://www.legionmac.com/wp-content/uploads/2022/07/Unidad-Optica.jpg" alt="Unidad de Disco Óptico"></div><div class="pc-glass-front"></div><div class="pc-scanline"></div></div><div class="pc-scene-hint"><span>↔</span><span data-i18n="explorer_hint">Mueve el ratón para cambiar la perspectiva</span></div></div>
-        <aside class="pc-explorer-panel" aria-live="polite"><span class="pc-panel-kicker" data-i18n="explorer_kicker">CINEMÁTICA ACTIVA</span><h3 id="pc-scene-title">Vista general</h3><p id="pc-scene-desc">La torre abierta revela la ruta principal de energía, datos y procesamiento.</p><div class="pc-part-readout"><span class="readout-dot"></span><span id="pc-part-name">Placa madre</span><span class="readout-line"></span><span id="pc-part-index">01 / 07</span></div><div class="pc-scene-controls"><button type="button" class="pc-scene-btn is-active" data-scene="overview"><span>01</span><span data-i18n="scene_overview_btn">Vista general</span></button><button type="button" class="pc-scene-btn" data-scene="core"><span>02</span><span data-i18n="scene_core_btn">Núcleo de cálculo</span></button><button type="button" class="pc-scene-btn" data-scene="airflow"><span>03</span><span data-i18n="scene_airflow_btn">Flujo y energía</span></button></div><div class="pc-spec-strip"><span><strong>07</strong><small data-i18n="explorer_parts">PIEZAS EN CAPA</small></span><span><strong>360°</strong><small data-i18n="explorer_view">VISTA DINÁMICA</small></span></div></aside>
+        <div class="pc-scene-shell" id="pc-scene-shell"><div class="pc-scene-grid"></div><div class="pc-viewer3d" id="pc-viewer3d"><canvas id="pc-canvas" aria-label="Modelo 3D interactivo de un computador"></canvas><div class="pc-viewer-loading" id="pc-viewer-loading"><span class="pc-loader" aria-hidden="true"></span><span data-i18n="pc3d_viewer_loading">Cargando modelo 3D…</span></div><div class="pc-viewer-error" id="pc-viewer-error" hidden><span data-i18n="pc3d_viewer_error">No se pudo cargar el visor 3D. Revisa tu conexión e inténtalo de nuevo.</span></div><div class="pc-tooltip" id="pc-tooltip" hidden></div></div><div class="pc-scene-hint"><span>↔</span><span data-i18n="explorer_hint">Arrastra para girar · Rueda para zoom · Toca una pieza</span></div></div>
+        <aside class="pc-explorer-panel" aria-live="polite"><span class="pc-panel-kicker" data-i18n="explorer_kicker">CINEMÁTICA ACTIVA</span><h3 id="pc-scene-title">Vista general</h3><p id="pc-scene-desc">La torre abierta revela la ruta principal de energía, datos y procesamiento.</p><div class="pc-part-readout"><span class="readout-dot"></span><span id="pc-part-name">Placa madre</span><span class="readout-line"></span><span id="pc-part-index">01 / 07</span></div><div class="pc-scene-controls"><button type="button" class="pc-scene-btn is-active" data-scene="overview"><span>01</span><span data-i18n="scene_overview_btn">Vista general</span></button><button type="button" class="pc-scene-btn" data-scene="core"><span>02</span><span data-i18n="scene_core_btn">Núcleo de cálculo</span></button><button type="button" class="pc-scene-btn" data-scene="airflow"><span>03</span><span data-i18n="scene_airflow_btn">Flujo y energía</span></button></div><div class="pc-explode-row"><label for="pc-explode" data-i18n="pc3d_explode_label">Desarmar</label><input type="range" id="pc-explode" min="0" max="100" value="0" step="1"><span id="pc-explode-val">0%</span></div><button type="button" class="pc-scene-btn pc-reset-btn" id="pc-reset-view"><span>⟲</span><span data-i18n="pc3d_reset_view">Restablecer vista</span></button><div class="pc-spec-strip"><span><strong>07</strong><small data-i18n="explorer_parts">PIEZAS EN CAPA</small></span><span><strong>360°</strong><small data-i18n="explorer_view">VISTA DINÁMICA</small></span></div></aside>
       </div>
     </section>
 
@@ -81,5 +90,16 @@
   </main>
   <footer class="site-footer"><p data-i18n="pc3d_footer">© 2026 - NVISION / PC3D y más</p></footer>
   <script src="js/main.js"></script>
+  <script>
+    // Si el visor 3D no arranca (sin WebGL o sin conexión al CDN), muestra el aviso.
+    setTimeout(function () {
+      if (!window.__pcViewerReady) {
+        var loading = document.getElementById('pc-viewer-loading');
+        var error = document.getElementById('pc-viewer-error');
+        if (loading) loading.hidden = true;
+        if (error) error.hidden = false;
+      }
+    }, 9000);
+  </script>
 </body>
 </html>
