@@ -50,7 +50,7 @@ function init() {
   const partById = Object.fromEntries(PARTS.map((p) => [p.id, p]));
 
   const SCENES = {
-    overview: { cam: [7.4, 4.8, 8.6], tgt: [0, 2.3, 0], focus: null, particles: false, fanBoost: 1 },
+    overview: { cam: [9.0, 4.4, 5.4], tgt: [0, 2.3, 0], focus: null, particles: false, fanBoost: 1 },
     core: { cam: [4.6, 4.3, 3.8], tgt: [-0.55, 3.1, 0.1], focus: ['cpu', 'ram'], particles: false, fanBoost: 1 },
     airflow: { cam: [6.4, 5.4, 7.4], tgt: [0, 2.0, 0], focus: ['psu', 'gpu'], particles: true, fanBoost: 2.4 }
   };
