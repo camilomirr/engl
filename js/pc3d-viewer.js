@@ -6,6 +6,11 @@
 // =========================================================
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 
 const mount = document.getElementById('pc-viewer3d');
 if (mount) init();
@@ -54,7 +59,7 @@ function init() {
   const partById = Object.fromEntries(PARTS.map((p) => [p.id, p]));
 
   const SCENES = {
-    overview: { cam: [9.0, 4.4, 5.4], tgt: [0, 2.3, 0], focus: null, particles: false, fanBoost: 1 },
+    overview: { cam: [9.0, 4.4, 5.4], tgt: [0, 2.3, 0], focus: null, particles: false, fanBoost: 1, dur: 1.8 },
     core: { cam: [4.6, 4.3, 3.8], tgt: [-0.55, 3.1, 0.1], focus: ['cpu', 'ram'], particles: false, fanBoost: 1 },
     airflow: { cam: [6.4, 5.4, 7.4], tgt: [0, 2.0, 0], focus: ['psu', 'gpu'], particles: true, fanBoost: 2.4 }
   };
@@ -74,8 +79,13 @@ function init() {
   renderer.toneMappingExposure = 1.25;
 
   const scene = new THREE.Scene();
+  scene.fog = new THREE.Fog(0x0d1b2b, 15, 30);
   const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
-  camera.position.set(...SCENES.overview.cam);
+  camera.position.set(15, 8.5, 17); // punto de partida de la intro cinematográfica
+
+  // Entorno de estudio: reflejos realistas en metales y vidrios
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  scene.environment = pmrem.fromScene(new RoomEnvironment(renderer), 0.04).texture;
 
   const controls = new OrbitControls(camera, canvas);
   controls.target.set(...SCENES.overview.tgt);
@@ -87,9 +97,16 @@ function init() {
   controls.autoRotate = !reduceMotion;
   controls.autoRotateSpeed = 0.9;
 
+  // Postproceso: bloom suave para que brillen los LED y el RGB
+  const composer = new EffectComposer(renderer);
+  composer.addPass(new RenderPass(scene, camera));
+  const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.5, 0.45, 0.85);
+  composer.addPass(bloom);
+  composer.addPass(new OutputPass());
+
   // --- Luces ---
-  scene.add(new THREE.AmbientLight(0x94a3b8, 0.75));
-  const keyLight = new THREE.DirectionalLight(0xffffff, 2.1);
+  scene.add(new THREE.AmbientLight(0x94a3b8, 0.5));
+  const keyLight = new THREE.DirectionalLight(0xffffff, 1.9);
   keyLight.position.set(6, 9, 7);
   keyLight.castShadow = true;
   keyLight.shadow.mapSize.set(2048, 2048);
@@ -119,6 +136,20 @@ function init() {
   ring.rotation.x = -Math.PI / 2;
   ring.position.y = 0.01;
   scene.add(ring);
+  const glowDisc = new THREE.Mesh(
+    new THREE.CircleGeometry(3.3, 48),
+    new THREE.MeshBasicMaterial({ color: 0x0ea5e9, transparent: true, opacity: 0.05, side: THREE.DoubleSide })
+  );
+  glowDisc.rotation.x = -Math.PI / 2;
+  glowDisc.position.y = 0.005;
+  scene.add(glowDisc);
+  const outerRing = new THREE.Mesh(
+    new THREE.RingGeometry(4.6, 4.64, 64),
+    new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.16, side: THREE.DoubleSide })
+  );
+  outerRing.rotation.x = -Math.PI / 2;
+  outerRing.position.y = 0.01;
+  scene.add(outerRing);
 
   // --- Materiales y helpers ---
   const mat = (color, opts = {}) => new THREE.MeshStandardMaterial({
@@ -185,6 +216,8 @@ function init() {
     group.userData.targetOpacity = 1;
     group.userData.removed = false;
     group.userData.removeK = 0;
+    group.userData.explodeK = 1; // arranca desarmada y se ensambla sola en la intro
+    group.userData.explodeRate = 2.0 + PARTS.findIndex((p) => p.id === id) * 0.45;
     const mats = new Set();
     group.traverse((o) => {
       if (o.isMesh) {
@@ -219,6 +252,8 @@ function init() {
   const frontPanel = caseBox(2.28, 4.6, 0.08, 0, 2.3, 2); // frontal
   frontPanel.userData.base = frontPanel.position.clone();
   frontPanel.userData.dir = new THREE.Vector3(0, 0, 1.6);
+  frontPanel.userData.explodeK = 1;
+  frontPanel.userData.explodeRate = 2.2;
   // marco del lado abierto (+X)
   caseBox(0.08, 0.12, 4.0, 1.1, 4.55, 0);
   caseBox(0.08, 0.12, 4.0, 1.1, 0.12, 0);
@@ -237,6 +272,15 @@ function init() {
   );
   rgbStrip.position.set(1.06, 2.3, 1.9);
   tower.add(rgbStrip);
+  // LED de encendido y de actividad (parpadean como un equipo real)
+  const powerLedMat = new THREE.MeshBasicMaterial({ color: 0x22c55e });
+  const powerLed = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.06, 0.03), powerLedMat);
+  powerLed.position.set(0.72, 4.35, 2.05);
+  tower.add(powerLed);
+  const hddLedMat = new THREE.MeshBasicMaterial({ color: 0xf59e0b });
+  const hddLed = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.06, 0.03), hddLedMat);
+  hddLed.position.set(0.92, 4.35, 2.05);
+  tower.add(hddLed);
 
   // --- Placa madre ---
   const motherboard = new THREE.Group();
@@ -413,7 +457,8 @@ function init() {
   let camTween = null;
   let fanBoost = 1;
   let explodeTarget = 0;
-  let explodeCurrent = 0;
+  let lastInteract = 0;
+  let hddOn = true;
   const clock = new THREE.Clock();
 
   function setEmissive(id, hex, intensity) {
@@ -517,10 +562,10 @@ function init() {
       descEl.dataset.i18n = `scene_${name}_desc`;
     }
   }
-  function flyTo(pos, tgt) {
+  function flyTo(pos, tgt, dur = 1.0) {
     camTween = {
       p0: camera.position.clone(), p1: new THREE.Vector3(...pos),
-      t0: controls.target.clone(), t1: new THREE.Vector3(...tgt), k: 0
+      t0: controls.target.clone(), t1: new THREE.Vector3(...tgt), k: 0, dur
     };
   }
   function setScene(name) {
@@ -529,7 +574,7 @@ function init() {
     const s = SCENES[name];
     sceneButtons.forEach((b) => b.classList.toggle('is-active', b.dataset.scene === name));
     setSceneText(name);
-    flyTo(s.cam, s.tgt);
+    flyTo(s.cam, s.tgt, s.dur || 1.0);
     particles.visible = s.particles;
     fanBoost = s.fanBoost;
     if (selectedPart) { restoreEmissive(selectedPart); selectedPart = null; }
@@ -582,16 +627,35 @@ function init() {
     downPos = { x: event.clientX, y: event.clientY };
     camTween = null;
     controls.autoRotate = false;
+    lastInteract = clock.elapsedTime;
   });
+  let clickTimer = null;
   canvas.addEventListener('pointerup', (event) => {
     if (!downPos) return;
     const moved = Math.hypot(event.clientX - downPos.x, event.clientY - downPos.y);
     downPos = null;
     if (moved > 8) return; // fue un arrastre, no un clic
     const id = pickPart(event);
-    selectPart(id);
+    // Espera un poco por si es doble clic (enfocar); si no, procesa el clic
+    if (clickTimer) clearTimeout(clickTimer);
+    clickTimer = setTimeout(() => { selectPart(id); clickTimer = null; }, 260);
   });
-  canvas.addEventListener('wheel', () => { controls.autoRotate = false; }, { passive: true });
+  canvas.addEventListener('dblclick', (event) => {
+    if (clickTimer) { clearTimeout(clickTimer); clickTimer = null; }
+    const id = pickPart(event);
+    if (!id) return;
+    const target = new THREE.Vector3();
+    partGroups[id].getWorldPosition(target);
+    const dir = camera.position.clone().sub(controls.target).normalize();
+    flyTo(
+      [target.x + dir.x * 5, target.y + dir.y * 5 + 0.6, target.z + dir.z * 5],
+      [target.x, target.y, target.z],
+      1.1
+    );
+    controls.autoRotate = false;
+    lastInteract = clock.elapsedTime;
+  });
+  canvas.addEventListener('wheel', () => { controls.autoRotate = false; lastInteract = clock.elapsedTime; }, { passive: true });
 
   sceneButtons.forEach((button) => {
     button.addEventListener('click', () => setScene(button.dataset.scene));
@@ -619,12 +683,38 @@ function init() {
     });
   }
 
+  // --- Etiquetas flotantes por pieza ---
+  const labelsWrap = document.getElementById('pc-labels');
+  const labelsToggle = document.getElementById('pc-labels-toggle');
+  const labelV = new THREE.Vector3();
+  let labelsVisible = true;
+  const labelEls = {};
+  if (labelsWrap) {
+    PARTS.forEach((p) => {
+      const el = document.createElement('div');
+      el.className = 'pc-label';
+      el.textContent = t(p.key);
+      el.dataset.i18n = p.key;
+      labelsWrap.appendChild(el);
+      labelEls[p.id] = el;
+    });
+  }
+  if (labelsToggle) {
+    labelsToggle.addEventListener('click', () => {
+      labelsVisible = !labelsVisible;
+      labelsToggle.classList.toggle('is-active', labelsVisible);
+      labelsToggle.setAttribute('aria-pressed', String(labelsVisible));
+      if (labelsWrap) labelsWrap.style.display = labelsVisible ? '' : 'none';
+    });
+  }
+
   // --- Tamaño ---
   function resize() {
     const w = shell.clientWidth;
     const h = shell.clientHeight;
     if (!w || !h) return;
     renderer.setSize(w, h, false);
+    composer.setSize(w, h);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
   }
@@ -642,7 +732,7 @@ function init() {
     const elapsed = clock.elapsedTime;
 
     if (camTween) {
-      camTween.k += dt / 0.9;
+      camTween.k += dt / camTween.dur;
       const k = Math.min(camTween.k, 1);
       const s = k * k * (3 - 2 * k);
       camera.position.lerpVectors(camTween.p0, camTween.p1, s);
@@ -651,6 +741,15 @@ function init() {
     }
     controls.update();
 
+    // la cámara vuelve a girar sola tras 6 s sin tocar nada
+    if (!reduceMotion && !camTween && clock.elapsedTime - lastInteract > 6) controls.autoRotate = true;
+
+    // pulso al pasar el cursor sobre una pieza
+    if (hoveredPart && hoveredPart !== selectedPart) {
+      const pulse = 0.24 + Math.sin(elapsed * 6) * 0.12;
+      (partMats[hoveredPart] || []).forEach((m) => { m.emissiveIntensity = pulse; });
+    }
+
     // ventiladores
     const spin = reduceMotion ? 0 : 1;
     spinners.forEach((f) => { f.group.rotation.z += f.speed * fanBoost * spin * dt; });
@@ -658,13 +757,22 @@ function init() {
     // tira RGB con ciclo de color suave
     rgbStrip.material.color.setHSL((elapsed * 0.04) % 1, 0.85, 0.6);
 
-    // vista desarmada (interpolada) + piezas retiradas con clic
-    explodeCurrent += (explodeTarget - explodeCurrent) * Math.min(1, dt * 6);
+    // LED de encendido (respiración) y de disco (parpadeo aleatorio)
+    powerLedMat.color.setHex(0x22c55e).multiplyScalar(0.65 + 0.35 * Math.sin(elapsed * 2.2));
+    if (Math.random() < 0.08) hddOn = !hddOn;
+    hddLedMat.color.setHex(hddOn ? 0xf59e0b : 0x201404);
+
+    // vista desarmada escalonada + piezas retiradas con arco y flotación
     Object.values(partGroups).forEach((g) => {
-      g.userData.removeK += ((g.userData.removed ? 1 : 0) - g.userData.removeK) * Math.min(1, dt * 5);
-      g.position.copy(g.userData.base).addScaledVector(g.userData.dir, explodeCurrent * 1.6 + g.userData.removeK * 2.1);
+      const ud = g.userData;
+      ud.explodeK += (explodeTarget - ud.explodeK) * Math.min(1, dt * ud.explodeRate);
+      ud.removeK += ((ud.removed ? 1 : 0) - ud.removeK) * Math.min(1, dt * 5);
+      g.position.copy(ud.base).addScaledVector(ud.dir, ud.explodeK * 1.6 + ud.removeK * 2.1);
+      g.position.y += Math.sin(elapsed * 2 + ud.explodeRate) * 0.05 * ud.removeK;
+      g.rotation.y = ud.removeK * 0.7;
     });
-    frontPanel.position.copy(frontPanel.userData.base).addScaledVector(frontPanel.userData.dir, explodeCurrent);
+    frontPanel.userData.explodeK += (explodeTarget - frontPanel.userData.explodeK) * Math.min(1, dt * frontPanel.userData.explodeRate);
+    frontPanel.position.copy(frontPanel.userData.base).addScaledVector(frontPanel.userData.dir, frontPanel.userData.explodeK * 1.6);
 
     // atenuado de piezas (interpolado)
     Object.values(partGroups).forEach((g) => {
@@ -692,7 +800,24 @@ function init() {
       pGeo.attributes.position.needsUpdate = true;
     }
 
-    renderer.render(scene, camera);
+    // etiquetas flotantes que siguen a cada pieza
+    if (labelsWrap && labelsVisible) {
+      const w = shell.clientWidth;
+      const h = shell.clientHeight;
+      PARTS.forEach((p) => {
+        const el = labelEls[p.id];
+        if (!el) return;
+        partGroups[p.id].getWorldPosition(labelV);
+        labelV.project(camera);
+        if (labelV.z > 1) { el.style.display = 'none'; return; }
+        el.style.display = '';
+        el.style.left = `${(labelV.x * 0.5 + 0.5) * w}px`;
+        el.style.top = `${(-labelV.y * 0.5 + 0.5) * h}px`;
+        el.style.opacity = partGroups[p.id].userData.targetOpacity < 1 ? '0.35' : '1';
+      });
+    }
+
+    composer.render();
     if (firstFrame) {
       firstFrame = false;
       if (loadingEl) loadingEl.hidden = true;
