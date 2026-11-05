@@ -13,7 +13,7 @@ import * as THREE from 'three';
 // (el lado abierto de la torre es +X; el frontal es +Z).
 export const PARTS = [
   { id: 'motherboard', key: 'part_motherboard', funcKey: 'pc3d_partfunc_motherboard', typesKey: 'pc3d_parttypes_motherboard', dir: [1.6, 0.2, 0] },
-  { id: 'ram', key: 'part_ram', funcKey: 'pc3d_partfunc_ram', typesKey: 'pc3d_parttypes_ram', dir: [1.6, 0.3, 0.2] },
+  { id: 'ram', key: 'part_ram', funcKey: 'pc3d_partfunc_ram', typesKey: 'pc3d_parttypes_ram', dir: [1.6, 0.3, 0.2], labelOff: [0.25, 0, 0] },
   { id: 'cpu', key: 'part_cpu', funcKey: 'pc3d_partfunc_cpu', typesKey: 'pc3d_parttypes_cpu', dir: [1.6, 0.2, 0] },
   { id: 'cooler', key: 'part_cooler', funcKey: 'pc3d_partfunc_cooler', typesKey: 'pc3d_parttypes_cooler', dir: [1, 0.7, 0], labelOff: [0, 0.6, 0] },
   { id: 'gpu', key: 'part_gpu', funcKey: 'pc3d_partfunc_gpu', typesKey: 'pc3d_parttypes_gpu', dir: [1.8, 0, 0] },
@@ -151,14 +151,65 @@ export function buildPcModel() {
     return m;
   }
   caseBox(0.08, 4.6, 4.0, -1.1, 2.3, 0);          // pared izquierda (placa madre)
-  caseBox(2.28, 4.6, 0.08, 0, 2.3, -2);           // trasera
+  // trasera con hueco real detrás del ventilador de la caja (sale el aire)
+  caseBox(2.28, 3.3, 0.08, 0, 1.65, -2);          // trasera baja
+  caseBox(2.28, 0.1, 0.08, 0, 4.55, -2);          // trasera alta
+  caseBox(0.54, 1.2, 0.08, -0.87, 3.9, -2);       // trasera izquierda del hueco
+  caseBox(0.54, 1.2, 0.08, 0.87, 3.9, -2);        // trasera derecha del hueco
+  // rejilla del hueco trasero: aro + 3 barras
+  const rearRing = new THREE.Mesh(new THREE.TorusGeometry(0.58, 0.03, 8, 40), CASE_MAT);
+  rearRing.position.set(0, 3.9, -2);
+  tower.add(rearRing);
+  [3.6, 3.9, 4.2].forEach((y) => {
+    const bar = box(1.16, 0.04, 0.02, CASE_MAT);
+    bar.position.set(0, y, -2);
+    tower.add(bar);
+  });
   caseBox(2.28, 0.08, 4.08, 0, 4.6, 0);           // techo
   caseBox(2.28, 0.08, 4.08, 0, 0.04, 0);          // piso
-  const frontPanel = caseBox(2.28, 4.6, 0.08, 0, 2.3, 2); // frontal
+  // frontal de malla gamer: marco sólido + rejilla perforada (los ventiladores se ven detrás)
+  const frontPanel = new THREE.Group();
+  frontPanel.position.set(0, 2.3, 2);
+  const fpFrame = (w, h, x, y) => {
+    const m = box(w, h, 0.08, CASE_MAT);
+    m.position.set(x, y, 0);
+    frontPanel.add(m);
+    return m;
+  };
+  fpFrame(2.28, 0.25, 0, 2.175);   // marco superior
+  fpFrame(2.28, 0.25, 0, -2.175);  // marco inferior
+  fpFrame(0.25, 4.1, -1.015, 0);   // marco izquierdo
+  fpFrame(0.25, 4.1, 1.015, 0);    // marco derecho
+  // malla perforada: textura con agujeros reales (alphaTest)
+  const meshCanvas = document.createElement('canvas');
+  meshCanvas.width = meshCanvas.height = 256;
+  const mctx = meshCanvas.getContext('2d');
+  mctx.fillStyle = '#ffffff';
+  mctx.fillRect(0, 0, 256, 256);
+  mctx.globalCompositeOperation = 'destination-out';
+  for (let yy = 8; yy < 256; yy += 16) {
+    for (let xx = 8; xx < 256; xx += 16) {
+      mctx.beginPath();
+      mctx.arc(xx, yy, 5, 0, Math.PI * 2);
+      mctx.fill();
+    }
+  }
+  const meshTex = new THREE.CanvasTexture(meshCanvas);
+  meshTex.colorSpace = THREE.SRGBColorSpace;
+  meshTex.wrapS = meshTex.wrapT = THREE.RepeatWrapping;
+  meshTex.repeat.set(1, 2.3);
+  const meshMat = new THREE.MeshStandardMaterial({
+    color: 0x2a3648, metalness: 0.7, roughness: 0.4,
+    map: meshTex, transparent: true, alphaTest: 0.4, side: THREE.DoubleSide
+  });
+  const meshPanel = new THREE.Mesh(new THREE.PlaneGeometry(1.78, 4.1), meshMat);
+  meshPanel.castShadow = true; meshPanel.receiveShadow = true;
+  frontPanel.add(meshPanel);
   frontPanel.userData.base = frontPanel.position.clone();
   frontPanel.userData.dir = new THREE.Vector3(0, 0, 1);
   frontPanel.userData.explodeK = 1;
   frontPanel.userData.explodeRate = 2.2;
+  tower.add(frontPanel);
   // marco del lado abierto (+X)
   caseBox(0.08, 0.12, 4.0, 1.1, 4.55, 0);
   caseBox(0.08, 0.12, 4.0, 1.1, 0.12, 0);
@@ -177,15 +228,15 @@ export function buildPcModel() {
   );
   rgbStrip.position.set(1.06, 2.3, 1.9);
   tower.add(rgbStrip);
-  // LED de encendido y de actividad (parpadean como un equipo real)
+  // LED de encendido y de actividad (parpadean como un equipo real; van en el frontal)
   const powerLedMat = new THREE.MeshBasicMaterial({ color: 0x22c55e });
   const powerLed = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.06, 0.03), powerLedMat);
-  powerLed.position.set(0.72, 4.35, 2.05);
-  tower.add(powerLed);
+  powerLed.position.set(0.72, 2.05, 0.05);
+  frontPanel.add(powerLed);
   const hddLedMat = new THREE.MeshBasicMaterial({ color: 0xf59e0b });
   const hddLed = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.06, 0.03), hddLedMat);
-  hddLed.position.set(0.92, 4.35, 2.05);
-  tower.add(hddLed);
+  hddLed.position.set(0.92, 2.05, 0.05);
+  frontPanel.add(hddLed);
 
   // --- Placa madre ---
   const motherboard = new THREE.Group();
@@ -205,7 +256,7 @@ export function buildPcModel() {
     cap.position.set(0.1, 1.35 - i * 0.22, 1.45);
     motherboard.add(cap);
   }
-  const trace = box(0.02, 2.6, 0.1, mat(0x0f172a, { emissive: 0x0ea5e9, emissiveIntensity: 0.5 }));
+  const trace = box(0.02, 2.6, 0.1, mat(0x0f172a, { emissive: 0x0ea5e9, emissiveIntensity: 0.25 }));
   trace.position.set(0.06, 0.2, -1.2);
   motherboard.add(trace);
   // conector ATX de 24 pines en el borde derecho de la placa
@@ -242,7 +293,7 @@ export function buildPcModel() {
   const ihsMark = box(0.02, 0.34, 0.34, mat(0x475569, { metal: 0.8, rough: 0.3 }));
   ihsMark.position.x = 0.14;
   cpu.add(ihsMark);
-  const ihsDot = box(0.02, 0.08, 0.08, mat(0x0f172a, { emissive: 0x22d3ee, emissiveIntensity: 0.9 }));
+  const ihsDot = box(0.02, 0.08, 0.08, mat(0x0f172a, { emissive: 0x22d3ee, emissiveIntensity: 0.6 }));
   ihsDot.position.set(0.15, 0.1, 0.1);
   cpu.add(ihsDot);
   tower.add(cpu);
@@ -275,46 +326,48 @@ export function buildPcModel() {
   tower.add(cooler);
   registerPart(cooler, 'cooler');
 
-  // --- RAM: 2 módulos DIMM realistas (PCB, chips, contactos dorados, disipador) ---
+  // --- RAM: 2 módulos DIMM de pie, sobresalen de la placa como deben ---
   const ram = new THREE.Group();
-  ram.position.set(-0.82, 3.3, 0.75);
+  ram.position.set(-0.82, 3.25, 0.75);
   const CHIP_MAT = mat(0x0f172a, { metal: 0.4, rough: 0.4 });
   const GOLD_MAT = mat(0xd4af37, { metal: 0.9, rough: 0.3 });
-  [0, 0.17].forEach((dx, i) => {
+  [0, 0.25].forEach((dz, i) => {
     const stick = new THREE.Group();
-    stick.position.x = dx;
-    // PCB del módulo
-    stick.add(box(0.06, 0.52, 1.7, mat(0x14532d, { metal: 0.2, rough: 0.55 })));
+    stick.position.z = dz;
+    // PCB del módulo: largo vertical, sobresale de la placa hacia el lado abierto
+    const pcb = box(0.5, 1.6, 0.06, mat(0x14532d, { metal: 0.2, rough: 0.55 }));
+    pcb.position.x = 0.25;
+    stick.add(pcb);
     // 8 chips de memoria por cara
     for (let c = 0; c < 8; c++) {
-      const z = -0.7 + c * 0.2;
-      const chipF = box(0.02, 0.24, 0.16, CHIP_MAT);
-      chipF.position.set(0.04, 0.04, z);
+      const y = -0.61 + c * 0.175;
+      const chipF = box(0.42, 0.2, 0.02, CHIP_MAT);
+      chipF.position.set(0.25, y, 0.04);
       stick.add(chipF);
-      const chipB = box(0.02, 0.24, 0.16, CHIP_MAT);
-      chipB.position.set(-0.04, 0.04, z);
+      const chipB = box(0.42, 0.2, 0.02, CHIP_MAT);
+      chipB.position.set(0.25, y, -0.04);
       stick.add(chipB);
     }
-    // contactos dorados del borde inferior, con la muesca DDR
-    const goldA = box(0.065, 0.08, 0.95, GOLD_MAT);
-    goldA.position.set(0, -0.26, -0.35);
+    // contactos dorados del borde que entra en la ranura, con la muesca DDR
+    const goldA = box(0.06, 0.9, 0.065, GOLD_MAT);
+    goldA.position.set(0.03, -0.32, 0);
     stick.add(goldA);
-    const goldB = box(0.065, 0.08, 0.6, GOLD_MAT);
-    goldB.position.set(0, -0.26, 0.45);
+    const goldB = box(0.06, 0.55, 0.065, GOLD_MAT);
+    goldB.position.set(0.03, 0.45, 0);
     stick.add(goldB);
-    // barra disipadora metálica del borde superior con acento RGB
-    const spreader = box(0.09, 0.12, 1.7, METAL_MAT);
-    spreader.position.set(0, 0.28, 0);
+    // barra disipadora metálica del borde exterior con acento RGB
+    const spreader = box(0.1, 1.6, 0.09, METAL_MAT);
+    spreader.position.set(0.47, 0, 0);
     stick.add(spreader);
-    const rgb = box(0.1, 0.05, 1.7, mat(0x0f172a, { emissive: i === 0 ? 0x22d3ee : 0xd946ef, emissiveIntensity: 0.9 }));
-    rgb.position.set(0, 0.36, 0);
+    const rgb = box(0.04, 1.6, 0.1, mat(0x0f172a, { emissive: i === 0 ? 0x22d3ee : 0xd946ef, emissiveIntensity: 0.45 }));
+    rgb.position.set(0.53, 0, 0);
     stick.add(rgb);
+    // ranura DIMM en la placa (se mueve con el módulo)
+    const slot = box(0.1, 1.75, 0.12, DARK_MAT);
+    slot.position.set(-0.02, 0, 0);
+    stick.add(slot);
     ram.add(stick);
   });
-  // ranuras DIMM en la placa
-  const ramSlot = box(0.12, 0.1, 1.85, DARK_MAT);
-  ramSlot.position.set(0.08, -0.34, 0);
-  ram.add(ramSlot);
   tower.add(ram);
   registerPart(ram, 'ram');
 
@@ -322,7 +375,7 @@ export function buildPcModel() {
   const gpu = new THREE.Group();
   gpu.position.set(-0.55, 1.75, 0.1);
   gpu.add(box(0.42, 0.55, 2.7, mat(0x1f2937, { metal: 0.6, rough: 0.4 })));
-  const gpuAccent = box(0.5, 0.09, 2.7, mat(0x7f1d1d, { emissive: 0xef4444, emissiveIntensity: 0.7 }));
+  const gpuAccent = box(0.5, 0.09, 2.7, mat(0x7f1d1d, { emissive: 0xef4444, emissiveIntensity: 0.45 }));
   gpuAccent.position.y = 0.28;
   gpu.add(gpuAccent);
   const gpuPlate = box(0.05, 0.5, 2.6, METAL_MAT);
@@ -348,7 +401,7 @@ export function buildPcModel() {
   const psuGrill = cyl(0.32, 0.32, 0.03, mat(0x334155, { metal: 0.7, rough: 0.4 }), 24);
   psuGrill.position.set(0, 0.44, 0);
   psu.add(psuGrill);
-  const psuLabel = box(0.5, 0.3, 0.02, mat(0x0f172a, { emissive: 0x10b981, emissiveIntensity: 0.6 }));
+  const psuLabel = box(0.5, 0.3, 0.02, mat(0x0f172a, { emissive: 0x10b981, emissiveIntensity: 0.4 }));
   psuLabel.position.set(0.76, 0.1, 0.3);
   psuLabel.rotation.y = Math.PI / 2;
   psu.add(psuLabel);
@@ -359,7 +412,7 @@ export function buildPcModel() {
   const storage = new THREE.Group();
   storage.position.set(-0.85, 1.05, 0.9);
   storage.add(box(0.06, 0.28, 0.95, mat(0x1d4ed8, { metal: 0.6, rough: 0.4 })));
-  const ssdLabel = box(0.02, 0.2, 0.6, mat(0x0f172a, { emissive: 0x38bdf8, emissiveIntensity: 0.5 }));
+  const ssdLabel = box(0.02, 0.2, 0.6, mat(0x0f172a, { emissive: 0x38bdf8, emissiveIntensity: 0.35 }));
   ssdLabel.position.x = 0.04;
   storage.add(ssdLabel);
   // conector SATA del SSD

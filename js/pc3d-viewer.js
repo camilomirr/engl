@@ -72,7 +72,7 @@ function init() {
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.25;
+  renderer.toneMappingExposure = 1.1;
 
   const scene = new THREE.Scene();
   scene.fog = new THREE.Fog(0x0d1b2b, 15, 30);
@@ -102,7 +102,7 @@ function init() {
   // --- Postproceso: bloom suave para que brillen los LED y el RGB ---
   const composer = new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene, camera));
-  const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.5, 0.45, 0.85);
+  const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.28, 0.4, 1.0); // brillo suave, solo lo más luminoso (sin resplandor blanco)
   composer.addPass(bloom);
   composer.addPass(new OutputPass());
 
