@@ -1,30 +1,130 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>NVISION - Redes Challenge</title>
+  <!-- Misma hoja de estilos de NVISION: la barra de arriba y el logo son los del sitio -->
+  <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="estilos.css">
 </head>
 <body>
-  <header class="topbar">
-    <div class="topbar-left">
-      <!-- Botón volver a NVISION -->
-      <a href="../redes.html#topologias" class="btn-back-nvision" title="Volver a NVISION Redes">
-        <span class="back-arrow">←</span>
-        <span class="back-text">Volver a <strong>NVISION</strong></span>
+  <!-- Encabezado y Barra de Navegación de NVISION (la misma de index.html / redes.html) -->
+  <header class="site-header">
+    <div class="header-container">
+      <!-- Marca / Nombre de la página -->
+      <a href="../index.html" class="brand-logo" aria-label="NVISION Home">
+        <span class="brand-text">NVISION</span>
       </a>
 
-      <div class="brand">
-        <a href="../index.html" class="brand-link" title="Ir al inicio de NVISION">
-          <span class="nvision-pill">NVISION</span>
-        </a>
-        <div class="brandmark">◉<br>⌁</div>
-        <div>
-          <h1>REDES <span>CHALLENGE</span></h1>
-          <p class="subtitle" data-i18n="subtitle">APRENDE LAS DISTINTAS ESTRUCTURAS DE REDES</p>
+      <nav id="nav-menu" class="nav-menu">
+        <ul class="nav-links">
+          <!-- Menú 1: Hardware & Computadores -->
+          <li class="nav-item-dropdown">
+            <button type="button" class="nav-dropdown-trigger" aria-expanded="false">
+              <span data-i18n="nav_grp_hardware">Hardware</span>
+              <span class="nav-arrow mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+            </button>
+            <ul class="nav-submenu">
+              <li class="nav-mobile-back"><button type="button"><span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></span><span data-i18n="nav_back">Volver</span></button></li>
+              <li><a href="../hardware.html#historia" data-i18n="nav_history">Historia</a></li>
+              <li><a href="../hardware.html#componentes" data-i18n="nav_components">Componentes</a></li>
+            </ul>
+          </li>
+
+          <!-- Menú 2: Redes & Topologías -->
+          <li class="nav-item-dropdown">
+            <button type="button" class="nav-dropdown-trigger" aria-expanded="false">
+              <span data-i18n="nav_grp_networks">Redes</span>
+              <span class="nav-arrow mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+            </button>
+            <ul class="nav-submenu">
+              <li class="nav-mobile-back"><button type="button"><span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></span><span data-i18n="nav_back">Volver</span></button></li>
+              <li><a href="../redes.html#redes" data-i18n="nav_network">Del Hardware a la Red</a></li>
+              <li><a href="../redes.html#alcance-redes" data-i18n="nav_scope">Clasificación de Redes</a></li>
+              <li><a href="../redes.html#topologias" data-i18n="nav_topologies">Topologías</a></li>
+              <li><a href="index.html" class="btn-challenge">🎮 Redes Challenge</a></li>
+              <li><a href="../redes.html#simulador-red" data-i18n="nav_simulator">Simulador Ping</a></li>
+              <li><a href="../redes.html#switch-3d" data-i18n="nav_switch3d">El switch por dentro</a></li>
+              <li><a href="../wifi.html" data-i18n="nav_wifi">WiFi Avanzado</a></li>
+            </ul>
+          </li>
+
+          <!-- Menú 3: Recursos & Práctica -->
+          <li class="nav-item-dropdown">
+            <button type="button" class="nav-dropdown-trigger" aria-expanded="false">
+              <span data-i18n="nav_grp_resources">Recursos</span>
+              <span class="nav-arrow mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+            </button>
+            <ul class="nav-submenu">
+              <li class="nav-mobile-back"><button type="button"><span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></span><span data-i18n="nav_back">Volver</span></button></li>
+              <li><a href="../recursos.html#glosario" data-i18n="nav_glossary">Glosario</a></li>
+              <li><a href="../recursos.html#laboratorio" data-i18n="nav_lab">Laboratorio de Códigos</a></li>
+              <li><a href="../mantenimiento-software.html" data-i18n="nav_ms">Mantenimiento por software</a></li>
+            </ul>
+          </li>
+          <li class="nav-item-dropdown">
+            <button type="button" class="nav-dropdown-trigger" aria-expanded="false">
+              <span data-i18n="nav_grp_pc3d">PC3D y más</span>
+              <span class="nav-arrow mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+            </button>
+            <ul class="nav-submenu">
+              <li class="nav-mobile-back"><button type="button"><span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></span><span data-i18n="nav_back">Volver</span></button></li>
+              <li><a href="../pc3d.html#visor-3d" data-i18n="nav_pc3d_viewer">Visor 3D</a></li>
+              <li><a href="../pc3d.html#componentes-3d" data-i18n="nav_pc3d_parts">Componentes y tipos</a></li>
+              <li><a href="../pc3d.html#mantenimiento" data-i18n="nav_pc3d_maintenance">Mantenimiento del PC</a></li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Botones de acción: Idioma y Menú Hamburguesa en móvil -->
+      <div class="header-actions">
+        <!-- Boton Modo Claro / Oscuro -->
+        <button id="theme-toggle" class="theme-switch-btn" title="Modo Claro / Oscuro" aria-label="Cambiar tema" data-i18n-title="theme_toggle_title">
+          <span id="theme-icon" class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span>
+        </button>
+        <!-- Selector desplegable bilingüe de Idioma (Español / Inglés) -->
+        <div class="lang-dropdown-wrapper" id="lang-dropdown-wrapper">
+          <button id="lang-toggle" class="lang-dropdown-btn" type="button" aria-haspopup="true" aria-expanded="false" title="Seleccionar idioma / Select language">
+            <span class="mono-icon globe-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg></span>
+            <span id="lang-label" class="lang-label-text">ES</span>
+            <span class="lang-chevron mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+          </button>
+          <div class="lang-dropdown-menu" id="lang-dropdown-menu" role="menu">
+            <div class="lang-dropdown-header" data-i18n="lang_select_title">Seleccionar Idioma</div>
+            <button type="button" class="lang-dropdown-item active" data-lang="es" role="menuitem">
+              <span class="item-code">ES</span>
+              <div class="item-info">
+                <span class="item-name">Español</span>
+                <span class="item-native">Spanish</span>
+              </div>
+              <span class="item-check mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+            </button>
+            <button type="button" class="lang-dropdown-item" data-lang="en" role="menuitem">
+              <span class="item-code">EN</span>
+              <div class="item-info">
+                <span class="item-name">English</span>
+                <span class="item-native">Inglés</span>
+              </div>
+              <span class="item-check mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+            </button>
+          </div>
         </div>
+
+        <!-- Botón de tres rayitas (Hamburguesa) para celulares -->
+        <button id="menu-toggle" class="menu-toggle-btn" aria-label="Abrir menú" aria-expanded="false" data-i18n-title="menu_toggle_title">
+          <span class="menu-icon-inner mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></span>
+        </button>
       </div>
+    </div>
+  </header>
+
+  <!-- Título y marcador del juego (debajo de la barra de NVISION, no dentro de ella) -->
+  <div class="game-hud">
+    <div class="game-hud-title">
+      <h1>REDES <span>CHALLENGE</span></h1>
+      <p class="subtitle" data-i18n="subtitle">APRENDE LAS DISTINTAS ESTRUCTURAS DE REDES</p>
     </div>
 
     <div class="stats">
@@ -43,12 +143,7 @@
         <span data-i18n="lives">Vidas</span>
       </span>
     </div>
-
-    <div class="topbar-actions">
-      <button id="lang-toggle" class="primary" type="button">🇬🇧 English</button>
-      <a href="../index.html" class="nav-home-icon" title="Inicio NVISION">🏠</a>
-    </div>
-  </header>
+  </div>
 
   <div class="layout">
     <aside class="sidebar">
@@ -100,6 +195,13 @@
     </aside>
   </div>
 
+  <!-- Footer de NVISION -->
+  <footer class="site-footer">
+    <p>© 2026 - <span data-i18n="footer_text">NVISION</span></p>
+  </footer>
+
+  <!-- Scripts de NVISION (barra, tema e idioma) + lógica del juego -->
+  <script src="../js/main.js"></script>
   <script src="juego.js" defer></script>
 </body>
 </html>
