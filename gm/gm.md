@@ -3,28 +3,6 @@
 - Idioma principal: Comunícate, explica y responde en español.
 - Documentación y mensajes: Redacta explicaciones, resúmenes, mensajes de estado y comentarios en español a menos que se indique explícitamente lo contrario.
 
-## Normalización Universal de Saltos de Línea (Solución Definitiva a "Target not found")
-- **Problema de Windows (CRLF vs LF)**: En Windows, los archivos suelen guardarse con saltos `\r\n` (CRLF), lo cual causa fallos constantes en `edit_file` con el mensaje: `Error: target content not found in the file; the Target must exactly match existing file text, including whitespace`.
-- **Regla de configuración obligatoria en toda PC nueva o clonada**:
-  1. Configurar Git para no convertir a CRLF:
-     ```powershell
-     git config --global core.autocrlf false
-     git config core.autocrlf false
-     ```
-  2. Mantener siempre el archivo `.gitattributes` en la raíz del repositorio con:
-     ```gitattributes
-     * text=auto eol=lf
-     *.html text eol=lf
-     *.css text eol=lf
-     *.js text eol=lf
-     *.md text eol=lf
-     ```
-  3. Si un archivo presenta discrepancia de líneas, ejecutar:
-     ```powershell
-     git add --renormalize .
-     ```
-
-
 ## Lectura y Edición de Archivos Estilo Editor (Regla Estricta de Lectura en Lotes)
 - **Lectura directa tipo VS Code**: Prohibido usar comandos de consola para leer o inspeccionar código (nada de `Get-Content`, `Select-String`, `type` o scripts). Usa exclusivamente la herramienta nativa `read_file` para leer el archivo tal cual como en un editor.
 - **Lectura en lotes de mínimo 700 líneas (Regla Estricta)**:
