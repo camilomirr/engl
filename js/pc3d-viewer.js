@@ -661,6 +661,7 @@ function init() {
   const labelsWrap = document.getElementById('pc-labels');
   const labelsToggle = document.getElementById('pc-labels-toggle');
   const labelV = new THREE.Vector3();
+  const labelOffV = new THREE.Vector3();
   let labelsVisible = true;
   const labelEls = {};
   if (labelsWrap) {
@@ -823,6 +824,7 @@ function init() {
         const el = labelEls[p.id];
         if (!el) return;
         partGroups[p.id].getWorldPosition(labelV);
+        if (p.labelOff) labelV.add(labelOffV.set(p.labelOff[0], p.labelOff[1], p.labelOff[2]));
         labelV.project(camera);
         if (labelV.z > 1) { el.style.display = 'none'; return; }
         el.style.display = '';

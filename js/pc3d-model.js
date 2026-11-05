@@ -1,6 +1,6 @@
 // =========================================================
 // NVISION — Modelo 3D de la torre (Three.js)
-// Reescrito desde cero: chasis, 7 piezas, ventiladores,
+// Reescrito desde cero: chasis, 8 piezas, ventiladores,
 // cables con sus conectores, LED y tira RGB.
 // Solo construye la geometría: la cámara, la interacción
 // y las animaciones viven en pc3d-viewer.js.
@@ -15,6 +15,7 @@ export const PARTS = [
   { id: 'motherboard', key: 'part_motherboard', funcKey: 'pc3d_partfunc_motherboard', typesKey: 'pc3d_parttypes_motherboard', dir: [1.6, 0.2, 0] },
   { id: 'ram', key: 'part_ram', funcKey: 'pc3d_partfunc_ram', typesKey: 'pc3d_parttypes_ram', dir: [1.6, 0.3, 0.2] },
   { id: 'cpu', key: 'part_cpu', funcKey: 'pc3d_partfunc_cpu', typesKey: 'pc3d_parttypes_cpu', dir: [1.6, 0.2, 0] },
+  { id: 'cooler', key: 'part_cooler', funcKey: 'pc3d_partfunc_cooler', typesKey: 'pc3d_parttypes_cooler', dir: [1, 0.7, 0], labelOff: [0, 0.6, 0] },
   { id: 'gpu', key: 'part_gpu', funcKey: 'pc3d_partfunc_gpu', typesKey: 'pc3d_parttypes_gpu', dir: [1.8, 0, 0] },
   { id: 'storage', key: 'part_storage', funcKey: 'pc3d_partfunc_storage', typesKey: 'pc3d_parttypes_storage', dir: [1.3, 0, 0.5] },
   { id: 'psu', key: 'part_psu', funcKey: 'pc3d_partfunc_psu', typesKey: 'pc3d_parttypes_psu', dir: [1.2, 0.2, -0.8] },
@@ -211,40 +212,108 @@ export function buildPcModel() {
   const atxConnector = box(0.12, 0.5, 0.3, mat(0xe5e7eb, { metal: 0.3, rough: 0.5 }));
   atxConnector.position.set(0.1, 0.1, 1.55);
   motherboard.add(atxConnector);
+  // zócalo del procesador: queda visible en la placa cuando se quita el CPU
+  const socket = box(0.04, 0.95, 0.95, mat(0x1e293b, { metal: 0.4, rough: 0.5 }));
+  socket.position.set(0.06, 0.95, -0.6);
+  motherboard.add(socket);
+  const socketInner = box(0.02, 0.78, 0.78, mat(0x475569, { metal: 0.5, rough: 0.45 }));
+  socketInner.position.set(0.09, 0.95, -0.6);
+  motherboard.add(socketInner);
+  const socketLever = box(0.02, 0.7, 0.05, METAL_MAT);
+  socketLever.position.set(0.1, 0.95, -0.08);
+  motherboard.add(socketLever);
   tower.add(motherboard);
   registerPart(motherboard, 'motherboard');
 
-  // --- CPU + disipador con ventilador ---
+  // --- Procesador: el chip queda visible cuando se quita el disipador ---
   const cpu = new THREE.Group();
-  cpu.position.set(-0.86, 3.45, -0.7);
-  cpu.add(box(0.1, 0.72, 0.72, DARK_MAT));
-  const chip = box(0.12, 0.5, 0.5, METAL_MAT);
-  chip.position.x = 0.08;
-  cpu.add(chip);
-  const heatsink = cyl(0.52, 0.52, 0.3, COPPER_MAT, 28);
-  heatsink.rotation.z = Math.PI / 2;
-  heatsink.position.x = 0.32;
-  cpu.add(heatsink);
-  const cpuFan = makeFan(0.5);
-  cpuFan.rotation.y = Math.PI / 2;
-  cpuFan.position.x = 0.52;
-  cpu.add(cpuFan);
+  cpu.position.set(-0.80, 3.45, -0.7);
+  // sustrato verde del chip
+  cpu.add(box(0.08, 0.78, 0.78, mat(0x14532d, { metal: 0.2, rough: 0.55 })));
+  // contactos dorados de la cara inferior (se ven al sacar el chip)
+  const cpuPins = box(0.02, 0.66, 0.66, mat(0xd4af37, { metal: 0.9, rough: 0.3 }));
+  cpuPins.position.x = -0.05;
+  cpu.add(cpuPins);
+  // disipador térmico integrado (IHS) de metal pulido
+  const ihs = box(0.12, 0.62, 0.62, METAL_MAT);
+  ihs.position.x = 0.07;
+  cpu.add(ihs);
+  // marca del chip sobre el IHS
+  const ihsMark = box(0.02, 0.34, 0.34, mat(0x475569, { metal: 0.8, rough: 0.3 }));
+  ihsMark.position.x = 0.14;
+  cpu.add(ihsMark);
+  const ihsDot = box(0.02, 0.08, 0.08, mat(0x0f172a, { emissive: 0x22d3ee, emissiveIntensity: 0.9 }));
+  ihsDot.position.set(0.15, 0.1, 0.1);
+  cpu.add(ihsDot);
   tower.add(cpu);
   registerPart(cpu, 'cpu');
 
-  // --- RAM (2 módulos) ---
+  // --- Disipador del procesador: se quita aparte y deja ver el chip ---
+  const cooler = new THREE.Group();
+  cooler.position.set(-0.40, 3.45, -0.7);
+  // placa base de cobre que apoya sobre el chip
+  const coolerBase = box(0.08, 0.7, 0.7, COPPER_MAT);
+  coolerBase.position.x = -0.23;
+  cooler.add(coolerBase);
+  // aletas de aluminio apiladas
+  for (let i = 0; i < 7; i++) {
+    const fin = box(0.025, 0.85, 0.85, METAL_MAT);
+    fin.position.x = -0.18 + i * 0.04;
+    cooler.add(fin);
+  }
+  // dos heatpipes de cobre que atraviesan las aletas
+  [-0.24, 0.24].forEach((z) => {
+    const pipe = cyl(0.045, 0.045, 0.9, COPPER_MAT, 12);
+    pipe.position.set(-0.06, 0, z);
+    cooler.add(pipe);
+  });
+  // ventilador sobre las aletas
+  const coolerFan = makeFan(0.55);
+  coolerFan.rotation.y = Math.PI / 2;
+  coolerFan.position.x = 0.16;
+  cooler.add(coolerFan);
+  tower.add(cooler);
+  registerPart(cooler, 'cooler');
+
+  // --- RAM: 2 módulos DIMM realistas (PCB, chips, contactos dorados, disipador) ---
   const ram = new THREE.Group();
   ram.position.set(-0.82, 3.3, 0.75);
-  [0, 0.4].forEach((dz, i) => {
-    const stick = box(0.1, 1.15, 0.22, mat(0x1f2937, { metal: 0.5, rough: 0.45 }));
-    stick.position.set(0, 0, dz);
+  const CHIP_MAT = mat(0x0f172a, { metal: 0.4, rough: 0.4 });
+  const GOLD_MAT = mat(0xd4af37, { metal: 0.9, rough: 0.3 });
+  [0, 0.17].forEach((dx, i) => {
+    const stick = new THREE.Group();
+    stick.position.x = dx;
+    // PCB del módulo
+    stick.add(box(0.06, 0.52, 1.7, mat(0x14532d, { metal: 0.2, rough: 0.55 })));
+    // 8 chips de memoria por cara
+    for (let c = 0; c < 8; c++) {
+      const z = -0.7 + c * 0.2;
+      const chipF = box(0.02, 0.24, 0.16, CHIP_MAT);
+      chipF.position.set(0.04, 0.04, z);
+      stick.add(chipF);
+      const chipB = box(0.02, 0.24, 0.16, CHIP_MAT);
+      chipB.position.set(-0.04, 0.04, z);
+      stick.add(chipB);
+    }
+    // contactos dorados del borde inferior, con la muesca DDR
+    const goldA = box(0.065, 0.08, 0.95, GOLD_MAT);
+    goldA.position.set(0, -0.26, -0.35);
+    stick.add(goldA);
+    const goldB = box(0.065, 0.08, 0.6, GOLD_MAT);
+    goldB.position.set(0, -0.26, 0.45);
+    stick.add(goldB);
+    // barra disipadora metálica del borde superior con acento RGB
+    const spreader = box(0.09, 0.12, 1.7, METAL_MAT);
+    spreader.position.set(0, 0.28, 0);
+    stick.add(spreader);
+    const rgb = box(0.1, 0.05, 1.7, mat(0x0f172a, { emissive: i === 0 ? 0x22d3ee : 0xd946ef, emissiveIntensity: 0.9 }));
+    rgb.position.set(0, 0.36, 0);
+    stick.add(rgb);
     ram.add(stick);
-    const rgb = box(0.11, 0.09, 0.22, mat(0x0f172a, { emissive: i === 0 ? 0x22d3ee : 0xd946ef, emissiveIntensity: 0.9 }));
-    rgb.position.set(0, 0.6, dz);
-    ram.add(rgb);
   });
-  const ramSlot = box(0.12, 0.1, 0.85, DARK_MAT);
-  ramSlot.position.set(0, -0.62, 0.2);
+  // ranuras DIMM en la placa
+  const ramSlot = box(0.12, 0.1, 1.85, DARK_MAT);
+  ramSlot.position.set(0.08, -0.34, 0);
   ram.add(ramSlot);
   tower.add(ram);
   registerPart(ram, 'ram');
