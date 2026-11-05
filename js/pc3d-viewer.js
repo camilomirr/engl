@@ -283,6 +283,7 @@ function init() {
       setEmissive(id, 0x0ea5e9, 0.5);
       const part = partById[id];
       updatePanelForPart(part, PARTS.indexOf(part));
+      updateStatus(); // el estado (INSTALADA/RETIRADA) siempre refleja la pieza que se selecciona
     } else {
       setSceneText(activeScene);
       if (partNameEl) {
