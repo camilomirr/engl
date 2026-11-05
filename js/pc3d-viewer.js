@@ -226,7 +226,9 @@ function init() {
     group.userData.explodeRate = 2.0 + PARTS.findIndex((p) => p.id === id) * 0.45;
     group.userData.freePos = null; // posición libre al arrastrarla suelta
     group.userData.dragging = false;
-    group.userData.magnetArmed = false; // el imán solo se arma al sacar la pieza de su sitio
+    group.userData.magnetArmed = false; // el imán solo ayuda al acercarla a su sitio
+    group.userData.lastDragD = 0; // distancia al sitio en el movimiento anterior
+    group.userData.grabOffset = new THREE.Vector3(); // agarre sin salto
     group.userData.ghost = null;
     const mats = new Set();
     group.traverse((o) => {
@@ -506,9 +508,8 @@ function init() {
   scene.add(particles);
 
   // Guía de recorrido: línea roja punteada hasta el sitio de la pieza
-  const SNAP_DIST = 0.6; // distancia a la que la pieza se incrusta sola al acercarla
+  const SNAP_DIST = 0.8; // distancia a la que la pieza se incrusta sola al acercarla
   const MAGNET_RADIUS = 2.0; // radio en el que el imán empieza a atraerla hacia su sitio
-  const MAGNET_ARM_DIST = 1.2; // el imán se arma solo cuando la pieza ya está fuera de su sitio
   const RELEASE_SNAP_DIST = 1.2; // al soltarla dentro de este radio, encaja sola
   const guideGeo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]);
   const guideMat = new THREE.LineDashedMaterial({ color: 0xef4444, dashSize: 0.18, gapSize: 0.12, transparent: true, opacity: 0.95 });
@@ -625,7 +626,26 @@ function init() {
     g.getWorldPosition(p);
     const n = new THREE.Vector3();
     camera.getWorldDirection(n);
-    dragPlane.setFromNormalAndCoplanarPoint(n, p);
+    // El plano de arrastre pasa POR LA ZONA ROJA (su sitio), no por la pieza:
+    // así la pieza sí puede llegar hasta su sitio con el cursor
+    const homeWorld = tower.localToWorld(g.userData.base.clone());
+    dragPlane.setFromNormalAndCoplanarPoint(n, homeWorld);
+    // Agarre sin salto: guardar el desplazamiento entre el centro y el punto del cursor
+    if (pointerClient) {
+      const rect = canvas.getBoundingClientRect();
+      pointer.x = ((pointerClient.x - rect.left) / rect.width) * 2 - 1;
+      pointer.y = -((pointerClient.y - rect.top) / rect.height) * 2 + 1;
+      raycaster.setFromCamera(pointer, camera);
+      const hit = new THREE.Vector3();
+      if (raycaster.ray.intersectPlane(dragPlane, hit)) {
+        const off = p.clone().sub(hit);
+        off.addScaledVector(n, -off.dot(n)); // solo la parte dentro del plano
+        g.userData.grabOffset = off;
+      } else {
+        g.userData.grabOffset = new THREE.Vector3();
+      }
+    }
+    g.userData.lastDragD = p.distanceTo(homeWorld);
     guideLine.visible = true;
     homeMarker.visible = true;
     ensureGhost(id);
@@ -756,10 +776,13 @@ function init() {
       if (raycaster.ray.intersectPlane(dragPlane, dragHit)) {
         const g = partGroups[dragId];
         const home = g.userData.base;
-        const raw = tower.worldToLocal(dragHit.clone());
+        const raw = tower.worldToLocal(dragHit.clone().add(g.userData.grabOffset));
         const d = raw.distanceTo(home);
-        // el imán se arma solo cuando la pieza ya está fuera de su sitio
-        if (d > MAGNET_ARM_DIST) g.userData.magnetArmed = true;
+        // el imán solo ayuda cuando la acercas a su sitio, nunca cuando la alejas
+        const approaching = d < g.userData.lastDragD;
+        g.userData.lastDragD = d;
+        if (approaching && d < MAGNET_RADIUS) g.userData.magnetArmed = true;
+        if (!approaching) g.userData.magnetArmed = false;
         let target = raw;
         if (g.userData.magnetArmed && d < MAGNET_RADIUS) {
           const pull = 1 - d / MAGNET_RADIUS;
