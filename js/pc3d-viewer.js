@@ -96,6 +96,10 @@ function init() {
   controls.maxPolarAngle = Math.PI * 0.55;
   controls.zoomSpeed = 0.35; // zoom suave, de a poquito con la rueda
   controls.rotateSpeed = 0.85;
+  // Izquierdo: agarrar piezas (y girar en vacío) · Derecho: mover la vista
+  controls.mouseButtons = { LEFT: THREE.MOUSE.ROTATE, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.PAN };
+  controls.touches = { ONE: THREE.TOUCH.ROTATE, TWO: THREE.TOUCH.DOLLY_PAN };
+  controls.enablePan = true;
   controls.autoRotate = !reduceMotion;
   controls.autoRotateSpeed = 0.9;
 
@@ -501,7 +505,9 @@ function init() {
   scene.add(particles);
 
   // Guía de recorrido: línea roja punteada hasta el sitio de la pieza
-  const SNAP_DIST = 1.0;
+  const SNAP_DIST = 0.6; // distancia a la que la pieza se incrusta sola al acercarla
+  const MAGNET_RADIUS = 2.0; // radio en el que el imán empieza a atraerla hacia su sitio
+  const RELEASE_SNAP_DIST = 1.0; // al soltarla dentro de este radio, encaja sola
   const guideGeo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]);
   const guideMat = new THREE.LineDashedMaterial({ color: 0xef4444, dashSize: 0.18, gapSize: 0.12, transparent: true, opacity: 0.95 });
   const guideLine = new THREE.Line(guideGeo, guideMat);
@@ -528,6 +534,7 @@ function init() {
   let lastInteract = 0;
   let hddOn = true;
   let dragId = null; // pieza que se está arrastrando suelta
+  let dragCandidate = null; // pieza bajo el cursor al presionar (posible arrastre)
   const clock = new THREE.Clock();
 
   function setEmissive(id, hex, intensity) {
@@ -587,11 +594,56 @@ function init() {
     pos.setXYZ(1, home.x, home.y, home.z);
     pos.needsUpdate = true;
     guideLine.computeLineDistances();
-    const inRange = guideV.distanceTo(home) < SNAP_DIST;
-    guideMat.color.setHex(inRange ? 0x22c55e : 0xef4444);
-    homeMarker.material.color.setHex(inRange ? 0x22c55e : 0xef4444);
+    const d = guideV.distanceTo(home);
+    const inSnap = d < SNAP_DIST;
+    const inMagnet = d < MAGNET_RADIUS;
+    guideMat.color.setHex(inSnap ? 0x22c55e : inMagnet ? 0xf59e0b : 0xef4444);
+    homeMarker.material.color.setHex(inSnap ? 0x22c55e : inMagnet ? 0xf59e0b : 0xef4444);
+    if (g.userData.ghostMat) g.userData.ghostMat.color.setHex(inSnap ? 0x22c55e : inMagnet ? 0xf59e0b : 0x38bdf8);
     homeMarker.position.copy(home);
     homeMarker.lookAt(camera.position);
+  }
+  function startDrag(id) {
+    const g = partGroups[id];
+    dragId = id;
+    dragCandidate = null;
+    g.userData.dragging = true;
+    selectPart(id); // el panel sigue a la pieza que se agarra
+    if (!g.userData.removed) {
+      g.userData.removed = true; // al agarrarla se suelta de su sitio
+      g.userData.freePos = null;
+      syncGhost(id);
+      updateStatus();
+      updateAllButton();
+      applyDim();
+    }
+    const p = new THREE.Vector3();
+    g.getWorldPosition(p);
+    const n = new THREE.Vector3();
+    camera.getWorldDirection(n);
+    dragPlane.setFromNormalAndCoplanarPoint(n, p);
+    guideLine.visible = true;
+    homeMarker.visible = true;
+    ensureGhost(id);
+    updateGuide();
+    canvas.style.cursor = 'grabbing';
+  }
+  function snapIn(id) {
+    const g = partGroups[id];
+    g.userData.freePos = null;
+    g.userData.removed = false;
+    g.userData.dragging = false;
+    dragId = null;
+    dragCandidate = null;
+    guideLine.visible = false;
+    homeMarker.visible = false;
+    canvas.style.cursor = 'grab';
+    if (g.userData.ghostMat) g.userData.ghostMat.color.setHex(0x38bdf8);
+    syncGhost(id);
+    updateStatus();
+    updateAllButton();
+    applyDim();
+    // los controles se reactivan en el pointerup, no aquí
   }
   function setAllRemoved(remove) {
     PARTS.forEach((p, i) => {
@@ -622,11 +674,11 @@ function init() {
     if (partIndexEl) partIndexEl.textContent = `${String(index + 1).padStart(2, '0')} / ${String(PARTS.length).padStart(2, '0')}`;
   }
   function selectPart(id) {
+    tooltip.hidden = true; // que no quede flotando el nombre viejo junto a la etiqueta
     if (selectedPart && selectedPart !== id) restoreEmissive(selectedPart);
     selectedPart = id;
     if (id) {
       setEmissive(id, 0x0ea5e9, 0.5);
-      toggleRemove(id); // clic = desmontar / volver a instalar
       const part = partById[id];
       updatePanelForPart(part, PARTS.indexOf(part));
     } else {
@@ -687,28 +739,47 @@ function init() {
   }
   canvas.addEventListener('pointermove', (event) => {
     pointerClient = { x: event.clientX, y: event.clientY };
+    // Si se presionó sobre una pieza y el cursor se mueve, empieza el arrastre
+    if (dragCandidate && !dragId && downPos) {
+      if (Math.hypot(event.clientX - downPos.x, event.clientY - downPos.y) > 8) startDrag(dragCandidate);
+    }
     if (dragId) {
-      // Arrastrar la pieza suelta sobre el plano que mira a la cámara
+      // Arrastrar la pieza sobre el plano que mira a la cámara, con imán hacia su sitio
       const rect = canvas.getBoundingClientRect();
       pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
       pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
       raycaster.setFromCamera(pointer, camera);
       if (raycaster.ray.intersectPlane(dragPlane, dragHit)) {
         const g = partGroups[dragId];
-        const local = tower.worldToLocal(dragHit.clone());
-        g.userData.freePos = local;
-        g.position.copy(local);
+        const home = g.userData.base;
+        const raw = tower.worldToLocal(dragHit.clone());
+        const d = raw.distanceTo(home);
+        let target = raw;
+        if (d < MAGNET_RADIUS) {
+          const pull = 1 - d / MAGNET_RADIUS;
+          const strength = Math.pow(pull, 1.5) * 0.85;
+          target = raw.clone().lerp(home, strength);
+        }
+        g.userData.freePos = target;
+        g.position.copy(target);
       }
       updateGuide();
+      // si llega muy cerca, se incrusta sola en su sitio
+      const g = partGroups[dragId];
+      if (g) {
+        g.getWorldPosition(guideV);
+        if (guideV.distanceTo(g.userData.base) < SNAP_DIST) snapIn(dragId);
+      }
       return;
     }
+    if (dragCandidate) return; // botón sostenido sobre una pieza, sin arrastre aún
     if (event.pointerType !== 'mouse') return;
     const id = pickPart(event);
     if (id !== hoveredPart) {
       if (hoveredPart && hoveredPart !== selectedPart) restoreEmissive(hoveredPart);
       hoveredPart = id;
       if (id && id !== selectedPart) setEmissive(id, 0x0ea5e9, 0.22);
-      canvas.style.cursor = id ? 'pointer' : 'grab';
+      canvas.style.cursor = id ? 'grab' : 'default';
     }
     if (tooltip) {
       if (id) {
@@ -725,10 +796,15 @@ function init() {
   canvas.addEventListener('pointerleave', () => {
     if (dragId) {
       partGroups[dragId].userData.dragging = false;
+      if (partGroups[dragId].userData.ghostMat) partGroups[dragId].userData.ghostMat.color.setHex(0x38bdf8);
       dragId = null;
+      dragCandidate = null;
       controls.enabled = true;
       guideLine.visible = false;
       homeMarker.visible = false;
+    } else if (dragCandidate) {
+      dragCandidate = null;
+      controls.enabled = true;
     }
     if (hoveredPart && hoveredPart !== selectedPart) restoreEmissive(hoveredPart);
     hoveredPart = null;
@@ -740,56 +816,43 @@ function init() {
     camTween = null;
     controls.autoRotate = false;
     lastInteract = clock.elapsedTime;
-    // Si la pieza ya está suelta, se puede arrastrar: se apaga la órbita
+    if (event.button !== 0) return; // derecho = panorámica, medio = zoom (los lleva OrbitControls)
+    tooltip.hidden = true;
+    // Botón izquierdo sobre una pieza = agarrarla; en vacío = girar la cámara
     const id = pickPart(event);
-    if (id && partGroups[id].userData.removed) {
-      dragId = id;
-      partGroups[id].userData.dragging = true;
-      controls.enabled = false;
-      const p = new THREE.Vector3();
-      partGroups[id].getWorldPosition(p);
-      const n = new THREE.Vector3();
-      camera.getWorldDirection(n);
-      dragPlane.setFromNormalAndCoplanarPoint(n, p);
-      guideLine.visible = true;
-      homeMarker.visible = true;
-      ensureGhost(id);
-      updateGuide();
-      canvas.style.cursor = 'grabbing';
+    if (id) {
+      dragCandidate = id;
+      controls.enabled = false; // no rotar mientras se agarra una pieza
     }
   });
   let clickTimer = null;
   canvas.addEventListener('pointerup', (event) => {
     if (dragId) {
-      // Soltar la pieza suelta
+      // Soltar la pieza: si quedó cerca de su sitio, encaja sola; si no, queda flotando
       const g = partGroups[dragId];
-      const moved = downPos ? Math.hypot(event.clientX - downPos.x, event.clientY - downPos.y) : 999;
-      const wasDrag = moved > 8;
       g.userData.dragging = false;
+      if (g.userData.ghostMat) g.userData.ghostMat.color.setHex(0x38bdf8);
+      const p = new THREE.Vector3();
+      g.getWorldPosition(p);
       const id = g.userData.partId;
       dragId = null;
+      dragCandidate = null;
       controls.enabled = true;
       guideLine.visible = false;
       homeMarker.visible = false;
       canvas.style.cursor = 'grab';
       downPos = null;
-      if (!wasDrag) {
-        // fue un clic, no un arrastre: desmontar/instalar con el flujo normal
-        if (clickTimer) clearTimeout(clickTimer);
-        clickTimer = setTimeout(() => { selectPart(id); clickTimer = null; }, 260);
-        return;
-      }
-      // si quedó cerca de su sitio, encaja sola
-      const p = new THREE.Vector3();
-      g.getWorldPosition(p);
-      if (p.distanceTo(g.userData.base) < SNAP_DIST) {
-        g.userData.freePos = null;
-        g.userData.removed = false;
-        syncGhost(id);
-        updateStatus();
-        updateAllButton();
-        applyDim();
-      }
+      if (p.distanceTo(g.userData.base) < RELEASE_SNAP_DIST) snapIn(id);
+      return;
+    }
+    if (dragCandidate) {
+      // fue un clic sobre la pieza: solo seleccionarla, no quitarla
+      const id = dragCandidate;
+      dragCandidate = null;
+      controls.enabled = true;
+      downPos = null;
+      if (clickTimer) clearTimeout(clickTimer);
+      clickTimer = setTimeout(() => { selectPart(id); clickTimer = null; }, 260);
       return;
     }
     if (!downPos) return;
@@ -803,6 +866,7 @@ function init() {
   });
   canvas.addEventListener('dblclick', (event) => {
     if (clickTimer) { clearTimeout(clickTimer); clickTimer = null; }
+    dragCandidate = null;
     const id = pickPart(event);
     if (!id) return;
     const target = new THREE.Vector3();
