@@ -447,6 +447,7 @@ function init() {
   }
   canvas.addEventListener('pointermove', (event) => {
     pointerClient = { x: event.clientX, y: event.clientY };
+    lastInteract = clock.elapsedTime; // mover el ratón es actividad: la cámara no gira sola mientras apuntas
     // Si se presionó sobre una pieza y el cursor se mueve, empieza el arrastre
     if (dragCandidate && !dragId && downPos) {
       if (Math.hypot(event.clientX - downPos.x, event.clientY - downPos.y) > 8) startDrag(dragCandidate);
@@ -540,6 +541,7 @@ function init() {
   canvas.addEventListener('pointerup', (event) => {
     // La órbita siempre vuelve a quedar activa al soltar, pase lo que pase
     controls.enabled = true;
+    lastInteract = clock.elapsedTime; // el conteo de 6 s para girar sola arranca desde que sueltas
     if (event.button !== 0) { downPos = null; return; } // solo el botón izquierdo termina arrastres o clics
     if (dragId) {
       // Soltar la pieza: si quedó cerca de su sitio, encaja sola; si no, queda flotando
