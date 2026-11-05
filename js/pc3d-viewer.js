@@ -24,6 +24,10 @@ function init() {
   const explodeInput = document.getElementById('pc-explode');
   const explodeVal = document.getElementById('pc-explode-val');
   const resetBtn = document.getElementById('pc-reset-view');
+  const statusWrap = document.getElementById('pc-part-status');
+  const statusText = document.getElementById('pc-part-status-text');
+  const allBtn = document.getElementById('pc-disassemble-all');
+  const allBtnLabel = allBtn ? allBtn.querySelector('span:last-child') : null;
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -67,7 +71,7 @@ function init() {
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.1;
+  renderer.toneMappingExposure = 1.25;
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
@@ -84,18 +88,18 @@ function init() {
   controls.autoRotateSpeed = 0.9;
 
   // --- Luces ---
-  scene.add(new THREE.AmbientLight(0x94a3b8, 0.55));
-  const keyLight = new THREE.DirectionalLight(0xffffff, 1.7);
+  scene.add(new THREE.AmbientLight(0x94a3b8, 0.75));
+  const keyLight = new THREE.DirectionalLight(0xffffff, 2.1);
   keyLight.position.set(6, 9, 7);
   keyLight.castShadow = true;
   keyLight.shadow.mapSize.set(2048, 2048);
   keyLight.shadow.camera.left = -7; keyLight.shadow.camera.right = 7;
   keyLight.shadow.camera.top = 7; keyLight.shadow.camera.bottom = -7;
   scene.add(keyLight);
-  const innerGlow = new THREE.PointLight(0x22d3ee, 14, 10, 2);
+  const innerGlow = new THREE.PointLight(0x22d3ee, 18, 10, 2);
   innerGlow.position.set(0.4, 3.0, 0.8);
   scene.add(innerGlow);
-  const fillLight = new THREE.PointLight(0xf59e0b, 4, 12, 2);
+  const fillLight = new THREE.PointLight(0xf59e0b, 6, 12, 2);
   fillLight.position.set(-4, 2, -5);
   scene.add(fillLight);
 
@@ -133,9 +137,9 @@ function init() {
     return m;
   };
 
-  const CASE_MAT = mat(0x1a2432, { metal: 0.65, rough: 0.4 });
+  const CASE_MAT = mat(0x2a3648, { metal: 0.7, rough: 0.35 });
   const DARK_MAT = mat(0x0f172a, { metal: 0.5, rough: 0.5 });
-  const PCB_MAT = mat(0x0d3327, { metal: 0.25, rough: 0.6 });
+  const PCB_MAT = mat(0x166534, { metal: 0.2, rough: 0.55 });
   const METAL_MAT = mat(0xb8c4d4, { metal: 0.9, rough: 0.25 });
   const COPPER_MAT = mat(0xb87333, { metal: 0.9, rough: 0.3 });
 
@@ -179,6 +183,8 @@ function init() {
     group.userData.base = group.position.clone();
     group.userData.dir = new THREE.Vector3(...dir);
     group.userData.targetOpacity = 1;
+    group.userData.removed = false;
+    group.userData.removeK = 0;
     const mats = new Set();
     group.traverse((o) => {
       if (o.isMesh) {
@@ -212,7 +218,7 @@ function init() {
   caseBox(2.28, 0.08, 4.08, 0, 0.04, 0);          // piso
   const frontPanel = caseBox(2.28, 4.6, 0.08, 0, 2.3, 2); // frontal
   frontPanel.userData.base = frontPanel.position.clone();
-  frontPanel.userData.dir = new THREE.Vector3(0, 0, 1.1);
+  frontPanel.userData.dir = new THREE.Vector3(0, 0, 1.6);
   // marco del lado abierto (+X)
   caseBox(0.08, 0.12, 4.0, 1.1, 4.55, 0);
   caseBox(0.08, 0.12, 4.0, 1.1, 0.12, 0);
@@ -265,7 +271,7 @@ function init() {
   const chip = box(0.12, 0.5, 0.5, METAL_MAT);
   chip.position.x = 0.08;
   cpu.add(chip);
-  const heatsink = cyl(0.52, 0.52, 0.3, mat(0x9aa7b8, { metal: 0.85, rough: 0.35 }), 28);
+  const heatsink = cyl(0.52, 0.52, 0.3, COPPER_MAT, 28);
   heatsink.rotation.z = Math.PI / 2;
   heatsink.position.x = 0.32;
   cpu.add(heatsink);
@@ -274,16 +280,16 @@ function init() {
   cpuFan.position.x = 0.52;
   cpu.add(cpuFan);
   tower.add(cpu);
-  registerPart(cpu, 'cpu', [1.1, 0.15, 0]);
+  registerPart(cpu, 'cpu', [1.6, 0.2, 0]);
 
   // --- RAM (2 módulos) ---
   const ram = new THREE.Group();
   ram.position.set(-0.82, 3.3, 0.75);
-  [0, 0.4].forEach((dz) => {
-    const stick = box(0.1, 1.15, 0.22, mat(0x111827, { metal: 0.5, rough: 0.45 }));
+  [0, 0.4].forEach((dz, i) => {
+    const stick = box(0.1, 1.15, 0.22, mat(0x1f2937, { metal: 0.5, rough: 0.45 }));
     stick.position.set(0, 0, dz);
     ram.add(stick);
-    const rgb = box(0.11, 0.09, 0.22, mat(0x0f172a, { emissive: 0x22d3ee, emissiveIntensity: 0.9 }));
+    const rgb = box(0.11, 0.09, 0.22, mat(0x0f172a, { emissive: i === 0 ? 0x22d3ee : 0xd946ef, emissiveIntensity: 0.9 }));
     rgb.position.set(0, 0.6, dz);
     ram.add(rgb);
   });
@@ -291,27 +297,27 @@ function init() {
   ramSlot.position.set(0, -0.62, 0.2);
   ram.add(ramSlot);
   tower.add(ram);
-  registerPart(ram, 'ram', [1.1, 0.25, 0.15]);
+  registerPart(ram, 'ram', [1.6, 0.3, 0.2]);
 
   // --- GPU ---
   const gpu = new THREE.Group();
   gpu.position.set(-0.55, 1.75, 0.1);
   const gpuBody = box(0.42, 0.55, 2.7, mat(0x1f2937, { metal: 0.6, rough: 0.4 }));
   gpu.add(gpuBody);
-  const gpuAccent = box(0.44, 0.09, 2.7, mat(0x0f172a, { emissive: 0x22d3ee, emissiveIntensity: 0.7 }));
+  const gpuAccent = box(0.44, 0.09, 2.7, mat(0x7f1d1d, { emissive: 0xef4444, emissiveIntensity: 0.7 }));
   gpuAccent.position.y = 0.28;
   gpu.add(gpuAccent);
   const gpuPlate = box(0.05, 0.5, 2.6, METAL_MAT);
   gpuPlate.position.x = -0.22;
   gpu.add(gpuPlate);
   [-0.62, 0.62].forEach((dz) => {
-    const fan = makeFan(0.42, 0x38bdf8);
+    const fan = makeFan(0.42, 0xef4444);
     fan.rotation.y = Math.PI / 2;
     fan.position.set(0.24, 0, dz);
     gpu.add(fan);
   });
   tower.add(gpu);
-  registerPart(gpu, 'gpu', [1.25, 0, 0]);
+  registerPart(gpu, 'gpu', [1.8, 0, 0]);
 
   // --- Fuente de poder ---
   const psu = new THREE.Group();
@@ -326,18 +332,18 @@ function init() {
   psuLabel.rotation.y = Math.PI / 2;
   psu.add(psuLabel);
   tower.add(psu);
-  registerPart(psu, 'psu', [0, -0.6, -0.4]);
+  registerPart(psu, 'psu', [0, -0.8, -0.5]);
 
   // --- Almacenamiento (SSD M.2 en placa) ---
   const storage = new THREE.Group();
   storage.position.set(-0.85, 1.05, 0.9);
-  const ssd = box(0.06, 0.28, 0.95, mat(0x1e293b, { metal: 0.6, rough: 0.4 }));
+  const ssd = box(0.06, 0.28, 0.95, mat(0x1d4ed8, { metal: 0.6, rough: 0.4 }));
   storage.add(ssd);
   const ssdLabel = box(0.02, 0.2, 0.6, mat(0x0f172a, { emissive: 0x38bdf8, emissiveIntensity: 0.5 }));
   ssdLabel.position.x = 0.04;
   storage.add(ssdLabel);
   tower.add(storage);
-  registerPart(storage, 'storage', [0.95, 0, 0.35]);
+  registerPart(storage, 'storage', [1.3, 0, 0.5]);
 
   // --- Unidad óptica (bahía frontal superior) ---
   const optical = new THREE.Group();
@@ -351,12 +357,12 @@ function init() {
   oddSlot.position.set(0, 0.02, 0.7);
   optical.add(oddSlot);
   tower.add(optical);
-  registerPart(optical, 'optical', [0, 0.55, 0.95]);
+  registerPart(optical, 'optical', [0, 0.8, 1.3]);
 
   // --- Ventiladores del chasis (no clicables) ---
   const caseFans = [];
-  [[0, 3.5, 1.92, 0], [0, 1.3, 1.92, 0], [0, 3.9, -1.92, Math.PI]].forEach(([x, y, z, ry]) => {
-    const fan = makeFan(0.55);
+  [[0, 3.5, 1.92, 0, 0x22d3ee], [0, 1.3, 1.92, 0, 0x22d3ee], [0, 3.9, -1.92, Math.PI, 0x34d399]].forEach(([x, y, z, ry, color]) => {
+    const fan = makeFan(0.55, color);
     fan.position.set(x, y, z);
     fan.rotation.y = ry;
     tower.add(fan);
@@ -374,9 +380,9 @@ function init() {
     tower.add(mesh);
     return mesh;
   }
-  cable([[0.3, 0.95, -0.9], [0.7, 1.3, -0.2], [-0.2, 1.7, 0.5], [-0.85, 2.1, 0.9]], 0.06, 0x111827);
-  cable([[0.3, 0.95, -0.6], [0.5, 1.4, 0.1], [-0.45, 2.0, 0.55]], 0.045, 0x1f2937);
-  cable([[-0.2, 0.95, -1.0], [-0.5, 1.0, 0.2], [-0.85, 1.05, 0.85]], 0.03, 0x374151);
+  cable([[0.3, 0.95, -0.9], [0.7, 1.3, -0.2], [-0.2, 1.7, 0.5], [-0.85, 2.1, 0.9]], 0.06, 0x991b1b);
+  cable([[0.3, 0.95, -0.6], [0.5, 1.4, 0.1], [-0.45, 2.0, 0.55]], 0.045, 0xd97706);
+  cable([[-0.2, 0.95, -1.0], [-0.5, 1.0, 0.2], [-0.85, 1.05, 0.85]], 0.03, 0x2563eb);
 
   // --- Partículas de flujo de aire ---
   const P_COUNT = 140;
@@ -426,7 +432,43 @@ function init() {
     const focus = SCENES[activeScene].focus;
     PARTS.forEach((p) => {
       const g = partGroups[p.id];
-      g.userData.targetOpacity = !focus || focus.includes(p.id) || selectedPart === p.id ? 1 : 0.32;
+      g.userData.targetOpacity = !focus || focus.includes(p.id) || selectedPart === p.id || g.userData.removed ? 1 : 0.32;
+    });
+  }
+  function updateStatus() {
+    if (!statusText || !statusWrap) return;
+    if (!selectedPart) {
+      statusText.textContent = t('pc3d_part_installed');
+      statusText.dataset.i18n = 'pc3d_part_installed';
+      statusWrap.classList.remove('is-removed');
+      return;
+    }
+    const removed = partGroups[selectedPart].userData.removed;
+    statusText.textContent = t(removed ? 'pc3d_part_removed' : 'pc3d_part_installed');
+    statusText.dataset.i18n = removed ? 'pc3d_part_removed' : 'pc3d_part_installed';
+    statusWrap.classList.toggle('is-removed', removed);
+  }
+  function updateAllButton() {
+    if (!allBtnLabel) return;
+    const allRemoved = PARTS.every((p) => partGroups[p.id].userData.removed);
+    allBtnLabel.textContent = t(allRemoved ? 'pc3d_assemble_all' : 'pc3d_disassemble_all');
+    allBtnLabel.dataset.i18n = allRemoved ? 'pc3d_assemble_all' : 'pc3d_disassemble_all';
+  }
+  function toggleRemove(id) {
+    const g = partGroups[id];
+    g.userData.removed = !g.userData.removed;
+    updateStatus();
+    updateAllButton();
+    applyDim();
+  }
+  function setAllRemoved(remove) {
+    PARTS.forEach((p, i) => {
+      setTimeout(() => {
+        partGroups[p.id].userData.removed = remove;
+        if (selectedPart === p.id) updateStatus();
+        updateAllButton();
+        applyDim();
+      }, i * 90);
     });
   }
   function updatePanelForPart(part, index) {
@@ -445,10 +487,11 @@ function init() {
     if (partIndexEl) partIndexEl.textContent = `${String(index + 1).padStart(2, '0')} / ${String(PARTS.length).padStart(2, '0')}`;
   }
   function selectPart(id) {
-    if (selectedPart) restoreEmissive(selectedPart);
+    if (selectedPart && selectedPart !== id) restoreEmissive(selectedPart);
     selectedPart = id;
     if (id) {
       setEmissive(id, 0x0ea5e9, 0.5);
+      toggleRemove(id); // clic = desmontar / volver a instalar
       const part = partById[id];
       updatePanelForPart(part, PARTS.indexOf(part));
     } else {
@@ -458,6 +501,7 @@ function init() {
         partNameEl.dataset.i18n = partById.motherboard.typesKey;
       }
       if (partIndexEl) partIndexEl.textContent = `01 / ${String(PARTS.length).padStart(2, '0')}`;
+      updateStatus();
     }
     applyDim();
   }
@@ -562,8 +606,16 @@ function init() {
     resetBtn.addEventListener('click', () => {
       if (explodeInput) { explodeInput.value = '0'; explodeTarget = 0; }
       if (explodeVal) explodeVal.textContent = '0%';
+      PARTS.forEach((p) => { partGroups[p.id].userData.removed = false; });
+      updateAllButton();
       selectPart(null);
       setScene('overview');
+    });
+  }
+  if (allBtn) {
+    allBtn.addEventListener('click', () => {
+      const anyInstalled = PARTS.some((p) => !partGroups[p.id].userData.removed);
+      setAllRemoved(anyInstalled);
     });
   }
 
@@ -606,10 +658,11 @@ function init() {
     // tira RGB con ciclo de color suave
     rgbStrip.material.color.setHSL((elapsed * 0.04) % 1, 0.85, 0.6);
 
-    // vista desarmada (interpolada)
+    // vista desarmada (interpolada) + piezas retiradas con clic
     explodeCurrent += (explodeTarget - explodeCurrent) * Math.min(1, dt * 6);
     Object.values(partGroups).forEach((g) => {
-      g.position.copy(g.userData.base).addScaledVector(g.userData.dir, explodeCurrent * 1.15);
+      g.userData.removeK += ((g.userData.removed ? 1 : 0) - g.userData.removeK) * Math.min(1, dt * 5);
+      g.position.copy(g.userData.base).addScaledVector(g.userData.dir, explodeCurrent * 1.6 + g.userData.removeK * 2.1);
     });
     frontPanel.position.copy(frontPanel.userData.base).addScaledVector(frontPanel.userData.dir, explodeCurrent);
 

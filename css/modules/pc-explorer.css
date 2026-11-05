@@ -31,6 +31,10 @@
 .pc-part-readout { display: flex; align-items: center; gap: .55rem; margin: 2rem 0 1.5rem; color: var(--text-primary); font: 700 .76rem 'JetBrains Mono', monospace; text-transform: uppercase; }
 .readout-line { height: 1px; flex: 1; background: var(--border-subtle); }
 .pc-part-readout #pc-part-index { color: var(--text-muted); font-weight: 400; }
+.pc-part-status { display: flex; align-items: center; gap: .55rem; margin: -0.9rem 0 1.2rem; color: var(--accent-emerald); font: 700 .7rem 'JetBrains Mono', monospace; text-transform: uppercase; letter-spacing: .08em; }
+.pc-status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent-emerald); box-shadow: 0 0 10px var(--accent-emerald); }
+.pc-part-status.is-removed { color: #f59e0b; }
+.pc-part-status.is-removed .pc-status-dot { background: #f59e0b; box-shadow: 0 0 10px #f59e0b; }
 .pc-part-info { margin: 0 0 1.4rem; padding: .8rem; border-left: 2px solid var(--accent-cyan); background: rgba(14,165,233,.07); color: var(--text-secondary); font-size: .78rem; line-height: 1.55; }
 .pc-part-info strong { display: block; color: var(--text-primary); font-size: .86rem; margin-bottom: .35rem; }
 .pc-scene-controls { display: grid; gap: .5rem; }
