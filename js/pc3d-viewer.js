@@ -319,9 +319,10 @@ function init() {
     pos.needsUpdate = true;
     guideLine.computeLineDistances();
     const d = guideV.distanceTo(home);
-    const armed = g.userData.magnetArmed;
-    const inSnap = armed && d < RELEASE_SNAP_DIST; // verde: si la sueltas aquí, se pega
-    const inMagnet = armed && d < MAGNET_RADIUS;
+    // el color es solo distancia: verde = si la sueltas aquí se pega, ámbar = el imán te ayuda
+    // (antes dependía de magnetArmed y un solo movimiento lateral lo apagaba, así que el verde casi nunca se veía)
+    const inSnap = d < RELEASE_SNAP_DIST;
+    const inMagnet = d < MAGNET_RADIUS;
     guideMat.color.setHex(inSnap ? 0x22c55e : inMagnet ? 0xf59e0b : 0xef4444);
     homeMarker.material.color.setHex(inSnap ? 0x22c55e : inMagnet ? 0xf59e0b : 0xef4444);
     if (g.userData.ghostMat) g.userData.ghostMat.color.setHex(inSnap ? 0x22c55e : inMagnet ? 0xf59e0b : 0x38bdf8);
