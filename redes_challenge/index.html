@@ -1,3 +1,105 @@
 <!DOCTYPE html>
 <html lang="es">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Redes Challenge</title><link rel="stylesheet" href="estilos.css"></head><body><header class="topbar"><div class="brand"><div class="brandmark">◉<br>⌁</div><div><h1>REDES <span>CHALLENGE</span></h1><p class="subtitle" data-i18n="subtitle">APRENDE LAS DISTINTAS ESTRUCTURAS DE REDES</p></div></div><div class="stats"><span class="pill"><span class="big">⭐</span><span><span data-i18n="points">Puntos</span><strong id="score">0</strong></span></span><span class="divider"></span><span class="pill"><span class="big">❔</span><span><span data-i18n="question">Pregunta</span><strong id="level">1/10</strong></span></span><span class="divider"></span><span class="pill"><span class="big" id="lives">❤️❤️❤️</span><span data-i18n="lives">Vidas</span></span></div><button id="lang-toggle" class="primary" type="button">🇬🇧 English</button></header><div class="layout"><aside class="sidebar"><div class="navitem"><span class="ico">⌂</span><span data-i18n="home">Inicio</span></div><div class="navitem active"><span class="ico">🎮</span><span data-i18n="play">Jugar</span></div><div class="navitem"><span class="ico">🏆</span><span data-i18n="results">Resultados</span></div><div class="navitem"><span class="ico">⚙</span><span data-i18n="settings">Configuración</span></div><div class="tip" data-i18n-html="tip">💡<br>La práctica<br>hace al experto</div></aside><main class="panel"><div id="game"><div class="questionbar"><span class="questiontag" id="questionTag">Pregunta 1/10</span><h2 id="question"></h2></div><div class="diagram" id="diagram"></div><div class="options" id="options"></div><p id="feedback" aria-live="polite"></p><button id="next" class="primary hidden">Siguiente pregunta →</button></div><div id="end" class="hidden"><h2 id="result"></h2><p id="summary"></p><button class="primary" id="restart">↻ Volver a jugar</button></div></main><aside class="rightart"><div class="globe"></div><div class="router"></div><p data-i18n-html="think">¡Piensa, analiza<br>y elige la respuesta<br>correcta!</p></aside></div><script src="juego.js" defer></script></body></html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NVISION - Redes Challenge</title>
+  <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-left">
+      <!-- Botón volver a NVISION -->
+      <a href="../redes.html#topologias" class="btn-back-nvision" title="Volver a NVISION Redes">
+        <span class="back-arrow">←</span>
+        <span class="back-text">Volver a <strong>NVISION</strong></span>
+      </a>
+
+      <div class="brand">
+        <a href="../index.html" class="brand-link" title="Ir al inicio de NVISION">
+          <span class="nvision-pill">NVISION</span>
+        </a>
+        <div class="brandmark">◉<br>⌁</div>
+        <div>
+          <h1>REDES <span>CHALLENGE</span></h1>
+          <p class="subtitle" data-i18n="subtitle">APRENDE LAS DISTINTAS ESTRUCTURAS DE REDES</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats">
+      <span class="pill">
+        <span class="big">⭐</span>
+        <span><span data-i18n="points">Puntos</span><strong id="score">0</strong></span>
+      </span>
+      <span class="divider"></span>
+      <span class="pill">
+        <span class="big">❔</span>
+        <span><span data-i18n="question">Pregunta</span><strong id="level">1/10</strong></span>
+      </span>
+      <span class="divider"></span>
+      <span class="pill">
+        <span class="big" id="lives">❤️❤️❤️</span>
+        <span data-i18n="lives">Vidas</span>
+      </span>
+    </div>
+
+    <div class="topbar-actions">
+      <button id="lang-toggle" class="primary" type="button">🇬🇧 English</button>
+      <a href="../index.html" class="nav-home-icon" title="Inicio NVISION">🏠</a>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <a href="../redes.html#topologias" class="navitem navitem-link" title="Regresar al tema de Topologías en NVISION">
+        <span class="ico">⌂</span>
+        <span data-i18n="home">NVISION Redes</span>
+      </a>
+      <div class="navitem active">
+        <span class="ico">🎮</span>
+        <span data-i18n="play">Jugar</span>
+      </div>
+      <a href="../recursos.html#glosario" class="navitem navitem-link" title="Ver Glosario de términos">
+        <span class="ico">🏆</span>
+        <span data-i18n="results">Glosario</span>
+      </a>
+      <a href="../redes.html#simulador-red" class="navitem navitem-link" title="Ir al Simulador Ping">
+        <span class="ico">⚙</span>
+        <span data-i18n="settings">Simulador</span>
+      </a>
+      <div class="tip" data-i18n-html="tip">💡<br>La práctica<br>hace al experto</div>
+    </aside>
+
+    <main class="panel">
+      <div id="game">
+        <div class="questionbar">
+          <span class="questiontag" id="questionTag">Pregunta 1/10</span>
+          <h2 id="question"></h2>
+        </div>
+        <div class="diagram" id="diagram"></div>
+        <div class="options" id="options"></div>
+        <p id="feedback" aria-live="polite"></p>
+        <button id="next" class="primary hidden">Siguiente pregunta →</button>
+      </div>
+
+      <div id="end" class="hidden">
+        <h2 id="result"></h2>
+        <p id="summary"></p>
+        <div class="end-actions">
+          <button class="primary" id="restart">↻ Volver a jugar</button>
+          <a href="../redes.html#topologias" class="btn-return-big">← Volver a NVISION Redes</a>
+        </div>
+      </div>
+    </main>
+
+    <aside class="rightart">
+      <div class="globe"></div>
+      <div class="router"></div>
+      <p data-i18n-html="think">¡Piensa, analiza<br>y elige la respuesta<br>correcta!</p>
+    </aside>
+  </div>
+
+  <script src="juego.js" defer></script>
+</body>
+</html>
