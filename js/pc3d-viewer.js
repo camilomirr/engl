@@ -277,7 +277,7 @@ function init() {
       powerBtnLabel.textContent = t(powered ? 'pc3d_power_off' : 'pc3d_power_on');
       powerBtnLabel.dataset.i18n = powered ? 'pc3d_power_off' : 'pc3d_power_on';
     }
-    if (powerBtnRingMat) powerBtnRingMat.color.setHex(powered ? 0x22c55e : 0x1f2937);
+    // el anillo 3D lo lleva el bucle de animación (verde al encender, rojo si falla el arranque)
   }
   function failBoot(missing) {
     failBlinkUntil = clock.elapsedTime + 3;
@@ -890,6 +890,13 @@ function init() {
     if (powered) powerLedMat.color.setHex(0x22c55e).multiplyScalar(1.3 + 0.6 * Math.sin(elapsed * 2.2));
     else if (clock.elapsedTime < failBlinkUntil) powerLedMat.color.setHex(Math.floor(elapsed * 6) % 2 ? 0xef4444 : 0x450a0a).multiplyScalar(Math.floor(elapsed * 6) % 2 ? 1.8 : 1);
     else powerLedMat.color.setHex(0x1f2937);
+    // anillo del botón de encendido: verde respirando si está encendido, rojo
+    // parpadeando si falló el arranque, apagado si no (antes quedaba gris en el error)
+    if (powerBtnRingMat) {
+      if (powered) powerBtnRingMat.color.setHex(0x22c55e).multiplyScalar(1.3 + 0.6 * Math.sin(elapsed * 2.2));
+      else if (clock.elapsedTime < failBlinkUntil) powerBtnRingMat.color.setHex(Math.floor(elapsed * 6) % 2 ? 0xef4444 : 0x450a0a).multiplyScalar(Math.floor(elapsed * 6) % 2 ? 1.8 : 1);
+      else powerBtnRingMat.color.setHex(0x1f2937);
+    }
     // LED de disco: solo parpadea con el PC encendido
     if (powered && Math.random() < 0.08) hddOn = !hddOn;
     hddLedMat.color.setHex(powered ? (hddOn ? 0xf59e0b : 0x201404) : 0x201404);
