@@ -562,8 +562,10 @@ export function buildPcModel() {
   registerPart(storage, 'storage');
 
   // --- Unidad óptica (bahía frontal superior) ---
+  // a ras del frontal (z=1.35): antes estaba en 1.55 y su frente sobresalía 0.2
+  // por fuera de la malla del panel frontal, atravesándola
   const optical = new THREE.Group();
-  optical.position.set(0, 4.25, 1.55);
+  optical.position.set(0, 4.25, 1.35);
   optical.add(box(1.8, 0.28, 1.3, mat(0x9aa7b8, { metal: 0.8, rough: 0.35 })));
   const oddBezel = box(1.82, 0.28, 0.06, DARK_MAT);
   oddBezel.position.z = 0.66;
@@ -612,8 +614,9 @@ export function buildPcModel() {
   // ventilador frontal inferior: a la cabecera SYS_FAN (abajo de la placa)
   cable([[0, 1.3, 1.92], [-0.2, 1.15, 1.4], [-0.6, 1.0, 0.6], [-0.86, 0.88, -0.6]], 0.02, 0x1f2937, 'motherboard');
   // unidad óptica: SATA de datos a la placa (puerto 1) y SATA de poder desde la fuente
-  cable([[0, 4.25, 0.95], [0.4, 3.8, 1.2], [0.6, 2.5, 1.4], [0.3, 1.2, 1.0], [-0.4, 0.9, 0.6], [-0.85, 0.88, 0.45]], 0.025, 0xdc2626, 'optical');
-  cable([[0.4, 0.75, -0.55], [0.5, 1.8, -1.5], [0.4, 3.2, -1.6], [0.2, 4.0, -0.5], [0, 4.25, 0.95]], 0.03, 0x111827, 'optical');
+  // (la unidad quedó a ras del frontal, así que su trasera está en z=0.7)
+  cable([[0, 4.25, 0.73], [0.4, 3.8, 1.2], [0.6, 2.5, 1.4], [0.3, 1.2, 1.0], [-0.4, 0.9, 0.6], [-0.85, 0.88, 0.45]], 0.025, 0xdc2626, 'optical');
+  cable([[0.4, 0.75, -0.55], [0.5, 1.8, -1.5], [0.4, 3.2, -1.6], [0.2, 4.0, -0.5], [0, 4.25, 0.73]], 0.03, 0x111827, 'optical');
   // SSD: SATA de datos del puerto 2 de la placa al conector del SSD (el azul ya es el de poder)
   cable([[-0.85, 0.88, 0.72], [-0.78, 0.95, 0.6], [-0.80, 1.05, 0.5]], 0.025, 0xdc2626, 'storage');
   // panel frontal: botón, LEDs y USB a la cabecera del borde inferior de la placa
@@ -908,7 +911,7 @@ export function buildPcModel() {
     // ocupa x 1.5..5.5 y z -1.1..1.1: nada puede pisar ese rectángulo)
     const spareFan = makeFan(0.55, 0x22d3ee, false); // de repuesto, sin corriente no gira
     spareFan.rotation.x = -Math.PI / 2;
-    spareFan.position.set(-0.5, 0.15, -2.5);
+    spareFan.position.set(-0.5, 0.06, -2.5); // apoyado en la mesa (antes flotaba a 0.15)
     env.add(spareFan);
     add(box(0.9, 0.6, 0.7, mat(0x9a7b4f, { metal: 0.1, rough: 0.85 })), 0.8, 0.3, -2.4);
     const smallBox = box(0.6, 0.4, 0.5, mat(0x9a7b4f, { metal: 0.1, rough: 0.85 }));
@@ -941,40 +944,41 @@ export function buildPcModel() {
     const pwrPortW = new THREE.Vector3(); pwrSocket.getWorldPosition(pwrPortW);
     // HDMI: del puerto del monitor al puerto HDMI de la tarjeta gráfica. La torre
     // está girada 90°, así que su parte trasera mira a la derecha y el puerto queda
-    // en (5.57, 1.75, -0.55), a la vista: el cable bordea la mesa por detrás y
+    // en (5.57, 1.85, -0.55), a la vista: el cable bordea la mesa por detrás y
     // sube por el costado derecho hasta enchufarse
-    extCable([hdmiPortW, [-4.85, 1.0, 1.1], [-4.7, 0.06, 0.3], [-3.0, 0.06, -2.0], [-1.0, 0.06, -3.1], [2.0, 0.06, -3.1], [4.5, 0.06, -2.8], [5.6, 0.06, -1.5], [5.57, 1.0, -0.55], [5.57, 1.75, -0.55]], 0.035, 0x111827);
+    extCable([hdmiPortW, [-4.85, 1.0, 1.1], [-4.7, 0.06, 0.3], [-3.0, 0.06, -2.0], [-1.0, 0.06, -3.1], [2.0, 0.06, -3.1], [4.5, 0.06, -2.8], [5.6, 0.06, -1.5], [5.57, 1.1, -0.55], [5.57, 1.85, -0.55]], 0.035, 0x111827);
     // energía del monitor: del puerto del monitor a la regleta
     extCable([pwrPortW, [-4.4, 0.06, 0.0], [-2.0, 0.06, -1.5], [0.0, 0.06, -3.1], [2.5, 0.06, -3.15], [5.0, 0.08, -3.0]], 0.035, 0x111827);
-    // energía de la torre: de la boca de la fuente (5.57, 0.5, 0.25) a la regleta,
+    // energía de la torre: de la boca de la fuente (5.57, 0.6, 0.25) a la regleta,
     // bajando por el costado derecho, a la vista
-    extCable([[5.57, 0.5, 0.25], [5.75, 0.06, 0.3], [5.75, 0.06, -1.5], [5.3, 0.06, -2.5], [5.0, 0.08, -3.0]], 0.04, 0x374151);
-    // ethernet (azul): de la boca de la placa madre (5.57, 3.0, -0.94) a la boca
+    extCable([[5.57, 0.6, 0.25], [5.75, 0.06, 0.3], [5.75, 0.06, -1.5], [5.3, 0.06, -2.5], [5.0, 0.08, -3.0]], 0.04, 0x374151);
+    // ethernet (azul): de la boca de la placa madre (5.57, 3.1, -0.94) a la boca
     // del router, bajando por el costado derecho, a la vista
-    extCable([[5.57, 3.0, -0.94], [5.6, 1.5, -1.2], [5.6, 0.06, -1.8], [5.6, 0.06, -2.5], [5.55, 0.08, -2.7]], 0.03, 0x2563eb);
+    extCable([[5.57, 3.1, -0.94], [5.6, 1.6, -1.2], [5.6, 0.06, -1.8], [5.6, 0.06, -2.5], [5.69, 0.08, -2.7]], 0.03, 0x2563eb);
     // energía del router: de su toma trasera a la regleta
-    extCable([[5.7, 0.08, -3.11], [5.3, 0.06, -3.0], [5.05, 0.08, -3.0]], 0.03, 0x111827);
+    extCable([[5.85, 0.08, -3.11], [5.3, 0.06, -3.0], [5.05, 0.08, -3.0]], 0.03, 0x111827);
     // cable de la regleta: baja por detrás del escritorio hasta el enchufe de la pared
     extCable([[5.0, 0.06, -3.1], [5.2, -0.5, -3.6], [5.1, -2.0, -4.3], [5.0, -2.55, -4.7], [5.0, -2.2, -4.95]], 0.04, 0x111827);
     // regleta (multitoma) sobre el escritorio, atrás a la derecha, junto a la torre
     add(box(1.2, 0.12, 0.35, mat(0xe5e7eb, { metal: 0.2, rough: 0.5 })), 5.0, 0.06, -3.0);
     [4.65, 5.0, 5.35].forEach((sx) => add(box(0.14, 0.02, 0.14, mat(0x111827, { metal: 0.3, rough: 0.5 })), sx, 0.13, -3.0));
     add(box(0.12, 0.03, 0.1, mat(0xdc2626, { metal: 0.3, rough: 0.5 })), 5.0, 0.13, -2.88);
-    // router con sus antenas, luces y bocas
-    add(box(0.9, 0.12, 0.6, mat(0x111827, { metal: 0.4, rough: 0.5 })), 6.0, 0.06, -2.8);
+    // router con sus antenas, luces y bocas (en x=6.15: antes en 6.0 su esquina
+    // se metía 0.05 dentro de la regleta)
+    add(box(0.9, 0.12, 0.6, mat(0x111827, { metal: 0.4, rough: 0.5 })), 6.15, 0.06, -2.8);
     const antMat = mat(0x1f2937, { metal: 0.5, rough: 0.4 });
-    [[5.7, -2.55, 0.25], [6.3, -2.55, -0.25]].forEach(([ax, az, tilt]) => {
+    [[5.85, -2.55, 0.25], [6.45, -2.55, -0.25]].forEach(([ax, az, tilt]) => {
       const ant = cyl(0.02, 0.02, 0.55, antMat, 8);
       add(ant, ax, 0.35, az); ant.rotation.z = tilt;
     });
-    [[5.75, 0x22c55e], [5.95, 0x22c55e], [6.15, 0x3b82f6]].forEach(([lx, c]) => {
+    [[5.9, 0x22c55e], [6.1, 0x22c55e], [6.3, 0x3b82f6]].forEach(([lx, c]) => {
       const led = new THREE.Mesh(new THREE.SphereGeometry(0.025, 8, 6), new THREE.MeshBasicMaterial({ color: c }));
       led.position.set(lx, 0.13, -2.55); env.add(led);
     });
     // bocas ethernet del router (ahí entra el cable azul) y su toma de energía
-    add(box(0.02, 0.08, 0.12, mat(0x1f2937, { metal: 0.3, rough: 0.6 })), 5.54, 0.08, -2.7);
-    add(box(0.02, 0.08, 0.12, mat(0x1f2937, { metal: 0.3, rough: 0.6 })), 5.54, 0.08, -2.9);
-    add(box(0.12, 0.08, 0.02, mat(0x1f2937, { metal: 0.3, rough: 0.6 })), 5.7, 0.08, -3.11);
+    add(box(0.02, 0.08, 0.12, mat(0x1f2937, { metal: 0.3, rough: 0.6 })), 5.69, 0.08, -2.7);
+    add(box(0.02, 0.08, 0.12, mat(0x1f2937, { metal: 0.3, rough: 0.6 })), 5.69, 0.08, -2.9);
+    add(box(0.12, 0.08, 0.02, mat(0x1f2937, { metal: 0.3, rough: 0.6 })), 5.85, 0.08, -3.11);
     // enchufe en la pared trasera, junto al suelo, bajo la regleta
     add(box(0.5, 0.7, 0.06, mat(0xe5e7eb, { metal: 0.2, rough: 0.5 })), 5.0, -2.2, -4.97);
     add(box(0.12, 0.12, 0.03, mat(0x111827, { metal: 0.3, rough: 0.5 })), 4.88, -2.1, -4.93);
@@ -996,10 +1000,12 @@ export function buildPcModel() {
   // a la vez y la torre ya no tapa el monitor. Girada 90° para que su lado abierto
   // (las piezas) mire al frente y su parte trasera (los puertos) mire a la derecha:
   // desde la cámara se ven AMBAS, así que cada cable se ve entrar en su puerto.
+  // Subida 0.1 para que repose sobre sus patas (antes las patas se hundían 0.1
+  // dentro del escritorio): los puertos y la luz interior suben lo mismo.
   // Las piezas, los cables internos y el panel frontal son hijos de la torre,
   // así que se mueven y giran con ella; los cables externos apuntan a los puertos
   // ya girados (sus posiciones de mundo están en buildEnvironment).
-  tower.position.set(3.5, 0, 0);
+  tower.position.set(3.5, 0.1, 0);
   tower.rotation.y = -Math.PI / 2;
   const environment = buildEnvironment();
 

@@ -58,9 +58,9 @@ function init() {
   // centra el puesto entero (monitor a un lado, torre al otro, ambos visibles);
   // núcleo mira la CPU de frente (el lado abierto ya no mira a +X, mira a +Z)
   const SCENES = {
-    overview: { cam: [9.0, 4.4, 5.4], tgt: [0, 2.0, 0.5], focus: null, particles: false, fanBoost: 1, dur: 1.8 },
-    core: { cam: [3.4, 4.2, 7.0], tgt: [3.4, 3.1, -0.55], focus: ['cpu', 'ram'], particles: false, fanBoost: 1 },
-    airflow: { cam: [9.9, 5.4, 7.4], tgt: [3.5, 2.0, 0], focus: ['psu', 'gpu'], particles: true, fanBoost: 2.4 }
+    overview: { cam: [9.0, 4.5, 5.4], tgt: [0, 2.1, 0.5], focus: null, particles: false, fanBoost: 1, dur: 1.8 },
+    core: { cam: [3.4, 4.3, 7.0], tgt: [3.4, 3.2, -0.55], focus: ['cpu', 'ram'], particles: false, fanBoost: 1 },
+    airflow: { cam: [9.9, 5.5, 7.4], tgt: [3.5, 2.1, 0], focus: ['psu', 'gpu'], particles: true, fanBoost: 2.4 }
   };
 
   // --- Renderizador ---
@@ -121,7 +121,7 @@ function init() {
   keyLight.shadow.camera.top = 7; keyLight.shadow.camera.bottom = -7;
   scene.add(keyLight);
   const innerGlow = new THREE.PointLight(0x22d3ee, 18, 10, 2);
-  innerGlow.position.set(3.9, 3.0, 0.8); // dentro de la torre (la torre está en x=3.5)
+  innerGlow.position.set(3.9, 3.1, 0.8); // dentro de la torre (la torre está en x=3.5, y=0.1)
   scene.add(innerGlow);
   const fillLight = new THREE.PointLight(0xf59e0b, 6, 12, 2);
   fillLight.position.set(-4, 2, -5);
