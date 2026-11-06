@@ -903,6 +903,9 @@ export function buildPcModel() {
     padd(box(1.2, 0.08, 0.8, darkMetal), 0, 0.04, 0);
     padd(box(0.18, 0.9, 0.18, darkMetal), -0.1, 0.48, 0);
     padd(box(0.1, 2.5, 4.5, darkMetal), 0, 2.05, 0);
+    // alfombrilla grande bajo teclado y ratón: antes iban directo sobre la madera
+    padd(box(2.4, 0.02, 5.6, mat(0x1e293b, { metal: 0.1, rough: 0.9 })), 1.6, 0.01, 0.35);
+    // (teclado, teclas y ratón suben 0.02 para apoyar SOBRE la alfombrilla, no dentro de ella)
     const screen = new THREE.Mesh(new THREE.PlaneGeometry(4.3, 2.35),
       new THREE.MeshBasicMaterial({ map: screenTex }));
     screen.rotation.y = Math.PI / 2;
@@ -923,11 +926,11 @@ export function buildPcModel() {
     kctx.fillStyle = '#1f2937';
     for (let c = 0; c < 4; c++) for (let r = 0; r < 14; r++) kctx.fillRect(6 + c * 22, 6 + r * 20, 18, 16);
     const keyTex = new THREE.CanvasTexture(keyCanvas); keyTex.colorSpace = THREE.SRGBColorSpace;
-    padd(box(1.5, 0.07, 4.0, mat(0x111827, { metal: 0.3, rough: 0.6 })), 1.6, 0.035, 0);
+    padd(box(1.5, 0.07, 4.0, mat(0x111827, { metal: 0.3, rough: 0.6 })), 1.6, 0.055, 0);
     const keys = new THREE.Mesh(new THREE.PlaneGeometry(1.3, 3.8),
       new THREE.MeshStandardMaterial({ map: keyTex, roughness: 0.6, metalness: 0.1, transparent: true }));
     keys.rotation.x = -Math.PI / 2;
-    padd(keys, 1.6, 0.075, 0);
+    padd(keys, 1.6, 0.095, 0);
     // ratón de verdad (no una lámina plana): cuerpo con lomo, rueda y base, en gris
     // claro para que se distinga del escritorio oscuro
     const mouse = new THREE.Group();
@@ -938,7 +941,7 @@ export function buildPcModel() {
     const wheel = cyl(0.05, 0.05, 0.07, mat(0x0f172a, { metal: 0.3, rough: 0.5 }), 12);
     wheel.rotation.z = Math.PI / 2;
     wheel.position.set(0.32, 0.2, 0); mouse.add(wheel);
-    padd(mouse, 1.6, 0, 2.4); mouse.rotation.y = -0.2;
+    padd(mouse, 1.6, 0.02, 2.4); mouse.rotation.y = -0.2;
     // cosas sueltas del taller sobre el escritorio (en el centro, atrás: fuera del
     // camino de las piezas que salen hacia +Z y de la torre, que con el giro de 90°
     // ocupa x 1.5..5.5 y z -1.1..1.1: nada puede pisar ese rectángulo)
@@ -961,6 +964,32 @@ export function buildPcModel() {
     mugHandle.position.set(-5.41, 0.11, -1.0); // el asa, como un pocillo de verdad
     mugHandle.castShadow = true;
     env.add(mugHandle);
+    // panel lateral de la torre (el que se quitó para abrirla): apoyado en la pared
+    // trasera, a la derecha de la torre. Antes la torre estaba abierta y el panel
+    // no existía en ningún lado
+    const sidePanel = box(4.0, 4.6, 0.06, mat(0x1f2937, { metal: 0.7, rough: 0.35 }));
+    sidePanel.position.set(7.0, -0.36, -4.40); sidePanel.rotation.x = 0.26; // inclinado, arriba contra la pared
+    sidePanel.castShadow = true; sidePanel.receiveShadow = true; env.add(sidePanel);
+    const sideGlass = box(3.4, 3.9, 0.02, mat(0x0f172a, { metal: 0.2, rough: 0.15 }));
+    sideGlass.position.set(7.0, -0.36, -4.36); sideGlass.rotation.x = 0.26; // cristal del panel
+    env.add(sideGlass);
+    // lámpara de escritorio (luz cálida): base + brazo + pantalla + bombilla
+    add(cyl(0.22, 0.28, 0.08, darkMetal, 20), -6.5, 0.04, -1.5);
+    const lampArm = cyl(0.04, 0.04, 1.55, darkMetal, 12);
+    add(lampArm, -6.35, 0.84, -1.5); lampArm.rotation.z = -0.195;
+    const lampShade = new THREE.Mesh(new THREE.ConeGeometry(0.28, 0.35, 20), mat(0x1f2937, { metal: 0.6, rough: 0.4 }));
+    lampShade.position.set(-6.2, 1.6, -1.5); lampShade.castShadow = true; env.add(lampShade);
+    const lampBulb = new THREE.Mesh(new THREE.SphereGeometry(0.08, 12, 10), new THREE.MeshBasicMaterial({ color: 0xffe0b3 }));
+    lampBulb.position.set(-6.2, 1.5, -1.5); env.add(lampBulb);
+    const lampLight = new THREE.PointLight(0xffd9a0, 5, 7, 2);
+    lampLight.position.set(-6.2, 1.45, -1.5); env.add(lampLight);
+    // bandeja con tornillos junto al destornillador: lo que se quita al abrir el PC
+    add(box(0.7, 0.06, 0.5, mat(0x334155, { metal: 0.5, rough: 0.5 })), -1.6, 0.03, -2.2);
+    [[-1.85, -2.32, 0.4], [-1.7, -2.2, 1.2], [-1.55, -2.35, 2.1], [-1.45, -2.15, 0.9], [-1.75, -2.05, 2.6]].forEach(([sx, sz, ry]) => {
+      const screw = cyl(0.02, 0.02, 0.06, METAL_MAT, 8);
+      screw.rotation.x = Math.PI / 2; screw.rotation.y = ry;
+      add(screw, sx, 0.08, sz);
+    });
     // --- Cables de conexión: HDMI, energía, ethernet, regleta y router ---
     // Cada cable empieza y termina EN UN PUERTO de verdad (monitor o torre), no
     // flotando: la posición de los puertos del monitor se calcula (el grupo tiene
