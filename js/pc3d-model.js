@@ -968,21 +968,21 @@ export function buildPcModel() {
     // trasera, a la derecha de la torre. Antes la torre estaba abierta y el panel
     // no existía en ningún lado
     const sidePanel = box(4.0, 4.6, 0.06, mat(0x1f2937, { metal: 0.7, rough: 0.35 }));
-    sidePanel.position.set(7.0, -0.36, -4.40); sidePanel.rotation.x = 0.26; // inclinado, arriba contra la pared
+    sidePanel.position.set(7.5, -0.36, -4.40); sidePanel.rotation.x = 0.26; // inclinado, arriba contra la pared
     sidePanel.castShadow = true; sidePanel.receiveShadow = true; env.add(sidePanel);
-    const sideGlass = box(3.4, 3.9, 0.02, mat(0x0f172a, { metal: 0.2, rough: 0.15 }));
-    sideGlass.position.set(7.0, -0.36, -4.36); sideGlass.rotation.x = 0.26; // cristal del panel
+    const sideGlass = box(3.4, 3.9, 0.02, mat(0x94a3b8, { metal: 0.9, rough: 0.1 }));
+    sideGlass.position.set(7.5, -0.36, -4.36); sideGlass.rotation.x = 0.26; // cristal claro para que se distinga del panel oscuro
     env.add(sideGlass);
-    // lámpara de escritorio (luz cálida): base + brazo + pantalla + bombilla
+    // lámpara de escritorio (luz cálida): base + brazo inclinado + pantalla + bombilla
     add(cyl(0.22, 0.28, 0.08, darkMetal, 20), -6.5, 0.04, -1.5);
-    const lampArm = cyl(0.04, 0.04, 1.55, darkMetal, 12);
-    add(lampArm, -6.35, 0.84, -1.5); lampArm.rotation.z = -0.195;
+    const lampArm = cyl(0.04, 0.04, 1.63, darkMetal, 12);
+    add(lampArm, -6.2, 0.84, -1.5); lampArm.rotation.z = -0.375; // bien inclinada hacia el centro del escritorio
     const lampShade = new THREE.Mesh(new THREE.ConeGeometry(0.28, 0.35, 20), mat(0x1f2937, { metal: 0.6, rough: 0.4 }));
-    lampShade.position.set(-6.2, 1.6, -1.5); lampShade.castShadow = true; env.add(lampShade);
-    const lampBulb = new THREE.Mesh(new THREE.SphereGeometry(0.08, 12, 10), new THREE.MeshBasicMaterial({ color: 0xffe0b3 }));
-    lampBulb.position.set(-6.2, 1.5, -1.5); env.add(lampBulb);
-    const lampLight = new THREE.PointLight(0xffd9a0, 5, 7, 2);
-    lampLight.position.set(-6.2, 1.45, -1.5); env.add(lampLight);
+    lampShade.position.set(-5.9, 1.6, -1.5); lampShade.castShadow = true; env.add(lampShade);
+    const lampBulb = new THREE.Mesh(new THREE.SphereGeometry(0.1, 12, 10), new THREE.MeshBasicMaterial({ color: 0xffe9c4 }));
+    lampBulb.position.set(-5.9, 1.45, -1.5); env.add(lampBulb); // asoma de la pantalla para que se vea
+    const lampLight = new THREE.PointLight(0xffd9a0, 8, 8, 2);
+    lampLight.position.set(-5.9, 1.4, -1.5); env.add(lampLight);
     // bandeja con tornillos junto al destornillador: lo que se quita al abrir el PC
     add(box(0.7, 0.06, 0.5, mat(0x334155, { metal: 0.5, rough: 0.5 })), -1.6, 0.03, -2.2);
     [[-1.85, -2.32, 0.4], [-1.7, -2.2, 1.2], [-1.55, -2.35, 2.1], [-1.45, -2.15, 0.9], [-1.75, -2.05, 2.6]].forEach(([sx, sz, ry]) => {
