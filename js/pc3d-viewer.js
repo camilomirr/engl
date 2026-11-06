@@ -13,7 +13,7 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
-import { PARTS, buildPcModel } from './pc3d-model.js?v=12';
+import { PARTS, buildPcModel } from './pc3d-model.js?v=14';
 
 const mount = document.getElementById('pc-viewer3d');
 if (mount) init();
@@ -107,7 +107,7 @@ function init() {
   // --- Postproceso: bloom suave para que brillen los LED y el RGB ---
   const composer = new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene, camera));
-  const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.28, 0.4, 1.0); // brillo suave, solo lo más luminoso (sin resplandor blanco)
+  const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.15, 0.4, 1.0); // brillo bajo: el resplandor fuerte se veía feo (soleado sí, resplandor no)
   composer.addPass(bloom);
   composer.addPass(new OutputPass());
 

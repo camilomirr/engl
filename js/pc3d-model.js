@@ -733,91 +733,95 @@ export function buildPcModel() {
       new THREE.MeshStandardMaterial({ map: rugTex, roughness: 0.95, metalness: 0, transparent: true }));
     rug.rotation.x = -Math.PI / 2; rug.position.set(0, -2.58, 1.5); rug.receiveShadow = true;
     env.add(rug);
-    // pared trasera con hueco REAL para la ventana (x -6.75..-3.25, y 2.45..5.95):
-    // por ahí se ve el parque de afuera. Antes era una caja cerrada y la ventana
-    // era solo un plano brillante pegado encima.
-    const backWallBot = box(24, 5.05, 0.3, wallMat);
-    add(backWallBot, 0, -0.075, -6.15); backWallBot.castShadow = false; // y -2.6..2.45
-    const backWallTop = box(24, 3.45, 0.3, wallMat);
-    add(backWallTop, 0, 7.675, -6.15); backWallTop.castShadow = false; // y 5.95..9.4
-    const backWallLeft = box(5.25, 3.5, 0.3, wallMat);
-    add(backWallLeft, -9.375, 4.2, -6.15); backWallLeft.castShadow = false; // x -12..-6.75
-    const backWallRight = box(15.25, 3.5, 0.3, wallMat);
-    add(backWallRight, 4.375, 4.2, -6.15); backWallRight.castShadow = false; // x -3.25..12
-    // paredes laterales SÓLIDAS con hueco REAL para una puerta cada una (la puerta
-    // va cerrada, con marco, manija y paneles). Sin hueco, una puerta sería solo
-    // un dibujo pegado en la pared.
+    // CUARTO REHECHO DESDE 0: más alto (techo en y=12, antes 9.4) para que las
+    // puertas y la ventana sean de tamaño de verdad y el cuarto no se vea achatado.
+    // pared trasera con hueco REAL para la ventana (x -7.5..-2.5, y 2.0..7.0):
+    // una ventana grande por la que se ve el parque de afuera.
+    const backWallBot = box(24, 4.6, 0.3, wallMat);
+    add(backWallBot, 0, -0.3, -6.15); backWallBot.castShadow = false; // y -2.6..2.0
+    const backWallTop = box(24, 5.0, 0.3, wallMat);
+    add(backWallTop, 0, 9.5, -6.15); backWallTop.castShadow = false; // y 7.0..12.0
+    const backWallLeft = box(4.5, 5.0, 0.3, wallMat);
+    add(backWallLeft, -9.75, 4.5, -6.15); backWallLeft.castShadow = false; // x -12..-7.5
+    const backWallRight = box(14.5, 5.0, 0.3, wallMat);
+    add(backWallRight, 4.75, 4.5, -6.15); backWallRight.castShadow = false; // x -2.5..12
+    // puertas GRANDES de verdad (3.4 de ancho × 10.5 de alto, del piso casi al
+    // techo): las anteriores eran de 2.0 × 4.9 y se veían como una puertica de
+    // alacena. Hueco real en la pared, marco blanco, hoja de madera con paneles
+    // y manija redonda.
     const doorMat = mat(0x7c5a3a, { metal: 0.1, rough: 0.7 }); // madera de la puerta
     const doorFrameMat = mat(0xe5e7eb, { metal: 0.2, rough: 0.5 }); // marco blanco
     const doorHandleMat = mat(0xb8c4d4, { metal: 0.9, rough: 0.25 });
     const makeDoor = (x, z, face) => { // face: -1 = la puerta mira hacia -X (pared derecha), +1 = mira hacia +X (pared izquierda)
-      // marco: dintel arriba y jambas a los lados del hueco (2.2 de ancho)
-      add(box(0.34, 0.14, 2.4, doorFrameMat), x, 2.47, z);
-      add(box(0.34, 5.1, 0.14, doorFrameMat), x, -0.05, z - 1.1);
-      add(box(0.34, 5.1, 0.14, doorFrameMat), x, -0.05, z + 1.1);
-      // hoja de la puerta, cerrada, con 4 paneles marcados
-      const door = box(0.08, 4.9, 2.0, doorMat);
-      add(door, x, -0.15, z);
-      [-0.95, 0.65].forEach((py) => [-0.5, 0.5].forEach((pz) => {
-        add(box(0.02, 1.1, 0.7, mat(0x6b4423, { metal: 0.1, rough: 0.7 })), x + face * 0.05, py, z + pz);
+      // marco: dintel arriba y jambas a los lados del hueco (3.4 de ancho, 10.5 de alto)
+      add(box(0.34, 0.16, 3.6, doorFrameMat), x, 7.98, z);
+      add(box(0.34, 10.6, 0.16, doorFrameMat), x, 2.65, z - 1.7);
+      add(box(0.34, 10.6, 0.16, doorFrameMat), x, 2.65, z + 1.7);
+      // hoja de la puerta, cerrada, con 6 paneles marcados
+      const door = box(0.08, 10.4, 3.2, doorMat);
+      add(door, x, 2.6, z);
+      [-1.4, 0.6, 2.6].forEach((py) => [-0.8, 0.8].forEach((pz) => {
+        add(box(0.02, 1.5, 1.1, mat(0x6b4423, { metal: 0.1, rough: 0.7 })), x + face * 0.05, py, z + pz);
       }));
       // manija redonda en la cara que mira al cuarto
-      const knob = new THREE.Mesh(new THREE.SphereGeometry(0.07, 12, 10), doorHandleMat);
-      knob.position.set(x + face * 0.09, -0.1, z + 0.75); env.add(knob);
-      const knobBase = cyl(0.03, 0.03, 0.1, doorHandleMat, 8);
-      knobBase.rotation.z = Math.PI / 2; knobBase.position.set(x + face * 0.05, -0.1, z + 0.75); env.add(knobBase);
+      const knob = new THREE.Mesh(new THREE.SphereGeometry(0.09, 12, 10), doorHandleMat);
+      knob.position.set(x + face * 0.09, 2.4, z + 1.2); env.add(knob);
+      const knobBase = cyl(0.035, 0.035, 0.12, doorHandleMat, 8);
+      knobBase.rotation.z = Math.PI / 2; knobBase.position.set(x + face * 0.05, 2.4, z + 1.2); env.add(knobBase);
     };
-    // pared derecha: hueco para la puerta en z=2 (z 0.9..3.1, y -2.6..2.4)
-    const rightWallBack = box(0.3, 12, 6.9, wallMat2);
-    add(rightWallBack, 12.15, 3.4, -2.55); rightWallBack.castShadow = false; // z -6..0.9
-    const rightWallFront = box(0.3, 12, 2.9, wallMat2);
-    add(rightWallFront, 12.15, 3.4, 4.55); rightWallFront.castShadow = false; // z 3.1..6
-    const rightWallTop = box(0.3, 7, 2.2, wallMat2);
-    add(rightWallTop, 12.15, 5.9, 2.0); rightWallTop.castShadow = false; // y 2.4..9.4 sobre la puerta
+    // pared derecha: hueco para la puerta en z=2 (z 0.3..3.7, y -2.6..7.9), paredes de 14.6 de alto
+    const rightWallBack = box(0.3, 14.6, 6.3, wallMat2);
+    add(rightWallBack, 12.15, 4.7, -2.85); rightWallBack.castShadow = false; // z -6..0.3
+    const rightWallFront = box(0.3, 14.6, 2.3, wallMat2);
+    add(rightWallFront, 12.15, 4.7, 4.85); rightWallFront.castShadow = false; // z 3.7..6
+    const rightWallTop = box(0.3, 4.1, 3.4, wallMat2);
+    add(rightWallTop, 12.15, 9.95, 2.0); rightWallTop.castShadow = false; // y 7.9..12.0 sobre la puerta
     makeDoor(12.15, 2.0, -1);
-    // pared izquierda: hueco para la puerta en z=-1 (z -2.1..0.1, y -2.6..2.4)
-    const leftWallBack = box(0.3, 12, 3.9, wallMat2);
-    add(leftWallBack, -12.15, 3.4, -4.05); leftWallBack.castShadow = false; // z -6..-2.1
-    const leftWallFront = box(0.3, 12, 5.9, wallMat2);
-    add(leftWallFront, -12.15, 3.4, 3.05); leftWallFront.castShadow = false; // z 0.1..6
-    const leftWallTop = box(0.3, 7, 2.2, wallMat2);
-    add(leftWallTop, -12.15, 5.9, -1.0); leftWallTop.castShadow = false; // y 2.4..9.4 sobre la puerta
+    // pared izquierda: hueco para la puerta en z=-1 (z -2.7..0.7, y -2.6..7.9)
+    const leftWallBack = box(0.3, 14.6, 3.3, wallMat2);
+    add(leftWallBack, -12.15, 4.7, -4.35); leftWallBack.castShadow = false; // z -6..-2.7
+    const leftWallFront = box(0.3, 14.6, 5.3, wallMat2);
+    add(leftWallFront, -12.15, 4.7, 3.35); leftWallFront.castShadow = false; // z 0.7..6
+    const leftWallTop = box(0.3, 4.1, 3.4, wallMat2);
+    add(leftWallTop, -12.15, 9.95, -1.0); leftWallTop.castShadow = false; // y 7.9..12.0 sobre la puerta
     makeDoor(-12.15, -1.0, 1);
     const ceiling = box(24, 0.3, 12, ceilMat);
-    add(ceiling, 0, 9.55, 0); ceiling.castShadow = false; // cara inferior en y=9.4
+    add(ceiling, 0, 12.15, 0); ceiling.castShadow = false; // cara inferior en y=12.0
     // rodapiés: apoyados en el suelo (y=-2.6), a ras de cada pared (los laterales
-    // se parten para no cruzar las puertas)
+    // se parten para no cruzar las puertas nuevas, más anchas)
     add(box(24, 0.25, 0.06, mat(0x94a3b8, { metal: 0.2, rough: 0.6 })), 0, -2.475, -5.97);
-    add(box(0.06, 0.25, 3.9, mat(0x94a3b8, { metal: 0.2, rough: 0.6 })), -11.97, -2.475, -4.05);
-    add(box(0.06, 0.25, 5.9, mat(0x94a3b8, { metal: 0.2, rough: 0.6 })), -11.97, -2.475, 3.05);
-    add(box(0.06, 0.25, 6.9, mat(0x94a3b8, { metal: 0.2, rough: 0.6 })), 11.97, -2.475, -2.55);
-    add(box(0.06, 0.25, 2.9, mat(0x94a3b8, { metal: 0.2, rough: 0.6 })), 11.97, -2.475, 4.55);
-    // ventana con vidrio TRANSPARENTE: por el hueco de la pared se ve el parque
-    // de afuera (cielo, pasto, árboles). El sol entra por aquí e ilumina el cuarto.
-    const winGlass = new THREE.Mesh(new THREE.PlaneGeometry(3.5, 3.5),
-      new THREE.MeshStandardMaterial({ color: 0xcfe8ff, transparent: true, opacity: 0.18, roughness: 0.1, metalness: 0.1 }));
-    add(winGlass, -5, 4.2, -6.15); winGlass.castShadow = false;
+    add(box(0.06, 0.25, 3.3, mat(0x94a3b8, { metal: 0.2, rough: 0.6 })), -11.97, -2.475, -4.35);
+    add(box(0.06, 0.25, 5.3, mat(0x94a3b8, { metal: 0.2, rough: 0.6 })), -11.97, -2.475, 3.35);
+    add(box(0.06, 0.25, 6.3, mat(0x94a3b8, { metal: 0.2, rough: 0.6 })), 11.97, -2.475, -2.85);
+    add(box(0.06, 0.25, 2.3, mat(0x94a3b8, { metal: 0.2, rough: 0.6 })), 11.97, -2.475, 4.85);
+    // ventana GRANDE (5×5) con vidrio TRANSPARENTE: por el hueco de la pared se
+    // ve el parque de afuera (cielo, pasto, árboles). El sol entra por aquí.
+    const winGlass = new THREE.Mesh(new THREE.PlaneGeometry(5.0, 5.0),
+      new THREE.MeshStandardMaterial({ color: 0xcfe8ff, transparent: true, opacity: 0.12, roughness: 0.1, metalness: 0.1 }));
+    add(winGlass, -5, 4.5, -6.15); winGlass.castShadow = false;
     const frameMat = mat(0x8a6a44, { metal: 0.2, rough: 0.6 }); // marco de madera
-    add(box(3.7, 0.14, 0.12, frameMat), -5, 6.0, -5.96);
-    add(box(3.7, 0.14, 0.12, frameMat), -5, 2.4, -5.96);
-    add(box(0.14, 3.7, 0.12, frameMat), -6.8, 4.2, -5.96);
-    add(box(0.14, 3.7, 0.12, frameMat), -3.2, 4.2, -5.96);
-    add(box(0.08, 3.5, 0.06, frameMat), -5, 4.2, -5.96); // travesaño vertical
-    add(box(3.5, 0.08, 0.06, frameMat), -5, 4.2, -5.96); // travesaño horizontal
-    add(box(3.9, 0.1, 0.3, frameMat), -5, 2.35, -5.85); // repisa: a ras de la pared, sin atravesarla
+    add(box(5.2, 0.16, 0.12, frameMat), -5, 7.05, -5.96);
+    add(box(5.2, 0.16, 0.12, frameMat), -5, 1.95, -5.96);
+    add(box(0.16, 5.2, 0.12, frameMat), -7.55, 4.5, -5.96);
+    add(box(0.16, 5.2, 0.12, frameMat), -2.45, 4.5, -5.96);
+    add(box(0.09, 5.0, 0.06, frameMat), -5, 4.5, -5.96); // travesaño vertical
+    add(box(5.0, 0.09, 0.06, frameMat), -5, 4.5, -5.96); // travesaño horizontal
+    add(box(5.4, 0.12, 0.3, frameMat), -5, 1.9, -5.85); // repisa: a ras de la pared, sin atravesarla
     // mancha de sol en el piso: la luz del sol entra por la ventana y cae aquí
-    const sunPatch = new THREE.Mesh(new THREE.PlaneGeometry(4.2, 3.0),
-      new THREE.MeshBasicMaterial({ color: 0xffd9a0, transparent: true, opacity: 0.32 }));
+    // (suave, sin brillo feo: opacidad baja)
+    const sunPatch = new THREE.Mesh(new THREE.PlaneGeometry(5.5, 3.5),
+      new THREE.MeshBasicMaterial({ color: 0xffd9a0, transparent: true, opacity: 0.22 }));
     sunPatch.rotation.x = -Math.PI / 2; sunPatch.rotation.z = 0.35;
-    sunPatch.position.set(-3.6, -2.57, -2.2); sunPatch.receiveShadow = true; env.add(sunPatch);
-    // ===== PARQUE AFUERA (se ve por la ventana) =====
-    // cielo con nubes, sol, pasto, árboles, camino, banca y flores
+    sunPatch.position.set(-3.4, -2.57, -2.0); sunPatch.receiveShadow = true; env.add(sunPatch);
+    // ===== PARQUE AFUERA (se ve por la ventana grande) =====
+    // cielo soleado SUAVE (azul claro, sin blanco quemado: ese era el resplandor
+    // feo), sol cálido, pasto, árboles, camino, banca y flores
     const skyCanvas = document.createElement('canvas'); skyCanvas.width = 512; skyCanvas.height = 256;
     const sctx = skyCanvas.getContext('2d');
     const skyGrad = sctx.createLinearGradient(0, 0, 0, 256);
-    skyGrad.addColorStop(0, '#2563eb'); skyGrad.addColorStop(0.6, '#60a5fa'); skyGrad.addColorStop(1, '#dbeafe');
+    skyGrad.addColorStop(0, '#4a90d9'); skyGrad.addColorStop(0.6, '#7fb5e8'); skyGrad.addColorStop(1, '#cfe6f7');
     sctx.fillStyle = skyGrad; sctx.fillRect(0, 0, 512, 256);
-    sctx.fillStyle = 'rgba(255,255,255,0.9)';
+    sctx.fillStyle = 'rgba(255,255,255,0.85)';
     [[80, 60, 46], [120, 70, 36], [300, 50, 52], [340, 62, 38], [420, 90, 42]].forEach(([cx, cy, r]) => {
       sctx.beginPath(); sctx.ellipse(cx, cy, r, r * 0.45, 0, 0, Math.PI * 2); sctx.fill();
     });
@@ -825,8 +829,8 @@ export function buildPcModel() {
     const sky = new THREE.Mesh(new THREE.PlaneGeometry(60, 18),
       new THREE.MeshBasicMaterial({ map: skyTex }));
     sky.position.set(0, 6.7, -22); env.add(sky);
-    const sunDisc = new THREE.Mesh(new THREE.CircleGeometry(1.2, 24),
-      new THREE.MeshBasicMaterial({ color: 0xfff3b0 }));
+    const sunDisc = new THREE.Mesh(new THREE.CircleGeometry(1.0, 24),
+      new THREE.MeshBasicMaterial({ color: 0xffe9a8 }));
     sunDisc.position.set(-10, 9, -21.5); env.add(sunDisc);
     // pasto (mismo nivel que el piso del cuarto)
     const grassCanvas = document.createElement('canvas'); grassCanvas.width = grassCanvas.height = 256;
@@ -1172,8 +1176,9 @@ export function buildPcModel() {
       add(leaf, 10.5 + dx, -2.1 + dy, -4.5 + dz);
     });
     // lámpara colgante sobre el escritorio (solo decoración: la luz real la da el visor)
-    const cord = cyl(0.02, 0.02, 2.4, darkMetal, 8);
-    add(cord, 0, 8.2, 0.5);
+    // el techo subió a y=12, así que el cable es más largo (de y=12 a la pantalla en y≈7)
+    const cord = cyl(0.02, 0.02, 5.0, darkMetal, 8);
+    add(cord, 0, 9.5, 0.5);
     const pendantShade = new THREE.Mesh(new THREE.ConeGeometry(0.45, 0.5, 20, 1, true), mat(0x1f2937, { metal: 0.6, rough: 0.4 }));
     pendantShade.position.set(0, 6.9, 0.5); pendantShade.castShadow = true; env.add(pendantShade);
     const pendantBulb = new THREE.Mesh(new THREE.SphereGeometry(0.12, 12, 10), new THREE.MeshBasicMaterial({ color: 0xffe9c4 }));
