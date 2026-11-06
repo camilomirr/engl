@@ -886,12 +886,14 @@ function init() {
     else rgbStrip.material.color.setHex(0x0f172a);
 
     // LED de encendido: verde respirando si está encendido, rojo parpadeando si falló, apagado si no
-    if (powered) powerLedMat.color.setHex(0x22c55e).multiplyScalar(0.65 + 0.35 * Math.sin(elapsed * 2.2));
-    else if (clock.elapsedTime < failBlinkUntil) powerLedMat.color.setHex(Math.floor(elapsed * 6) % 2 ? 0xef4444 : 0x450a0a);
+    // (el factor pasa de 1 para que el verde supere el umbral del bloom y se vea brillar)
+    if (powered) powerLedMat.color.setHex(0x22c55e).multiplyScalar(1.3 + 0.6 * Math.sin(elapsed * 2.2));
+    else if (clock.elapsedTime < failBlinkUntil) powerLedMat.color.setHex(Math.floor(elapsed * 6) % 2 ? 0xef4444 : 0x450a0a).multiplyScalar(Math.floor(elapsed * 6) % 2 ? 1.8 : 1);
     else powerLedMat.color.setHex(0x1f2937);
     // LED de disco: solo parpadea con el PC encendido
     if (powered && Math.random() < 0.08) hddOn = !hddOn;
     hddLedMat.color.setHex(powered ? (hddOn ? 0xf59e0b : 0x201404) : 0x201404);
+    if (powered && hddOn) hddLedMat.color.multiplyScalar(1.6);
     // luz interior de la torre: se enciende con el PC
     innerGlow.intensity += ((powered ? 18 : 0) - innerGlow.intensity) * Math.min(1, dt * 3);
 

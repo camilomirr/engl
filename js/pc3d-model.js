@@ -59,7 +59,10 @@ export function buildPcModel() {
     hub.rotation.x = Math.PI / 2;
     group.add(hub);
     for (let i = 0; i < 5; i++) {
-      const blade = box(radius * 0.78, radius * 0.34, 0.03, mat(0x0f172a, { metal: 0.4, rough: 0.5 }));
+      // una aspa azul para que el giro SE VEA: con las 5 iguales, en foto no se
+      // distinguía si giraba o no (todas se ven igual al rotar)
+      const bladeMat = i === 0 ? mat(0x38bdf8, { metal: 0.4, rough: 0.5 }) : mat(0x0f172a, { metal: 0.4, rough: 0.5 });
+      const blade = box(radius * 0.78, radius * 0.34, 0.03, bladeMat);
       const holder = new THREE.Group();
       blade.position.x = radius * 0.52;
       blade.rotation.x = 0.5;
@@ -251,8 +254,9 @@ export function buildPcModel() {
   rgbStrip.position.set(1.06, 2.3, 1.9);
   tower.add(rgbStrip);
   // LED de encendido y de actividad (parpadean como un equipo real; van en el frontal)
+  // grandes para que se vean: antes eran de 0.09 y en foto no se distinguían
   const powerLedMat = new THREE.MeshBasicMaterial({ color: 0x22c55e });
-  const powerLed = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.06, 0.03), powerLedMat);
+  const powerLed = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.1, 0.04), powerLedMat);
   powerLed.position.set(0.72, 2.05, 0.05);
   frontPanel.add(powerLed);
   // botón de encendido físico en el frontal (se puede pulsar en 3D; el anillo se enciende con el PC)
@@ -271,7 +275,7 @@ export function buildPcModel() {
   powerButton.position.set(0.45, 2.05, 0.05);
   frontPanel.add(powerButton);
   const hddLedMat = new THREE.MeshBasicMaterial({ color: 0xf59e0b });
-  const hddLed = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.06, 0.03), hddLedMat);
+  const hddLed = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.1, 0.04), hddLedMat);
   hddLed.position.set(0.92, 2.05, 0.05);
   frontPanel.add(hddLed);
 
@@ -862,8 +866,17 @@ export function buildPcModel() {
       new THREE.MeshStandardMaterial({ map: keyTex, roughness: 0.6, metalness: 0.1, transparent: true }));
     keys.rotation.x = -Math.PI / 2;
     padd(keys, 1.6, 0.075, 0);
-    const mouse = box(1.2, 0.08, 0.6, darkMetal);
-    padd(mouse, 1.6, 0.04, 2.4); mouse.rotation.y = -0.2;
+    // ratón de verdad (no una lámina plana): cuerpo con lomo, rueda y base, en gris
+    // claro para que se distinga del escritorio oscuro
+    const mouse = new THREE.Group();
+    const mouseBase = box(1.1, 0.1, 0.6, mat(0x334155, { metal: 0.5, rough: 0.4 }));
+    mouseBase.position.set(0, 0.05, 0); mouse.add(mouseBase);
+    const mouseBody = box(0.9, 0.14, 0.5, mat(0x64748b, { metal: 0.4, rough: 0.45 }));
+    mouseBody.position.set(-0.05, 0.16, 0); mouse.add(mouseBody);
+    const wheel = cyl(0.05, 0.05, 0.07, mat(0x0f172a, { metal: 0.3, rough: 0.5 }), 12);
+    wheel.rotation.z = Math.PI / 2;
+    wheel.position.set(0.32, 0.2, 0); mouse.add(wheel);
+    padd(mouse, 1.6, 0, 2.4); mouse.rotation.y = -0.2;
     // cosas sueltas del taller sobre el escritorio (en el centro, atrás: fuera del
     // camino de las piezas que salen hacia +Z y de la torre, que con el giro de 90°
     // ocupa x 1.5..5.5 y z -1.1..1.1: nada puede pisar ese rectángulo)
