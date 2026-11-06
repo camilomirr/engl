@@ -782,7 +782,12 @@ export function buildPcModel() {
     const screwShaft = cyl(0.02, 0.02, 0.4, METAL_MAT, 8);
     screwShaft.rotation.z = Math.PI / 2;
     add(screwShaft, 2.55, 0.05, -1.8);
-    add(cyl(0.09, 0.09, 0.22, mat(0x1e3a5f, { metal: 0.3, rough: 0.5 }), 16), -1.8, 0.11, 2.2);
+    const mugMat = mat(0xdc2626, { metal: 0.2, rough: 0.5 }); // pocillo rojo, que se vea sobre el escritorio
+    add(cyl(0.09, 0.09, 0.22, mugMat, 16), -1.8, 0.11, 2.2);
+    const mugHandle = new THREE.Mesh(new THREE.TorusGeometry(0.07, 0.015, 8, 20), mugMat);
+    mugHandle.position.set(-1.71, 0.11, 2.2); // el asa, como un pocillo de verdad
+    mugHandle.castShadow = true;
+    env.add(mugHandle);
     return env;
   }
   const environment = buildEnvironment();

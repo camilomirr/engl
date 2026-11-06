@@ -572,7 +572,9 @@ function init() {
     }
     if (!id && pickPowerButton(event)) canvas.style.cursor = 'pointer'; // sobre el botón de encendido
     if (tooltip) {
-      if (id) {
+      if (id && !labelsVisible) {
+        // el nombre flotante solo aparece cuando las etiquetas están apagadas:
+        // con las etiquetas puestas se veía el nombre dos veces (rótulo + flotante)
         const rect = shell.getBoundingClientRect();
         tooltip.hidden = false;
         tooltip.textContent = t(partById[id].key);
