@@ -185,6 +185,11 @@ export function buildPcModel() {
   rearPort(0.12, 0.05, 0.05, -0.94, 2.4, -2.07, rearDarkMat);   // boca USB superior
   rearPort(0.12, 0.05, 0.05, -0.94, 2.2, -2.07, rearDarkMat);   // boca USB inferior
   rearPort(0.06, 0.03, 0.12, -0.94, 2.4, -2.13, rearDarkMat);   // receptor inalámbrico enchufado
+  // interruptor de la fuente (rocker I/O): toda fuente lo lleva junto a su boca de
+  // energía; antes la trasera tenía la boca pero no el interruptor
+  rearPort(0.16, 0.2, 0.02, 0.55, 0.5, -2.05, rearPlateMat);    // placa del interruptor
+  const psuSwitch = rearPort(0.12, 0.16, 0.04, 0.55, 0.5, -2.06, rearDarkMat);
+  psuSwitch.rotation.x = 0.12; // basculante: un lado metido, el otro fuera
   [3.6, 3.9, 4.2].forEach((y) => {
     const bar = box(1.16, 0.04, 0.02, CASE_MAT);
     bar.position.set(0, y, -2);
@@ -278,6 +283,24 @@ export function buildPcModel() {
   const hddLed = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.1, 0.04), hddLedMat);
   hddLed.position.set(0.92, 2.05, 0.05);
   frontPanel.add(hddLed);
+  // USB y audio en el frontal (bajo el botón): toda torre los lleva adelante;
+  // antes el frontal solo tenía botón y LEDs
+  const usbDark = mat(0x111827, { metal: 0.3, rough: 0.6 });
+  [[0.45, 1.55], [0.72, 1.55]].forEach(([x, y]) => {
+    const usb = box(0.16, 0.07, 0.03, usbDark); // boca USB-A
+    usb.position.set(x, y, 0.05); frontPanel.add(usb);
+    const tongue = box(0.13, 0.02, 0.02, mat(0x2563eb, { metal: 0.3, rough: 0.5 })); // lengua azul USB 3.0
+    tongue.position.set(x, y, 0.065); frontPanel.add(tongue);
+  });
+  const usbC = box(0.09, 0.035, 0.03, usbDark); // USB-C
+  usbC.position.set(0.58, 1.35, 0.05); frontPanel.add(usbC);
+  // audio: verde = audífonos, rosa = micrófono
+  [[0.45, 0x22c55e], [0.72, 0xec4899]].forEach(([x, c]) => {
+    const jack = cyl(0.04, 0.04, 0.03, usbDark, 16);
+    jack.rotation.x = Math.PI / 2; jack.position.set(x, 1.12, 0.05); frontPanel.add(jack);
+    const jackRing = new THREE.Mesh(new THREE.TorusGeometry(0.04, 0.008, 8, 24), mat(c, { metal: 0.3, rough: 0.5 }));
+    jackRing.position.set(x, 1.12, 0.065); frontPanel.add(jackRing);
+  });
 
   // --- Placa madre ---
   const motherboard = new THREE.Group();
@@ -583,6 +606,14 @@ export function buildPcModel() {
     fan.rotation.y = ry;
     tower.add(fan);
   });
+  // ventilador superior de salida (techo): saca el aire caliente; antes el techo
+  // era cerrado y no había salida superior. Gira con el PC (está en spinners)
+  const topVent = cyl(0.62, 0.62, 0.02, mat(0x111827, { metal: 0.5, rough: 0.5 }), 24);
+  topVent.position.set(0, 4.65, -0.5); tower.add(topVent); // rejilla oscura sobre el techo
+  const topFan = makeFan(0.55, 0x22d3ee);
+  topFan.rotation.x = Math.PI / 2; // boca arriba: extrae el aire por el techo
+  topFan.position.set(0, 4.72, -0.5);
+  tower.add(topFan);
 
   // --- Cables (cada uno pertenece a su pieza y se desvanece con ella) ---
   const cables = [];
