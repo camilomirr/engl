@@ -687,8 +687,9 @@ export function buildPcModel() {
     })();
     const woodMat = new THREE.MeshStandardMaterial({ map: woodTex, roughness: 0.75, metalness: 0.05, transparent: true });
     const darkMetal = mat(0x1f2937, { metal: 0.7, rough: 0.4 });
-    const wallMat = mat(0x2b3648, { metal: 0.05, rough: 0.95 });
-    const wallMat2 = mat(0x232f42, { metal: 0.05, rough: 0.95 });
+    const wallMat = mat(0xe8e0d0, { metal: 0.05, rough: 0.95 }); // paredes claras y cálidas: cuarto bien iluminado
+    const wallMat2 = mat(0xddd3c2, { metal: 0.05, rough: 0.95 });
+    const ceilMat = mat(0xf5f2ea, { metal: 0.05, rough: 0.95 }); // techo blanco cálido
     const add = (mesh, x, y, z) => { mesh.position.set(x, y, z); mesh.castShadow = true; mesh.receiveShadow = true; env.add(mesh); return mesh; };
 
     // suelo del cuarto: piso de madera (tablones) con grosor real, no una lámina
@@ -732,33 +733,149 @@ export function buildPcModel() {
       new THREE.MeshStandardMaterial({ map: rugTex, roughness: 0.95, metalness: 0, transparent: true }));
     rug.rotation.x = -Math.PI / 2; rug.position.set(0, -2.58, 1.5); rug.receiveShadow = true;
     env.add(rug);
-    // paredes SÓLIDAS (cajas con grosor real, se ven por dentro y por fuera):
-    // antes eran planos de una sola cara y la cámara los atravesaba como si no
-    // existieran. Ahora el cuarto es una caja cerrada de verdad.
-    const backWall = box(24, 12, 0.3, wallMat);
-    add(backWall, 0, 3.4, -6.15); backWall.castShadow = false; // cara interior en z=-6.0
-    const leftWall = box(0.3, 12, 12, wallMat2);
-    add(leftWall, -12.15, 3.4, 0); leftWall.castShadow = false; // cara interior en x=-12.0
-    const rightWall = box(0.3, 12, 12, wallMat2);
-    add(rightWall, 12.15, 3.4, 0); rightWall.castShadow = false; // cara interior en x=12.0
-    const ceiling = box(24, 0.3, 12, wallMat);
+    // pared trasera con hueco REAL para la ventana (x -6.75..-3.25, y 2.45..5.95):
+    // por ahí se ve el parque de afuera. Antes era una caja cerrada y la ventana
+    // era solo un plano brillante pegado encima.
+    const backWallBot = box(24, 5.05, 0.3, wallMat);
+    add(backWallBot, 0, -0.075, -6.15); backWallBot.castShadow = false; // y -2.6..2.45
+    const backWallTop = box(24, 3.45, 0.3, wallMat);
+    add(backWallTop, 0, 7.675, -6.15); backWallTop.castShadow = false; // y 5.95..9.4
+    const backWallLeft = box(5.25, 3.5, 0.3, wallMat);
+    add(backWallLeft, -9.375, 4.2, -6.15); backWallLeft.castShadow = false; // x -12..-6.75
+    const backWallRight = box(15.25, 3.5, 0.3, wallMat);
+    add(backWallRight, 4.375, 4.2, -6.15); backWallRight.castShadow = false; // x -3.25..12
+    // paredes laterales SÓLIDAS con hueco REAL para una puerta cada una (la puerta
+    // va cerrada, con marco, manija y paneles). Sin hueco, una puerta sería solo
+    // un dibujo pegado en la pared.
+    const doorMat = mat(0x7c5a3a, { metal: 0.1, rough: 0.7 }); // madera de la puerta
+    const doorFrameMat = mat(0xe5e7eb, { metal: 0.2, rough: 0.5 }); // marco blanco
+    const doorHandleMat = mat(0xb8c4d4, { metal: 0.9, rough: 0.25 });
+    const makeDoor = (x, z, face) => { // face: -1 = la puerta mira hacia -X (pared derecha), +1 = mira hacia +X (pared izquierda)
+      // marco: dintel arriba y jambas a los lados del hueco (2.2 de ancho)
+      add(box(0.34, 0.14, 2.4, doorFrameMat), x, 2.47, z);
+      add(box(0.34, 5.1, 0.14, doorFrameMat), x, -0.05, z - 1.1);
+      add(box(0.34, 5.1, 0.14, doorFrameMat), x, -0.05, z + 1.1);
+      // hoja de la puerta, cerrada, con 4 paneles marcados
+      const door = box(0.08, 4.9, 2.0, doorMat);
+      add(door, x, -0.15, z);
+      [-0.95, 0.65].forEach((py) => [-0.5, 0.5].forEach((pz) => {
+        add(box(0.02, 1.1, 0.7, mat(0x6b4423, { metal: 0.1, rough: 0.7 })), x + face * 0.05, py, z + pz);
+      }));
+      // manija redonda en la cara que mira al cuarto
+      const knob = new THREE.Mesh(new THREE.SphereGeometry(0.07, 12, 10), doorHandleMat);
+      knob.position.set(x + face * 0.09, -0.1, z + 0.75); env.add(knob);
+      const knobBase = cyl(0.03, 0.03, 0.1, doorHandleMat, 8);
+      knobBase.rotation.z = Math.PI / 2; knobBase.position.set(x + face * 0.05, -0.1, z + 0.75); env.add(knobBase);
+    };
+    // pared derecha: hueco para la puerta en z=2 (z 0.9..3.1, y -2.6..2.4)
+    const rightWallBack = box(0.3, 12, 6.9, wallMat2);
+    add(rightWallBack, 12.15, 3.4, -2.55); rightWallBack.castShadow = false; // z -6..0.9
+    const rightWallFront = box(0.3, 12, 2.9, wallMat2);
+    add(rightWallFront, 12.15, 3.4, 4.55); rightWallFront.castShadow = false; // z 3.1..6
+    const rightWallTop = box(0.3, 7, 2.2, wallMat2);
+    add(rightWallTop, 12.15, 5.9, 2.0); rightWallTop.castShadow = false; // y 2.4..9.4 sobre la puerta
+    makeDoor(12.15, 2.0, -1);
+    // pared izquierda: hueco para la puerta en z=-1 (z -2.1..0.1, y -2.6..2.4)
+    const leftWallBack = box(0.3, 12, 3.9, wallMat2);
+    add(leftWallBack, -12.15, 3.4, -4.05); leftWallBack.castShadow = false; // z -6..-2.1
+    const leftWallFront = box(0.3, 12, 5.9, wallMat2);
+    add(leftWallFront, -12.15, 3.4, 3.05); leftWallFront.castShadow = false; // z 0.1..6
+    const leftWallTop = box(0.3, 7, 2.2, wallMat2);
+    add(leftWallTop, -12.15, 5.9, -1.0); leftWallTop.castShadow = false; // y 2.4..9.4 sobre la puerta
+    makeDoor(-12.15, -1.0, 1);
+    const ceiling = box(24, 0.3, 12, ceilMat);
     add(ceiling, 0, 9.55, 0); ceiling.castShadow = false; // cara inferior en y=9.4
-    // rodapiés: apoyados en el suelo (y=-2.6), a ras de cada pared
+    // rodapiés: apoyados en el suelo (y=-2.6), a ras de cada pared (los laterales
+    // se parten para no cruzar las puertas)
     add(box(24, 0.25, 0.06, mat(0x94a3b8, { metal: 0.2, rough: 0.6 })), 0, -2.475, -5.97);
-    add(box(0.06, 0.25, 12, mat(0x94a3b8, { metal: 0.2, rough: 0.6 })), -11.97, -2.475, 0);
-    add(box(0.06, 0.25, 12, mat(0x94a3b8, { metal: 0.2, rough: 0.6 })), 11.97, -2.475, 0);
-    // ventana en la pared trasera (luz suave, sin quemar)
+    add(box(0.06, 0.25, 3.9, mat(0x94a3b8, { metal: 0.2, rough: 0.6 })), -11.97, -2.475, -4.05);
+    add(box(0.06, 0.25, 5.9, mat(0x94a3b8, { metal: 0.2, rough: 0.6 })), -11.97, -2.475, 3.05);
+    add(box(0.06, 0.25, 6.9, mat(0x94a3b8, { metal: 0.2, rough: 0.6 })), 11.97, -2.475, -2.55);
+    add(box(0.06, 0.25, 2.9, mat(0x94a3b8, { metal: 0.2, rough: 0.6 })), 11.97, -2.475, 4.55);
+    // ventana con vidrio TRANSPARENTE: por el hueco de la pared se ve el parque
+    // de afuera (cielo, pasto, árboles). El sol entra por aquí e ilumina el cuarto.
     const winGlass = new THREE.Mesh(new THREE.PlaneGeometry(3.5, 3.5),
-      mat(0x0f172a, { emissive: 0x9cc8ff, emissiveIntensity: 1.25, metal: 0.1, rough: 0.4 }));
-    add(winGlass, -5, 4.2, -5.96); winGlass.castShadow = false;
-    const frameMat = mat(0xd7dee8, { metal: 0.3, rough: 0.5 });
-    add(box(3.7, 0.12, 0.08, frameMat), -5, 6.0, -5.94);
-    add(box(3.7, 0.12, 0.08, frameMat), -5, 2.4, -5.94);
-    add(box(0.12, 3.7, 0.08, frameMat), -6.8, 4.2, -5.94);
-    add(box(0.12, 3.7, 0.08, frameMat), -3.2, 4.2, -5.94);
-    add(box(0.08, 3.5, 0.06, frameMat), -5, 4.2, -5.93);
-    add(box(3.5, 0.08, 0.06, frameMat), -5, 4.2, -5.93);
-    add(box(3.9, 0.1, 0.25, frameMat), -5, 2.3, -5.88); // repisa: a ras de la pared, sin atravesarla
+      new THREE.MeshStandardMaterial({ color: 0xcfe8ff, transparent: true, opacity: 0.18, roughness: 0.1, metalness: 0.1 }));
+    add(winGlass, -5, 4.2, -6.15); winGlass.castShadow = false;
+    const frameMat = mat(0x8a6a44, { metal: 0.2, rough: 0.6 }); // marco de madera
+    add(box(3.7, 0.14, 0.12, frameMat), -5, 6.0, -5.96);
+    add(box(3.7, 0.14, 0.12, frameMat), -5, 2.4, -5.96);
+    add(box(0.14, 3.7, 0.12, frameMat), -6.8, 4.2, -5.96);
+    add(box(0.14, 3.7, 0.12, frameMat), -3.2, 4.2, -5.96);
+    add(box(0.08, 3.5, 0.06, frameMat), -5, 4.2, -5.96); // travesaño vertical
+    add(box(3.5, 0.08, 0.06, frameMat), -5, 4.2, -5.96); // travesaño horizontal
+    add(box(3.9, 0.1, 0.3, frameMat), -5, 2.35, -5.85); // repisa: a ras de la pared, sin atravesarla
+    // mancha de sol en el piso: la luz del sol entra por la ventana y cae aquí
+    const sunPatch = new THREE.Mesh(new THREE.PlaneGeometry(4.2, 3.0),
+      new THREE.MeshBasicMaterial({ color: 0xffd9a0, transparent: true, opacity: 0.32 }));
+    sunPatch.rotation.x = -Math.PI / 2; sunPatch.rotation.z = 0.35;
+    sunPatch.position.set(-3.6, -2.57, -2.2); sunPatch.receiveShadow = true; env.add(sunPatch);
+    // ===== PARQUE AFUERA (se ve por la ventana) =====
+    // cielo con nubes, sol, pasto, árboles, camino, banca y flores
+    const skyCanvas = document.createElement('canvas'); skyCanvas.width = 512; skyCanvas.height = 256;
+    const sctx = skyCanvas.getContext('2d');
+    const skyGrad = sctx.createLinearGradient(0, 0, 0, 256);
+    skyGrad.addColorStop(0, '#2563eb'); skyGrad.addColorStop(0.6, '#60a5fa'); skyGrad.addColorStop(1, '#dbeafe');
+    sctx.fillStyle = skyGrad; sctx.fillRect(0, 0, 512, 256);
+    sctx.fillStyle = 'rgba(255,255,255,0.9)';
+    [[80, 60, 46], [120, 70, 36], [300, 50, 52], [340, 62, 38], [420, 90, 42]].forEach(([cx, cy, r]) => {
+      sctx.beginPath(); sctx.ellipse(cx, cy, r, r * 0.45, 0, 0, Math.PI * 2); sctx.fill();
+    });
+    const skyTex = new THREE.CanvasTexture(skyCanvas); skyTex.colorSpace = THREE.SRGBColorSpace;
+    const sky = new THREE.Mesh(new THREE.PlaneGeometry(60, 18),
+      new THREE.MeshBasicMaterial({ map: skyTex }));
+    sky.position.set(0, 6.7, -22); env.add(sky);
+    const sunDisc = new THREE.Mesh(new THREE.CircleGeometry(1.2, 24),
+      new THREE.MeshBasicMaterial({ color: 0xfff3b0 }));
+    sunDisc.position.set(-10, 9, -21.5); env.add(sunDisc);
+    // pasto (mismo nivel que el piso del cuarto)
+    const grassCanvas = document.createElement('canvas'); grassCanvas.width = grassCanvas.height = 256;
+    const gctx = grassCanvas.getContext('2d');
+    gctx.fillStyle = '#3f7a2e'; gctx.fillRect(0, 0, 256, 256);
+    let gs = 99; const gr = () => { gs = (gs * 1664525 + 1013904223) >>> 0; return gs / 4294967296; };
+    for (let i = 0; i < 900; i++) {
+      gctx.fillStyle = gr() > 0.5 ? 'rgba(46,125,50,0.5)' : 'rgba(124,179,66,0.5)';
+      gctx.fillRect(gr() * 256, gr() * 256, 3, 3);
+    }
+    const grassTex = new THREE.CanvasTexture(grassCanvas); grassTex.colorSpace = THREE.SRGBColorSpace;
+    grassTex.wrapS = grassTex.wrapT = THREE.RepeatWrapping; grassTex.repeat.set(4, 2);
+    const grass = new THREE.Mesh(new THREE.PlaneGeometry(36, 16),
+      new THREE.MeshStandardMaterial({ map: grassTex, roughness: 1, metalness: 0, transparent: true }));
+    grass.rotation.x = -Math.PI / 2; grass.position.set(0, -2.6, -14); grass.receiveShadow = true; env.add(grass);
+    // camino de piedra desde la ventana hacia el fondo del parque
+    const path = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 12),
+      new THREE.MeshStandardMaterial({ color: 0xd6c9a8, roughness: 0.95, metalness: 0, transparent: true }));
+    path.rotation.x = -Math.PI / 2; path.position.set(-5, -2.59, -12); path.receiveShadow = true; env.add(path);
+    // árboles (tronco + copa)
+    const trunkMat = mat(0x6b4423, { metal: 0.1, rough: 0.9 });
+    const leafMat2 = mat(0x2e7d32, { metal: 0.1, rough: 0.8 });
+    const leafMat3 = mat(0x43a047, { metal: 0.1, rough: 0.8 });
+    const makeTree = (x, z, s) => {
+      const trunk = cyl(0.14 * s, 0.2 * s, 1.8 * s, trunkMat, 10);
+      add(trunk, x, -2.6 + 0.9 * s, z);
+      [[0, 1.9, 0, 1.1], [0.5, 1.5, 0.2, 0.8], [-0.5, 1.6, -0.15, 0.85]].forEach(([dx, dy, dz, r]) => {
+        const c = new THREE.Mesh(new THREE.SphereGeometry(r * s, 12, 10), Math.random() > 0.5 ? leafMat2 : leafMat3);
+        add(c, x + dx * s, -2.6 + dy * s, z + dz * s);
+      });
+    };
+    makeTree(-11, -12, 1.2); makeTree(-2, -15, 1.4); makeTree(5, -11, 1.0); makeTree(11, -16, 1.3); makeTree(-8.5, -9, 0.9);
+    // banca junto al camino
+    add(box(1.8, 0.08, 0.5, mat(0x8a6a44, { metal: 0.1, rough: 0.8 })), -2.5, -2.25, -11);
+    add(box(1.8, 0.5, 0.08, mat(0x8a6a44, { metal: 0.1, rough: 0.8 })), -2.5, -1.95, -11.25);
+    add(box(0.08, 0.35, 0.45, darkMetal), -3.2, -2.42, -11);
+    add(box(0.08, 0.35, 0.45, darkMetal), -1.8, -2.42, -11);
+    // arbustos y flores
+    [[-7.5, -8], [-3, -10], [2, -13], [8, -9]].forEach(([bx, bz]) => {
+      const b = new THREE.Mesh(new THREE.SphereGeometry(0.55, 10, 8), leafMat2);
+      add(b, bx, -2.25, bz);
+    });
+    const flowerCols = [0xef4444, 0xfacc15, 0xf8fafc, 0xec4899, 0xf97316];
+    [[-6.2, -8.5], [-4.2, -9.5], [-6.8, -11], [-3.8, -13], [0.5, -9], [3, -12]].forEach(([fx, fz], i) => {
+      const f = new THREE.Mesh(new THREE.SphereGeometry(0.09, 8, 6),
+        new THREE.MeshBasicMaterial({ color: flowerCols[i % flowerCols.length] }));
+      add(f, fx, -2.45, fz);
+      add(cyl(0.02, 0.02, 0.25, leafMat2, 6), fx, -2.55, fz);
+    });
     // póster NVISION en la pared trasera
     const posterCanvas = document.createElement('canvas'); posterCanvas.width = 256; posterCanvas.height = 340;
     const pctx = posterCanvas.getContext('2d');
