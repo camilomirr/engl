@@ -716,27 +716,49 @@ export function buildPcModel() {
         if (names[1]) x.fillText(names.slice(1).join(', '), 128, 118);
         x.fillStyle = '#94a3b8';
         x.fillText('Instala todas las piezas', 128, 136);
-      } else { // windows: escritorio estilo Windows 11
+      } else { // windows 11: fondo Bloom + barra de tareas con sus iconos de verdad
         const g = x.createLinearGradient(0, 0, 0, H);
-        g.addColorStop(0, '#0078d4'); g.addColorStop(1, '#0a2a5e');
+        g.addColorStop(0, '#0b2a6b'); g.addColorStop(0.5, '#0a3d91'); g.addColorStop(1, '#081a3d');
         x.fillStyle = g; x.fillRect(0, 0, W, H);
-        const glow = x.createRadialGradient(90, 50, 4, 90, 50, 110);
-        glow.addColorStop(0, 'rgba(147,197,253,0.55)'); glow.addColorStop(1, 'rgba(147,197,253,0)');
-        x.fillStyle = glow; x.fillRect(0, 0, W, H);
-        x.textAlign = 'left'; x.fillStyle = '#e5e7eb';
-        [['Equipo', 14], ['Papelera', 44], ['NVISION', 74]].forEach(([label, y]) => {
-          x.fillStyle = 'rgba(255,255,255,0.85)'; x.fillRect(12, y, 16, 16);
-          x.fillStyle = '#e5e7eb'; x.font = '9px sans-serif'; x.fillText(label, 32, y + 12);
-        });
-        x.fillStyle = 'rgba(15,23,42,0.85)';
-        x.beginPath(); x.roundRect(68, 124, 120, 16, 8); x.fill();
-        x.fillStyle = '#00adef';
-        x.fillRect(78, 128, 5, 5); x.fillRect(84, 128, 5, 5);
-        x.fillRect(78, 134, 5, 5); x.fillRect(84, 134, 5, 5);
-        x.fillStyle = 'rgba(255,255,255,0.25)';
-        x.beginPath(); x.roundRect(96, 128, 44, 8, 4); x.fill();
-        x.fillStyle = '#e5e7eb'; x.font = '9px sans-serif'; x.textAlign = 'right';
-        x.fillText('20:31', 244, 135);
+        const petal = (cx, cy, rx, ry, color) => {
+          const pg = x.createRadialGradient(cx, cy, 2, cx, cy, Math.max(rx, ry));
+          pg.addColorStop(0, color); pg.addColorStop(1, 'rgba(0,0,0,0)');
+          x.fillStyle = pg;
+          x.beginPath(); x.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2); x.fill();
+        };
+        petal(150, 62, 55, 34, 'rgba(96,165,250,0.75)');
+        petal(105, 80, 45, 30, 'rgba(56,189,248,0.6)');
+        petal(185, 85, 40, 26, 'rgba(147,140,250,0.55)');
+        petal(128, 45, 30, 20, 'rgba(125,211,252,0.6)');
+        // iconos del escritorio: Este equipo y Papelera
+        x.textAlign = 'left';
+        x.fillStyle = '#3b82f6'; x.fillRect(12, 12, 16, 11); // monitor
+        x.fillStyle = '#93c5fd'; x.fillRect(18, 23, 4, 3); x.fillRect(14, 26, 12, 2);
+        x.fillStyle = '#ffffff'; x.font = '9px sans-serif'; x.fillText('Este equipo', 32, 22);
+        x.fillStyle = '#9ca3af'; // papelera
+        x.beginPath(); x.moveTo(13, 44); x.lineTo(27, 44); x.lineTo(25, 60); x.lineTo(15, 60); x.closePath(); x.fill();
+        x.fillStyle = '#d1d5db'; x.fillRect(12, 42, 16, 2);
+        x.fillStyle = '#ffffff'; x.fillText('Papelera', 32, 56);
+        // barra de tareas de ancho completo, iconos centrados, reloj a la derecha
+        x.fillStyle = 'rgba(13,20,36,0.85)'; x.fillRect(0, 124, W, 20);
+        x.fillStyle = 'rgba(255,255,255,0.14)'; x.fillRect(0, 124, W, 1);
+        x.fillStyle = '#00adef'; // Inicio (4 cuadros)
+        x.fillRect(92, 128, 5, 5); x.fillRect(98, 128, 5, 5);
+        x.fillRect(92, 134, 5, 5); x.fillRect(98, 134, 5, 5);
+        x.strokeStyle = '#e5e7eb'; x.lineWidth = 1.2; // Buscar (lupa)
+        x.beginPath(); x.arc(112, 131, 3, 0, Math.PI * 2); x.stroke();
+        x.beginPath(); x.moveTo(114.5, 133.5); x.lineTo(117, 136); x.stroke();
+        x.strokeRect(122, 128, 7, 5); x.strokeRect(125, 131, 7, 5); // Vista de tareas
+        x.fillStyle = '#fbbf24'; x.fillRect(136, 129, 10, 7); // Explorador (carpeta amarilla)
+        x.fillStyle = '#f59e0b'; x.fillRect(136, 129, 4, 2);
+        const eg = x.createLinearGradient(150, 128, 160, 138); // Edge (círculo azul-verde)
+        eg.addColorStop(0, '#0ea5e9'); eg.addColorStop(1, '#10b981');
+        x.fillStyle = eg; x.beginPath(); x.arc(155, 132, 5, 0, Math.PI * 2); x.fill();
+        x.fillStyle = '#e5e7eb'; x.fillRect(164, 129, 8, 7); // Store (bolsa)
+        x.strokeStyle = '#e5e7eb'; x.beginPath(); x.arc(168, 129, 2.5, Math.PI, 0); x.stroke();
+        x.fillStyle = '#e5e7eb'; x.font = '8px sans-serif'; x.textAlign = 'right';
+        x.fillText('20:31', 248, 132);
+        x.fillText('05/11/2026', 248, 141);
       }
       screenTex.needsUpdate = true;
     }
@@ -747,27 +769,30 @@ export function buildPcModel() {
     peripherals.rotation.y = -0.35;
     env.add(peripherals);
     const padd = (mesh, x, y, z) => { mesh.position.set(x, y, z); mesh.castShadow = true; mesh.receiveShadow = true; peripherals.add(mesh); return mesh; };
-    // monitor grande de verdad: una pantalla de 27" mide casi lo mismo de alto que la torre
-    padd(box(0.9, 0.06, 0.6, darkMetal), 0, 0.03, 0);
-    padd(box(0.14, 0.7, 0.14, darkMetal), -0.08, 0.38, 0);
-    padd(box(0.08, 1.5, 2.6, darkMetal), 0, 1.15, 0);
-    const screen = new THREE.Mesh(new THREE.PlaneGeometry(2.45, 1.4),
+    // monitor GRANDE de verdad: una pantalla de 27" (61 cm de ancho) mide casi lo mismo
+    // de alto que la torre y es 3 veces más ancha que ella (1 unidad = 10 cm)
+    padd(box(1.2, 0.08, 0.8, darkMetal), 0, 0.04, 0);
+    padd(box(0.18, 0.9, 0.18, darkMetal), -0.1, 0.48, 0);
+    padd(box(0.1, 2.5, 4.5, darkMetal), 0, 2.05, 0);
+    const screen = new THREE.Mesh(new THREE.PlaneGeometry(4.3, 2.35),
       new THREE.MeshBasicMaterial({ map: screenTex }));
     screen.rotation.y = Math.PI / 2;
-    padd(screen, 0.06, 1.15, 0);
-    const keyCanvas = document.createElement('canvas'); keyCanvas.width = 256; keyCanvas.height = 96;
+    padd(screen, 0.06, 2.05, 0);
+    // teclado de tamaño real (45 cm de ancho): el lienzo va en vertical porque el
+    // teclado es más ancho (Z) que profundo (X)
+    const keyCanvas = document.createElement('canvas'); keyCanvas.width = 96; keyCanvas.height = 288;
     const kctx = keyCanvas.getContext('2d');
-    kctx.fillStyle = '#111827'; kctx.fillRect(0, 0, 256, 96);
+    kctx.fillStyle = '#111827'; kctx.fillRect(0, 0, 96, 288);
     kctx.fillStyle = '#1f2937';
-    for (let r = 0; r < 4; r++) for (let c = 0; c < 14; c++) kctx.fillRect(6 + c * 18, 8 + r * 21, 14, 16);
+    for (let c = 0; c < 4; c++) for (let r = 0; r < 14; r++) kctx.fillRect(6 + c * 22, 6 + r * 20, 18, 16);
     const keyTex = new THREE.CanvasTexture(keyCanvas); keyTex.colorSpace = THREE.SRGBColorSpace;
-    padd(box(0.55, 0.06, 1.9, mat(0x111827, { metal: 0.3, rough: 0.6 })), 1.35, 0.03, 0);
-    const keys = new THREE.Mesh(new THREE.PlaneGeometry(1.8, 0.5),
+    padd(box(1.5, 0.07, 4.0, mat(0x111827, { metal: 0.3, rough: 0.6 })), 1.6, 0.035, 0);
+    const keys = new THREE.Mesh(new THREE.PlaneGeometry(1.3, 3.8),
       new THREE.MeshStandardMaterial({ map: keyTex, roughness: 0.6, metalness: 0.1, transparent: true }));
     keys.rotation.x = -Math.PI / 2;
-    padd(keys, 1.35, 0.065, 0);
-    const mouse = box(0.22, 0.07, 0.35, darkMetal);
-    padd(mouse, 1.35, 0.035, 1.3); mouse.rotation.y = -0.2;
+    padd(keys, 1.6, 0.075, 0);
+    const mouse = box(1.2, 0.08, 0.6, darkMetal);
+    padd(mouse, 1.6, 0.04, 2.4); mouse.rotation.y = -0.2;
     // cosas sueltas del taller sobre el escritorio
     const spareFan = makeFan(0.55, 0x22d3ee, false); // de repuesto, sin corriente no gira
     spareFan.rotation.x = -Math.PI / 2;
