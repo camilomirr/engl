@@ -753,79 +753,80 @@ export function buildPcModel() {
         if (names[1]) x.fillText(names.slice(1).join(', '), 256, 236);
         x.fillStyle = '#94a3b8';
         x.fillText('Instala todas las piezas', 256, 272);
-      } else { // windows 11 modo claro: NVISION de fondo + iconos chicos y ordenados + barra blanca
-        // fondo: NVISION como wallpaper (azul con desvanecido negro, como la página)
+      } else { // windows 11 modo claro: solo NVISION de fondo + rejilla de iconos + barra blanca
+        // fondo: NVISION como wallpaper, SOLO el logo (sin "PC BUILDING"), centrado
+        // en el área del escritorio con un resplandor suave detrás
         const g = x.createLinearGradient(0, 0, 0, H);
         g.addColorStop(0, '#000000'); g.addColorStop(0.55, '#050a14'); g.addColorStop(1, '#0a1628');
         x.fillStyle = g; x.fillRect(0, 0, W, H);
-        const glow = x.createRadialGradient(256, 118, 10, 256, 118, 150);
-        glow.addColorStop(0, 'rgba(37,99,235,0.35)'); glow.addColorStop(1, 'rgba(37,99,235,0)');
+        const glow = x.createRadialGradient(256, 120, 10, 256, 120, 160);
+        glow.addColorStop(0, 'rgba(37,99,235,0.4)'); glow.addColorStop(1, 'rgba(37,99,235,0)');
         x.fillStyle = glow; x.fillRect(0, 0, W, H);
-        const lg = x.createLinearGradient(150, 0, 362, 0);
+        const lg = x.createLinearGradient(148, 0, 364, 0);
         lg.addColorStop(0, '#2563eb'); lg.addColorStop(1, '#06b6d4');
         x.fillStyle = lg;
         x.shadowColor = 'rgba(37,99,235,0.7)'; x.shadowBlur = 18;
-        x.font = 'bold 52px sans-serif';
-        x.fillText('NVISION', 256, 122);
+        x.font = 'bold 56px sans-serif';
+        x.fillText('NVISION', 256, 138);
         x.shadowBlur = 0;
-        x.fillStyle = '#64748b'; x.font = '15px sans-serif';
-        x.fillText('PC BUILDING', 256, 148);
-        // iconos del escritorio estilo Windows 11: chicos (24 px), en columna a la
-        // izquierda, con su nombre debajo y hueco entre uno y otro (no pegados)
+        // iconos del escritorio estilo Windows 11: en columna a la izquierda, con
+        // margen arriba (el primero ya no queda pegado al borde), su nombre debajo
+        // y el mismo hueco entre uno y otro (paso de 68 px)
         x.textAlign = 'center';
         const deskIcon = (cy, label, draw) => {
-          draw(40, cy);
+          draw(44, cy);
           x.fillStyle = '#ffffff';
           x.shadowColor = 'rgba(0,0,0,0.6)'; x.shadowBlur = 3;
           x.font = '12px sans-serif';
-          x.fillText(label, 40, cy + 38);
+          x.fillText(label, 44, cy + 38);
           x.shadowBlur = 0;
         };
-        deskIcon(24, 'Este equipo', (ix, iy) => { // monitor chico
+        deskIcon(32, 'Este equipo', (ix, iy) => { // monitor chico
           x.fillStyle = '#3b82f6'; x.fillRect(ix - 12, iy - 9, 24, 16);
           x.fillStyle = '#93c5fd'; x.fillRect(ix - 3, iy + 7, 6, 4);
           x.fillStyle = '#60a5fa'; x.fillRect(ix - 9, iy + 11, 18, 2);
         });
-        deskIcon(92, 'Papelera', (ix, iy) => {
+        deskIcon(100, 'Papelera', (ix, iy) => {
           x.fillStyle = '#9ca3af';
           x.beginPath(); x.moveTo(ix - 10, iy - 6); x.lineTo(ix + 10, iy - 6); x.lineTo(ix + 8, iy + 10); x.lineTo(ix - 8, iy + 10); x.closePath(); x.fill();
           x.fillStyle = '#d1d5db'; x.fillRect(ix - 12, iy - 10, 24, 3);
         });
-        deskIcon(160, 'NVISION', (ix, iy) => { // carpeta amarilla
+        deskIcon(168, 'NVISION', (ix, iy) => { // carpeta amarilla
           x.fillStyle = '#fbbf24'; x.fillRect(ix - 12, iy - 8, 24, 16);
           x.fillStyle = '#f59e0b'; x.fillRect(ix - 12, iy - 8, 9, 4);
         });
-        // barra de tareas MODO CLARO: blanca, iconos oscuros centrados, reloj a la derecha
+        // barra de tareas MODO CLARO: blanca, 7 iconos de 18 px con 8 px de hueco,
+        // grupo de 174 px centrado exacto en 256 (169..343), reloj a la derecha
         x.fillStyle = 'rgba(243,243,243,0.94)'; x.fillRect(0, 248, W, 40);
         x.fillStyle = 'rgba(0,0,0,0.08)'; x.fillRect(0, 248, W, 1);
         x.fillStyle = '#0078d4'; // Inicio (4 cuadros)
-        x.fillRect(176, 258, 8, 8); x.fillRect(186, 258, 8, 8);
-        x.fillRect(176, 268, 8, 8); x.fillRect(186, 268, 8, 8);
+        x.fillRect(169, 259, 8, 8); x.fillRect(179, 259, 8, 8);
+        x.fillRect(169, 269, 8, 8); x.fillRect(179, 269, 8, 8);
         x.strokeStyle = '#1f2937'; x.lineWidth = 2; // Buscar (lupa)
-        x.beginPath(); x.arc(210, 263, 5, 0, Math.PI * 2); x.stroke();
-        x.beginPath(); x.moveTo(214, 267); x.lineTo(219, 272); x.stroke();
-        x.strokeRect(228, 258, 12, 9); x.strokeRect(233, 263, 12, 9); // Vista de tareas
-        x.strokeRect(254, 258, 18, 14); // Widgets
-        x.beginPath(); x.moveTo(263, 258); x.lineTo(263, 272); x.stroke();
-        x.fillStyle = '#fbbf24'; x.fillRect(280, 260, 18, 12); // Explorador (carpeta amarilla)
-        x.fillStyle = '#f59e0b'; x.fillRect(280, 260, 7, 3);
-        const eg = x.createLinearGradient(304, 258, 322, 276); // Edge (círculo azul-verde)
+        x.beginPath(); x.arc(204, 268, 5, 0, Math.PI * 2); x.stroke();
+        x.beginPath(); x.moveTo(207.5, 271.5); x.lineTo(212, 276); x.stroke();
+        x.strokeRect(221, 262, 12, 9); x.strokeRect(226, 267, 12, 9); // Vista de tareas
+        x.strokeRect(247, 261, 18, 14); // Widgets
+        x.beginPath(); x.moveTo(256, 261); x.lineTo(256, 275); x.stroke();
+        x.fillStyle = '#fbbf24'; x.fillRect(273, 262, 18, 12); // Explorador (carpeta amarilla)
+        x.fillStyle = '#f59e0b'; x.fillRect(273, 262, 7, 3);
+        const eg = x.createLinearGradient(299, 259, 317, 277); // Edge (círculo azul-verde)
         eg.addColorStop(0, '#0ea5e9'); eg.addColorStop(1, '#10b981');
-        x.fillStyle = eg; x.beginPath(); x.arc(313, 267, 9, 0, Math.PI * 2); x.fill();
-        x.fillStyle = '#1f2937'; x.fillRect(330, 260, 14, 12); // Store (bolsa)
-        x.strokeStyle = '#f3f3f3'; x.lineWidth = 1.5; x.beginPath(); x.arc(337, 260, 4, Math.PI, 0); x.stroke();
+        x.fillStyle = eg; x.beginPath(); x.arc(308, 268, 9, 0, Math.PI * 2); x.fill();
+        x.fillStyle = '#1f2937'; x.fillRect(325, 262, 14, 12); // Store (bolsa)
+        x.strokeStyle = '#f3f3f3'; x.lineWidth = 1.5; x.beginPath(); x.arc(332, 262, 4, Math.PI, 0); x.stroke();
         x.strokeStyle = '#1f2937'; x.lineWidth = 1.8; // Wi-Fi, volumen y batería (oscuros)
-        x.beginPath(); x.arc(418, 273, 9, Math.PI * 1.25, Math.PI * 1.75); x.stroke();
-        x.beginPath(); x.arc(418, 273, 5.5, Math.PI * 1.25, Math.PI * 1.75); x.stroke();
-        x.fillStyle = '#1f2937'; x.beginPath(); x.arc(418, 273, 1.8, 0, Math.PI * 2); x.fill();
+        x.beginPath(); x.arc(368, 273, 9, Math.PI * 1.25, Math.PI * 1.75); x.stroke();
+        x.beginPath(); x.arc(368, 273, 5.5, Math.PI * 1.25, Math.PI * 1.75); x.stroke();
+        x.fillStyle = '#1f2937'; x.beginPath(); x.arc(368, 273, 1.8, 0, Math.PI * 2); x.fill();
         x.fillStyle = '#1f2937';
-        x.beginPath(); x.moveTo(434, 260); x.lineTo(434, 274); x.lineTo(441, 270); x.lineTo(441, 264); x.closePath(); x.fill();
-        x.fillRect(442, 266, 4, 3);
-        x.strokeStyle = '#1f2937'; x.lineWidth = 1.8; x.strokeRect(450, 261, 12, 9);
-        x.fillStyle = '#1f2937'; x.fillRect(452, 263, 8, 5); x.fillRect(463, 264, 2, 3);
+        x.beginPath(); x.moveTo(384, 261); x.lineTo(384, 275); x.lineTo(391, 271); x.lineTo(391, 265); x.closePath(); x.fill();
+        x.fillRect(392, 267, 4, 3);
+        x.strokeStyle = '#1f2937'; x.lineWidth = 1.8; x.strokeRect(400, 262, 12, 9);
+        x.fillStyle = '#1f2937'; x.fillRect(402, 264, 8, 5); x.fillRect(413, 265, 2, 3);
         x.fillStyle = '#1f2937'; x.font = '13px sans-serif'; x.textAlign = 'right';
-        x.fillText('20:31', 505, 265);
-        x.fillText('05/11/2026', 505, 281);
+        x.fillText('20:31', 504, 266);
+        x.fillText('05/11/2026', 504, 282);
       }
       screenTex.needsUpdate = true;
     }
