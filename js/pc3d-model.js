@@ -242,23 +242,113 @@ export function buildPcModel() {
   const motherboard = new THREE.Group();
   motherboard.position.set(-0.94, 2.5, -0.1);
   motherboard.add(box(0.08, 3.5, 3.4, PCB_MAT));
+  // cara con las pistas impresas como un mapa (textura generada: pistas, vías y serigrafía)
+  const pcbCanvas = document.createElement('canvas');
+  pcbCanvas.width = pcbCanvas.height = 512;
+  const pctx = pcbCanvas.getContext('2d');
+  pctx.fillStyle = '#166534';
+  pctx.fillRect(0, 0, 512, 512);
+  let pcbSeed = 1234567;
+  const prnd = () => { pcbSeed = (pcbSeed * 1664525 + 1013904223) >>> 0; return pcbSeed / 4294967296; };
+  for (let i = 0; i < 40; i++) { // parches suaves para que el verde no sea plano
+    pctx.fillStyle = prnd() > 0.5 ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.04)';
+    pctx.fillRect(prnd() * 512, prnd() * 512, 40 + prnd() * 90, 30 + prnd() * 70);
+  }
+  const traceColors = ['#1f8a4c', '#1f8a4c', '#2ea86a', '#b45309', '#d4af37'];
+  for (let t = 0; t < 34; t++) { // pistas: polilíneas ortogonales con giros de 45°/90°
+    let x = prnd() * 512, y = prnd() * 512;
+    let ang = Math.floor(prnd() * 8) * Math.PI / 4;
+    const pts = [[x, y]];
+    const steps = 3 + Math.floor(prnd() * 4);
+    for (let s = 0; s < steps; s++) {
+      const len = 20 + prnd() * 55;
+      x = Math.max(10, Math.min(502, x + Math.cos(ang) * len));
+      y = Math.max(10, Math.min(502, y + Math.sin(ang) * len));
+      pts.push([x, y]);
+      ang += (prnd() > 0.5 ? 1 : -1) * (Math.PI / 4) * (1 + Math.floor(prnd() * 2));
+    }
+    pctx.strokeStyle = traceColors[Math.floor(prnd() * traceColors.length)];
+    pctx.lineWidth = t % 5 === 0 ? 2 : 3;
+    pctx.lineJoin = 'round'; pctx.lineCap = 'round';
+    pctx.beginPath(); pctx.moveTo(pts[0][0], pts[0][1]);
+    pts.slice(1).forEach(([px, py]) => pctx.lineTo(px, py));
+    pctx.stroke();
+    pctx.fillStyle = '#d4af37'; // vías doradas en los giros
+    pts.slice(1, -1).forEach(([px, py]) => { pctx.beginPath(); pctx.arc(px, py, 3, 0, Math.PI * 2); pctx.fill(); });
+  }
+  pctx.strokeStyle = 'rgba(229,231,235,0.8)'; // serigrafía blanca: contornos de componentes
+  pctx.lineWidth = 1.5;
+  for (let i = 0; i < 16; i++) {
+    const w = 18 + prnd() * 46, h = 14 + prnd() * 40;
+    pctx.strokeRect(prnd() * (512 - w), prnd() * (512 - h), w, h);
+  }
+  pctx.strokeStyle = '#0f3d21'; pctx.lineWidth = 10; // marco del borde
+  pctx.strokeRect(5, 5, 502, 502);
+  const pcbTex = new THREE.CanvasTexture(pcbCanvas);
+  pcbTex.colorSpace = THREE.SRGBColorSpace;
+  pcbTex.anisotropy = 4;
+  const pcbFace = new THREE.Mesh(
+    new THREE.PlaneGeometry(3.4, 3.5),
+    new THREE.MeshStandardMaterial({ map: pcbTex, roughness: 0.6, metalness: 0.1, transparent: true })
+  );
+  pcbFace.rotation.y = Math.PI / 2;
+  pcbFace.position.set(0.05, 0, 0);
+  pcbFace.castShadow = true; pcbFace.receiveShadow = true;
+  motherboard.add(pcbFace);
+  // disipador del chipset con aletas
   const chipset = box(0.1, 0.5, 0.5, DARK_MAT);
   chipset.position.set(0.08, -0.9, -0.6);
   motherboard.add(chipset);
+  [-1.04, -0.92, -0.8, -0.68].forEach((y) => {
+    const fin = box(0.06, 0.05, 0.5, METAL_MAT);
+    fin.position.set(0.15, y, -0.6);
+    motherboard.add(fin);
+  });
   [-1.15, -0.55].forEach((y) => {
     const slot = box(0.1, 0.12, 2.4, mat(0x111827, { metal: 0.4, rough: 0.55 }));
     slot.position.set(0.08, y, 0.1);
     motherboard.add(slot);
   });
+  // ranura PCIe x1 corta
+  const slotX1 = box(0.1, 0.12, 0.8, mat(0x111827, { metal: 0.4, rough: 0.55 }));
+  slotX1.position.set(0.08, -1.45, 0.1);
+  motherboard.add(slotX1);
   for (let i = 0; i < 6; i++) {
     const cap = cyl(0.05, 0.05, 0.16, COPPER_MAT, 10);
     cap.rotation.z = Math.PI / 2;
     cap.position.set(0.1, 1.35 - i * 0.22, 1.45);
     motherboard.add(cap);
   }
-  const trace = box(0.02, 2.6, 0.1, mat(0x0f172a, { emissive: 0x0ea5e9, emissiveIntensity: 0.25 }));
-  trace.position.set(0.06, 0.2, -1.2);
-  motherboard.add(trace);
+  // condensadores del VRM: fila superior y columna izquierda del zócalo
+  [[1.58, -1.0], [1.58, -0.75], [1.58, -0.5], [1.58, -0.25], [0.6, -1.28], [0.95, -1.28], [1.3, -1.28]].forEach(([y, z]) => {
+    const cap = cyl(0.045, 0.045, 0.14, COPPER_MAT, 10);
+    cap.rotation.z = Math.PI / 2;
+    cap.position.set(0.1, y, z);
+    motherboard.add(cap);
+  });
+  // pila CMOS (la moneda plateada)
+  const battery = cyl(0.16, 0.16, 0.04, METAL_MAT, 24);
+  battery.rotation.z = Math.PI / 2;
+  battery.position.set(0.09, -1.4, 1.2);
+  motherboard.add(battery);
+  // chips negros repartidos por la placa
+  [[1.6, -1.4, 0.3, 0.3], [-1.55, -1.2, 0.3, 0.3], [-0.2, 1.2, 0.3, 0.3], [0.6, -1.52, 0.25, 0.35]].forEach(([y, z, h, w]) => {
+    const ic = box(0.06, h, w, DARK_MAT);
+    ic.position.set(0.07, y, z);
+    motherboard.add(ic);
+  });
+  // puertos SATA
+  [0.55, 0.82].forEach((z) => {
+    const sata = box(0.1, 0.15, 0.22, mat(0x111827, { metal: 0.4, rough: 0.55 }));
+    sata.position.set(0.09, -1.62, z);
+    motherboard.add(sata);
+  });
+  // conectores de ventilador (cabecitas blancas)
+  [[1.6, 0.2], [-1.62, -0.5]].forEach(([y, z]) => {
+    const fanHeader = box(0.06, 0.08, 0.12, mat(0xe5e7eb, { metal: 0.3, rough: 0.5 }));
+    fanHeader.position.set(0.08, y, z);
+    motherboard.add(fanHeader);
+  });
   // conector ATX de 24 pines en el borde derecho de la placa
   const atxConnector = box(0.12, 0.5, 0.3, mat(0xe5e7eb, { metal: 0.3, rough: 0.5 }));
   atxConnector.position.set(0.1, 0.1, 1.55);
