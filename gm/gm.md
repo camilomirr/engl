@@ -1,3 +1,4 @@
+
 # Instrucciones de Idioma y Comunicación
 
 - Idioma principal: Comunícate, explica y responde en español.
