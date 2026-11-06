@@ -190,6 +190,15 @@ export function buildPcModel() {
   rearPort(0.16, 0.2, 0.02, 0.55, 0.5, -2.05, rearPlateMat);    // placa del interruptor
   const psuSwitch = rearPort(0.12, 0.16, 0.04, 0.55, 0.5, -2.06, rearDarkMat);
   psuSwitch.rotation.x = 0.12; // basculante: un lado metido, el otro fuera
+  // placa de I/O trasera (marco metálico alrededor de los puertos ethernet/USB):
+  // antes eran placas sueltas sin el marco que las une
+  const ioMat = mat(0x9ca3af, { metal: 0.9, rough: 0.3 });
+  [[0.35, 0.03, -0.95, 3.35], [0.35, 0.03, -0.95, 1.95]].forEach(([w, h, x, y]) => {
+    const bar = box(w, h, 0.02, ioMat); bar.position.set(x, y, -2.05); tower.add(bar);
+  });
+  [[-1.1], [-0.8]].forEach(([x]) => {
+    const bar = box(0.03, 1.4, 0.02, ioMat); bar.position.set(x, 2.65, -2.05); tower.add(bar);
+  });
   [3.6, 3.9, 4.2].forEach((y) => {
     const bar = box(1.16, 0.04, 0.02, CASE_MAT);
     bar.position.set(0, y, -2);
@@ -990,6 +999,52 @@ export function buildPcModel() {
       screw.rotation.x = Math.PI / 2; screw.rotation.y = ry;
       add(screw, sx, 0.08, sz);
     });
+    // silla de oficina frente al escritorio (mirando al monitor)
+    const chair = new THREE.Group();
+    const chairSeat = box(1.1, 0.12, 1.0, mat(0x1e293b, { metal: 0.1, rough: 0.9 }));
+    chairSeat.position.set(0, 1.3, 0); chair.add(chairSeat);
+    const chairBack = box(1.0, 1.3, 0.1, mat(0x1e293b, { metal: 0.1, rough: 0.9 }));
+    chairBack.position.set(0, 1.95, 0.55); chairBack.rotation.x = -0.15; chair.add(chairBack);
+    const chairPole = cyl(0.06, 0.06, 1.2, METAL_MAT, 12);
+    chairPole.position.set(0, 0.65, 0); chair.add(chairPole);
+    const chairBase = cyl(0.55, 0.55, 0.06, METAL_MAT, 24);
+    chairBase.position.set(0, 0.05, 0); chair.add(chairBase);
+    for (let i = 0; i < 5; i++) {
+      const a = (i / 5) * Math.PI * 2;
+      const caster = new THREE.Mesh(new THREE.SphereGeometry(0.06, 10, 8), darkMetal);
+      caster.position.set(0.5 * Math.cos(a), 0.08, 0.5 * Math.sin(a)); chair.add(caster);
+    }
+    chair.position.set(-2.9, -2.6, 5.5); env.add(chair);
+    // pared derecha (espejo de la izquierda) y techo: antes el cuarto no tenía ni pared derecha ni techo
+    const rightWall = new THREE.Mesh(new THREE.PlaneGeometry(24, 12), wallMat2);
+    rightWall.position.set(9.5, 3.4, 0); rightWall.rotation.y = -Math.PI / 2;
+    rightWall.receiveShadow = true; env.add(rightWall);
+    add(box(0.06, 0.25, 24, wallMat), 9.47, -2.475, 0); // rodapié derecho
+    const ceiling = new THREE.Mesh(new THREE.PlaneGeometry(34, 24), wallMat);
+    ceiling.position.set(0, 9, 0); ceiling.rotation.x = Math.PI / 2;
+    env.add(ceiling);
+    // cable de internet del router a la pared: antes el router solo conectaba al PC, no tenía internet
+    const wanJack = box(0.3, 0.4, 0.06, mat(0xf1f5f9, { metal: 0.1, rough: 0.5 }));
+    wanJack.position.set(6.5, -2.2, -4.97); wanJack.castShadow = true; env.add(wanJack);
+    const wanSocket = box(0.12, 0.12, 0.03, darkMetal);
+    wanSocket.position.set(6.5, -2.2, -4.93); env.add(wanSocket);
+    const wanPort = box(0.12, 0.08, 0.02, darkMetal); // boca WAN en la trasera del router
+    wanPort.position.set(6.3, 0.08, -3.11); env.add(wanPort);
+    extCable([[6.3, 0.09, -3.11], [6.4, 0.09, -3.6], [6.45, 0.09, -3.75], [6.5, -0.6, -3.9], [6.5, -2.0, -4.3], [6.5, -2.2, -4.93]], 0.025, 0xeab308);
+    // altavoces a ambos lados del monitor, girados hacia quien se sienta
+    const makeSpeaker = (x, ry) => {
+      const sp = new THREE.Group();
+      const spBody = box(0.5, 0.9, 0.4, mat(0x111827, { metal: 0.3, rough: 0.6 }));
+      spBody.position.set(0, 0.45, 0); sp.add(spBody);
+      const woofer = cyl(0.16, 0.16, 0.03, mat(0x1f2937, { metal: 0.3, rough: 0.6 }), 20);
+      woofer.rotation.x = Math.PI / 2; woofer.position.set(0, 0.35, 0.21); sp.add(woofer);
+      const tweeter = cyl(0.06, 0.06, 0.03, mat(0x1f2937, { metal: 0.3, rough: 0.6 }), 16);
+      tweeter.rotation.x = Math.PI / 2; tweeter.position.set(0, 0.7, 0.21); sp.add(tweeter);
+      sp.position.set(x, 0, 1.0); sp.rotation.y = ry;
+      env.add(sp);
+    };
+    makeSpeaker(-7.0, 0.3);
+    makeSpeaker(-1.0, -0.3);
     // --- Cables de conexión: HDMI, energía, ethernet, regleta y router ---
     // Cada cable empieza y termina EN UN PUERTO de verdad (monitor o torre), no
     // flotando: la posición de los puertos del monitor se calcula (el grupo tiene
