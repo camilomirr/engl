@@ -55,10 +55,10 @@ function init() {
 
   // la torre está a la derecha de la mesa (x=3.5): la vista general centra el
   // puesto de trabajo entero (monitor a un lado, torre al otro, ambos visibles);
-  // núcleo y flujo siguen a la torre
+  // núcleo sigue a la torre (que ahora está girada, así que su punto cambia)
   const SCENES = {
     overview: { cam: [9.0, 4.4, 5.4], tgt: [0, 2.0, 0.5], focus: null, particles: false, fanBoost: 1, dur: 1.8 },
-    core: { cam: [8.1, 4.3, 3.8], tgt: [2.95, 3.1, 0.1], focus: ['cpu', 'ram'], particles: false, fanBoost: 1 },
+    core: { cam: [8.1, 4.3, 3.8], tgt: [3.04, 3.1, -0.32], focus: ['cpu', 'ram'], particles: false, fanBoost: 1 },
     airflow: { cam: [9.9, 5.4, 7.4], tgt: [3.5, 2.0, 0], focus: ['psu', 'gpu'], particles: true, fanBoost: 2.4 }
   };
 
@@ -164,7 +164,7 @@ function init() {
   const pData = [];
   for (let i = 0; i < P_COUNT; i++) {
     pData.push({
-      x: 2.8 + Math.random() * 1.4, // dentro de la torre (la torre está en x=3.5)
+      x: -0.7 + Math.random() * 1.4, // local a la torre: las partículas son hijas de la torre y giran con ella
       y: 0.5 + Math.random() * 3.7,
       z: 1.9,
       speed: 0.6 + Math.random() * 0.9,
@@ -177,7 +177,7 @@ function init() {
   }));
   particles.visible = false;
   particles.frustumCulled = false;
-  scene.add(particles);
+  tower.add(particles); // hijas de la torre: el flujo va de adelante hacia atrás aunque la torre gire
 
   // --- Guía de recorrido: línea punteada hasta el sitio de la pieza ---
   const MAGNET_RADIUS = 2.0; // radio en el que el imán empieza a atraerla hacia su sitio
@@ -378,7 +378,10 @@ function init() {
   function updateGuide() {
     if (!dragId) return;
     const g = partGroups[dragId];
-    const home = g.userData.base;
+    // el sitio en COORDENADAS DE MUNDO: la línea y el marcador viven en la escena,
+    // y la base es local a la torre (que está en x=3.5 y girada): sin convertirla,
+    // la distancia salía siempre mayor que 3.5 y la guía nunca se ponía verde
+    const home = tower.localToWorld(g.userData.base.clone());
     g.getWorldPosition(guideV);
     const pos = guideGeo.attributes.position;
     pos.setXYZ(0, guideV.x, guideV.y, guideV.z);
@@ -652,6 +655,9 @@ function init() {
     }
     if (dragId) {
       // Soltar la pieza: si quedó cerca de su sitio, encaja sola; si no, queda flotando
+      // (la posición de la pieza es de mundo y la base es local a la torre: hay que
+      // convertir la base a mundo, si no la distancia siempre es mayor que 3.5 y
+      // la pieza nunca encaja)
       const g = partGroups[dragId];
       g.userData.dragging = false;
       if (g.userData.ghostMat) g.userData.ghostMat.color.setHex(0x38bdf8);
@@ -664,7 +670,7 @@ function init() {
       homeMarker.visible = false;
       canvas.style.cursor = 'grab';
       downPos = null;
-      if (p.distanceTo(g.userData.base) < RELEASE_SNAP_DIST) snapIn(id);
+      if (p.distanceTo(tower.localToWorld(g.userData.base.clone())) < RELEASE_SNAP_DIST) snapIn(id);
       return;
     }
     if (dragCandidate) {

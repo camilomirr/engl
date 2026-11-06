@@ -808,7 +808,7 @@ export function buildPcModel() {
     setScreen = drawScreen;
     drawScreen('off'); // el equipo arranca apagado: hay que encenderlo
     const peripherals = new THREE.Group();
-    peripherals.position.set(-3.6, 0, 2.0); // a un lado de la torre, adelante: ambos se ven a la vez
+    peripherals.position.set(-4.5, 0, 1.5); // a la izquierda de la torre, bien separado: ambos se ven a la vez
     peripherals.rotation.y = -0.27; // la pantalla mira hacia la cámara
     env.add(peripherals);
     const padd = (mesh, x, y, z) => { mesh.position.set(x, y, z); mesh.castShadow = true; mesh.receiveShadow = true; peripherals.add(mesh); return mesh; };
@@ -860,9 +860,9 @@ export function buildPcModel() {
     screwShaft.rotation.z = Math.PI / 2;
     add(screwShaft, -1.15, 0.05, -2.8);
     const mugMat = mat(0xdc2626, { metal: 0.2, rough: 0.5 }); // pocillo rojo, que se vea sobre el escritorio
-    add(cyl(0.09, 0.09, 0.22, mugMat, 16), -4.4, 0.11, -0.5);
+    add(cyl(0.09, 0.09, 0.22, mugMat, 16), -5.5, 0.11, -1.0);
     const mugHandle = new THREE.Mesh(new THREE.TorusGeometry(0.07, 0.015, 8, 20), mugMat);
-    mugHandle.position.set(-4.31, 0.11, -0.5); // el asa, como un pocillo de verdad
+    mugHandle.position.set(-5.41, 0.11, -1.0); // el asa, como un pocillo de verdad
     mugHandle.castShadow = true;
     env.add(mugHandle);
     // --- Cables de conexión: HDMI, energía, ethernet, regleta y router ---
@@ -879,14 +879,15 @@ export function buildPcModel() {
     peripherals.updateMatrixWorld(true);
     const hdmiPortW = new THREE.Vector3(); hdmiSocket.getWorldPosition(hdmiPortW);
     const pwrPortW = new THREE.Vector3(); pwrSocket.getWorldPosition(pwrPortW);
-    // HDMI: del puerto del monitor al puerto HDMI de la tarjeta gráfica (atrás de la torre)
-    extCable([hdmiPortW, [-3.85, 1.0, 1.6], [-3.7, 0.06, 0.8], [-3.0, 0.06, -2.0], [0.0, 0.06, -2.8], [2.0, 0.06, -2.6], [2.95, 1.0, -2.0], [2.95, 1.75, -2.0]], 0.035, 0x111827);
+    // HDMI: del puerto del monitor al puerto HDMI de la tarjeta gráfica (la torre
+    // está girada 45°, así que su puerto queda en (4.57, 1.75, -1.85))
+    extCable([hdmiPortW, [-4.85, 1.0, 1.1], [-4.7, 0.06, 0.3], [-3.0, 0.06, -2.0], [0.0, 0.06, -2.8], [2.0, 0.06, -2.6], [3.8, 0.06, -2.6], [4.57, 1.0, -1.85], [4.57, 1.75, -1.85]], 0.035, 0x111827);
     // energía del monitor: del puerto del monitor a la regleta
-    extCable([pwrPortW, [-3.5, 0.06, 0.5], [-2.0, 0.06, -1.5], [0.0, 0.06, -2.5], [2.5, 0.06, -2.9], [5.0, 0.08, -3.0]], 0.035, 0x111827);
-    // energía de la torre: de la boca de la fuente a la regleta
-    extCable([[3.75, 0.5, -2.0], [3.9, 0.06, -2.3], [4.5, 0.06, -2.9], [5.0, 0.08, -3.0]], 0.04, 0x374151);
-    // ethernet (azul): de la boca de la placa madre a la boca del router
-    extCable([[2.56, 3.0, -2.0], [2.4, 1.5, -2.1], [2.5, 0.06, -2.6], [4.0, 0.06, -2.8], [5.55, 0.08, -2.7]], 0.03, 0x2563eb);
+    extCable([pwrPortW, [-4.4, 0.06, 0.0], [-2.0, 0.06, -1.5], [0.0, 0.06, -2.5], [2.5, 0.06, -2.9], [5.0, 0.08, -3.0]], 0.035, 0x111827);
+    // energía de la torre: de la boca de la fuente (girada: (5.14, 0.5, -1.29)) a la regleta
+    extCable([[5.14, 0.5, -1.29], [5.3, 0.06, -1.6], [5.2, 0.06, -2.5], [5.0, 0.08, -3.0]], 0.04, 0x374151);
+    // ethernet (azul): de la boca de la placa madre (girada: (4.30, 3.0, -2.13)) a la boca del router
+    extCable([[4.30, 3.0, -2.13], [4.1, 1.5, -2.3], [4.0, 0.06, -2.6], [5.0, 0.06, -2.8], [5.55, 0.08, -2.7]], 0.03, 0x2563eb);
     // energía del router: de su toma trasera a la regleta
     extCable([[5.7, 0.08, -3.11], [5.3, 0.06, -3.0], [5.05, 0.08, -3.0]], 0.03, 0x111827);
     // cable de la regleta: baja por detrás del escritorio hasta el enchufe de la pared
@@ -928,9 +929,13 @@ export function buildPcModel() {
     return env;
   }
   // la torre va a la DERECHA de la mesa y el monitor a la IZQUIERDA: ambos se ven
-  // a la vez y la torre ya no tapa el monitor (las piezas, los cables internos y
-  // el panel frontal son hijos de la torre, así que se mueven con ella)
+  // a la vez y la torre ya no tapa el monitor. Girada 45° para que su lado abierto
+  // (las piezas) mire de frente a la cámara: la CPU se ve completa, no de lado.
+  // Las piezas, los cables internos y el panel frontal son hijos de la torre,
+  // así que se mueven y giran con ella; los cables externos apuntan a los puertos
+  // ya girados (sus posiciones de mundo están en buildEnvironment).
   tower.position.set(3.5, 0, 0);
+  tower.rotation.y = -Math.PI / 4;
   const environment = buildEnvironment();
 
   return {
