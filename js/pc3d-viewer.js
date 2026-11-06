@@ -148,7 +148,7 @@ function init() {
 
   // --- Modelo 3D (torre, piezas, cables, LED) ---
   const model = buildPcModel();
-  const { tower, frontPanel, rgbStrip, powerLedMat, hddLedMat, environment } = model;
+  const { tower, frontPanel, rgbStrip, powerLedMat, hddLedMat, environment, powerButton, powerBtnRingMat, setScreen } = model;
   const { partGroups, partMeshes, partMats, spinners, cables } = model;
   scene.add(tower);
   scene.add(environment); // el taller: escritorio, cuarto, monitor y cosas
@@ -254,6 +254,74 @@ function init() {
     allBtnLabel.textContent = t(allRemoved ? 'pc3d_assemble_all' : 'pc3d_disassemble_all');
     allBtnLabel.dataset.i18n = allRemoved ? 'pc3d_assemble_all' : 'pc3d_disassemble_all';
   }
+  // --- Encendido: el PC solo arranca con las 8 piezas instaladas ---
+  let powered = false; // el equipo arranca apagado
+  let powerSpin = 0; // 0 = ventiladores parados, 1 = a tope (sube poco a poco al encender)
+  let twitchUntil = 0; // un intento fallido hace girar los ventiladores un instante
+  let failBlinkUntil = 0; // parpadeo rojo del LED tras un intento fallido
+  let bootTimer = null;
+  let powerPress = false; // se presionó el botón físico 3D (posible clic, no arrastre)
+  const powerBtn = document.getElementById('pc-power');
+  const powerBtnLabel = powerBtn ? powerBtn.querySelector('span:last-child') : null;
+  function missingParts() { return PARTS.filter((p) => partGroups[p.id].userData.removed); }
+  function setPowerButtonUI() {
+    if (!powerBtn) return;
+    powerBtn.classList.toggle('is-active', powered);
+    powerBtn.setAttribute('aria-pressed', String(powered));
+    if (powerBtnLabel) {
+      powerBtnLabel.textContent = t(powered ? 'pc3d_power_off' : 'pc3d_power_on');
+      powerBtnLabel.dataset.i18n = powered ? 'pc3d_power_off' : 'pc3d_power_on';
+    }
+    if (powerBtnRingMat) powerBtnRingMat.color.setHex(powered ? 0x22c55e : 0x1f2937);
+  }
+  function failBoot(missing) {
+    failBlinkUntil = clock.elapsedTime + 3;
+    twitchUntil = clock.elapsedTime + 0.5;
+    if (setScreen) setScreen('error', missing.map((p) => t(p.key)).join(', '));
+    if (titleEl) { titleEl.textContent = t('pc3d_power_fail_title'); titleEl.dataset.i18n = 'pc3d_power_fail_title'; }
+    if (descEl) descEl.textContent = t('pc3d_power_fail_desc').replace('{parts}', missing.map((p) => t(p.key)).join(', '));
+  }
+  // Si sacan una pieza con el PC encendido, se apaga de golpe (como un equipo real)
+  function checkPowerAfterRemoval() {
+    if (!powered) return;
+    const missing = missingParts();
+    if (!missing.length) return;
+    powered = false;
+    if (bootTimer) { clearInterval(bootTimer); bootTimer = null; }
+    if (setScreen) setScreen('off');
+    setPowerButtonUI();
+    if (titleEl) { titleEl.textContent = t('pc3d_power_fail_title'); titleEl.dataset.i18n = 'pc3d_power_fail_title'; }
+    if (descEl) descEl.textContent = t('pc3d_power_crash_desc').replace('{parts}', missing.map((p) => t(p.key)).join(', '));
+  }
+  function togglePower() {
+    if (powered) { // apagar
+      powered = false;
+      if (bootTimer) { clearInterval(bootTimer); bootTimer = null; }
+      if (setScreen) setScreen('off');
+      setPowerButtonUI();
+      if (titleEl) { titleEl.textContent = t('pc3d_power_off_title'); titleEl.dataset.i18n = 'pc3d_power_off_title'; }
+      if (descEl) { descEl.textContent = t('pc3d_power_off_desc'); descEl.dataset.i18n = 'pc3d_power_off_desc'; }
+      return;
+    }
+    const missing = missingParts();
+    if (missing.length) { failBoot(missing); return; }
+    // arrancar: logo y puntos de carga, luego el escritorio de Windows
+    if (setScreen) setScreen('boot', 0);
+    let tick = 0;
+    if (bootTimer) clearInterval(bootTimer);
+    bootTimer = setInterval(() => {
+      tick++;
+      if (setScreen) setScreen('boot', tick);
+      if (tick >= 14) {
+        clearInterval(bootTimer); bootTimer = null;
+        powered = true;
+        if (setScreen) setScreen('windows');
+        setPowerButtonUI();
+        if (titleEl) { titleEl.textContent = t('pc3d_power_on_title'); titleEl.dataset.i18n = 'pc3d_power_on_title'; }
+        if (descEl) { descEl.textContent = t('pc3d_power_on_desc'); descEl.dataset.i18n = 'pc3d_power_on_desc'; }
+      }
+    }, 180);
+  }
   function updatePanelForPart(part, index) {
     if (titleEl) {
       titleEl.textContent = t(part.key);
@@ -338,6 +406,7 @@ function init() {
       updateStatus();
       updateAllButton();
       applyDim();
+      checkPowerAfterRemoval(); // si el PC estaba encendido, se apaga de golpe
     }
     const p = new THREE.Vector3();
     g.getWorldPosition(p);
@@ -396,6 +465,7 @@ function init() {
         if (selectedPart === p.id) updateStatus();
         updateAllButton();
         applyDim();
+        checkPowerAfterRemoval(); // si el PC estaba encendido, se apaga de golpe
       }, i * 90);
     });
   }
@@ -441,12 +511,26 @@ function init() {
     const hits = raycaster.intersectObjects(partMeshes, false);
     return hits.length ? hits[0].object.userData.partId : null;
   }
+  // ¿El cursor está sobre el botón de encendido físico del frontal?
+  function pickPowerButton(event) {
+    if (!powerButton) return false;
+    const rect = canvas.getBoundingClientRect();
+    pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+    raycaster.setFromCamera(pointer, camera);
+    return raycaster.intersectObject(powerButton, true).length > 0;
+  }
   canvas.addEventListener('pointermove', (event) => {
     pointerClient = { x: event.clientX, y: event.clientY };
     lastInteract = clock.elapsedTime; // mover el ratón es actividad: la cámara no gira sola mientras apuntas
     // Si se presionó sobre una pieza y el cursor se mueve, empieza el arrastre
     if (dragCandidate && !dragId && downPos) {
       if (Math.hypot(event.clientX - downPos.x, event.clientY - downPos.y) > 8) startDrag(dragCandidate);
+    }
+    // Si se presionó el botón de encendido y el cursor se mueve, fue un arrastre: se cancela la pulsación
+    if (powerPress && downPos && Math.hypot(event.clientX - downPos.x, event.clientY - downPos.y) > 8) {
+      powerPress = false;
+      controls.enabled = true;
     }
     if (dragId) {
       // Arrastrar la pieza sobre el plano de su sitio, con imán al acercarla
@@ -486,11 +570,18 @@ function init() {
       if (id && id !== selectedPart) setEmissive(id, 0x0ea5e9, 0.22);
       canvas.style.cursor = id ? 'grab' : 'default';
     }
+    if (!id && pickPowerButton(event)) canvas.style.cursor = 'pointer'; // sobre el botón de encendido
     if (tooltip) {
       if (id) {
         const rect = shell.getBoundingClientRect();
         tooltip.hidden = false;
         tooltip.textContent = t(partById[id].key);
+        tooltip.style.left = `${event.clientX - rect.left + 14}px`;
+        tooltip.style.top = `${event.clientY - rect.top + 14}px`;
+      } else if (pickPowerButton(event)) {
+        const rect = shell.getBoundingClientRect();
+        tooltip.hidden = false;
+        tooltip.textContent = t(powered ? 'pc3d_power_off' : 'pc3d_power_on');
         tooltip.style.left = `${event.clientX - rect.left + 14}px`;
         tooltip.style.top = `${event.clientY - rect.top + 14}px`;
       } else {
@@ -526,6 +617,12 @@ function init() {
     lastInteract = clock.elapsedTime;
     if (event.button !== 0) return; // derecho = panorámica, medio = zoom (los lleva OrbitControls)
     tooltip.hidden = true;
+    // Botón de encendido físico en el frontal: se pulsa, no se arrastra
+    if (pickPowerButton(event)) {
+      powerPress = true;
+      controls.enabled = false; // no rotar mientras se pulsa el botón
+      return;
+    }
     // Botón izquierdo sobre una pieza = agarrarla; en vacío = girar la cámara
     const id = pickPart(event);
     if (id) {
@@ -539,6 +636,14 @@ function init() {
     controls.enabled = true;
     lastInteract = clock.elapsedTime; // el conteo de 6 s para girar sola arranca desde que sueltas
     if (event.button !== 0) { downPos = null; return; } // solo el botón izquierdo termina arrastres o clics
+    if (powerPress) {
+      // fue una pulsación del botón de encendido físico (sin arrastre)
+      powerPress = false;
+      const wasPress = downPos && Math.hypot(event.clientX - downPos.x, event.clientY - downPos.y) <= 8;
+      downPos = null;
+      if (wasPress) togglePower();
+      return;
+    }
     if (dragId) {
       // Soltar la pieza: si quedó cerca de su sitio, encaja sola; si no, queda flotando
       const g = partGroups[dragId];
@@ -652,6 +757,25 @@ function init() {
       setAllRemoved(anyInstalled);
     });
   }
+  // --- Botón de encendido (panel) y pantalla completa ---
+  if (powerBtn) powerBtn.addEventListener('click', () => togglePower());
+  const fsBtn = document.getElementById('pc-fullscreen');
+  const fsBtnLabel = fsBtn ? fsBtn.querySelector('span:last-child') : null;
+  const explorerLayout = document.querySelector('.pc-explorer-layout');
+  if (fsBtn) {
+    fsBtn.addEventListener('click', () => {
+      if (document.fullscreenElement) document.exitFullscreen();
+      else if (explorerLayout && explorerLayout.requestFullscreen) explorerLayout.requestFullscreen();
+    });
+    document.addEventListener('fullscreenchange', () => {
+      const on = !!document.fullscreenElement;
+      fsBtn.classList.toggle('is-active', on);
+      if (fsBtnLabel) {
+        fsBtnLabel.textContent = t(on ? 'pc3d_exit_fullscreen' : 'pc3d_fullscreen');
+        fsBtnLabel.dataset.i18n = on ? 'pc3d_exit_fullscreen' : 'pc3d_fullscreen';
+      }
+    });
+  }
 
   // --- Etiquetas flotantes por pieza ---
   const labelsWrap = document.getElementById('pc-labels');
@@ -737,17 +861,26 @@ function init() {
       (partMats[hoveredPart] || []).forEach((m) => { m.emissiveIntensity = pulse; });
     }
 
-    // ventiladores
+    // ventiladores: solo giran con el PC encendido (o al intentar arrancar);
+    // al encender suben poco a poco, al apagar bajan
     const spin = reduceMotion ? 0 : 1;
-    spinners.forEach((f) => { f.group.rotation.z += f.speed * fanBoost * spin * dt; });
+    const spinTarget = (powered || bootTimer) ? 1 : (clock.elapsedTime < twitchUntil ? 0.6 : 0);
+    powerSpin += (spinTarget - powerSpin) * Math.min(1, dt * (spinTarget > powerSpin ? 2.5 : 4));
+    spinners.forEach((f) => { f.group.rotation.z += f.speed * fanBoost * powerSpin * spin * dt; });
 
-    // tira RGB con ciclo de color suave
-    rgbStrip.material.color.setHSL((elapsed * 0.04) % 1, 0.85, 0.6);
+    // tira RGB con ciclo de color suave (solo con el PC encendido)
+    if (powered || bootTimer) rgbStrip.material.color.setHSL((elapsed * 0.04) % 1, 0.85, 0.6);
+    else rgbStrip.material.color.setHex(0x0f172a);
 
-    // LED de encendido (respiración) y de disco (parpadeo aleatorio)
-    powerLedMat.color.setHex(0x22c55e).multiplyScalar(0.65 + 0.35 * Math.sin(elapsed * 2.2));
-    if (Math.random() < 0.08) hddOn = !hddOn;
-    hddLedMat.color.setHex(hddOn ? 0xf59e0b : 0x201404);
+    // LED de encendido: verde respirando si está encendido, rojo parpadeando si falló, apagado si no
+    if (powered) powerLedMat.color.setHex(0x22c55e).multiplyScalar(0.65 + 0.35 * Math.sin(elapsed * 2.2));
+    else if (clock.elapsedTime < failBlinkUntil) powerLedMat.color.setHex(Math.floor(elapsed * 6) % 2 ? 0xef4444 : 0x450a0a);
+    else powerLedMat.color.setHex(0x1f2937);
+    // LED de disco: solo parpadea con el PC encendido
+    if (powered && Math.random() < 0.08) hddOn = !hddOn;
+    hddLedMat.color.setHex(powered ? (hddOn ? 0xf59e0b : 0x201404) : 0x201404);
+    // luz interior de la torre: se enciende con el PC
+    innerGlow.intensity += ((powered ? 18 : 0) - innerGlow.intensity) * Math.min(1, dt * 3);
 
     // vista desarmada escalonada + piezas retiradas con arco y flotación
     Object.values(partGroups).forEach((g) => {

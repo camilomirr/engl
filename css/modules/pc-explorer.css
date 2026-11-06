@@ -57,4 +57,13 @@
 @keyframes explorerPulse { 50% { opacity: .35; transform: scale(.7); } }
 @keyframes viewerSpin { to { transform: rotate(360deg); } }
 @media (max-width: 760px) { .pc-explorer-heading { align-items: flex-start; flex-direction: column; gap: .75rem; } .pc-explorer-layout { grid-template-columns: 1fr; } .pc-scene-shell { min-height: 390px; } .pc-explorer-panel { padding: 1.35rem; } .pc-spec-strip { margin-top: 1.5rem; } }
+/* Pantalla completa: el visor y el panel ocupan toda la pantalla para desarmar mejor */
+.pc-explorer-layout:fullscreen { height: 100%; padding: 1rem; background: #07111e; }
+.pc-explorer-layout:fullscreen .pc-scene-shell { min-height: 0; }
+.pc-explorer-layout:fullscreen .pc-explorer-panel { overflow-y: auto; }
+/* Botón de encendido: parpadea para invitar a pulsarlo, verde cuando el PC está encendido */
+.pc-power-btn:not(.is-active) span:first-child { animation: pc-power-pulse 2.2s ease-in-out infinite; }
+@keyframes pc-power-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+.pc-power-btn.is-active { border-color: #22c55e; background: rgba(34,197,94,.12); }
+.pc-power-btn.is-active span:first-child { color: #22c55e; }
 @media (prefers-reduced-motion: reduce) { .status-pulse, .pc-loader { animation: none; } }

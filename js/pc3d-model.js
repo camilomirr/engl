@@ -47,7 +47,7 @@ export function buildPcModel() {
   const COPPER_MAT = mat(0xb87333, { metal: 0.9, rough: 0.3 });
 
   const spinners = []; // ventiladores que giran { group, speed }
-  function makeFan(radius, ringColor = 0x22d3ee) {
+  function makeFan(radius, ringColor = 0x22d3ee, spin = true) { // spin=false: ventilador de repuesto, sin corriente no gira
     const group = new THREE.Group();
     const spinner = new THREE.Group();
     const ringMesh = new THREE.Mesh(
@@ -73,7 +73,7 @@ export function buildPcModel() {
       new THREE.MeshBasicMaterial({ color: ringColor })
     );
     group.add(glow);
-    spinners.push({ group: spinner, speed: 6 + Math.random() * 2 });
+    if (spin) spinners.push({ group: spinner, speed: 6 + Math.random() * 2 });
     return group;
   }
 
@@ -233,6 +233,21 @@ export function buildPcModel() {
   const powerLed = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.06, 0.03), powerLedMat);
   powerLed.position.set(0.72, 2.05, 0.05);
   frontPanel.add(powerLed);
+  // botón de encendido físico en el frontal (se puede pulsar en 3D; el anillo se enciende con el PC)
+  const powerBtnRingMat = new THREE.MeshBasicMaterial({ color: 0x1f2937 });
+  const powerButton = new THREE.Group();
+  const powerBtnCyl = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.09, 0.09, 0.05, 20),
+    new THREE.MeshStandardMaterial({ color: 0x1f2937, metalness: 0.6, roughness: 0.35, transparent: true })
+  );
+  powerBtnCyl.rotation.x = Math.PI / 2;
+  powerBtnCyl.position.set(0, 0, 0.04);
+  powerButton.add(powerBtnCyl);
+  const powerBtnRing = new THREE.Mesh(new THREE.TorusGeometry(0.11, 0.015, 8, 32), powerBtnRingMat);
+  powerBtnRing.position.set(0, 0, 0.05);
+  powerButton.add(powerBtnRing);
+  powerButton.position.set(0.45, 2.05, 0.05);
+  frontPanel.add(powerButton);
   const hddLedMat = new THREE.MeshBasicMaterial({ color: 0xf59e0b });
   const hddLed = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.06, 0.03), hddLedMat);
   hddLed.position.set(0.92, 2.05, 0.05);
@@ -555,6 +570,7 @@ export function buildPcModel() {
 
   // --- Entorno 3D estilo taller (PC Building Simulator): cuarto, escritorio y cosas ---
   // La torre ya está en y=0, así que la superficie del escritorio ES y=0 y el suelo queda abajo.
+  let setScreen = null; // la asigna buildEnvironment: dibuja la pantalla del monitor (off/boot/windows/error)
   function buildEnvironment() {
     const env = new THREE.Group();
     const woodTex = (() => { // madera del escritorio
@@ -664,16 +680,68 @@ export function buildPcModel() {
       add(box(0.05, 0.06, 0.5, METAL_MAT), 4.58, y, 0.3);
     });
     // monitor + teclado sobre el escritorio, a la izquierda de la torre
+    // pantalla del monitor: off = apagada, boot = logo y puntos de carga,
+    // windows = escritorio, error = falta una pieza (detail = nombre de la pieza)
     const screenCanvas = document.createElement('canvas'); screenCanvas.width = 256; screenCanvas.height = 144;
-    const sctx = screenCanvas.getContext('2d');
-    const sgrad = sctx.createLinearGradient(0, 0, 0, 144);
-    sgrad.addColorStop(0, '#1e3a5f'); sgrad.addColorStop(1, '#0f172a');
-    sctx.fillStyle = sgrad; sctx.fillRect(0, 0, 256, 144);
-    sctx.fillStyle = '#e5e7eb'; sctx.fillRect(30, 22, 150, 92);
-    sctx.fillStyle = '#3b82f6'; sctx.fillRect(30, 22, 150, 14);
-    sctx.fillStyle = '#0f172a'; sctx.fillRect(0, 128, 256, 16);
-    sctx.fillStyle = '#3b82f6'; sctx.fillRect(8, 132, 10, 8);
     const screenTex = new THREE.CanvasTexture(screenCanvas); screenTex.colorSpace = THREE.SRGBColorSpace;
+    function drawScreen(mode, detail = '') {
+      const x = screenCanvas.getContext('2d');
+      const W = 256, H = 144;
+      x.textAlign = 'center';
+      if (mode === 'off') {
+        x.fillStyle = '#05070d'; x.fillRect(0, 0, W, H);
+      } else if (mode === 'boot') {
+        x.fillStyle = '#0a0f1e'; x.fillRect(0, 0, W, H);
+        x.fillStyle = '#00adef';
+        x.fillRect(110, 38, 16, 16); x.fillRect(130, 38, 16, 16);
+        x.fillRect(110, 58, 16, 16); x.fillRect(130, 58, 16, 16);
+        for (let i = 0; i < 5; i++) {
+          const a = (Number(detail) || 0) * 0.5 + (i / 5) * Math.PI * 2;
+          x.fillStyle = i === (Number(detail) || 0) % 5 ? '#ffffff' : '#475569';
+          x.beginPath(); x.arc(128 + Math.cos(a) * 18, 100 + Math.sin(a) * 8, 3, 0, Math.PI * 2); x.fill();
+        }
+        x.fillStyle = '#94a3b8'; x.font = '11px sans-serif';
+        x.fillText('Iniciando Windows', 128, 132);
+      } else if (mode === 'error') {
+        x.fillStyle = '#0a0f1e'; x.fillRect(0, 0, W, H);
+        x.fillStyle = '#ef4444';
+        x.beginPath(); x.moveTo(128, 22); x.lineTo(152, 62); x.lineTo(104, 62); x.closePath(); x.fill();
+        x.fillStyle = '#ffffff'; x.font = 'bold 24px sans-serif';
+        x.fillText('!', 128, 56);
+        x.fillStyle = '#ef4444'; x.font = 'bold 15px sans-serif';
+        x.fillText('FALTA UNA PIEZA', 128, 84);
+        x.fillStyle = '#ffffff'; x.font = '11px sans-serif';
+        const names = String(detail).split(', ');
+        x.fillText(names[0] || '', 128, 104);
+        if (names[1]) x.fillText(names.slice(1).join(', '), 128, 118);
+        x.fillStyle = '#94a3b8';
+        x.fillText('Instala todas las piezas', 128, 136);
+      } else { // windows: escritorio estilo Windows 11
+        const g = x.createLinearGradient(0, 0, 0, H);
+        g.addColorStop(0, '#0078d4'); g.addColorStop(1, '#0a2a5e');
+        x.fillStyle = g; x.fillRect(0, 0, W, H);
+        const glow = x.createRadialGradient(90, 50, 4, 90, 50, 110);
+        glow.addColorStop(0, 'rgba(147,197,253,0.55)'); glow.addColorStop(1, 'rgba(147,197,253,0)');
+        x.fillStyle = glow; x.fillRect(0, 0, W, H);
+        x.textAlign = 'left'; x.fillStyle = '#e5e7eb';
+        [['Equipo', 14], ['Papelera', 44], ['NVISION', 74]].forEach(([label, y]) => {
+          x.fillStyle = 'rgba(255,255,255,0.85)'; x.fillRect(12, y, 16, 16);
+          x.fillStyle = '#e5e7eb'; x.font = '9px sans-serif'; x.fillText(label, 32, y + 12);
+        });
+        x.fillStyle = 'rgba(15,23,42,0.85)';
+        x.beginPath(); x.roundRect(68, 124, 120, 16, 8); x.fill();
+        x.fillStyle = '#00adef';
+        x.fillRect(78, 128, 5, 5); x.fillRect(84, 128, 5, 5);
+        x.fillRect(78, 134, 5, 5); x.fillRect(84, 134, 5, 5);
+        x.fillStyle = 'rgba(255,255,255,0.25)';
+        x.beginPath(); x.roundRect(96, 128, 44, 8, 4); x.fill();
+        x.fillStyle = '#e5e7eb'; x.font = '9px sans-serif'; x.textAlign = 'right';
+        x.fillText('20:31', 244, 135);
+      }
+      screenTex.needsUpdate = true;
+    }
+    setScreen = drawScreen;
+    drawScreen('off'); // el equipo arranca apagado: hay que encenderlo
     const peripherals = new THREE.Group();
     peripherals.position.set(-3.3, 0, -0.6);
     peripherals.rotation.y = -0.35;
@@ -698,7 +766,7 @@ export function buildPcModel() {
     keys.rotation.x = -Math.PI / 2;
     padd(keys, 1.2, 0.065, 0);
     // cosas sueltas del taller sobre el escritorio
-    const spareFan = makeFan(0.55, 0x22d3ee);
+    const spareFan = makeFan(0.55, 0x22d3ee, false); // de repuesto, sin corriente no gira
     spareFan.rotation.x = -Math.PI / 2;
     spareFan.position.set(3.4, 0.15, -1.6);
     env.add(spareFan);
@@ -719,6 +787,6 @@ export function buildPcModel() {
   return {
     tower, frontPanel, rgbStrip, powerLedMat, hddLedMat,
     partGroups, partMeshes, partMats, spinners, cables,
-    ensureGhost, syncGhost, environment
+    ensureGhost, syncGhost, environment, powerButton, powerBtnRingMat, setScreen
   };
 }
