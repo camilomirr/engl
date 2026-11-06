@@ -553,9 +553,172 @@ export function buildPcModel() {
   // SATA: de la fuente al conector del SSD
   cable([[-0.3, 0.7, -0.55], [-0.55, 0.9, 0.0], [-0.78, 1.05, 0.48]], 0.03, 0x2563eb, 'storage');
 
+  // --- Entorno 3D estilo taller (PC Building Simulator): cuarto, escritorio y cosas ---
+  // La torre ya está en y=0, así que la superficie del escritorio ES y=0 y el suelo queda abajo.
+  function buildEnvironment() {
+    const env = new THREE.Group();
+    const woodTex = (() => { // madera del escritorio
+      const c = document.createElement('canvas'); c.width = c.height = 256;
+      const x = c.getContext('2d');
+      x.fillStyle = '#7c5a3a'; x.fillRect(0, 0, 256, 256);
+      let s = 777; const r = () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; };
+      for (let i = 0; i < 46; i++) {
+        x.strokeStyle = r() > 0.5 ? 'rgba(93,66,38,0.55)' : 'rgba(160,120,80,0.4)';
+        x.lineWidth = 1 + r() * 3;
+        const y = r() * 256;
+        x.beginPath(); x.moveTo(0, y);
+        x.bezierCurveTo(85, y + (r() - 0.5) * 14, 170, y + (r() - 0.5) * 14, 256, y + (r() - 0.5) * 10);
+        x.stroke();
+      }
+      const t = new THREE.CanvasTexture(c);
+      t.colorSpace = THREE.SRGBColorSpace; t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(2, 1);
+      return t;
+    })();
+    const woodMat = new THREE.MeshStandardMaterial({ map: woodTex, roughness: 0.75, metalness: 0.05, transparent: true });
+    const darkMetal = mat(0x1f2937, { metal: 0.7, rough: 0.4 });
+    const wallMat = mat(0x2b3648, { metal: 0.05, rough: 0.95 });
+    const wallMat2 = mat(0x232f42, { metal: 0.05, rough: 0.95 });
+    const floorMat = mat(0x1c2433, { metal: 0.05, rough: 0.95 });
+    const add = (mesh, x, y, z) => { mesh.position.set(x, y, z); mesh.castShadow = true; mesh.receiveShadow = true; env.add(mesh); return mesh; };
+
+    // suelo del cuarto
+    const floor = new THREE.Mesh(new THREE.PlaneGeometry(34, 34), floorMat);
+    floor.rotation.x = -Math.PI / 2; floor.position.y = -2.6; floor.receiveShadow = true;
+    env.add(floor);
+    // alfombra bajo el escritorio
+    const rugCanvas = document.createElement('canvas'); rugCanvas.width = rugCanvas.height = 256;
+    const rctx = rugCanvas.getContext('2d');
+    rctx.fillStyle = '#1e293b'; rctx.fillRect(0, 0, 256, 256);
+    rctx.strokeStyle = 'rgba(59,130,246,0.55)'; rctx.lineWidth = 6; rctx.strokeRect(10, 10, 236, 236);
+    rctx.strokeStyle = '#334155'; rctx.lineWidth = 3; rctx.strokeRect(24, 24, 208, 208);
+    const rugTex = new THREE.CanvasTexture(rugCanvas); rugTex.colorSpace = THREE.SRGBColorSpace;
+    const rug = new THREE.Mesh(new THREE.PlaneGeometry(13, 9),
+      new THREE.MeshStandardMaterial({ map: rugTex, roughness: 0.95, metalness: 0, transparent: true }));
+    rug.rotation.x = -Math.PI / 2; rug.position.set(0.3, -2.58, 0.3); rug.receiveShadow = true;
+    env.add(rug);
+    // paredes (solo la cara interior se ve; desde fuera desaparecen)
+    const backWall = new THREE.Mesh(new THREE.PlaneGeometry(34, 12), wallMat);
+    add(backWall, 0, 3.4, -5); backWall.castShadow = false;
+    const leftWall = new THREE.Mesh(new THREE.PlaneGeometry(24, 12), wallMat2);
+    leftWall.rotation.y = Math.PI / 2; add(leftWall, -6.5, 3.4, 0); leftWall.castShadow = false;
+    // rodapiés
+    add(box(34, 0.25, 0.06, mat(0x94a3b8, { metal: 0.2, rough: 0.6 })), 0, -2.48, -4.97);
+    add(box(0.06, 0.25, 24, mat(0x94a3b8, { metal: 0.2, rough: 0.6 })), -6.47, -2.48, 0);
+    // ventana en la pared trasera (luz suave, sin quemar)
+    const winGlass = new THREE.Mesh(new THREE.PlaneGeometry(3, 3),
+      mat(0x0f172a, { emissive: 0x9cc8ff, emissiveIntensity: 1.25, metal: 0.1, rough: 0.4 }));
+    add(winGlass, -3, 4.2, -4.96); winGlass.castShadow = false;
+    const frameMat = mat(0xd7dee8, { metal: 0.3, rough: 0.5 });
+    add(box(3.2, 0.12, 0.08, frameMat), -3, 5.75, -4.94);
+    add(box(3.2, 0.12, 0.08, frameMat), -3, 2.65, -4.94);
+    add(box(0.12, 3.2, 0.08, frameMat), -4.55, 4.2, -4.94);
+    add(box(0.12, 3.2, 0.08, frameMat), -1.45, 4.2, -4.94);
+    add(box(0.08, 3.0, 0.06, frameMat), -3, 4.2, -4.93);
+    add(box(3.0, 0.08, 0.06, frameMat), -3, 4.2, -4.93);
+    add(box(3.4, 0.1, 0.25, frameMat), -3, 2.55, -4.9);
+    // póster NVISION en la pared trasera
+    const posterCanvas = document.createElement('canvas'); posterCanvas.width = 256; posterCanvas.height = 340;
+    const pctx = posterCanvas.getContext('2d');
+    pctx.fillStyle = '#0f172a'; pctx.fillRect(0, 0, 256, 340);
+    const grad = pctx.createLinearGradient(0, 0, 256, 0);
+    grad.addColorStop(0, '#2563eb'); grad.addColorStop(1, '#06b6d4');
+    pctx.fillStyle = grad; pctx.fillRect(0, 0, 256, 26);
+    pctx.fillStyle = '#ffffff'; pctx.font = 'bold 42px sans-serif'; pctx.textAlign = 'center';
+    pctx.fillText('NVISION', 128, 78);
+    pctx.fillStyle = '#93c5fd'; pctx.font = '20px sans-serif';
+    pctx.fillText('PC BUILDING', 128, 108);
+    pctx.fillStyle = '#1e293b'; pctx.fillRect(78, 140, 100, 130);
+    pctx.fillStyle = '#22d3ee'; pctx.beginPath(); pctx.arc(128, 195, 26, 0, Math.PI * 2); pctx.fill();
+    pctx.fillStyle = '#0f172a'; pctx.fillRect(96, 240, 64, 10);
+    pctx.fillStyle = '#64748b'; pctx.font = '16px sans-serif';
+    pctx.fillText('ARMA · JUEGA · CREA', 128, 305);
+    const posterTex = new THREE.CanvasTexture(posterCanvas); posterTex.colorSpace = THREE.SRGBColorSpace;
+    const poster = new THREE.Mesh(new THREE.PlaneGeometry(1.8, 2.4),
+      new THREE.MeshStandardMaterial({ map: posterTex, roughness: 0.9, metalness: 0, transparent: true }));
+    add(poster, 0.8, 5, -4.96); poster.castShadow = false;
+    // estanterías con cajas de componentes en la pared trasera
+    [5.0, 6.3].forEach((y) => {
+      add(box(4, 0.08, 0.9, woodMat), 3.2, y, -4.55);
+      [-0.5, 0.5].forEach((dx) => add(box(0.08, 0.3, 0.08, darkMetal), 3.2 + dx * 3.4, y - 0.18, -4.7));
+    });
+    add(box(0.9, 0.7, 0.7, mat(0x1e3a5f, { metal: 0.3, rough: 0.6 })), 1.9, 5.4, -4.55);
+    add(box(0.7, 0.6, 0.6, mat(0x7f1d1d, { metal: 0.3, rough: 0.6 })), 3.1, 5.35, -4.55);
+    add(box(0.6, 0.9, 0.6, mat(0x334155, { metal: 0.4, rough: 0.5 })), 4.2, 5.5, -4.55);
+    add(box(0.8, 0.5, 0.7, mat(0x14532d, { metal: 0.3, rough: 0.6 })), 2.6, 6.6, -4.55);
+    add(box(0.6, 0.6, 0.6, mat(0x78350f, { metal: 0.3, rough: 0.6 })), 3.8, 6.65, -4.55);
+    const pot = cyl(0.18, 0.14, 0.25, mat(0x92400e, { metal: 0.2, rough: 0.7 }), 16);
+    add(pot, 1.7, 6.48, -4.55);
+    const leafMat = mat(0x22c55e, { metal: 0.1, rough: 0.7 });
+    [[0, 0.25, 0], [0.1, 0.18, 0.08], [-0.1, 0.18, -0.06]].forEach(([dx, dy, dz]) => {
+      const leaf = new THREE.Mesh(new THREE.SphereGeometry(0.14, 10, 8), leafMat);
+      add(leaf, 1.7 + dx, 6.6 + dy, -4.55 + dz);
+    });
+    // escritorio: tablero de madera + patas + cajonera
+    add(box(10, 0.35, 6.5, woodMat), 0.3, -0.175, 0.3);
+    [[-4.1, -2.6], [4.7, -2.6], [-4.1, 3.2], [4.7, 3.2]].forEach(([x, z]) => {
+      add(box(0.3, 2.6, 0.3, darkMetal), x, -1.3, z);
+    });
+    add(box(2.2, 2.25, 4.5, mat(0x374151, { metal: 0.5, rough: 0.5 })), 3.4, -1.475, 0.3);
+    [-0.75, -1.45, -2.15].forEach((y) => {
+      add(box(0.06, 0.62, 4.0, mat(0x4b5563, { metal: 0.5, rough: 0.5 })), 4.53, y, 0.3);
+      add(box(0.05, 0.06, 0.5, METAL_MAT), 4.58, y, 0.3);
+    });
+    // monitor + teclado sobre el escritorio, a la izquierda de la torre
+    const screenCanvas = document.createElement('canvas'); screenCanvas.width = 256; screenCanvas.height = 144;
+    const sctx = screenCanvas.getContext('2d');
+    const sgrad = sctx.createLinearGradient(0, 0, 0, 144);
+    sgrad.addColorStop(0, '#1e3a5f'); sgrad.addColorStop(1, '#0f172a');
+    sctx.fillStyle = sgrad; sctx.fillRect(0, 0, 256, 144);
+    sctx.fillStyle = '#e5e7eb'; sctx.fillRect(30, 22, 150, 92);
+    sctx.fillStyle = '#3b82f6'; sctx.fillRect(30, 22, 150, 14);
+    sctx.fillStyle = '#0f172a'; sctx.fillRect(0, 128, 256, 16);
+    sctx.fillStyle = '#3b82f6'; sctx.fillRect(8, 132, 10, 8);
+    const screenTex = new THREE.CanvasTexture(screenCanvas); screenTex.colorSpace = THREE.SRGBColorSpace;
+    const peripherals = new THREE.Group();
+    peripherals.position.set(-3.3, 0, -0.6);
+    peripherals.rotation.y = -0.35;
+    env.add(peripherals);
+    const padd = (mesh, x, y, z) => { mesh.position.set(x, y, z); mesh.castShadow = true; mesh.receiveShadow = true; peripherals.add(mesh); return mesh; };
+    padd(box(0.7, 0.06, 0.5, darkMetal), 0, 0.03, 0);
+    padd(box(0.12, 0.5, 0.12, darkMetal), 0, 0.3, 0);
+    padd(box(0.08, 1.2, 2.0, darkMetal), 0, 0.95, 0);
+    const screen = new THREE.Mesh(new THREE.PlaneGeometry(1.85, 1.05),
+      new THREE.MeshBasicMaterial({ map: screenTex }));
+    screen.rotation.y = Math.PI / 2;
+    padd(screen, 0.06, 0.95, 0);
+    const keyCanvas = document.createElement('canvas'); keyCanvas.width = 256; keyCanvas.height = 96;
+    const kctx = keyCanvas.getContext('2d');
+    kctx.fillStyle = '#111827'; kctx.fillRect(0, 0, 256, 96);
+    kctx.fillStyle = '#1f2937';
+    for (let r = 0; r < 4; r++) for (let c = 0; c < 14; c++) kctx.fillRect(6 + c * 18, 8 + r * 21, 14, 16);
+    const keyTex = new THREE.CanvasTexture(keyCanvas); keyTex.colorSpace = THREE.SRGBColorSpace;
+    padd(box(0.5, 0.06, 1.5, mat(0x111827, { metal: 0.3, rough: 0.6 })), 1.2, 0.03, 0);
+    const keys = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 0.45),
+      new THREE.MeshStandardMaterial({ map: keyTex, roughness: 0.6, metalness: 0.1, transparent: true }));
+    keys.rotation.x = -Math.PI / 2;
+    padd(keys, 1.2, 0.065, 0);
+    // cosas sueltas del taller sobre el escritorio
+    const spareFan = makeFan(0.55, 0x22d3ee);
+    spareFan.rotation.x = -Math.PI / 2;
+    spareFan.position.set(3.4, 0.15, -1.6);
+    env.add(spareFan);
+    add(box(0.9, 0.6, 0.7, mat(0x9a7b4f, { metal: 0.1, rough: 0.85 })), 3.6, 0.3, 1.8);
+    const smallBox = box(0.6, 0.4, 0.5, mat(0x9a7b4f, { metal: 0.1, rough: 0.85 }));
+    add(smallBox, 2.7, 0.2, 2.2); smallBox.rotation.y = 0.4;
+    const screwHandle = cyl(0.05, 0.05, 0.35, mat(0xdc2626, { metal: 0.3, rough: 0.5 }), 12);
+    screwHandle.rotation.z = Math.PI / 2;
+    add(screwHandle, 2.2, 0.05, -1.8);
+    const screwShaft = cyl(0.02, 0.02, 0.4, METAL_MAT, 8);
+    screwShaft.rotation.z = Math.PI / 2;
+    add(screwShaft, 2.55, 0.05, -1.8);
+    add(cyl(0.09, 0.09, 0.22, mat(0x1e3a5f, { metal: 0.3, rough: 0.5 }), 16), -1.8, 0.11, 2.2);
+    return env;
+  }
+  const environment = buildEnvironment();
+
   return {
     tower, frontPanel, rgbStrip, powerLedMat, hddLedMat,
     partGroups, partMeshes, partMats, spinners, cables,
-    ensureGhost, syncGhost
+    ensureGhost, syncGhost, environment
   };
 }

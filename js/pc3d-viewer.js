@@ -76,6 +76,7 @@ function init() {
 
   const scene = new THREE.Scene();
   scene.fog = new THREE.Fog(0x0d1b2b, 15, 30);
+  scene.background = new THREE.Color(0x0d1b2b); // ya no hay vacío negro: el fondo es el mismo azul del taller
   const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
   camera.position.set(15, 8.5, 17); // punto de partida de la intro cinematográfica
 
@@ -122,15 +123,7 @@ function init() {
   fillLight.position.set(-4, 2, -5);
   scene.add(fillLight);
 
-  // --- Suelo: sombra + anillos luminosos ---
-  const ground = new THREE.Mesh(
-    new THREE.CircleGeometry(8, 48),
-    new THREE.ShadowMaterial({ opacity: 0.32 })
-  );
-  ground.rotation.x = -Math.PI / 2;
-  ground.position.y = -0.02;
-  ground.receiveShadow = true;
-  scene.add(ground);
+  // --- Suelo: anillos luminosos sobre el escritorio (la sombra la recibe el tablero) ---
   const ring = new THREE.Mesh(
     new THREE.RingGeometry(3.3, 3.38, 64),
     new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.4, side: THREE.DoubleSide })
@@ -155,9 +148,10 @@ function init() {
 
   // --- Modelo 3D (torre, piezas, cables, LED) ---
   const model = buildPcModel();
-  const { tower, frontPanel, rgbStrip, powerLedMat, hddLedMat } = model;
+  const { tower, frontPanel, rgbStrip, powerLedMat, hddLedMat, environment } = model;
   const { partGroups, partMeshes, partMats, spinners, cables } = model;
   scene.add(tower);
+  scene.add(environment); // el taller: escritorio, cuarto, monitor y cosas
 
   // --- Partículas de flujo de aire (cinemática 03) ---
   const P_COUNT = 140;
