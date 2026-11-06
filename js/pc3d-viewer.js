@@ -496,7 +496,6 @@ function init() {
   }
   function setScene(name) {
     if (!SCENES[name]) return;
-    if (walkMode) exitWalk(); // cambiar de cinemática sale del modo Caminar
     activeScene = name;
     const s = SCENES[name];
     sceneButtons.forEach((b) => b.classList.toggle('is-active', b.dataset.scene === name));
@@ -539,17 +538,6 @@ function init() {
     return raycaster.intersectObject(powerButton, true).length > 0;
   }
   canvas.addEventListener('pointermove', (event) => {
-    if (walkMode) {
-      // sin pointer lock (el navegador lo rechazó): arrastrar para mirar
-      if (walkLookDrag && document.pointerLockElement !== canvas) {
-        walkYaw -= (event.clientX - walkLookDrag.x) * 0.004;
-        walkPitch = THREE.MathUtils.clamp(walkPitch - (event.clientY - walkLookDrag.y) * 0.004, -1.45, 1.45);
-        camera.rotation.set(walkPitch, walkYaw, 0);
-        walkLookDrag = { x: event.clientX, y: event.clientY };
-        lastInteract = clock.elapsedTime;
-      }
-      return; // con pointer lock, la vista la mueve el listener de document
-    }
     pointerClient = { x: event.clientX, y: event.clientY };
     lastInteract = clock.elapsedTime; // mover el ratón es actividad: la cámara no gira sola mientras apuntas
     // Si se presionó sobre una pieza y el cursor se mueve, empieza el arrastre
@@ -641,13 +629,6 @@ function init() {
   // El menú del navegador nunca debe aparecer sobre el visor (clic derecho = panorámica)
   canvas.addEventListener('contextmenu', (event) => event.preventDefault());
   canvas.addEventListener('pointerdown', (event) => {
-    if (walkMode) {
-      // en modo Caminar no se agarran piezas: el clic solo mira (sin pointer lock, arrastrando)
-      if (event.button === 0 && document.pointerLockElement !== canvas) {
-        walkLookDrag = { x: event.clientX, y: event.clientY };
-      }
-      return;
-    }
     controls.enabled = true; // red de seguridad: la órbita nunca queda apagada
     downPos = { x: event.clientX, y: event.clientY };
     camTween = null;
@@ -670,7 +651,6 @@ function init() {
   });
   let clickTimer = null;
   canvas.addEventListener('pointerup', (event) => {
-    if (walkMode) { walkLookDrag = null; downPos = null; return; }
     // La órbita siempre vuelve a quedar activa al soltar, pase lo que pase
     controls.enabled = true;
     lastInteract = clock.elapsedTime; // el conteo de 6 s para girar sola arranca desde que sueltas
@@ -727,7 +707,6 @@ function init() {
     clickTimer = setTimeout(() => { selectPart(id); clickTimer = null; }, 260);
   });
   canvas.addEventListener('dblclick', (event) => {
-    if (walkMode) return;
     if (clickTimer) { clearTimeout(clickTimer); clickTimer = null; }
     dragCandidate = null;
     const id = pickPart(event);
@@ -759,7 +738,6 @@ function init() {
     .distanceTo(new THREE.Vector3(...SCENES.overview.tgt));
   let lastWheelAt = -10;
   mount.addEventListener('wheel', (event) => {
-    if (walkMode) return; // en modo Caminar la rueda no hace zoom
     event.preventDefault();
     event.stopPropagation();
     let dy = event.deltaY;
@@ -847,132 +825,6 @@ function init() {
     });
   }
 
-  // --- Modo Caminar (primera persona, como un juego) ---
-  // WASD para caminar, el ratón mueve la vista (pointer lock), Esc para salir.
-  // Al salir se vuelve a la vista de órbita que había antes, y las piezas se
-  // siguen moviendo igual que siempre (agarrar y arrastrar) en el modo normal.
-  const walkBtn = document.getElementById('pc-walk');
-  const walkBtnLabel = walkBtn ? walkBtn.querySelector('span:last-child') : null;
-  const walkHint = document.getElementById('pc-walk-hint');
-  const walkCross = document.getElementById('pc-walk-crosshair');
-  const EYE_Y = 2.2; // altura de los ojos al caminar (por encima de la mesa, y=0)
-  const WALK_SPEED = 3.2; // unidades por segundo (1 unidad = 10 cm)
-  const WALK_RUN = 6.5; // con Shift, para correr
-  const WALK_MIN = { x: -11.2, z: -5.2 }; // dentro de las paredes (x ±12, z ±6)
-  const WALK_MAX = { x: 11.2, z: 5.2 };
-  // obstáculos que la cámara no puede atravesar: la torre y el monitor, que
-  // suben hasta y≈4.5. La mesa, la silla y los altavoces quedan por debajo de
-  // la altura de los ojos, así que no estorban.
-  const WALK_BLOCKS = [
-    { x0: 1.2, x1: 5.8, z0: -1.4, z1: 1.4 }, // torre
-    { x0: -5.8, x1: -3.2, z0: 0.7, z1: 2.3 } // monitor
-  ];
-  let walkMode = false;
-  let walkYaw = 0;
-  let walkPitch = 0;
-  let walkLookDrag = null; // arrastre para mirar, si el pointer lock no se pudo activar
-  let savedCamPos = null;
-  let savedTarget = null;
-  const walkKeys = new Set();
-  const WALK_KEYMAP = { KeyW: 'f', ArrowUp: 'f', KeyS: 'b', ArrowDown: 'b', KeyA: 'l', ArrowLeft: 'l', KeyD: 'r', ArrowRight: 'r' };
-
-  function walkBlocked(x, z) {
-    return WALK_BLOCKS.some((b) => x > b.x0 && x < b.x1 && z > b.z0 && z < b.z1);
-  }
-  function setWalkUI(on) {
-    if (walkBtn) {
-      walkBtn.classList.toggle('is-active', on);
-      if (walkBtnLabel) {
-        walkBtnLabel.textContent = t(on ? 'pc3d_walk_exit' : 'pc3d_walk');
-        walkBtnLabel.dataset.i18n = on ? 'pc3d_walk_exit' : 'pc3d_walk';
-      }
-    }
-    if (walkHint) walkHint.hidden = !on;
-    if (walkCross) walkCross.hidden = !on;
-    if (labelsWrap) labelsWrap.style.display = on ? 'none' : (labelsVisible ? '' : 'none');
-  }
-  function enterWalk() {
-    if (walkMode) return;
-    // guardar la vista de órbita para volver a ella al salir
-    savedCamPos = camera.position.clone();
-    savedTarget = controls.target.clone();
-    camTween = null;
-    controls.enabled = false;
-    controls.autoRotate = false;
-    // empezar de pie frente a la mesa, mirando al PC
-    camera.position.set(0, EYE_Y, 5.0);
-    camera.rotation.order = 'YXZ';
-    walkYaw = 0; // mirando hacia -Z (hacia la mesa)
-    walkPitch = 0;
-    camera.rotation.set(walkPitch, walkYaw, 0);
-    walkMode = true;
-    walkKeys.clear();
-    walkLookDrag = null;
-    setWalkUI(true);
-    // el pointer lock lo pide el clic del usuario (gesto): si el navegador lo
-    // rechaza (p. ej. justo después de pulsar Esc), se sigue caminando igual
-    // con WASD y se mira arrastrando con el ratón
-    canvas.requestPointerLock?.();
-  }
-  function exitWalk() {
-    if (!walkMode) return;
-    walkMode = false;
-    walkKeys.clear();
-    walkLookDrag = null;
-    if (document.pointerLockElement === canvas) document.exitPointerLock();
-    setWalkUI(false);
-    // volver a la vista de órbita que había antes de caminar
-    if (savedCamPos) camera.position.copy(savedCamPos);
-    if (savedTarget) controls.target.copy(savedTarget);
-    camera.rotation.order = 'YXZ';
-    camera.rotation.set(0, 0, 0);
-    controls.enabled = true;
-    lastInteract = clock.elapsedTime;
-  }
-  if (walkBtn) walkBtn.addEventListener('click', () => (walkMode ? exitWalk() : enterWalk()));
-  document.addEventListener('pointerlockchange', () => {
-    // Esc sale del pointer lock: si estábamos caminando, se sale del modo
-    if (walkMode && document.pointerLockElement !== canvas) exitWalk();
-  });
-  document.addEventListener('mousemove', (event) => {
-    if (!walkMode || document.pointerLockElement !== canvas) return;
-    walkYaw -= event.movementX * 0.0025;
-    walkPitch = THREE.MathUtils.clamp(walkPitch - event.movementY * 0.0025, -1.45, 1.45);
-    camera.rotation.set(walkPitch, walkYaw, 0);
-    lastInteract = clock.elapsedTime;
-  });
-  document.addEventListener('keydown', (event) => {
-    const dir = WALK_KEYMAP[event.code];
-    if (dir && walkMode) { walkKeys.add(dir); event.preventDefault(); }
-    if (event.code === 'ShiftLeft' || event.code === 'ShiftRight') walkKeys.add('run');
-  });
-  document.addEventListener('keyup', (event) => {
-    const dir = WALK_KEYMAP[event.code];
-    if (dir) walkKeys.delete(dir);
-    if (event.code === 'ShiftLeft' || event.code === 'ShiftRight') walkKeys.delete('run');
-  });
-  // mover la cámara en el bucle de animación (con colisiones y límites del cuarto)
-  function updateWalk(dt) {
-    if (!walkMode) return;
-    const speed = (walkKeys.has('run') ? WALK_RUN : WALK_SPEED) * dt;
-    const sin = Math.sin(walkYaw), cos = Math.cos(walkYaw);
-    let mx = 0, mz = 0;
-    if (walkKeys.has('f')) { mx += -sin; mz += -cos; }
-    if (walkKeys.has('b')) { mx += sin; mz += cos; }
-    if (walkKeys.has('l')) { mx += -cos; mz += sin; }
-    if (walkKeys.has('r')) { mx += cos; mz += -sin; }
-    if (!mx && !mz) return;
-    const len = Math.hypot(mx, mz);
-    mx = (mx / len) * speed; mz = (mz / len) * speed;
-    // eje por eje: si choca en X, igual se desliza en Z (y al revés)
-    const nx = THREE.MathUtils.clamp(camera.position.x + mx, WALK_MIN.x, WALK_MAX.x);
-    if (!walkBlocked(nx, camera.position.z)) camera.position.x = nx;
-    const nz = THREE.MathUtils.clamp(camera.position.z + mz, WALK_MIN.z, WALK_MAX.z);
-    if (!walkBlocked(camera.position.x, nz)) camera.position.z = nz;
-    camera.position.y = EYE_Y;
-    lastInteract = clock.elapsedTime;
-  }
-
   // --- Tamaño ---
   function resize() {
     const w = shell.clientWidth;
@@ -996,10 +848,6 @@ function init() {
     const dt = Math.min(clock.getDelta(), 0.05);
     const elapsed = clock.elapsedTime;
 
-    if (walkMode) {
-      // caminar: WASD + ratón; la órbita no toca la cámara en este modo
-      updateWalk(dt);
-    } else {
     // vuelo de cámara (intro y cinemáticas)
     if (camTween) {
       camTween.k += dt / camTween.dur;
@@ -1028,7 +876,6 @@ function init() {
 
     // la cámara vuelve a girar sola tras 6 s sin tocar nada
     if (!reduceMotion && !camTween && clock.elapsedTime - lastInteract > 6) controls.autoRotate = true;
-    } // fin del else (modo órbita)
 
     // pulso al pasar el cursor sobre una pieza
     if (hoveredPart && hoveredPart !== selectedPart) {
