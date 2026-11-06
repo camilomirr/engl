@@ -727,7 +727,9 @@ export function buildPcModel() {
     // estilo PC Building Simulator: el monitor a un lado y la torre al otro, ambos visibles)
     add(box(16, 0.35, 8, woodMat), 0.3, -0.175, 0.5);
     [[-7.4, -3.2], [7.6, -3.2], [-7.4, 4.2], [7.6, 4.2]].forEach(([x, z]) => {
-      add(box(0.3, 2.6, 0.3, darkMetal), x, -1.3, z);
+      // patas del suelo (y=-2.6) hasta la cara inferior del tablero (y=-0.35):
+      // antes medían 2.6 y se metían 0.35 dentro de la madera
+      add(box(0.3, 2.25, 0.3, darkMetal), x, -1.475, z);
     });
     add(box(2.2, 2.25, 4.5, mat(0x374151, { metal: 0.5, rough: 0.5 })), 3.4, -1.475, 0.3);
     [-0.75, -1.45, -2.15].forEach((y) => {
@@ -957,8 +959,10 @@ export function buildPcModel() {
     extCable([[5.57, 3.1, -0.94], [5.6, 1.6, -1.2], [5.6, 0.06, -1.8], [5.6, 0.06, -2.5], [5.69, 0.08, -2.7]], 0.03, 0x2563eb);
     // energía del router: de su toma trasera a la regleta
     extCable([[5.85, 0.08, -3.11], [5.3, 0.06, -3.0], [5.05, 0.08, -3.0]], 0.03, 0x111827);
-    // cable de la regleta: baja por detrás del escritorio hasta el enchufe de la pared
-    extCable([[5.0, 0.06, -3.1], [5.2, -0.5, -3.6], [5.1, -2.0, -4.3], [5.0, -2.55, -4.7], [5.0, -2.2, -4.95]], 0.04, 0x111827);
+    // cable de la regleta: baja por detrás del escritorio hasta el enchufe de la pared.
+    // Sale por ENCIMA del borde trasero (a la altura de la mesa hasta pasar z=-3.5)
+    // y luego cae por detrás: antes bajaba en diagonal y atravesaba la madera del borde.
+    extCable([[5.0, 0.06, -3.1], [5.1, 0.06, -3.6], [5.2, -0.6, -3.9], [5.1, -2.0, -4.3], [5.0, -2.55, -4.7], [5.0, -2.2, -4.95]], 0.04, 0x111827);
     // regleta (multitoma) sobre el escritorio, atrás a la derecha, junto a la torre
     add(box(1.2, 0.12, 0.35, mat(0xe5e7eb, { metal: 0.2, rough: 0.5 })), 5.0, 0.06, -3.0);
     [4.65, 5.0, 5.35].forEach((sx) => add(box(0.14, 0.02, 0.14, mat(0x111827, { metal: 0.3, rough: 0.5 })), sx, 0.13, -3.0));
