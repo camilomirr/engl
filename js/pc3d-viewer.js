@@ -124,23 +124,24 @@ function init() {
   scene.add(fillLight);
 
   // --- Suelo: anillos luminosos sobre el escritorio (la sombra la recibe el tablero) ---
+  // (tenues, para que el escritorio se vea como escritorio y no como una alfombra de luz)
   const ring = new THREE.Mesh(
     new THREE.RingGeometry(3.3, 3.38, 64),
-    new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.4, side: THREE.DoubleSide })
+    new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.22, side: THREE.DoubleSide })
   );
   ring.rotation.x = -Math.PI / 2;
   ring.position.y = 0.01;
   scene.add(ring);
   const glowDisc = new THREE.Mesh(
     new THREE.CircleGeometry(3.3, 48),
-    new THREE.MeshBasicMaterial({ color: 0x0ea5e9, transparent: true, opacity: 0.05, side: THREE.DoubleSide })
+    new THREE.MeshBasicMaterial({ color: 0x0ea5e9, transparent: true, opacity: 0.03, side: THREE.DoubleSide })
   );
   glowDisc.rotation.x = -Math.PI / 2;
   glowDisc.position.y = 0.005;
   scene.add(glowDisc);
   const outerRing = new THREE.Mesh(
     new THREE.RingGeometry(4.6, 4.64, 64),
-    new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.16, side: THREE.DoubleSide })
+    new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.09, side: THREE.DoubleSide })
   );
   outerRing.rotation.x = -Math.PI / 2;
   outerRing.position.y = 0.01;

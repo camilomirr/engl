@@ -840,6 +840,56 @@ export function buildPcModel() {
     mugHandle.position.set(-4.31, 0.11, -0.5); // el asa, como un pocillo de verdad
     mugHandle.castShadow = true;
     env.add(mugHandle);
+    // --- Cables de conexión: HDMI, energía, ethernet, regleta y router ---
+    function extCable(points, radius, color) {
+      const curve = new THREE.CatmullRomCurve3(points.map((p) => new THREE.Vector3(...p)));
+      const mesh = new THREE.Mesh(new THREE.TubeGeometry(curve, 32, radius, 8, false), mat(color, { metal: 0.2, rough: 0.7 }));
+      mesh.castShadow = true; mesh.receiveShadow = true;
+      env.add(mesh);
+      return mesh;
+    }
+    // HDMI: del monitor a la parte trasera de la torre (tarjeta gráfica)
+    extCable([[-3.70, 2.05, 1.97], [-3.85, 1.0, 1.6], [-3.7, 0.06, 0.8], [-2.5, 0.06, -0.5], [-1.2, 0.06, -1.6], [-0.8, 0.3, -1.95], [-0.55, 1.0, -2.0], [-0.55, 1.75, -2.0]], 0.035, 0x111827);
+    // energía del monitor: del monitor a la regleta
+    extCable([[-3.75, 0.9, 1.7], [-3.5, 0.06, 0.5], [-2.0, 0.06, -1.5], [0.0, 0.06, -2.5], [1.5, 0.06, -2.95], [2.5, 0.08, -3.0]], 0.035, 0x111827);
+    // energía de la torre: de la fuente a la regleta
+    extCable([[0.25, 0.5, -2.0], [0.4, 0.06, -2.3], [1.2, 0.06, -2.9], [2.0, 0.06, -3.0], [2.5, 0.08, -3.0]], 0.04, 0x374151);
+    // ethernet (azul): de la parte trasera de la torre al router
+    extCable([[-0.94, 3.0, -2.0], [-1.1, 1.5, -2.1], [-1.0, 0.06, -2.6], [0.5, 0.06, -2.8], [2.5, 0.06, -2.9], [3.6, 0.1, -2.8]], 0.03, 0x2563eb);
+    // energía del router: del router a la regleta
+    extCable([[4.0, 0.06, -2.9], [3.2, 0.06, -3.0], [2.6, 0.08, -3.0]], 0.03, 0x111827);
+    // cable de la regleta: baja por detrás del escritorio hasta el enchufe de la pared
+    extCable([[2.5, 0.06, -3.1], [2.7, -0.5, -3.6], [2.6, -2.0, -4.3], [2.5, -2.55, -4.7], [2.5, -2.2, -4.95]], 0.04, 0x111827);
+    // regleta (multitoma) sobre el escritorio, atrás a la derecha
+    add(box(1.2, 0.12, 0.35, mat(0xe5e7eb, { metal: 0.2, rough: 0.5 })), 2.5, 0.06, -3.0);
+    [2.15, 2.5, 2.85].forEach((sx) => add(box(0.14, 0.02, 0.14, mat(0x111827, { metal: 0.3, rough: 0.5 })), sx, 0.13, -3.0));
+    add(box(0.12, 0.03, 0.1, mat(0xdc2626, { metal: 0.3, rough: 0.5 })), 2.5, 0.13, -2.88);
+    // router con sus antenas y luces
+    add(box(0.9, 0.12, 0.6, mat(0x111827, { metal: 0.4, rough: 0.5 })), 4.0, 0.06, -2.8);
+    const antMat = mat(0x1f2937, { metal: 0.5, rough: 0.4 });
+    [[3.7, -2.55, 0.25], [4.3, -2.55, -0.25]].forEach(([ax, az, tilt]) => {
+      const ant = cyl(0.02, 0.02, 0.55, antMat, 8);
+      add(ant, ax, 0.35, az); ant.rotation.z = tilt;
+    });
+    [[3.75, 0x22c55e], [3.95, 0x22c55e], [4.15, 0x3b82f6]].forEach(([lx, c]) => {
+      const led = new THREE.Mesh(new THREE.SphereGeometry(0.025, 8, 6), new THREE.MeshBasicMaterial({ color: c }));
+      led.position.set(lx, 0.13, -2.55); env.add(led);
+    });
+    // enchufe en la pared trasera, junto al suelo
+    add(box(0.5, 0.7, 0.06, mat(0xe5e7eb, { metal: 0.2, rough: 0.5 })), 2.5, -2.2, -4.97);
+    add(box(0.12, 0.12, 0.03, mat(0x111827, { metal: 0.3, rough: 0.5 })), 2.38, -2.1, -4.93);
+    add(box(0.12, 0.12, 0.03, mat(0x111827, { metal: 0.3, rough: 0.5 })), 2.62, -2.1, -4.93);
+    // reloj de pared (las 10:10, como en los anuncios)
+    const clockFace = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 0.06, 32), mat(0xf8fafc, { metal: 0.2, rough: 0.4 }));
+    clockFace.rotation.x = Math.PI / 2;
+    add(clockFace, -5.5, 6.5, -4.96);
+    const handMat = mat(0x111827, { metal: 0.3, rough: 0.5 });
+    const hourHand = box(0.04, 0.28, 0.02, handMat);
+    add(hourHand, -5.57, 6.62, -4.92); hourHand.rotation.z = 0.52;
+    const minHand = box(0.03, 0.4, 0.02, handMat);
+    add(minHand, -5.4, 6.67, -4.92); minHand.rotation.z = -0.52;
+    const clockDot = new THREE.Mesh(new THREE.SphereGeometry(0.04, 10, 8), handMat);
+    clockDot.position.set(-5.5, 6.5, -4.92); env.add(clockDot);
     return env;
   }
   const environment = buildEnvironment();
