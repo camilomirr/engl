@@ -53,10 +53,13 @@ function init() {
 
   const partById = Object.fromEntries(PARTS.map((p) => [p.id, p]));
 
+  // la torre está a la derecha de la mesa (x=3.5): la vista general centra el
+  // puesto de trabajo entero (monitor a un lado, torre al otro, ambos visibles);
+  // núcleo y flujo siguen a la torre
   const SCENES = {
-    overview: { cam: [9.0, 4.4, 5.4], tgt: [0, 2.3, 0], focus: null, particles: false, fanBoost: 1, dur: 1.8 },
-    core: { cam: [4.6, 4.3, 3.8], tgt: [-0.55, 3.1, 0.1], focus: ['cpu', 'ram'], particles: false, fanBoost: 1 },
-    airflow: { cam: [6.4, 5.4, 7.4], tgt: [0, 2.0, 0], focus: ['psu', 'gpu'], particles: true, fanBoost: 2.4 }
+    overview: { cam: [9.0, 4.4, 5.4], tgt: [0, 2.0, 0.5], focus: null, particles: false, fanBoost: 1, dur: 1.8 },
+    core: { cam: [8.1, 4.3, 3.8], tgt: [2.95, 3.1, 0.1], focus: ['cpu', 'ram'], particles: false, fanBoost: 1 },
+    airflow: { cam: [9.9, 5.4, 7.4], tgt: [3.5, 2.0, 0], focus: ['psu', 'gpu'], particles: true, fanBoost: 2.4 }
   };
 
   // --- Renderizador ---
@@ -117,7 +120,7 @@ function init() {
   keyLight.shadow.camera.top = 7; keyLight.shadow.camera.bottom = -7;
   scene.add(keyLight);
   const innerGlow = new THREE.PointLight(0x22d3ee, 18, 10, 2);
-  innerGlow.position.set(0.4, 3.0, 0.8);
+  innerGlow.position.set(3.9, 3.0, 0.8); // dentro de la torre (la torre está en x=3.5)
   scene.add(innerGlow);
   const fillLight = new THREE.PointLight(0xf59e0b, 6, 12, 2);
   fillLight.position.set(-4, 2, -5);
@@ -161,7 +164,7 @@ function init() {
   const pData = [];
   for (let i = 0; i < P_COUNT; i++) {
     pData.push({
-      x: -0.7 + Math.random() * 1.4,
+      x: 2.8 + Math.random() * 1.4, // dentro de la torre (la torre está en x=3.5)
       y: 0.5 + Math.random() * 3.7,
       z: 1.9,
       speed: 0.6 + Math.random() * 0.9,
