@@ -597,8 +597,8 @@ export function buildPcModel() {
     cables.push({ mesh, partId });
     return mesh;
   }
-  // 24 pines: de la fuente al conector ATX del borde de la placa
-  cable([[0.5, 0.7, -0.55], [0.95, 1.0, 0.2], [0.7, 1.9, 1.1], [0.0, 2.4, 1.45], [-0.74, 2.6, 1.45]], 0.06, 0x991b1b, 'motherboard');
+  // 24 pines: de la fuente al conector ATX del borde de la placa (termina EN el conector)
+  cable([[0.5, 0.7, -0.55], [0.95, 1.0, 0.2], [0.7, 1.9, 1.1], [0.0, 2.4, 1.45], [-0.84, 2.6, 1.45]], 0.06, 0x991b1b, 'motherboard');
   // poder de GPU: de la fuente al conector de 8 pines del borde superior
   cable([[0.0, 0.8, -0.55], [0.75, 1.3, 0.3], [0.4, 1.9, 0.95], [-0.5, 2.12, 1.15]], 0.045, 0xd97706, 'gpu');
   // SATA: de la fuente al conector del SSD (este es el de PODER; el de datos va aparte)
@@ -614,9 +614,10 @@ export function buildPcModel() {
   // ventilador frontal inferior: a la cabecera SYS_FAN (abajo de la placa)
   cable([[0, 1.3, 1.92], [-0.2, 1.15, 1.4], [-0.6, 1.0, 0.6], [-0.86, 0.88, -0.6]], 0.02, 0x1f2937, 'motherboard');
   // unidad óptica: SATA de datos a la placa (puerto 1) y SATA de poder desde la fuente
-  // (la unidad quedó a ras del frontal, así que su trasera está en z=0.7)
-  cable([[0, 4.25, 0.73], [0.4, 3.8, 1.2], [0.6, 2.5, 1.4], [0.3, 1.2, 1.0], [-0.4, 0.9, 0.6], [-0.85, 0.88, 0.45]], 0.025, 0xdc2626, 'optical');
-  cable([[0.4, 0.75, -0.55], [0.5, 1.8, -1.5], [0.4, 3.2, -1.6], [0.2, 4.0, -0.5], [0, 4.25, 0.73]], 0.03, 0x111827, 'optical');
+  // (la unidad quedó a ras del frontal, así que su trasera está en z=0.7: los cables
+  // terminan a ras de la trasera, sin meterse dentro de la unidad)
+  cable([[0, 4.25, 0.7], [0.4, 3.8, 1.2], [0.6, 2.5, 1.4], [0.3, 1.2, 1.0], [-0.4, 0.9, 0.6], [-0.85, 0.88, 0.45]], 0.025, 0xdc2626, 'optical');
+  cable([[0.4, 0.75, -0.55], [0.5, 1.8, -1.5], [0.4, 3.2, -1.6], [0.2, 4.0, -0.5], [0, 4.25, 0.7]], 0.03, 0x111827, 'optical');
   // SSD: SATA de datos del puerto 2 de la placa al conector del SSD (el azul ya es el de poder)
   cable([[-0.85, 0.88, 0.72], [-0.78, 0.95, 0.6], [-0.80, 1.05, 0.5]], 0.025, 0xdc2626, 'storage');
   // panel frontal: botón, LEDs y USB a la cabecera del borde inferior de la placa
@@ -671,9 +672,9 @@ export function buildPcModel() {
     add(backWall, 0, 3.4, -5); backWall.castShadow = false;
     const leftWall = new THREE.Mesh(new THREE.PlaneGeometry(24, 12), wallMat2);
     leftWall.rotation.y = Math.PI / 2; add(leftWall, -9.5, 3.4, 0); leftWall.castShadow = false;
-    // rodapiés
-    add(box(34, 0.25, 0.06, mat(0x94a3b8, { metal: 0.2, rough: 0.6 })), 0, -2.48, -4.97);
-    add(box(0.06, 0.25, 24, mat(0x94a3b8, { metal: 0.2, rough: 0.6 })), -9.47, -2.48, 0);
+    // rodapiés: apoyados en el suelo (y=-2.6), sin meterse por debajo del piso
+    add(box(34, 0.25, 0.06, mat(0x94a3b8, { metal: 0.2, rough: 0.6 })), 0, -2.475, -4.97);
+    add(box(0.06, 0.25, 24, mat(0x94a3b8, { metal: 0.2, rough: 0.6 })), -9.47, -2.475, 0);
     // ventana en la pared trasera (luz suave, sin quemar)
     const winGlass = new THREE.Mesh(new THREE.PlaneGeometry(3, 3),
       mat(0x0f172a, { emissive: 0x9cc8ff, emissiveIntensity: 1.25, metal: 0.1, rough: 0.4 }));
@@ -685,7 +686,7 @@ export function buildPcModel() {
     add(box(0.12, 3.2, 0.08, frameMat), -1.45, 4.2, -4.94);
     add(box(0.08, 3.0, 0.06, frameMat), -3, 4.2, -4.93);
     add(box(3.0, 0.08, 0.06, frameMat), -3, 4.2, -4.93);
-    add(box(3.4, 0.1, 0.25, frameMat), -3, 2.55, -4.9);
+    add(box(3.4, 0.1, 0.25, frameMat), -3, 2.55, -4.875); // repisa: a ras de la pared, sin atravesarla
     // póster NVISION en la pared trasera
     const posterCanvas = document.createElement('canvas'); posterCanvas.width = 256; posterCanvas.height = 340;
     const pctx = posterCanvas.getContext('2d');
@@ -693,10 +694,8 @@ export function buildPcModel() {
     const grad = pctx.createLinearGradient(0, 0, 256, 0);
     grad.addColorStop(0, '#2563eb'); grad.addColorStop(1, '#06b6d4');
     pctx.fillStyle = grad; pctx.fillRect(0, 0, 256, 26);
-    pctx.fillStyle = '#ffffff'; pctx.font = 'bold 42px sans-serif'; pctx.textAlign = 'center';
-    pctx.fillText('NVISION', 128, 78);
-    pctx.fillStyle = '#93c5fd'; pctx.font = '20px sans-serif';
-    pctx.fillText('PC BUILDING', 128, 108);
+    pctx.fillStyle = '#ffffff'; pctx.font = 'bold 48px sans-serif'; pctx.textAlign = 'center';
+    pctx.fillText('NVISION', 128, 100);
     pctx.fillStyle = '#1e293b'; pctx.fillRect(78, 140, 100, 130);
     pctx.fillStyle = '#22d3ee'; pctx.beginPath(); pctx.arc(128, 195, 26, 0, Math.PI * 2); pctx.fill();
     pctx.fillStyle = '#0f172a'; pctx.fillRect(96, 240, 64, 10);
@@ -727,11 +726,12 @@ export function buildPcModel() {
     // estilo PC Building Simulator: el monitor a un lado y la torre al otro, ambos visibles)
     add(box(16, 0.35, 8, woodMat), 0.3, -0.175, 0.5);
     [[-7.4, -3.2], [7.6, -3.2], [-7.4, 4.2], [7.6, 4.2]].forEach(([x, z]) => {
-      // patas del suelo (y=-2.6) hasta la cara inferior del tablero (y=-0.35):
-      // antes medían 2.6 y se metían 0.35 dentro de la madera
-      add(box(0.3, 2.25, 0.3, darkMetal), x, -1.475, z);
+      // patas de la alfombra (y=-2.58) hasta la cara inferior del tablero (y=-0.35):
+      // antes medían 2.6 y se metían 0.35 dentro de la madera; con 2.25 llegaban
+      // al suelo (y=-2.6) y atravesaban la alfombra 0.02 por debajo
+      add(box(0.3, 2.23, 0.3, darkMetal), x, -1.465, z);
     });
-    add(box(2.2, 2.25, 4.5, mat(0x374151, { metal: 0.5, rough: 0.5 })), 3.4, -1.475, 0.3);
+    add(box(2.2, 2.23, 4.5, mat(0x374151, { metal: 0.5, rough: 0.5 })), 3.4, -1.465, 0.3);
     [-0.75, -1.45, -2.15].forEach((y) => {
       add(box(0.06, 0.62, 4.0, mat(0x4b5563, { metal: 0.5, rough: 0.5 })), 4.53, y, 0.3);
       add(box(0.05, 0.06, 0.5, METAL_MAT), 4.58, y, 0.3);
@@ -947,22 +947,25 @@ export function buildPcModel() {
     // HDMI: del puerto del monitor al puerto HDMI de la tarjeta gráfica. La torre
     // está girada 90°, así que su parte trasera mira a la derecha y el puerto queda
     // en (5.57, 1.85, -0.55), a la vista: el cable bordea la mesa por detrás y
-    // sube por el costado derecho hasta enchufarse
-    extCable([hdmiPortW, [-4.85, 1.0, 1.1], [-4.7, 0.06, 0.3], [-3.0, 0.06, -2.0], [-1.0, 0.06, -3.1], [2.0, 0.06, -3.1], [4.5, 0.06, -2.8], [5.6, 0.06, -1.5], [5.57, 1.1, -0.55], [5.57, 1.85, -0.55]], 0.035, 0x111827);
+    // sube por el costado derecho hasta enchufarse. Los tramos sobre la mesa van a
+    // y=0.08 con puntos intermedios que suavizan la bajada/subida: la curva
+    // CatmullRom se hundía bajo la mesa justo en las transiciones y atravesaba
+    // la madera (el cable solo toca la mesa, nunca la cruza)
+    extCable([hdmiPortW, [-4.85, 1.0, 1.1], [-4.82, 0.55, 0.85], [-4.78, 0.2, 0.55], [-4.7, 0.08, 0.3], [-3.0, 0.08, -2.0], [-1.0, 0.08, -3.1], [2.0, 0.08, -3.1], [4.5, 0.08, -2.8], [5.6, 0.08, -1.5], [5.58, 0.2, -1.2], [5.57, 0.6, -0.85], [5.57, 1.1, -0.55], [5.57, 1.85, -0.55]], 0.035, 0x111827);
     // energía del monitor: del puerto del monitor a la regleta
-    extCable([pwrPortW, [-4.4, 0.06, 0.0], [-2.0, 0.06, -1.5], [0.0, 0.06, -3.1], [2.5, 0.06, -3.15], [5.0, 0.08, -3.0]], 0.035, 0x111827);
+    extCable([pwrPortW, [-4.42, 0.7, -0.25], [-4.41, 0.3, -0.1], [-4.4, 0.08, 0.0], [-2.0, 0.08, -1.5], [0.0, 0.08, -3.1], [2.5, 0.08, -3.15], [5.0, 0.09, -3.0]], 0.035, 0x111827);
     // energía de la torre: de la boca de la fuente (5.57, 0.6, 0.25) a la regleta,
     // bajando por el costado derecho, a la vista
-    extCable([[5.57, 0.6, 0.25], [5.75, 0.06, 0.3], [5.75, 0.06, -1.5], [5.3, 0.06, -2.5], [5.0, 0.08, -3.0]], 0.04, 0x374151);
+    extCable([[5.57, 0.6, 0.25], [5.68, 0.35, 0.27], [5.73, 0.15, 0.29], [5.75, 0.09, 0.3], [5.75, 0.09, -1.5], [5.3, 0.09, -2.5], [5.0, 0.09, -3.0]], 0.04, 0x374151);
     // ethernet (azul): de la boca de la placa madre (5.57, 3.1, -0.94) a la boca
     // del router, bajando por el costado derecho, a la vista
-    extCable([[5.57, 3.1, -0.94], [5.6, 1.6, -1.2], [5.6, 0.06, -1.8], [5.6, 0.06, -2.5], [5.69, 0.08, -2.7]], 0.03, 0x2563eb);
+    extCable([[5.57, 3.1, -0.94], [5.6, 1.6, -1.2], [5.6, 0.7, -1.45], [5.6, 0.3, -1.65], [5.6, 0.08, -1.8], [5.6, 0.08, -2.5], [5.69, 0.09, -2.7]], 0.03, 0x2563eb);
     // energía del router: de su toma trasera a la regleta
-    extCable([[5.85, 0.08, -3.11], [5.3, 0.06, -3.0], [5.05, 0.08, -3.0]], 0.03, 0x111827);
+    extCable([[5.85, 0.09, -3.11], [5.3, 0.09, -3.0], [5.05, 0.09, -3.0]], 0.03, 0x111827);
     // cable de la regleta: baja por detrás del escritorio hasta el enchufe de la pared.
     // Sale por ENCIMA del borde trasero (a la altura de la mesa hasta pasar z=-3.5)
     // y luego cae por detrás: antes bajaba en diagonal y atravesaba la madera del borde.
-    extCable([[5.0, 0.06, -3.1], [5.1, 0.06, -3.6], [5.2, -0.6, -3.9], [5.1, -2.0, -4.3], [5.0, -2.55, -4.7], [5.0, -2.2, -4.95]], 0.04, 0x111827);
+    extCable([[5.0, 0.09, -3.1], [5.1, 0.09, -3.6], [5.15, 0.09, -3.75], [5.2, -0.6, -3.9], [5.1, -2.0, -4.3], [5.0, -2.55, -4.7], [5.0, -2.2, -4.95]], 0.04, 0x111827);
     // regleta (multitoma) sobre el escritorio, atrás a la derecha, junto a la torre
     add(box(1.2, 0.12, 0.35, mat(0xe5e7eb, { metal: 0.2, rough: 0.5 })), 5.0, 0.06, -3.0);
     [4.65, 5.0, 5.35].forEach((sx) => add(box(0.14, 0.02, 0.14, mat(0x111827, { metal: 0.3, rough: 0.5 })), sx, 0.13, -3.0));
