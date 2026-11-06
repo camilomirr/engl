@@ -184,16 +184,23 @@ function init() {
   const MAGNET_RADIUS = 2.0; // radio en el que el imán empieza a atraerla hacia su sitio
   const RELEASE_SNAP_DIST = 1.2; // al soltarla dentro de este radio, encaja sola
   const guideGeo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]);
-  const guideMat = new THREE.LineDashedMaterial({ color: 0xef4444, dashSize: 0.22, gapSize: 0.1, transparent: true, opacity: 1 });
+  const guideMat = new THREE.LineDashedMaterial({ color: 0xef4444, dashSize: 0.32, gapSize: 0.14, transparent: true, opacity: 1 });
   const guideLine = new THREE.Line(guideGeo, guideMat);
   guideLine.visible = false;
   guideLine.frustumCulled = false;
   scene.add(guideLine);
-  // Pulso que viaja por la guía: hace visible el recorrido hasta el sitio
+  // Pulso que viaja por la guía: hace visible el recorrido hasta el sitio.
+  // Grande y con halo para que se vea sin duda en foto: antes era una bolita de
+  // 0.07 y la línea punteada fina se perdía en las capturas
   const guidePulse = new THREE.Mesh(
-    new THREE.SphereGeometry(0.07, 12, 12),
+    new THREE.SphereGeometry(0.12, 12, 12),
     new THREE.MeshBasicMaterial({ color: 0xef4444 })
   );
+  const guidePulseHalo = new THREE.Mesh(
+    new THREE.SphereGeometry(0.22, 12, 12),
+    new THREE.MeshBasicMaterial({ color: 0xef4444, transparent: true, opacity: 0.25 })
+  );
+  guidePulse.add(guidePulseHalo);
   guidePulse.visible = false;
   scene.add(guidePulse);
   const pulseV = new THREE.Vector3();
@@ -939,6 +946,7 @@ function init() {
       // con la pieza ni con su sitio
       guidePulse.position.lerpVectors(pulseV, guideHomeV, k);
       guidePulse.material.color.copy(guideMat.color);
+      guidePulseHalo.material.color.copy(guideMat.color);
       guidePulse.visible = true;
     } else {
       guidePulse.visible = false;
