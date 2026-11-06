@@ -747,24 +747,27 @@ export function buildPcModel() {
     peripherals.rotation.y = -0.35;
     env.add(peripherals);
     const padd = (mesh, x, y, z) => { mesh.position.set(x, y, z); mesh.castShadow = true; mesh.receiveShadow = true; peripherals.add(mesh); return mesh; };
-    padd(box(0.7, 0.06, 0.5, darkMetal), 0, 0.03, 0);
-    padd(box(0.12, 0.5, 0.12, darkMetal), 0, 0.3, 0);
-    padd(box(0.08, 1.2, 2.0, darkMetal), 0, 0.95, 0);
-    const screen = new THREE.Mesh(new THREE.PlaneGeometry(1.85, 1.05),
+    // monitor grande de verdad: una pantalla de 27" mide casi lo mismo de alto que la torre
+    padd(box(0.9, 0.06, 0.6, darkMetal), 0, 0.03, 0);
+    padd(box(0.14, 0.7, 0.14, darkMetal), -0.08, 0.38, 0);
+    padd(box(0.08, 1.5, 2.6, darkMetal), 0, 1.15, 0);
+    const screen = new THREE.Mesh(new THREE.PlaneGeometry(2.45, 1.4),
       new THREE.MeshBasicMaterial({ map: screenTex }));
     screen.rotation.y = Math.PI / 2;
-    padd(screen, 0.06, 0.95, 0);
+    padd(screen, 0.06, 1.15, 0);
     const keyCanvas = document.createElement('canvas'); keyCanvas.width = 256; keyCanvas.height = 96;
     const kctx = keyCanvas.getContext('2d');
     kctx.fillStyle = '#111827'; kctx.fillRect(0, 0, 256, 96);
     kctx.fillStyle = '#1f2937';
     for (let r = 0; r < 4; r++) for (let c = 0; c < 14; c++) kctx.fillRect(6 + c * 18, 8 + r * 21, 14, 16);
     const keyTex = new THREE.CanvasTexture(keyCanvas); keyTex.colorSpace = THREE.SRGBColorSpace;
-    padd(box(0.5, 0.06, 1.5, mat(0x111827, { metal: 0.3, rough: 0.6 })), 1.2, 0.03, 0);
-    const keys = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 0.45),
+    padd(box(0.55, 0.06, 1.9, mat(0x111827, { metal: 0.3, rough: 0.6 })), 1.35, 0.03, 0);
+    const keys = new THREE.Mesh(new THREE.PlaneGeometry(1.8, 0.5),
       new THREE.MeshStandardMaterial({ map: keyTex, roughness: 0.6, metalness: 0.1, transparent: true }));
     keys.rotation.x = -Math.PI / 2;
-    padd(keys, 1.2, 0.065, 0);
+    padd(keys, 1.35, 0.065, 0);
+    const mouse = box(0.22, 0.07, 0.35, darkMetal);
+    padd(mouse, 1.35, 0.035, 1.3); mouse.rotation.y = -0.2;
     // cosas sueltas del taller sobre el escritorio
     const spareFan = makeFan(0.55, 0x22d3ee, false); // de repuesto, sin corriente no gira
     spareFan.rotation.x = -Math.PI / 2;
