@@ -982,24 +982,25 @@ export function buildPcModel() {
     const sideGlass = box(3.4, 3.9, 0.02, mat(0x94a3b8, { metal: 0.9, rough: 0.1 }));
     sideGlass.position.set(7.5, -0.36, -4.36); sideGlass.rotation.x = 0.26; // cristal claro para que se distinga del panel oscuro
     env.add(sideGlass);
-    // lámpara de escritorio articulada (luz cálida): base + dos brazos en ángulo
-    // + pantalla inclinada + bombilla grande que asoma + halo de luz en la mesa
-    add(cyl(0.22, 0.28, 0.08, darkMetal, 20), -6.5, 0.04, -1.5);
-    const lampArm1 = cyl(0.04, 0.04, 1.05, darkMetal, 12);
-    add(lampArm1, -6.25, 0.54, -1.5); lampArm1.rotation.z = -0.497; // brazo bajo, 28° hacia el centro
-    const lampJoint = new THREE.Mesh(new THREE.SphereGeometry(0.06, 12, 10), darkMetal);
-    lampJoint.position.set(-6.0, 1.0, -1.5); env.add(lampJoint);
-    const lampArm2 = cyl(0.04, 0.04, 0.75, darkMetal, 12);
-    add(lampArm2, -5.75, 1.275, -1.5); lampArm2.rotation.z = -0.737; // brazo alto, 42° hacia el centro
+    // lámpara de escritorio articulada (luz cálida): a la izquierda del monitor,
+    // donde se ve desde el frente (antes quedaba tapada por el monitor). Base +
+    // dos brazos gruesos en ángulo + pantalla inclinada + bombilla grande + halo
+    add(cyl(0.22, 0.28, 0.08, darkMetal, 20), -7.0, 0.04, 0.5);
+    const lampArm1 = cyl(0.06, 0.06, 1.05, darkMetal, 12);
+    add(lampArm1, -6.75, 0.54, 0.5); lampArm1.rotation.z = -0.497; // brazo bajo, 28° hacia el centro
+    const lampJoint = new THREE.Mesh(new THREE.SphereGeometry(0.1, 12, 10), darkMetal);
+    lampJoint.position.set(-6.5, 1.0, 0.5); env.add(lampJoint);
+    const lampArm2 = cyl(0.06, 0.06, 0.75, darkMetal, 12);
+    add(lampArm2, -6.25, 1.275, 0.5); lampArm2.rotation.z = -0.737; // brazo alto, 42° hacia el centro
     const lampShade = new THREE.Mesh(new THREE.ConeGeometry(0.28, 0.35, 20), mat(0x1f2937, { metal: 0.6, rough: 0.4 }));
-    lampShade.position.set(-5.5, 1.55, -1.5); lampShade.rotation.z = 0.6; lampShade.castShadow = true; env.add(lampShade);
-    const lampBulb = new THREE.Mesh(new THREE.SphereGeometry(0.13, 12, 10), new THREE.MeshBasicMaterial({ color: 0xffe9c4 }));
-    lampBulb.position.set(-5.55, 1.38, -1.5); env.add(lampBulb); // cuelga bien por debajo de la pantalla
-    const lampLight = new THREE.PointLight(0xffd9a0, 15, 9, 2);
-    lampLight.position.set(-5.55, 1.35, -1.5); env.add(lampLight);
-    const lampPool = new THREE.Mesh(new THREE.CircleGeometry(0.9, 24),
-      new THREE.MeshBasicMaterial({ color: 0xffd9a0, transparent: true, opacity: 0.18 }));
-    lampPool.rotation.x = -Math.PI / 2; lampPool.position.set(-5.6, 0.012, -1.5); env.add(lampPool);
+    lampShade.position.set(-6.0, 1.55, 0.5); lampShade.rotation.z = 0.6; lampShade.castShadow = true; env.add(lampShade);
+    const lampBulb = new THREE.Mesh(new THREE.SphereGeometry(0.15, 12, 10), new THREE.MeshBasicMaterial({ color: 0xffe9c4 }));
+    lampBulb.position.set(-6.05, 1.36, 0.5); env.add(lampBulb); // cuelga bien por debajo de la pantalla
+    const lampLight = new THREE.PointLight(0xffd9a0, 20, 9, 2);
+    lampLight.position.set(-6.05, 1.33, 0.5); env.add(lampLight);
+    const lampPool = new THREE.Mesh(new THREE.CircleGeometry(0.7, 24),
+      new THREE.MeshBasicMaterial({ color: 0xffd9a0, transparent: true, opacity: 0.3 }));
+    lampPool.rotation.x = -Math.PI / 2; lampPool.position.set(-6.1, 0.02, 0.5); env.add(lampPool);
     // bandeja con tornillos junto al destornillador: lo que se quita al abrir el PC
     add(box(0.7, 0.06, 0.5, mat(0x334155, { metal: 0.5, rough: 0.5 })), -1.6, 0.03, -2.2);
     [[-1.85, -2.32, 0.4], [-1.7, -2.2, 1.2], [-1.55, -2.35, 2.1], [-1.45, -2.15, 0.9], [-1.75, -2.05, 2.6]].forEach(([sx, sz, ry]) => {
@@ -1013,8 +1014,8 @@ export function buildPcModel() {
     const chairMat = mat(0x64748b, { metal: 0.1, rough: 0.9 });
     const chairSeat = box(1.1, 0.12, 1.0, chairMat);
     chairSeat.position.set(0, 1.3, 0); chair.add(chairSeat);
-    const chairBack = box(1.0, 1.6, 0.1, chairMat);
-    chairBack.position.set(0, 2.1, 0.55); chairBack.rotation.x = -0.15; chair.add(chairBack);
+    const chairBack = box(1.0, 2.2, 0.1, chairMat);
+    chairBack.position.set(0, 2.4, 0.55); chairBack.rotation.x = -0.15; chair.add(chairBack);
     const chairPole = cyl(0.06, 0.06, 1.2, METAL_MAT, 12);
     chairPole.position.set(0, 0.65, 0); chair.add(chairPole);
     const chairBase = cyl(0.55, 0.55, 0.06, METAL_MAT, 24);
@@ -1024,7 +1025,7 @@ export function buildPcModel() {
       const caster = new THREE.Mesh(new THREE.SphereGeometry(0.06, 10, 8), darkMetal);
       caster.position.set(0.5 * Math.cos(a), 0.08, 0.5 * Math.sin(a)); chair.add(caster);
     }
-    chair.position.set(-2.9, -2.6, 4.8); env.add(chair);
+    chair.position.set(-3.5, -2.6, 4.6); chair.rotation.y = 0.35; env.add(chair); // mirando al monitor
     // pared derecha (espejo de la izquierda) y techo: antes el cuarto no tenía ni pared derecha ni techo
     const rightWall = new THREE.Mesh(new THREE.PlaneGeometry(24, 12), wallMat2);
     rightWall.position.set(9.5, 3.4, 0); rightWall.rotation.y = -Math.PI / 2;
