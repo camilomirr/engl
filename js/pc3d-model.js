@@ -394,6 +394,14 @@ export function buildPcModel() {
   const atxConnector = box(0.12, 0.5, 0.3, mat(0xe5e7eb, { metal: 0.3, rough: 0.5 }));
   atxConnector.position.set(0.1, 0.1, 1.55);
   motherboard.add(atxConnector);
+  // conector EPS de 8 pines (poder del CPU) en el borde superior, sobre el zócalo
+  const epsConnector = box(0.08, 0.15, 0.25, mat(0xe5e7eb, { metal: 0.3, rough: 0.5 }));
+  epsConnector.position.set(0.08, 1.7, -0.4);
+  motherboard.add(epsConnector);
+  // cabecera del panel frontal (botón, LEDs y USB) en el borde inferior
+  const fpHeader = box(0.06, 0.08, 0.2, mat(0xe5e7eb, { metal: 0.3, rough: 0.5 }));
+  fpHeader.position.set(0.08, -1.62, 1.0);
+  motherboard.add(fpHeader);
   // zócalo del procesador: queda visible en la placa cuando se quita el CPU
   const socket = box(0.04, 0.95, 0.95, mat(0x1e293b, { metal: 0.4, rough: 0.5 }));
   socket.position.set(0.06, 0.95, -0.6);
@@ -591,8 +599,25 @@ export function buildPcModel() {
   cable([[0.5, 0.7, -0.55], [0.95, 1.0, 0.2], [0.7, 1.9, 1.1], [0.0, 2.4, 1.45], [-0.74, 2.6, 1.45]], 0.06, 0x991b1b, 'motherboard');
   // poder de GPU: de la fuente al conector de 8 pines del borde superior
   cable([[0.0, 0.8, -0.55], [0.75, 1.3, 0.3], [0.4, 1.9, 0.95], [-0.5, 2.12, 1.15]], 0.045, 0xd97706, 'gpu');
-  // SATA: de la fuente al conector del SSD
+  // SATA: de la fuente al conector del SSD (este es el de PODER; el de datos va aparte)
   cable([[-0.3, 0.7, -0.55], [-0.55, 0.9, 0.0], [-0.78, 1.05, 0.48]], 0.03, 0x2563eb, 'storage');
+  // poder del CPU (EPS 8 pines): de la fuente, por detrás de la placa, al conector superior
+  cable([[0.4, 0.75, -0.55], [-0.1, 1.5, -1.3], [-0.5, 2.8, -1.4], [-0.75, 3.8, -1.0], [-0.86, 4.15, -0.5]], 0.045, 0x374151, 'motherboard');
+  // ventilador del CPU: del disipador a la cabecera CPU_FAN (arriba de la placa)
+  cable([[-0.35, 3.55, -0.6], [-0.55, 3.85, -0.25], [-0.86, 4.1, 0.1]], 0.02, 0x1f2937, 'cooler');
+  // ventilador trasero: a la cabecera superior (la de arriba sirve al ventilador de atrás)
+  cable([[0, 3.9, -1.92], [-0.3, 4.05, -1.3], [-0.6, 4.15, -0.5], [-0.86, 4.1, 0.1]], 0.02, 0x1f2937, 'motherboard');
+  // ventilador frontal superior: baja por el borde delantero hasta la cabecera SYS_FAN
+  cable([[0, 3.5, 1.92], [0.4, 2.8, 1.75], [0.3, 1.8, 1.3], [-0.2, 1.1, 0.5], [-0.86, 0.88, -0.6]], 0.02, 0x1f2937, 'motherboard');
+  // ventilador frontal inferior: a la cabecera SYS_FAN (abajo de la placa)
+  cable([[0, 1.3, 1.92], [-0.2, 1.15, 1.4], [-0.6, 1.0, 0.6], [-0.86, 0.88, -0.6]], 0.02, 0x1f2937, 'motherboard');
+  // unidad óptica: SATA de datos a la placa (puerto 1) y SATA de poder desde la fuente
+  cable([[0, 4.25, 0.95], [0.4, 3.8, 1.2], [0.6, 2.5, 1.4], [0.3, 1.2, 1.0], [-0.4, 0.9, 0.6], [-0.85, 0.88, 0.45]], 0.025, 0xdc2626, 'optical');
+  cable([[0.4, 0.75, -0.55], [0.5, 1.8, -1.5], [0.4, 3.2, -1.6], [0.2, 4.0, -0.5], [0, 4.25, 0.95]], 0.03, 0x111827, 'optical');
+  // SSD: SATA de datos del puerto 2 de la placa al conector del SSD (el azul ya es el de poder)
+  cable([[-0.85, 0.88, 0.72], [-0.78, 0.95, 0.6], [-0.80, 1.05, 0.5]], 0.025, 0xdc2626, 'storage');
+  // panel frontal: botón, LEDs y USB a la cabecera del borde inferior de la placa
+  cable([[0.7, 2.0, 1.85], [0.5, 1.3, 1.5], [-0.2, 0.95, 1.1], [-0.86, 0.85, 1.0]], 0.02, 0x1f2937, 'motherboard');
 
   // --- Entorno 3D estilo taller (PC Building Simulator): cuarto, escritorio y cosas ---
   // La torre ya está en y=0, así que la superficie del escritorio ES y=0 y el suelo queda abajo.
