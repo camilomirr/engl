@@ -176,6 +176,12 @@ export function buildPcModel() {
   rearPort(0.16, 0.16, 0.05, -0.94, 3.0, -2.07, rearDarkMat);   // boca ethernet
   const ethLed = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.04, 0.02), new THREE.MeshBasicMaterial({ color: 0x22c55e }));
   ethLed.position.set(-0.78, 3.08, -2.06); tower.add(ethLed); // led del ethernet
+  // puertos USB del panel trasero (el teclado y el ratón son inalámbricos: su
+  // receptor va enchufado aquí, por eso no tienen cable)
+  rearPort(0.22, 0.5, 0.02, -0.94, 2.3, -2.05, rearPlateMat);   // placa USB
+  rearPort(0.12, 0.05, 0.05, -0.94, 2.4, -2.07, rearDarkMat);   // boca USB superior
+  rearPort(0.12, 0.05, 0.05, -0.94, 2.2, -2.07, rearDarkMat);   // boca USB inferior
+  rearPort(0.06, 0.03, 0.12, -0.94, 2.4, -2.13, rearDarkMat);   // receptor inalámbrico enchufado
   [3.6, 3.9, 4.2].forEach((y) => {
     const bar = box(1.16, 0.04, 0.02, CASE_MAT);
     bar.position.set(0, y, -2);
@@ -879,15 +885,19 @@ export function buildPcModel() {
     peripherals.updateMatrixWorld(true);
     const hdmiPortW = new THREE.Vector3(); hdmiSocket.getWorldPosition(hdmiPortW);
     const pwrPortW = new THREE.Vector3(); pwrSocket.getWorldPosition(pwrPortW);
-    // HDMI: del puerto del monitor al puerto HDMI de la tarjeta gráfica (la torre
-    // está girada 45°, así que su puerto queda en (4.57, 1.75, -1.85))
-    extCable([hdmiPortW, [-4.85, 1.0, 1.1], [-4.7, 0.06, 0.3], [-3.0, 0.06, -2.0], [0.0, 0.06, -2.8], [2.0, 0.06, -2.6], [3.8, 0.06, -2.6], [4.57, 1.0, -1.85], [4.57, 1.75, -1.85]], 0.035, 0x111827);
+    // HDMI: del puerto del monitor al puerto HDMI de la tarjeta gráfica. La torre
+    // está girada 90°, así que su parte trasera mira a la derecha y el puerto queda
+    // en (5.57, 1.75, -0.55), a la vista: el cable bordea la mesa por detrás y
+    // sube por el costado derecho hasta enchufarse
+    extCable([hdmiPortW, [-4.85, 1.0, 1.1], [-4.7, 0.06, 0.3], [-3.0, 0.06, -2.0], [-1.0, 0.06, -3.1], [2.0, 0.06, -3.1], [4.5, 0.06, -2.8], [5.6, 0.06, -1.5], [5.57, 1.0, -0.55], [5.57, 1.75, -0.55]], 0.035, 0x111827);
     // energía del monitor: del puerto del monitor a la regleta
-    extCable([pwrPortW, [-4.4, 0.06, 0.0], [-2.0, 0.06, -1.5], [0.0, 0.06, -2.5], [2.5, 0.06, -2.9], [5.0, 0.08, -3.0]], 0.035, 0x111827);
-    // energía de la torre: de la boca de la fuente (girada: (5.14, 0.5, -1.29)) a la regleta
-    extCable([[5.14, 0.5, -1.29], [5.3, 0.06, -1.6], [5.2, 0.06, -2.5], [5.0, 0.08, -3.0]], 0.04, 0x374151);
-    // ethernet (azul): de la boca de la placa madre (girada: (4.30, 3.0, -2.13)) a la boca del router
-    extCable([[4.30, 3.0, -2.13], [4.1, 1.5, -2.3], [4.0, 0.06, -2.6], [5.0, 0.06, -2.8], [5.55, 0.08, -2.7]], 0.03, 0x2563eb);
+    extCable([pwrPortW, [-4.4, 0.06, 0.0], [-2.0, 0.06, -1.5], [0.0, 0.06, -3.1], [2.5, 0.06, -3.15], [5.0, 0.08, -3.0]], 0.035, 0x111827);
+    // energía de la torre: de la boca de la fuente (5.57, 0.5, 0.25) a la regleta,
+    // bajando por el costado derecho, a la vista
+    extCable([[5.57, 0.5, 0.25], [5.75, 0.06, 0.3], [5.75, 0.06, -1.5], [5.3, 0.06, -2.5], [5.0, 0.08, -3.0]], 0.04, 0x374151);
+    // ethernet (azul): de la boca de la placa madre (5.57, 3.0, -0.94) a la boca
+    // del router, bajando por el costado derecho, a la vista
+    extCable([[5.57, 3.0, -0.94], [5.6, 1.5, -1.2], [5.6, 0.06, -1.8], [5.6, 0.06, -2.5], [5.55, 0.08, -2.7]], 0.03, 0x2563eb);
     // energía del router: de su toma trasera a la regleta
     extCable([[5.7, 0.08, -3.11], [5.3, 0.06, -3.0], [5.05, 0.08, -3.0]], 0.03, 0x111827);
     // cable de la regleta: baja por detrás del escritorio hasta el enchufe de la pared
@@ -929,13 +939,14 @@ export function buildPcModel() {
     return env;
   }
   // la torre va a la DERECHA de la mesa y el monitor a la IZQUIERDA: ambos se ven
-  // a la vez y la torre ya no tapa el monitor. Girada 45° para que su lado abierto
-  // (las piezas) mire de frente a la cámara: la CPU se ve completa, no de lado.
+  // a la vez y la torre ya no tapa el monitor. Girada 90° para que su lado abierto
+  // (las piezas) mire al frente y su parte trasera (los puertos) mire a la derecha:
+  // desde la cámara se ven AMBAS, así que cada cable se ve entrar en su puerto.
   // Las piezas, los cables internos y el panel frontal son hijos de la torre,
   // así que se mueven y giran con ella; los cables externos apuntan a los puertos
   // ya girados (sus posiciones de mundo están en buildEnvironment).
   tower.position.set(3.5, 0, 0);
-  tower.rotation.y = -Math.PI / 4;
+  tower.rotation.y = -Math.PI / 2;
   const environment = buildEnvironment();
 
   return {

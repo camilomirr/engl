@@ -53,12 +53,13 @@ function init() {
 
   const partById = Object.fromEntries(PARTS.map((p) => [p.id, p]));
 
-  // la torre está a la derecha de la mesa (x=3.5): la vista general centra el
-  // puesto de trabajo entero (monitor a un lado, torre al otro, ambos visibles);
-  // núcleo sigue a la torre (que ahora está girada, así que su punto cambia)
+  // la torre está a la derecha de la mesa (x=3.5) y girada 90°: su lado abierto
+  // mira al frente y su parte trasera (puertos) a la derecha. La vista general
+  // centra el puesto entero (monitor a un lado, torre al otro, ambos visibles);
+  // núcleo mira la CPU de frente (el lado abierto ya no mira a +X, mira a +Z)
   const SCENES = {
     overview: { cam: [9.0, 4.4, 5.4], tgt: [0, 2.0, 0.5], focus: null, particles: false, fanBoost: 1, dur: 1.8 },
-    core: { cam: [8.1, 4.3, 3.8], tgt: [3.04, 3.1, -0.32], focus: ['cpu', 'ram'], particles: false, fanBoost: 1 },
+    core: { cam: [3.4, 4.2, 7.0], tgt: [3.4, 3.1, -0.55], focus: ['cpu', 'ram'], particles: false, fanBoost: 1 },
     airflow: { cam: [9.9, 5.4, 7.4], tgt: [3.5, 2.0, 0], focus: ['psu', 'gpu'], particles: true, fanBoost: 2.4 }
   };
 
