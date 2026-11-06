@@ -716,26 +716,25 @@ export function buildPcModel() {
       if (mode === 'off') {
         x.fillStyle = '#05070d'; x.fillRect(0, 0, W, H);
       } else if (mode === 'boot') {
-        // arranque con el logo NVISION de la página: azul con desvanecido negro
-        const bg = x.createLinearGradient(0, 0, 0, H);
-        bg.addColorStop(0, '#000000'); bg.addColorStop(0.6, '#050a14'); bg.addColorStop(1, '#0a1628');
-        x.fillStyle = bg; x.fillRect(0, 0, W, H);
-        const lg = x.createLinearGradient(130, 0, 382, 0);
-        lg.addColorStop(0, '#2563eb'); lg.addColorStop(1, '#06b6d4');
-        x.fillStyle = lg;
-        x.shadowColor = 'rgba(37,99,235,0.8)'; x.shadowBlur = 24;
-        x.font = 'bold 64px sans-serif';
-        x.fillText('NVISION', 256, 128);
-        x.shadowBlur = 0;
-        x.fillStyle = '#64748b'; x.font = '20px sans-serif';
-        x.fillText('PC BUILDING', 256, 162);
-        for (let i = 0; i < 5; i++) {
-          const a = (Number(detail) || 0) * 0.5 + (i / 5) * Math.PI * 2;
-          x.fillStyle = i === (Number(detail) || 0) % 5 ? '#ffffff' : '#475569';
-          x.beginPath(); x.arc(256 + Math.cos(a) * 36, 205 + Math.sin(a) * 16, 6, 0, Math.PI * 2); x.fill();
+        // arranque de Windows 11 de verdad: logo de Windows (4 cuadros azules)
+        // + ruedita de carga, en negro. El logo NVISION no va aquí: es el fondo
+        // de escritorio (ver 'windows').
+        x.fillStyle = '#000000'; x.fillRect(0, 0, W, H);
+        const tick = Number(detail) || 0;
+        const s = 34, gap = 6, lx = 256 - s - gap / 2, ly = 88;
+        x.fillStyle = '#0078d4';
+        x.fillRect(lx, ly, s, s);
+        x.fillRect(lx + s + gap, ly, s, s);
+        x.fillRect(lx, ly + s + gap, s, s);
+        x.fillRect(lx + s + gap, ly + s + gap, s, s);
+        const cx = 256, cy = 212, r = 16, n = 10;
+        for (let i = 0; i < n; i++) {
+          const a = (i / n) * Math.PI * 2 - Math.PI / 2; // el primero, arriba
+          const d = ((tick % n) - i + n) % n; // 0 = el que brilla, se apaga hacia atrás
+          const alpha = d === 0 ? 1 : Math.max(0.2, 1 - d * 0.12);
+          x.fillStyle = `rgba(255,255,255,${alpha})`;
+          x.beginPath(); x.arc(cx + Math.cos(a) * r, cy + Math.sin(a) * r, d === 0 ? 3.5 : 2.5, 0, Math.PI * 2); x.fill();
         }
-        x.fillStyle = '#94a3b8'; x.font = '18px sans-serif';
-        x.fillText('Iniciando Windows', 256, 262);
       } else if (mode === 'error') {
         x.fillStyle = '#0a0f1e'; x.fillRect(0, 0, W, H);
         x.fillStyle = '#ef4444';
@@ -750,64 +749,79 @@ export function buildPcModel() {
         if (names[1]) x.fillText(names.slice(1).join(', '), 256, 236);
         x.fillStyle = '#94a3b8';
         x.fillText('Instala todas las piezas', 256, 272);
-      } else { // windows 11: fondo Bloom + barra de tareas con sus iconos de verdad
+      } else { // windows 11 modo claro: NVISION de fondo + iconos chicos y ordenados + barra blanca
+        // fondo: NVISION como wallpaper (azul con desvanecido negro, como la página)
         const g = x.createLinearGradient(0, 0, 0, H);
-        g.addColorStop(0, '#0b2a6b'); g.addColorStop(0.5, '#0a3d91'); g.addColorStop(1, '#081a3d');
+        g.addColorStop(0, '#000000'); g.addColorStop(0.55, '#050a14'); g.addColorStop(1, '#0a1628');
         x.fillStyle = g; x.fillRect(0, 0, W, H);
-        const petal = (cx, cy, rx, ry, color) => {
-          const pg = x.createRadialGradient(cx, cy, 2, cx, cy, Math.max(rx, ry));
-          pg.addColorStop(0, color); pg.addColorStop(1, 'rgba(0,0,0,0)');
-          x.fillStyle = pg;
-          x.beginPath(); x.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2); x.fill();
+        const glow = x.createRadialGradient(256, 118, 10, 256, 118, 150);
+        glow.addColorStop(0, 'rgba(37,99,235,0.35)'); glow.addColorStop(1, 'rgba(37,99,235,0)');
+        x.fillStyle = glow; x.fillRect(0, 0, W, H);
+        const lg = x.createLinearGradient(150, 0, 362, 0);
+        lg.addColorStop(0, '#2563eb'); lg.addColorStop(1, '#06b6d4');
+        x.fillStyle = lg;
+        x.shadowColor = 'rgba(37,99,235,0.7)'; x.shadowBlur = 18;
+        x.font = 'bold 52px sans-serif';
+        x.fillText('NVISION', 256, 122);
+        x.shadowBlur = 0;
+        x.fillStyle = '#64748b'; x.font = '15px sans-serif';
+        x.fillText('PC BUILDING', 256, 148);
+        // iconos del escritorio estilo Windows 11: chicos (24 px), en columna a la
+        // izquierda, con su nombre debajo y hueco entre uno y otro (no pegados)
+        x.textAlign = 'center';
+        const deskIcon = (cy, label, draw) => {
+          draw(40, cy);
+          x.fillStyle = '#ffffff';
+          x.shadowColor = 'rgba(0,0,0,0.6)'; x.shadowBlur = 3;
+          x.font = '12px sans-serif';
+          x.fillText(label, 40, cy + 38);
+          x.shadowBlur = 0;
         };
-        petal(300, 124, 110, 68, 'rgba(96,165,250,0.75)');
-        petal(210, 160, 90, 60, 'rgba(56,189,248,0.6)');
-        petal(370, 170, 80, 52, 'rgba(147,140,250,0.55)');
-        petal(256, 90, 60, 40, 'rgba(125,211,252,0.6)');
-        // iconos del escritorio: Este equipo, Papelera y carpeta NVISION
-        x.textAlign = 'left';
-        x.fillStyle = '#3b82f6'; x.fillRect(24, 24, 32, 22); // monitor
-        x.fillStyle = '#93c5fd'; x.fillRect(36, 46, 8, 6); x.fillRect(28, 52, 24, 4);
-        x.fillStyle = '#ffffff'; x.font = '18px sans-serif'; x.fillText('Este equipo', 64, 44);
-        x.fillStyle = '#9ca3af'; // papelera
-        x.beginPath(); x.moveTo(26, 88); x.lineTo(54, 88); x.lineTo(50, 120); x.lineTo(30, 120); x.closePath(); x.fill();
-        x.fillStyle = '#d1d5db'; x.fillRect(24, 84, 32, 4);
-        x.fillStyle = '#ffffff'; x.fillText('Papelera', 64, 112);
-        x.fillStyle = '#fbbf24'; x.fillRect(24, 140, 32, 22); // carpeta NVISION
-        x.fillStyle = '#f59e0b'; x.fillRect(24, 140, 12, 6);
-        x.fillStyle = '#ffffff'; x.fillText('NVISION', 64, 158);
-        // barra de tareas de ancho completo, iconos centrados, reloj a la derecha
-        x.fillStyle = 'rgba(13,20,36,0.85)'; x.fillRect(0, 248, W, 40);
-        x.fillStyle = 'rgba(255,255,255,0.14)'; x.fillRect(0, 248, W, 2);
-        x.fillStyle = '#00adef'; // Inicio (4 cuadros)
-        x.fillRect(168, 256, 10, 10); x.fillRect(180, 256, 10, 10);
-        x.fillRect(168, 268, 10, 10); x.fillRect(180, 268, 10, 10);
-        x.strokeStyle = '#e5e7eb'; x.lineWidth = 2.4; // Buscar (lupa)
-        x.beginPath(); x.arc(208, 262, 6, 0, Math.PI * 2); x.stroke();
-        x.beginPath(); x.moveTo(212.5, 266.5); x.lineTo(218, 272); x.stroke();
-        x.strokeRect(228, 256, 14, 10); x.strokeRect(234, 262, 14, 10); // Vista de tareas
-        x.strokeStyle = '#e5e7eb'; x.lineWidth = 2; // Widgets
-        x.strokeRect(256, 256, 20, 16);
-        x.beginPath(); x.moveTo(266, 256); x.lineTo(266, 272); x.stroke();
-        x.fillStyle = '#fbbf24'; x.fillRect(284, 258, 20, 14); // Explorador (carpeta amarilla)
-        x.fillStyle = '#f59e0b'; x.fillRect(284, 258, 8, 4);
-        const eg = x.createLinearGradient(308, 256, 328, 276); // Edge (círculo azul-verde)
+        deskIcon(24, 'Este equipo', (ix, iy) => { // monitor chico
+          x.fillStyle = '#3b82f6'; x.fillRect(ix - 12, iy - 9, 24, 16);
+          x.fillStyle = '#93c5fd'; x.fillRect(ix - 3, iy + 7, 6, 4);
+          x.fillStyle = '#60a5fa'; x.fillRect(ix - 9, iy + 11, 18, 2);
+        });
+        deskIcon(92, 'Papelera', (ix, iy) => {
+          x.fillStyle = '#9ca3af';
+          x.beginPath(); x.moveTo(ix - 10, iy - 6); x.lineTo(ix + 10, iy - 6); x.lineTo(ix + 8, iy + 10); x.lineTo(ix - 8, iy + 10); x.closePath(); x.fill();
+          x.fillStyle = '#d1d5db'; x.fillRect(ix - 12, iy - 10, 24, 3);
+        });
+        deskIcon(160, 'NVISION', (ix, iy) => { // carpeta amarilla
+          x.fillStyle = '#fbbf24'; x.fillRect(ix - 12, iy - 8, 24, 16);
+          x.fillStyle = '#f59e0b'; x.fillRect(ix - 12, iy - 8, 9, 4);
+        });
+        // barra de tareas MODO CLARO: blanca, iconos oscuros centrados, reloj a la derecha
+        x.fillStyle = 'rgba(243,243,243,0.94)'; x.fillRect(0, 248, W, 40);
+        x.fillStyle = 'rgba(0,0,0,0.08)'; x.fillRect(0, 248, W, 1);
+        x.fillStyle = '#0078d4'; // Inicio (4 cuadros)
+        x.fillRect(176, 258, 8, 8); x.fillRect(186, 258, 8, 8);
+        x.fillRect(176, 268, 8, 8); x.fillRect(186, 268, 8, 8);
+        x.strokeStyle = '#1f2937'; x.lineWidth = 2; // Buscar (lupa)
+        x.beginPath(); x.arc(210, 263, 5, 0, Math.PI * 2); x.stroke();
+        x.beginPath(); x.moveTo(214, 267); x.lineTo(219, 272); x.stroke();
+        x.strokeRect(228, 258, 12, 9); x.strokeRect(233, 263, 12, 9); // Vista de tareas
+        x.strokeRect(254, 258, 18, 14); // Widgets
+        x.beginPath(); x.moveTo(263, 258); x.lineTo(263, 272); x.stroke();
+        x.fillStyle = '#fbbf24'; x.fillRect(280, 260, 18, 12); // Explorador (carpeta amarilla)
+        x.fillStyle = '#f59e0b'; x.fillRect(280, 260, 7, 3);
+        const eg = x.createLinearGradient(304, 258, 322, 276); // Edge (círculo azul-verde)
         eg.addColorStop(0, '#0ea5e9'); eg.addColorStop(1, '#10b981');
-        x.fillStyle = eg; x.beginPath(); x.arc(318, 266, 10, 0, Math.PI * 2); x.fill();
-        x.fillStyle = '#e5e7eb'; x.fillRect(336, 258, 16, 14); // Store (bolsa)
-        x.strokeStyle = '#e5e7eb'; x.lineWidth = 2; x.beginPath(); x.arc(344, 258, 5, Math.PI, 0); x.stroke();
-        x.strokeStyle = '#e5e7eb'; x.lineWidth = 2; // Wi-Fi, volumen y batería
-        x.beginPath(); x.arc(436, 272, 10, Math.PI * 1.25, Math.PI * 1.75); x.stroke();
-        x.beginPath(); x.arc(436, 272, 6, Math.PI * 1.25, Math.PI * 1.75); x.stroke();
-        x.fillStyle = '#e5e7eb'; x.beginPath(); x.arc(436, 272, 2, 0, Math.PI * 2); x.fill();
-        x.fillStyle = '#e5e7eb';
-        x.beginPath(); x.moveTo(452, 258); x.lineTo(452, 274); x.lineTo(460, 270); x.lineTo(460, 262); x.closePath(); x.fill();
-        x.fillRect(461, 265, 5, 4);
-        x.strokeStyle = '#e5e7eb'; x.lineWidth = 2; x.strokeRect(472, 260, 14, 10);
-        x.fillStyle = '#e5e7eb'; x.fillRect(474, 262, 9, 6); x.fillRect(487, 263, 2, 4);
-        x.fillStyle = '#e5e7eb'; x.font = '15px sans-serif'; x.textAlign = 'right';
-        x.fillText('20:31', 500, 264);
-        x.fillText('05/11/2026', 500, 282);
+        x.fillStyle = eg; x.beginPath(); x.arc(313, 267, 9, 0, Math.PI * 2); x.fill();
+        x.fillStyle = '#1f2937'; x.fillRect(330, 260, 14, 12); // Store (bolsa)
+        x.strokeStyle = '#f3f3f3'; x.lineWidth = 1.5; x.beginPath(); x.arc(337, 260, 4, Math.PI, 0); x.stroke();
+        x.strokeStyle = '#1f2937'; x.lineWidth = 1.8; // Wi-Fi, volumen y batería (oscuros)
+        x.beginPath(); x.arc(418, 273, 9, Math.PI * 1.25, Math.PI * 1.75); x.stroke();
+        x.beginPath(); x.arc(418, 273, 5.5, Math.PI * 1.25, Math.PI * 1.75); x.stroke();
+        x.fillStyle = '#1f2937'; x.beginPath(); x.arc(418, 273, 1.8, 0, Math.PI * 2); x.fill();
+        x.fillStyle = '#1f2937';
+        x.beginPath(); x.moveTo(434, 260); x.lineTo(434, 274); x.lineTo(441, 270); x.lineTo(441, 264); x.closePath(); x.fill();
+        x.fillRect(442, 266, 4, 3);
+        x.strokeStyle = '#1f2937'; x.lineWidth = 1.8; x.strokeRect(450, 261, 12, 9);
+        x.fillStyle = '#1f2937'; x.fillRect(452, 263, 8, 5); x.fillRect(463, 264, 2, 3);
+        x.fillStyle = '#1f2937'; x.font = '13px sans-serif'; x.textAlign = 'right';
+        x.fillText('20:31', 505, 265);
+        x.fillText('05/11/2026', 505, 281);
       }
       screenTex.needsUpdate = true;
     }
@@ -851,20 +865,21 @@ export function buildPcModel() {
     const mouse = box(1.2, 0.08, 0.6, darkMetal);
     padd(mouse, 1.6, 0.04, 2.4); mouse.rotation.y = -0.2;
     // cosas sueltas del taller sobre el escritorio (en el centro, atrás: fuera del
-    // camino de las piezas que salen hacia +X y de la torre, que está a la derecha)
+    // camino de las piezas que salen hacia +Z y de la torre, que con el giro de 90°
+    // ocupa x 1.5..5.5 y z -1.1..1.1: nada puede pisar ese rectángulo)
     const spareFan = makeFan(0.55, 0x22d3ee, false); // de repuesto, sin corriente no gira
     spareFan.rotation.x = -Math.PI / 2;
-    spareFan.position.set(0.5, 0.15, -2.5);
+    spareFan.position.set(-0.5, 0.15, -2.5);
     env.add(spareFan);
-    add(box(0.9, 0.6, 0.7, mat(0x9a7b4f, { metal: 0.1, rough: 0.85 })), 1.8, 0.3, -1.2);
+    add(box(0.9, 0.6, 0.7, mat(0x9a7b4f, { metal: 0.1, rough: 0.85 })), 0.8, 0.3, -2.4);
     const smallBox = box(0.6, 0.4, 0.5, mat(0x9a7b4f, { metal: 0.1, rough: 0.85 }));
     add(smallBox, -0.6, 0.2, -1.2); smallBox.rotation.y = 0.4;
     const screwHandle = cyl(0.05, 0.05, 0.35, mat(0xdc2626, { metal: 0.3, rough: 0.5 }), 12);
     screwHandle.rotation.z = Math.PI / 2;
-    add(screwHandle, -1.5, 0.05, -2.8);
+    add(screwHandle, -1.8, 0.05, -2.8);
     const screwShaft = cyl(0.02, 0.02, 0.4, METAL_MAT, 8);
     screwShaft.rotation.z = Math.PI / 2;
-    add(screwShaft, -1.15, 0.05, -2.8);
+    add(screwShaft, -1.45, 0.05, -2.8);
     const mugMat = mat(0xdc2626, { metal: 0.2, rough: 0.5 }); // pocillo rojo, que se vea sobre el escritorio
     add(cyl(0.09, 0.09, 0.22, mugMat, 16), -5.5, 0.11, -1.0);
     const mugHandle = new THREE.Mesh(new THREE.TorusGeometry(0.07, 0.015, 8, 20), mugMat);
