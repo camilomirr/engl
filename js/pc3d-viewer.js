@@ -197,6 +197,7 @@ function init() {
   guidePulse.visible = false;
   scene.add(guidePulse);
   const pulseV = new THREE.Vector3();
+  const guideHomeV = new THREE.Vector3(); // el sitio en MUNDO, para el pulso (la base es local a la torre)
   const homeMarker = new THREE.Mesh(
     new THREE.TorusGeometry(0.34, 0.04, 10, 40),
     new THREE.MeshBasicMaterial({ color: 0xef4444, transparent: true, opacity: 0.9 })
@@ -383,6 +384,7 @@ function init() {
     // y la base es local a la torre (que está en x=3.5 y girada): sin convertirla,
     // la distancia salía siempre mayor que 3.5 y la guía nunca se ponía verde
     const home = tower.localToWorld(g.userData.base.clone());
+    guideHomeV.copy(home); // el pulso viaja hasta aquí: en MUNDO, como la línea y el marcador
     g.getWorldPosition(guideV);
     const pos = guideGeo.attributes.position;
     pos.setXYZ(0, guideV.x, guideV.y, guideV.z);
@@ -932,7 +934,10 @@ function init() {
       const g = partGroups[dragId];
       g.getWorldPosition(pulseV);
       const k = (elapsed * 1.2) % 1;
-      guidePulse.position.lerpVectors(pulseV, g.userData.base, k);
+      // de la pieza (mundo) a su sitio (MUNDO): antes iba a g.userData.base, que es
+      // local a la torre, y la bolita salía volando hacia el origen, sin nada que ver
+      // con la pieza ni con su sitio
+      guidePulse.position.lerpVectors(pulseV, guideHomeV, k);
       guidePulse.material.color.copy(guideMat.color);
       guidePulse.visible = true;
     } else {
