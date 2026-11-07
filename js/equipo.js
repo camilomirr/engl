@@ -83,7 +83,7 @@ function renderTasks() {
         ? '<div class="eq-msg eq-msg-muse"><strong>Muse</strong><p>' + esc(result || 'Listo.') + '</p>' + (commit ? '<span class="eq-commit">Cambio: ' + esc(commit) + '</span>' : '') + '</div>'
         : (t.status === 'proceso'
           ? '<div class="eq-msg eq-msg-muse eq-typing"><strong>Muse</strong><p>Estoy trabajando en esto…</p></div>'
-          : '<div class="eq-msg eq-msg-muse eq-typing"><strong>Muse</strong><p>Lo vi, ya lo reviso…</p></div>');
+          : '<div class="eq-msg eq-msg-muse eq-typing"><strong>Muse</strong><p>Recibido. Muse lo revisa en unos minutos y te responde aquí mismo.</p></div>');
       return '<div class="eq-chat-thread">' +
         '<div class="eq-msg eq-msg-user"><strong>' + esc(t.name) + '</strong><p>' + esc(t.task) + '</p>' +
         '<span class="eq-meta">' + esc(t.page || 'Otra') + ' · ' + esc(fmtHora(t.created_at)) + (done ? ' · ✓' : '') + '</span></div>' +
