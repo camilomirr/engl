@@ -65,6 +65,8 @@
 .eq-msg-done { background: #dcfce7; border-color: #86efac; }
 .eq-msg-done strong { color: #15803d; }
 .eq-commit { display: block; margin-top: 0.3rem; font-size: 0.85rem; color: #15803d; font-family: ui-monospace, monospace; }
+/* Aviso naranja al final de cada respuesta con cambio: recargar para verlo. */
+.eq-reload { display: block; margin-top: 0.45rem; color: #ea580c; font-size: 0.72rem; font-weight: 700; }
 .eq-typing p { color: var(--text-muted, #64748b); font-style: italic; }
 
 /* Barra para escribir */

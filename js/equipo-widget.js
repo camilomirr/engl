@@ -155,7 +155,7 @@
         var result = (t.result || '').trim();
         var commit = (t.commit_sha || '').trim();
         var museBubble = done
-          ? '<div class="eq-msg eq-msg-muse eq-msg-done"><strong>Muse ✓ Listo</strong><p>' + esc(result || 'Listo.') + '</p>' + (commit ? '<span class="eq-commit">Cambio: ' + esc(commit) + '</span>' : '') + '</div>'
+          ? '<div class="eq-msg eq-msg-muse eq-msg-done"><strong>Muse ✓ Listo</strong><p>' + esc(result || 'Listo.') + '</p>' + (commit ? '<span class="eq-commit">Cambio: ' + esc(commit) + '</span><span class="eq-reload">Recarga la página con Ctrl+Shift+R para ver los cambios aplicados.</span>' : '') + '</div>'
           : (t.status === 'proceso'
             ? '<div class="eq-msg eq-msg-muse eq-typing"><strong>Muse</strong><p>Estoy trabajando en esto<span class="eq-dots"><i></i><i></i><i></i></span></p></div>'
             : '<div class="eq-msg eq-msg-muse eq-typing"><strong>Muse</strong><p>Recibido. Muse lo revisa en unos minutos y te responde aquí mismo.</p></div>');
