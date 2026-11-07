@@ -288,7 +288,7 @@ const translations = {
 
     // Glosario
     glos_title: "Glosario Técnico de Redes y Computación",
-    glos_desc: "Conceptos esenciales en inglés técnico para la comunicación en redes y arquitectura de sistemas.",
+    glos_desc: "36 conceptos esenciales de redes, hardware y mantenimiento, con buscador, filtros por tema y modo tarjetas para repasar.",
     term_throughput: "Throughput (Tasa de transferencia efectiva)",
     desc_throughput: "Volumen real de datos transferidos con éxito entre dos puntos de la red en un intervalo de tiempo.",
     term_bandwidth: "Bandwidth (Ancho de banda)",
@@ -1031,7 +1031,7 @@ const translations = {
 
     // Glossary
     glos_title: "Technical Glossary (Networks & Hardware)",
-    glos_desc: "Core English terminology essential for computer architecture and network engineering.",
+    glos_desc: "36 core terms on networks, hardware and maintenance, with search, topic filters and a flashcard mode for review.",
     term_throughput: "Throughput",
     desc_throughput: "Actual amount of data successfully transferred across a network link within a specific timeframe.",
     term_bandwidth: "Bandwidth",

@@ -252,3 +252,40 @@
 .detect-row { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; font-size: 0.9rem; }
 .detect-row span { color: var(--text-secondary); }
 .detect-row strong { color: var(--text-primary); font-family: 'JetBrains Mono', monospace; font-weight: 600; text-align: right; word-break: break-word; }
+
+/* Glosario ampliado: buscador, filtros, contador y modo tarjetas */
+.glossary-controls { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 0.9rem; }
+.glossary-search {
+  flex: 1; min-width: 220px; padding: 0.65rem 0.9rem;
+  border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);
+  background: var(--bg-card); color: var(--text-primary); font-size: 0.95rem;
+}
+.glossary-btn {
+  padding: 0.65rem 1rem; border-radius: var(--radius-sm); cursor: pointer;
+  border: 1px solid var(--border-subtle); background: var(--bg-card);
+  color: var(--text-primary); font-size: 0.9rem; font-weight: 600; transition: var(--transition);
+}
+.glossary-btn:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+.glossary-btn.active, .glossary-btn-primary { background: var(--accent-blue, #2563eb); border-color: var(--accent-blue, #2563eb); color: #fff; }
+.glossary-count { color: var(--text-secondary); font-size: 0.9rem; margin: 0 0 1rem; }
+.glossary-tag {
+  display: inline-block; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.04em;
+  text-transform: uppercase; color: var(--accent-cyan);
+  border: 1px solid var(--border-subtle); border-radius: 9999px;
+  padding: 0.15rem 0.6rem; margin-bottom: 0.6rem;
+}
+.glossary-ej { color: var(--text-muted, var(--text-secondary)); font-size: 0.88rem; line-height: 1.55; margin-top: 0.55rem; }
+.glossary-flash { text-align: center; max-width: 560px; margin: 0 auto; }
+.glossary-flash[hidden] { display: none; }
+.glossary-fc {
+  background: var(--bg-card); border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md); min-height: 220px; padding: 2rem;
+  cursor: pointer; display: flex; flex-direction: column; justify-content: center;
+  box-shadow: var(--shadow-sm);
+}
+.glossary-fc-front { font-size: 1.6rem; font-weight: 700; color: var(--text-primary); }
+.glossary-fc-back { font-size: 1rem; line-height: 1.55; color: var(--text-secondary); }
+.glossary-fc-back strong { color: var(--text-primary); font-size: 1.15rem; }
+.glossary-fc-back .e { color: var(--text-muted, var(--text-secondary)); font-size: 0.9rem; }
+.glossary-flash-nav { display: flex; gap: 0.6rem; justify-content: center; margin-top: 1rem; flex-wrap: wrap; }
+.glossary-flash-hint { color: var(--text-muted, var(--text-secondary)); font-size: 0.88rem; margin-top: 0.9rem; }
