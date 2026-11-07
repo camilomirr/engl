@@ -33,10 +33,6 @@
     try { return new Date(iso).toLocaleString('es-CO', { timeZone: 'America/Bogota', hour: '2-digit', minute: '2-digit' }); }
     catch (e) { return ''; }
   }
-  function initials(name) {
-    var parts = String(name || '?').trim().split(/\s+/);
-    return (parts[0][0] || '?').toUpperCase() + (parts.length > 1 ? (parts[parts.length - 1][0] || '').toUpperCase() : '');
-  }
 
   var lastRows = [];
   var view = 'picker'; // 'picker' | 'chat'
@@ -107,7 +103,7 @@
         : 'Sin mensajes todavía.';
       var mine = n === name;
       return '<button type="button" class="eq-chat-row eqw-row' + (mine ? ' eqw-row-current' : '') + '" data-name="' + esc(n) + '">' +
-        '<span class="eq-avatar">' + esc(initials(n)) + '</span>' +
+        '<img src="assets/muse-logo.webp" alt="" class="eqw-row-logo">' +
         '<span class="eq-row-main"><strong>' + esc(n) + (mine ? ' <span class="eqw-you">· Tu chat</span>' : '') + '</strong>' +
         '<span class="eq-row-preview">' + esc(preview) + '</span></span>' +
         '<span class="eq-row-side">' + (when ? '<span class="eq-row-time">' + esc(when) + '</span>' : '') +

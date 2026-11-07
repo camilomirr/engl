@@ -169,3 +169,9 @@
 
 /* Aviso de error al enviar en el mini chatbot (antes se tragaba el error) */
 .eqw-status { margin: 0; padding: 0.2rem 0.8rem 0.6rem; font-size: 0.8rem; color: #dc2626; background: #fff; min-height: 0.4rem; }
+
+/* La barra de escribir NO debe verse sin haber escogido nombre: el display:flex
+   del CSS pisaba el atributo hidden; esta regla lo corrige. */
+.eqw-inputbar[hidden] { display: none; }
+/* Logo de Muse en cada fila de nombres, en vez de los círculos azules con letras */
+.eqw-row-logo { width: 46px; height: 46px; flex: 0 0 46px; border-radius: 12px; object-fit: cover; box-shadow: 0 2px 8px rgba(2, 8, 23, 0.15); }
