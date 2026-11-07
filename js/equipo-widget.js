@@ -167,11 +167,17 @@
     renderFabBadge();
   }
 
+  // Si se abre el asistente del sitio, este chatbot se cierra (y viceversa).
+  window.addEventListener('nvision-chat-open', function (e) {
+    if (e.detail && e.detail.which === 'assistant' && open) setOpen(false);
+  });
+
   function setOpen(v) {
     open = v;
     localStorage.setItem('eqw_open', v ? '1' : '0');
     panel.hidden = !v;
     if (v) {
+      window.dispatchEvent(new CustomEvent('nvision-chat-open', { detail: { which: 'equipo' } }));
       // Al abrir el botón, SIEMPRE salen primero los nombres.
       renderPicker();
       renderFabBadge();

@@ -3540,11 +3540,19 @@ function setupLocalAssistant() {
 
   /* ===== Abrir / cerrar y primer saludo ===== */
   let greeted = false;
+  // Si se abre el chatbot del equipo, este se cierra (y viceversa).
+  window.addEventListener('nvision-chat-open', (e) => {
+    if (e.detail && e.detail.which === 'equipo' && !panel.hidden) {
+      panel.hidden = true;
+      toggle.setAttribute('aria-expanded', 'false');
+    }
+  });
   toggle.addEventListener('click', () => {
     const isOpen = !panel.hidden;
     panel.hidden = isOpen;
     toggle.setAttribute('aria-expanded', String(!isOpen));
     if (!isOpen) {
+      window.dispatchEvent(new CustomEvent('nvision-chat-open', { detail: { which: 'assistant' } }));
       renderChips();
       if (!greeted) { greeted = true; say(KB[0].r[L()], null, null, null); }
       input.focus();
