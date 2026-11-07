@@ -1,4 +1,4 @@
-/* Chat del equipo NVISION con Muse (equipo.html) — estilo app de chat */
+/* Chat del equipo NVISION con Muse — mini chatbot flotante en todas las páginas */
 .equipo-wrap { max-width: 860px; margin: 0 auto; padding: 2rem 1rem 3rem; }
 .equipo-intro { color: var(--text-muted, #64748b); margin: 0.5rem 0 1.5rem; line-height: 1.6; }
 .equipo-loading { color: var(--text-muted, #64748b); }
@@ -133,3 +133,7 @@
 @media (max-width: 480px) {
   .eqw-body { max-height: 50vh; }
 }
+
+/* Nombre propio marcado en la lista del mini chatbot */
+.eqw-row-current { border-color: #22c55e; box-shadow: inset 0 0 0 1px #22c55e; }
+.eqw-you { font-size: 0.72rem; color: #15803d; font-weight: 700; }
