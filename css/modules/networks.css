@@ -1147,7 +1147,6 @@
   box-shadow:
     0 4px 14px rgba(0, 0, 0, 0.5),
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  min-height: 290px;
   cursor: pointer;
 }
 
@@ -1165,36 +1164,53 @@
   opacity: 0.6;
 }
 
-/* -- SVG circuito de fondo -- */
-.nv-card-circuit {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 0;
-  transition: opacity 0.35s ease;
-  opacity: 0.65;
+/* -- Foto superior de la tarjeta -- */
+.nv-card-media {
+  position: relative;
+  z-index: 1;
+  height: 190px;
+  overflow: hidden;
+  flex-shrink: 0;
 }
 
-/* -- Ícono técnico (Diseño limpio y sobrio) -- */
-.nv-card-icon {
-  position: relative;
+.nv-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Degradado inferior para que el chip del ícono se lea bien */
+.nv-card-media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(4, 10, 20, 0) 55%, rgba(4, 10, 20, 0.55) 100%);
+  pointer-events: none;
+}
+
+/* -- Chip con el ícono técnico sobre la foto -- */
+.nv-card-chip {
+  position: absolute;
+  left: 1.25rem;
+  bottom: 1rem;
   z-index: 2;
-  width: 44px;
-  height: 44px;
-  margin: 1.75rem 0 0 1.75rem;
+  width: 46px;
+  height: 46px;
   color: var(--accent-cyan);
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
-  background: rgba(56, 189, 248, 0.06);
-  border: 1px solid rgba(56, 189, 248, 0.18);
+  border-radius: 10px;
+  background: rgba(9, 14, 24, 0.72);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(56, 189, 248, 0.35);
   transition: all 0.25s ease;
 }
 
-.nv-card-icon svg {
+.nv-card-chip svg {
   width: 24px;
   height: 24px;
   display: block;
@@ -1204,7 +1220,7 @@
 .nv-card-body {
   position: relative;
   z-index: 2;
-  padding: 1.25rem 1.75rem 0;
+  padding: 1.35rem 1.5rem 0;
   display: flex;
   flex-direction: column;
   gap: 0.55rem;
@@ -1235,9 +1251,18 @@
   z-index: 2;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  padding: 1rem 1.75rem 1.5rem;
+  justify-content: space-between;
+  padding: 1rem 1.5rem 1.4rem;
   margin-top: auto;
+}
+
+.nv-card-cta {
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-cyan);
+  transition: color 0.25s ease;
 }
 
 .nv-card-arrow {
@@ -1287,10 +1312,18 @@
   width: 100%;
 }
 
-.nv-card:hover .nv-card-icon {
-  background: rgba(56, 189, 248, 0.12);
+.nv-card:hover .nv-card-media img {
+  transform: scale(1.07);
+}
+
+.nv-card:hover .nv-card-chip {
+  background: rgba(56, 189, 248, 0.16);
   border-color: var(--accent-cyan);
   color: #38bdf8;
+}
+
+.nv-card:hover .nv-card-cta {
+  color: #7dd3fc;
 }
 
 .nv-card:hover .nv-card-title {
@@ -1307,10 +1340,6 @@
   background: var(--accent-cyan);
   transform: translateX(4px);
   box-shadow: 0 0 12px rgba(56, 189, 248, 0.5);
-}
-
-.nv-card:hover .nv-card-circuit {
-  opacity: 1;
 }
 
 .nv-card:hover::after {
@@ -1343,11 +1372,15 @@
   color: #64748b;
 }
 
-[data-theme="light"] .nv-card-icon {
-  background: #f1f5f9;
+[data-theme="light"] .nv-card-chip {
+  background: rgba(255, 255, 255, 0.88);
   border: 1px solid #e2e8f0;
   color: #0284c7;
-  box-shadow: none;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12);
+}
+
+[data-theme="light"] .nv-card-cta {
+  color: #0284c7;
 }
 
 [data-theme="light"] .nv-card-arrow {
@@ -1372,7 +1405,7 @@
   color: #334155;
 }
 
-[data-theme="light"] .nv-card:hover .nv-card-icon {
+[data-theme="light"] .nv-card:hover .nv-card-chip {
   background: #e0f2fe;
   border-color: #38bdf8;
   color: #0284c7;
@@ -1391,6 +1424,10 @@
   .nv-cards-grid {
     grid-template-columns: 1fr;
     gap: 1.25rem;
+  }
+
+  .nv-card-media {
+    height: 170px;
   }
 
   .nv-card-title {
