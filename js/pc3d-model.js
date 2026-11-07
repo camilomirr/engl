@@ -938,9 +938,10 @@ export function buildPcModel() {
     const ledStrip = new THREE.Mesh(new THREE.BoxGeometry(19.6, 0.05, 0.05),
       new THREE.MeshBasicMaterial({ color: 0x22d3ee }));
     add(ledStrip, 0, -0.43, 4.4); // bajo el borde frontal del tablero, a la vista
-    // patas de panel: del suelo (y=-2.6) a la cara inferior del tablero (y=-0.4)
-    add(box(0.5, 2.2, 7, darkMetal), -9.5, -1.5, 0.5);
-    add(box(0.5, 2.2, 7, darkMetal), 9.5, -1.5, 0.5);
+    // patas de panel: del suelo (y=-2.6) a la cara inferior del tablero (y=-0.4).
+    // Son de madera como el tablero, para que el escritorio sea todo de madera.
+    add(box(0.5, 2.2, 7, woodMat), -9.5, -1.5, 0.5);
+    add(box(0.5, 2.2, 7, woodMat), 9.5, -1.5, 0.5);
     // bandeja para cables bajo el tablero, junto al borde trasero
     add(box(14, 0.12, 0.8, darkMetal), 0, -0.55, -3.0);
     // cajonera bajo el tablero, a la derecha y cerca del borde frontal
@@ -955,6 +956,10 @@ export function buildPcModel() {
     // escritorio (antes se veía a través, como un vidrio) para que el
     // escritorio sea todo de madera; la tira LED queda por delante, a la vista
     add(box(18.4, 2.2, 0.1, woodMat), 0, -1.5, 4.3);
+    // panel de madera bajo el borde TRASERO: el hueco del medio también se veía
+    // a través por detrás (eso era el "vidrio" que quedaba); con los dos paneles
+    // y las patas de madera el escritorio queda cerrado por los 4 lados, full madera
+    add(box(18.4, 2.2, 0.1, woodMat), 0, -1.5, -3.3);
     // monitor + teclado sobre el escritorio, a la izquierda de la torre
     // pantalla del monitor: off = apagada, boot = logo y puntos de carga,
     // windows = escritorio, error = falta una pieza (detail = nombre de la pieza)
@@ -1344,6 +1349,23 @@ export function buildPcModel() {
     makeGamerTower(34.2, 2.1, -12, 0, 0x22d3ee); // gamer en reparación, SOBRE el banco (cristal al cuarto)
     makeGamerTower(12.5, -0.5, -2.5, 0, 0xa855f7); // gamer en el piso, junto al escritorio: se ve al abrir el visor
     makeGamerTower(-33, -0.5, 3.5, Math.PI / 2, 0xec4899); // gamer junto a la estantería de la pared izquierda
+    // ===== AÚN MÁS PCs (a pedido de Camilo: "pc por todas partes, es un taller") =====
+    // otra gamer SOBRE el banco, en el otro extremo (el banco va de z -14 a 2)
+    makeGamerTower(34.2, 2.1, 0, 0, 0x3b82f6);
+    // fila de 4 gamers pegadas a la pared trasera (z -20..-16, cristal y RGB al cuarto)
+    makeGamerTower(-25, -0.5, -18, 0, 0x22c55e);
+    makeGamerTower(-15, -0.5, -18, 0, 0xf59e0b);
+    makeGamerTower(15, -0.5, -18, 0, 0xef4444);
+    makeGamerTower(25, -0.5, -18, 0, 0x06b6d4);
+    // fila de 3 gamers pegadas a la pared frontal (z 16..20, mirando al cuarto)
+    makeGamerTower(-2, -0.5, 18, Math.PI, 0xf97316);
+    makeGamerTower(6, -0.5, 18, Math.PI, 0x14b8a6);
+    makeGamerTower(14, -0.5, 18, Math.PI, 0x8b5cf6);
+    // dos torres en espera más, junto a las que ya hay (bloque de 2×2)
+    [[24, 8], [24, 12.5]].forEach(([tx, tz]) => {
+      add(box(1.6, 4.2, 4.0, mat(0x1f2937, { metal: 0.7, rough: 0.35 })), tx, -0.5, tz);
+      add(box(0.1, 3.6, 3.4, mat(0x111827, { metal: 0.5, rough: 0.4 })), tx - 0.78, -0.5, tz); // lateral quitado: se ve el interior oscuro
+    });
     // --- más herramientas sobre el banco de trabajo ---
     // prensa / tornillo de banco en la esquina del banco, junto a los destornilladores
     add(box(0.7, 0.25, 0.9, darkMetal), 35.2, 0.13, -5.5);
