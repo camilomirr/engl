@@ -1321,6 +1321,139 @@ export function buildPcModel() {
     add(cyl(0.18, 0.18, 0.9, mat(0xdc2626, { metal: 0.4, rough: 0.4 }), 16), 35.85, -1.4, 8.5);
     add(cyl(0.05, 0.05, 0.25, mat(0x111827, { metal: 0.4, rough: 0.5 }), 8), 35.85, -0.88, 8.5);
     add(box(0.06, 0.5, 0.3, darkMetal), 35.95, -1.4, 8.5); // soporte a la pared
+    // ===== MÁS TALLER (a pedido de Camilo): más PCs gamers, más herramientas
+    // y más cosas de taller, para que la habitación se sienta un taller de
+    // verdad y no un cuarto con un banco. Todo dentro del cuarto (x -36..36,
+    // z -20..20) y sin pisar el escritorio principal ni la zona de las piezas.
+    const makeGamerTower = (x, y, z, ry, rgb) => { // torre gamer con cristal y RGB
+      const g = new THREE.Group();
+      const body = box(1.6, 4.2, 4.0, mat(0x111827, { metal: 0.7, rough: 0.35 }));
+      g.add(body);
+      const glass = box(0.04, 3.6, 3.4, mat(0x94a3b8, { metal: 0.9, rough: 0.1 })); // cristal templado
+      glass.position.set(-0.82, 0, 0); g.add(glass);
+      const strip = new THREE.Mesh(new THREE.BoxGeometry(0.08, 3.8, 0.08),
+        new THREE.MeshBasicMaterial({ color: rgb })); // tira RGB frontal
+      strip.position.set(0.72, 0, 2.02); g.add(strip);
+      [-1.2, 0, 1.2].forEach((fy) => { // 3 ventiladores con aro de color en el frontal
+        const fan = makeFan(0.55, rgb, false);
+        fan.position.set(0, fy, 2.02); g.add(fan);
+      });
+      g.position.set(x, y, z); g.rotation.y = ry; env.add(g);
+      return g;
+    };
+    makeGamerTower(34.2, 2.1, -12, 0, 0x22d3ee); // gamer en reparación, SOBRE el banco (cristal al cuarto)
+    makeGamerTower(12.5, -0.5, -2.5, 0, 0xa855f7); // gamer en el piso, junto al escritorio: se ve al abrir el visor
+    makeGamerTower(-33, -0.5, 3.5, Math.PI / 2, 0xec4899); // gamer junto a la estantería de la pared izquierda
+    // --- más herramientas sobre el banco de trabajo ---
+    // prensa / tornillo de banco en la esquina del banco, junto a los destornilladores
+    add(box(0.7, 0.25, 0.9, darkMetal), 35.2, 0.13, -5.5);
+    add(box(0.7, 0.5, 0.15, darkMetal), 35.2, 0.35, -5.95); // mordaza fija
+    add(box(0.7, 0.5, 0.15, darkMetal), 35.2, 0.35, -5.15); // mordaza móvil
+    const viseScrew = cyl(0.05, 0.05, 0.5, METAL_MAT, 10);
+    viseScrew.rotation.x = Math.PI / 2; add(viseScrew, 35.2, 0.35, -4.85);
+    const viseBar = cyl(0.03, 0.03, 0.6, METAL_MAT, 8);
+    viseBar.rotation.z = Math.PI / 2; add(viseBar, 35.2, 0.35, -4.6);
+    // martillo, llave inglesa y alicates sueltos sobre el banco
+    const hammerHandle = cyl(0.03, 0.03, 0.6, mat(0x78350f, { metal: 0.1, rough: 0.8 }), 10);
+    hammerHandle.rotation.x = Math.PI / 2; add(hammerHandle, 33.6, 0.05, -5.6);
+    add(box(0.12, 0.12, 0.3, darkMetal), 33.6, 0.05, -5.95);
+    const wrenchHandle = box(0.14, 0.03, 0.7, METAL_MAT);
+    add(wrenchHandle, 34.3, 0.02, -5.3); wrenchHandle.rotation.y = 0.5;
+    const wrenchHead = cyl(0.12, 0.12, 0.03, METAL_MAT, 16);
+    wrenchHead.rotation.x = Math.PI / 2; add(wrenchHead, 34.47, 0.02, -4.99);
+    const plierA = box(0.08, 0.03, 0.5, mat(0xdc2626, { metal: 0.3, rough: 0.5 }));
+    add(plierA, 33.9, 0.03, -3.6); plierA.rotation.y = 0.4;
+    const plierB = box(0.08, 0.03, 0.5, METAL_MAT);
+    add(plierB, 33.9, 0.035, -3.6); plierB.rotation.y = -0.4;
+    // latas de aire comprimido, pasta térmica y bridas, junto al multímetro
+    add(cyl(0.09, 0.09, 0.5, mat(0x3b82f6, { metal: 0.5, rough: 0.4 }), 16), 33.4, 0.25, -3.2);
+    add(cyl(0.05, 0.05, 0.08, mat(0xe5e7eb, { metal: 0.3, rough: 0.5 }), 12), 33.4, 0.54, -3.2);
+    add(cyl(0.09, 0.09, 0.5, mat(0x9ca3af, { metal: 0.6, rough: 0.35 }), 16), 33.65, 0.25, -3.35);
+    add(cyl(0.05, 0.05, 0.08, mat(0x1f2937, { metal: 0.3, rough: 0.5 }), 12), 33.65, 0.54, -3.35);
+    const pasteTube = cyl(0.04, 0.04, 0.25, mat(0xe5e7eb, { metal: 0.5, rough: 0.4 }), 10);
+    pasteTube.rotation.z = Math.PI / 2; add(pasteTube, 34.6, 0.05, -3.2);
+    add(box(0.25, 0.04, 0.08, mat(0xf8fafc, { metal: 0.1, rough: 0.6 })), 34.7, 0.03, -3.5);
+    // GPU suelta sobre el banco, entre el multímetro y la estación de soldadura
+    add(box(1.3, 0.1, 0.5, mat(0x111827, { metal: 0.6, rough: 0.4 })), 33.9, 0.08, -1.0);
+    [33.6, 34.2].forEach((fx) => {
+      const gf = cyl(0.16, 0.16, 0.02, mat(0x1f2937, { metal: 0.5, rough: 0.4 }), 20);
+      gf.rotation.x = Math.PI / 2; add(gf, fx, 0.14, -1.0);
+    });
+    // --- mesa de pruebas junto a la pared frontal, con su propio panel de herramientas ---
+    // tablero con placa en pruebas, fuente y monitor; el monitor mira al cuarto
+    add(box(8, 0.3, 2.6, woodMat), -18, -0.15, 18.6);
+    [[-21.7, 17.6], [-14.3, 17.6], [-21.7, 19.6], [-14.3, 19.6]].forEach(([lx, lz]) => {
+      add(box(0.25, 2.3, 0.25, darkMetal), lx, -1.45, lz);
+    });
+    add(box(2.2, 0.06, 1.8, mat(0x166534, { metal: 0.2, rough: 0.6 })), -19.5, 0.04, 18.6); // placa en pruebas
+    add(box(0.5, 0.08, 0.5, mat(0x111827, { metal: 0.4, rough: 0.5 })), -19.5, 0.09, 18.6);
+    add(box(0.9, 0.05, 0.25, mat(0x1f2937, { metal: 0.4, rough: 0.5 })), -19.2, 0.08, 19.1);
+    add(box(0.9, 0.7, 1.4, darkMetal), -16.8, 0.35, 18.6); // fuente suelta
+    add(box(2.2, 1.3, 0.08, mat(0x111827, { metal: 0.4, rough: 0.5 })), -15.2, 0.95, 19.3); // monitor de pruebas
+    add(box(2.0, 1.15, 0.02, new THREE.MeshBasicMaterial({ color: 0x1e3a8a })), -15.2, 0.95, 19.25);
+    add(box(0.15, 0.5, 0.15, darkMetal), -15.2, 0.3, 19.35);
+    add(box(0.8, 0.05, 0.5, darkMetal), -15.2, 0.03, 19.35);
+    add(box(1.2, 0.05, 0.45, mat(0x1f2937, { metal: 0.3, rough: 0.6 })), -15.2, 0.03, 18.0); // teclado de pruebas
+    // panel de herramientas (pegboard) en la pared frontal, sobre la mesa de pruebas
+    add(box(6, 3.5, 0.08, mat(0x78350f, { metal: 0.1, rough: 0.8 })), -18, 3.8, 19.96);
+    [2.8, 3.8, 4.8].forEach((ty) => {
+      [-20.3, -18.9, -17.5, -16.1].forEach((tx, i) => {
+        if (i % 2 === 0) {
+          const tool = cyl(0.045, 0.045, 0.55, mat(i % 4 === 0 ? 0xdc2626 : 0x9ca3af, { metal: 0.5, rough: 0.4 }), 8);
+          tool.rotation.x = Math.PI / 2; add(tool, tx, ty, 19.72);
+        } else {
+          add(box(0.06, 0.7, 0.18, mat(0x4b5563, { metal: 0.6, rough: 0.4 })), tx, ty, 19.9);
+        }
+      });
+    });
+    // --- cosas sueltas del taller por el piso ---
+    // caja de herramientas roja con asa, junto al carro
+    add(box(1.8, 0.8, 0.9, mat(0xb91c1c, { metal: 0.4, rough: 0.5 })), 11.5, -2.2, 6.5);
+    add(box(1.82, 0.15, 0.92, mat(0x7f1d1d, { metal: 0.4, rough: 0.5 })), 11.5, -1.78, 6.5);
+    add(box(0.5, 0.08, 0.08, darkMetal), 11.5, -1.65, 6.5);
+    add(box(0.06, 0.12, 0.06, darkMetal), 11.3, -1.72, 6.5);
+    add(box(0.06, 0.12, 0.06, darkMetal), 11.7, -1.72, 6.5);
+    // carrete de cable azul dentro de la zona marcada con cinta
+    add(cyl(0.85, 0.85, 0.08, woodMat, 24), 30, -2.56, -10.5);
+    add(cyl(0.6, 0.6, 0.9, mat(0x2563eb, { metal: 0.2, rough: 0.6 }), 24), 30, -2.1, -10.5);
+    add(cyl(0.85, 0.85, 0.08, woodMat, 24), 30, -1.62, -10.5);
+    // compresor de aire junto a la pared derecha, cerca de la puerta
+    const compTank = cyl(0.45, 0.45, 1.6, mat(0xdc2626, { metal: 0.5, rough: 0.4 }), 20);
+    compTank.rotation.x = Math.PI / 2; add(compTank, 34.8, -2.15, 5.5);
+    add(box(0.6, 0.4, 0.7, darkMetal), 34.8, -1.75, 5.5);
+    add(box(0.15, 0.15, 1.2, darkMetal), 34.8, -2.53, 5.5); // patín bajo el tanque
+    // monitores de repuesto apoyados en la pared frontal
+    [-12.5, -9.8].forEach((mx) => {
+      const sm = new THREE.Group();
+      const smBody = box(2.4, 1.5, 0.08, mat(0x111827, { metal: 0.4, rough: 0.5 }));
+      sm.add(smBody);
+      const smScreen = box(2.2, 1.35, 0.02, new THREE.MeshBasicMaterial({ color: 0x0f172a }));
+      smScreen.position.set(0, 0, -0.05); sm.add(smScreen);
+      sm.position.set(mx, -1.8, 19.55); sm.rotation.x = 0.18; env.add(sm);
+    });
+    // cajas de repuestos apiladas junto a la pared izquierda (plástico, no cartón)
+    add(box(1.6, 0.6, 1.2, mat(0x1e3a5f, { metal: 0.3, rough: 0.6 })), -33.5, -2.3, -15);
+    add(box(1.5, 0.55, 1.1, mat(0x14532d, { metal: 0.3, rough: 0.6 })), -33.5, -1.72, -15);
+    add(box(1.4, 0.5, 1.0, mat(0x7f1d1d, { metal: 0.3, rough: 0.6 })), -33.5, -2.35, -13.4);
+    // monitor de pruebas en su soporte, frente a las torres en espera
+    add(box(0.9, 0.06, 0.9, darkMetal), 26.5, -2.57, -8);
+    add(cyl(0.05, 0.05, 0.4, METAL_MAT, 12), 26.5, -2.4, -8);
+    add(box(0.08, 1.4, 2.2, mat(0x111827, { metal: 0.4, rough: 0.5 })), 26.5, -1.5, -8);
+    add(box(0.02, 1.25, 2.05, new THREE.MeshBasicMaterial({ color: 0x1e3a8a })), 26.55, -1.5, -8);
+    // ventilador de repuesto en el piso, junto a la zona marcada
+    const spareFan2 = makeFan(0.55, 0xef4444, false);
+    spareFan2.rotation.x = -Math.PI / 2;
+    spareFan2.position.set(30, -2.56, 3.5); env.add(spareFan2);
+    // --- más repuestos en la estantería de la pared izquierda ---
+    add(box(1.4, 0.06, 0.5, mat(0x1f2937, { metal: 0.3, rough: 0.6 })), -35.4, 3.08, -5.5); // teclados de repuesto
+    add(box(1.4, 0.06, 0.5, mat(0x111827, { metal: 0.3, rough: 0.6 })), -35.4, 3.15, -5.5);
+    add(box(0.25, 0.08, 0.4, mat(0x1f2937, { metal: 0.3, rough: 0.6 })), -35.4, 3.08, -4.6); // ratón de repuesto
+    add(box(0.8, 0.7, 1.4, mat(0x7f1d1d, { metal: 0.3, rough: 0.6 })), -35.4, 4.9, -6.5); // organizador de piezas
+    [4.75, 4.95, 5.15].forEach((dy) => {
+      [-6.9, -6.1].forEach((dz) => {
+        add(box(0.04, 0.18, 0.4, mat(0xd1d5db, { metal: 0.4, rough: 0.5 })), -34.98, dy, dz);
+      });
+    });
     // letrero del taller en la pared frontal: se ve al girar la vista
     const signCanvas = document.createElement('canvas'); signCanvas.width = 512; signCanvas.height = 128;
     const sg = signCanvas.getContext('2d');
