@@ -4,6 +4,54 @@
  */
 
 // Diccionario de textos bilingüe
+// Iconos mono (SVG inline, estilo .mono-icon). Las cadenas de traducciones y del
+// chatbot usan marcadores [[icono]]: fmt() escapa el HTML con esc() y cap() /
+// applyLanguage() asignaban con textContent, asi que un SVG literal se veria
+// como texto en pantalla. iconize() expande el marcador al renderizar, con el
+// mismo SVG en ES y EN. Las cadenas son propias del sitio, no entrada de usuario.
+const SVG_STAR = '<svg class="rating-star" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+const SVG_STAR_EMPTY = '<svg class="rating-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+const ICONS = {
+  trophy: '<span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M7 6H4.5a2.5 2.5 0 0 0 0 5H7"/><path d="M17 6h2.5a2.5 2.5 0 0 1 0 5H17"/></svg></span>',
+  coin: '<span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v10"/><path d="M15 9.5c0-1.5-1.3-2.5-3-2.5s-3 .8-3 2.2c0 3.3 6 1.6 6 4.6 0 1.4-1.3 2.2-3 2.2s-3-1-3-2.5"/></svg></span>',
+  bolt: '<span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg></span>',
+  star: '<span class="mono-icon rating-star"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span>',
+  heart: '<span class="mono-icon" style="color:#ef4444"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></span>',
+  heart_green: '<span class="mono-icon" style="color:#22c55e"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></span>',
+  robot: '<span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="8" width="14" height="11" rx="2"/><line x1="12" y1="8" x2="12" y2="4"/><circle cx="12" cy="3" r="1"/><circle cx="9" cy="13" r="0.6" fill="currentColor" stroke="none"/><circle cx="15" cy="13" r="0.6" fill="currentColor" stroke="none"/><line x1="9" y1="16.5" x2="15" y2="16.5"/></svg></span>',
+  wave: '<span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 12V5.5a1.5 1.5 0 0 1 3 0V11"/><path d="M11 11V4.5a1.5 1.5 0 0 1 3 0V11"/><path d="M14 11V6.5a1.5 1.5 0 0 1 3 0V12"/><path d="M17 12v-1a1.5 1.5 0 0 1 3 0v5a7 7 0 0 1-7 7h-1a7 7 0 0 1-6-3.3L4.6 15a1.6 1.6 0 0 1 2.6-1.8L8 14.5"/></svg></span>',
+  think: '<span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.5 9a2.5 2.5 0 0 1 4.9.7c0 1.6-2.4 2-2.4 3.3"/><circle cx="12" cy="17" r="0.6" fill="currentColor" stroke="none"/></svg></span>',
+  question: '<span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.5 9a2.5 2.5 0 0 1 4.9.7c0 1.6-2.4 2-2.4 3.3"/><circle cx="12" cy="17" r="0.6" fill="currentColor" stroke="none"/></svg></span>',
+  thumb_up: '<span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88z"/></svg></span>',
+  thumb_down: '<span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 14V2"/><path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88z"/></svg></span>',
+  check: '<span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>',
+  check_box: '<span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><polyline points="8.5 12.5 11 15 15.5 9.5"/></svg></span>',
+  x_circle: '<span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></span>',
+  medal: '<span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="15" r="6"/><path d="M8.6 9.6 5 3h5l2 4 2-4h5l-3.6 6.6"/><path d="M12 12.6l.9 1.8 2 .3-1.45 1.4.35 2-1.8-.95-1.8.95.35-2L9.1 14.7l2-.3.9-1.8z" fill="currentColor" stroke="none"/></svg></span>',
+  book: '<span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>',
+  bulb: '<span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.4 1 2.3h6c0-.9.4-1.8 1-2.3A7 7 0 0 0 12 2z"/></svg></span>',
+  gear: '<span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>',
+  stopwatch: '<span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5"/><path d="M9 2h6"/><path d="M12 2v4"/></svg></span>',
+  hourglass: '<span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2h12"/><path d="M6 22h12"/><path d="M8 2v4l4 4 4-4V2"/><path d="M8 22v-4l4-4 4 4v4"/></svg></span>',
+  home: '<span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>',
+  refresh: '<span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></span>',
+  reset: '<span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg></span>',
+  play: '<span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg></span>',
+  arrow_right: '<span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>',
+  arrow_left: '<span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></span>',
+  power: '<span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg></span>',
+  fullscreen: '<span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg></span>',
+  menu: '<span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></span>',
+  arrows_h: '<span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="2" y1="12" x2="22" y2="12"/><polyline points="6 8 2 12 6 16"/><polyline points="18 8 22 12 18 16"/></svg></span>',
+  grid: '<span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="1"/><line x1="12" y1="3" x2="12" y2="21"/><line x1="3" y1="12" x2="21" y2="12"/></svg></span>',
+  target: '<span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/></svg></span>',
+  gamepad: '<span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 8h10.5a4 4 0 0 1 3.9 4.8l-.6 3.1a3 3 0 0 1-5.4 1.4L13.5 15.5h-3l-1.4 1.8a3 3 0 0 1-5.4-1.4l-.6-3.1A4 4 0 0 1 6.5 8z"/><path d="M8 11v3M6.5 12.5h3"/><circle cx="15.8" cy="11.6" r="0.4" fill="currentColor"/><circle cx="17.8" cy="13.4" r="0.4" fill="currentColor"/></svg></span>',
+  stars5: '<span class="rating">' + SVG_STAR.repeat(5) + '</span>',
+  stars4: '<span class="rating">' + SVG_STAR.repeat(4) + SVG_STAR_EMPTY + '</span>',
+  stars3: '<span class="rating">' + SVG_STAR.repeat(3) + SVG_STAR_EMPTY.repeat(2) + '</span>',
+};
+const iconize = (s) => String(s).replace(/\[\[([a-z0-9_]+)\]\]/g, (m, k) => ICONS[k] || m);
+
 const translations = {
   es: {
     badge_hero: "Estructura de Redes",
@@ -132,7 +180,7 @@ const translations = {
     swl_cap_forward: "¡La tiene, puerto {port}! Reenvía la trama SOLO por ese puerto: los demás equipos ni se enteran.",
     swl_cap_flood: "Todavía no conoce la MAC de {to}: envía la trama por TODOS los puertos (flooding) a ver quién responde.",
     swl_cap_reply: "Los demás la ignoran; solo {to} responde. Con su respuesta, el switch aprende también la MAC de {to}: puerto {port}.",
-    swl_cap_done: "✔ Trama entregada a {to}. Y ojo a la tabla: la próxima vez entre estos dos equipos el envío será directo, sin flooding.",
+    swl_cap_done: "[[check]] Trama entregada a {to}. Y ojo a la tabla: la próxima vez entre estos dos equipos el envío será directo, sin flooding.",
     swl_cap_hub: "El hub no piensa ni aprende: repite la trama por TODOS los puertos, siempre.",
     swl_cap_hub_done: "Todos recibieron la trama aunque era solo para {to}: más tráfico y cero privacidad. Por eso los hubs desaparecieron y hoy todo es switch.",
 
@@ -205,7 +253,7 @@ const translations = {
     assistant_open: "Abrir sección",
     assistant_tab_chat: "Chat",
     assistant_tab_train: "Entrenar",
-    assistant_fallback: "Todavía no sé responder eso 🤔. Prueba con otras palabras, o enséñame la respuesta para que la próxima vez la sepa.",
+    assistant_fallback: "Todavía no sé responder eso [[think]]. Prueba con otras palabras, o enséñame la respuesta para que la próxima vez la sepa.",
     assistant_teach_title: "Enseñar una respuesta nueva",
     assistant_teach_q: "Formas de preguntarlo (una por línea)",
     assistant_teach_a: "Respuesta",
@@ -225,7 +273,7 @@ const translations = {
     assistant_reset: "Borrar lo aprendido",
     assistant_saved_toast: "¡Aprendido! Ya conozco esta respuesta.",
     assistant_need_both: "Escribe al menos una pregunta y la respuesta.",
-    assistant_thanks: "¡Gracias! 💚",
+    assistant_thanks: "¡Gracias! [[heart_green]]",
     assistant_teach_this: "Enséñame esta respuesta",
     assistant_up: "Me sirvió",
     assistant_down: "Mejorar",
@@ -696,14 +744,14 @@ const translations = {
     ms_prog_kicker: "06 / Programas recomendados",
     ms_prog_title: "Los mejores programas, clasificados sin rodeos",
     ms_prog_desc: "No hace falta instalar diez programas. Esta clasificación usa tres criterios claros: Mejor es la valoración general para mantenimiento preventivo, Costo es lo que pagas por el uso básico y Eficiencia es lo ligero y rápido que va en un equipo normal. Las estrellas son orientativas, no un laboratorio: el mejor programa es el que vas a mantener actualizado.",
-    ms_prog_note: "Cómo leer la tabla: ★★★★★ es excelente, ★★★★☆ es muy bueno y ★★★☆☆ es correcto, pero con límites. “Gratis” significa que el uso básico no cuesta nada; algunos ofrecen una versión de pago con más funciones.",
-    ms_prog_best_badge: "🏆 Mejor en general",
+    ms_prog_note: "Cómo leer la tabla: [[stars5]] es excelente, [[stars4]] es muy bueno y [[stars3]] es correcto, pero con límites. “Gratis” significa que el uso básico no cuesta nada; algunos ofrecen una versión de pago con más funciones.",
+    ms_prog_best_badge: "[[trophy]] Mejor en general",
     ms_prog_best_desc: "Ya viene con Windows, se actualiza solo y protege todo el tiempo sin instalar nada extra ni pagar nada. Para la mayoría de usuarios, es la base correcta.",
     ms_prog_best_tag: "Gratis · Integrado en Windows · Siempre activo",
-    ms_prog_cost_badge: "💰 Mejor costo",
+    ms_prog_cost_badge: "[[coin]] Mejor costo",
     ms_prog_cost_desc: "La combinación de costo cero: Defender protege y BleachBit limpia temporales sin publicidad, sin suscripción y sin peso extra. Ideal si no quieres gastar nada.",
     ms_prog_cost_tag: "Costo total: 0 · Código abierto · Sin suscripción",
-    ms_prog_eff_badge: "⚡ Más eficiente",
+    ms_prog_eff_badge: "[[bolt]] Más eficiente",
     ms_prog_eff_desc: "Solo trabajan cuando se les pide: Winget actualiza programas en un momento y CrystalDiskInfo revisa la salud del disco sin quedarse consumiendo recursos en segundo plano.",
     ms_prog_eff_tag: "Casi sin consumo · Rápidos · No residentes",
     ms_prog_th_prog: "Programa",
@@ -754,7 +802,247 @@ const translations = {
     ms_prog_pick3_title: "Menos programas, más eficiencia",
     ms_prog_pick3_desc: "Evita suites pesadas y dos antivirus a la vez. Quédate con Defender, limpieza ligera y revisión del disco: cada programa residente extra le quita velocidad.",
     ms_prog_credit: "Consejo final: descarga cada programa solo desde su sitio oficial o desde Windows. Un “optimizador” de un sitio pirata puede ser justo lo contrario: el programa que te infecta el equipo.",
-    assistant_close_title: "Cerrar"
+    assistant_close_title: "Cerrar",
+    ms_img_antivirus: "Persona usando una herramienta de análisis antivirus en un computador",
+    ms_img_backup: "Ilustración de copia de seguridad en la nube",
+    ms_img_circuit: "Primer plano de una placa de circuito, que necesita controladores para comunicarse con el software",
+    ms_img_code: "Portátil con código en pantalla en un escritorio de trabajo",
+    ms_img_disk: "Herramienta de limpieza de disco mostrando archivos que se pueden eliminar",
+    ms_img_hero: "Placa y circuitos de un computador, base del sistema que mantiene el software",
+    ms_img_laptop: "Portátil encendido en la oscuridad, listo para una revisión de rendimiento",
+    pc3d_tool_air_alt: "Aire comprimido",
+    pc3d_tool_brush_alt: "Brocha ancha de cerdas suaves completa",
+    pc3d_tool_cloth_alt: "Paños de limpieza completos",
+    pc3d_tool_drivers_alt: "Destornilladores Phillips y plano completos",
+    pc3d_tool_paste_alt: "Jeringa de pasta térmica completa con su tapa",
+    pc3d_tool_ties_alt: "Bridas de colores completas",
+    pc3d_tool_wrist_alt: "Manilla antiestática completa con su cable y pinza",
+    hw_optical_alt: "Unidad óptica de disco CD DVD",
+    sim_insp_calc: "Calculando latencia...",
+    sim_insp_connected: "RTT: {rtt} ms | Pérdida: 0% | Estado: Conectado (OK)",
+    sim_insp_frame: "Trama: {a} -> {b}",
+    sim_log_dest_ok: "[DESTINO] {name} recibe los datos correctamente.",
+    sim_log_host_nic: "[HOST NIC] {name} encapsula paquete IP en trama 802.3 Ethernet y lo envía por par trenzado al Switch LAN.",
+    sim_log_icmp_reply: "[ICMP RESPUESTA] Enviando respuesta desde {a} de vuelta a {b}...",
+    sim_log_icmp_start: "[ICMP INICIO] Iniciando ping desde {src} ({srcIp}) hacia {dst} ({dstIp})...",
+    sim_log_reset: "[SISTEMA] Simulador reiniciado. Listo para nueva prueba.",
+    sim_log_router_l3: "[ROUTER L3] Desencapsula trama L2. Consulta tabla de rutas: IP 10.0.0.80 está en la interfaz WAN. Decrementa TTL a 63.",
+    sim_log_router_reply: "[ROUTER] Enruta respuesta WAN de vuelta a subred LAN 192.168.1.0/24 hacia Switch.",
+    sim_log_router_wan: "[ROUTER -> WAN] Transmite paquete a través de enlace punto a punto hacia {name}.",
+    sim_log_same_host: "[ERROR] El host de origen y el de destino no pueden ser el mismo.",
+    sim_log_success: "[ÉXITO] 64 bytes desde {ip}: icmp_seq=1 ttl={ttl} tiempo={rtt} ms",
+    sim_log_summary: "[RESUMEN] 1 paquetes transmitidos, 1 recibidos, 0% packet loss. Enlace verificado.",
+    sim_log_switch_cam: "[SWITCH] Lee encabezado Capa 2: Puerto asociado a MAC destino detectado en CAM Table.",
+    sim_log_switch_final: "[SWITCH] Entrega Echo Reply final al puerto de {name}.",
+    sim_log_switch_reply: "[SWITCH] Conmuta respuesta directamente al puerto de {name}.",
+    sim_log_switch_wan: "[SWITCH] Destino está fuera de la subred local (192.168.1.0/24). Reenvía trama a la MAC de la Gateway (Router).",
+    sim_log_web_server: "[WEB SERVER] El servidor recibe los datos y prepara la respuesta.",
+    sim_packet_received: "Datos recibidos",
+    sim_status_done: "COMPLETADO (100%)",
+    sim_status_transmitting: "TRANSMITIENDO...",
+    glos_antivirus_def: "Programa que detecta, bloquea y elimina software malicioso.",
+    glos_antivirus_ex: "Ej.: Windows Defender es el antivirus incluido en Windows.",
+    glos_antivirus_term: "Antivirus",
+    glos_backup_def: "Copia de tus archivos en otro lugar para recuperarlos si el equipo falla o se pierde.",
+    glos_backup_ex: "Ej.: guarda tus trabajos en un disco externo o en la nube.",
+    glos_backup_term: "Copia de seguridad (Backup)",
+    glos_bandwidth_def: "Capacidad máxima teórica de datos que puede llevar una conexión en un tiempo dado.",
+    glos_bandwidth_ex: "Ej.: un plan de 200 Mbps tiene ese ancho de banda como tope, no como velocidad garantizada.",
+    glos_bandwidth_term: "Bandwidth (Ancho de banda)",
+    glos_bios_uefi_def: "Programa inicial que arranca el equipo y verifica el hardware antes de cargar el sistema.",
+    glos_bios_uefi_ex: "Ej.: desde UEFI se cambia el orden de arranque del PC.",
+    glos_bios_uefi_term: "BIOS / UEFI",
+    glos_cache_def: "Memoria muy rápida y pequeña que guarda datos que el CPU usa con frecuencia.",
+    glos_cache_ex: "Ej.: la caché evita que el CPU espere tanto a la RAM.",
+    glos_cache_term: "Caché",
+    glos_cat_hardware: "Hardware",
+    glos_cat_mantenimiento: "Mantenimiento",
+    glos_cat_redes: "Redes",
+    glos_cpu_def: "El cerebro del equipo: ejecuta las instrucciones de los programas.",
+    glos_cpu_ex: "Ej.: un CPU más rápido abre programas y responde antes.",
+    glos_cpu_term: "CPU (Procesador)",
+    glos_dhcp_def: "Protocolo que asigna automáticamente direcciones IP y otros datos de red a los dispositivos.",
+    glos_dhcp_ex: "Ej.: al conectarte al Wi-Fi, el router te da una IP por DHCP.",
+    glos_dhcp_term: "DHCP",
+    glos_dns_def: "Sistema que traduce nombres de dominio, como nvision.social, a direcciones IP.",
+    glos_dns_ex: "Ej.: sin DNS tendrías que escribir la IP del sitio en vez de su nombre.",
+    glos_dns_term: "DNS",
+    glos_driver_def: "Programa que permite que el sistema operativo use un componente, como la tarjeta gráfica o el Wi-Fi.",
+    glos_driver_ex: "Ej.: sin el driver de Wi-Fi, el PC no ve las redes.",
+    glos_driver_term: "Controlador (Driver)",
+    glos_filter_all: "Todos",
+    glos_firewall_def: "Sistema que filtra el tráfico de red y bloquea accesos no permitidos.",
+    glos_firewall_ex: "Ej.: el firewall de Windows bloquea conexiones sospechosas.",
+    glos_firewall_term: "Firewall (Cortafuegos)",
+    glos_flash_exit: "Volver a la lista",
+    glos_flash_flip: "Voltear",
+    glos_flash_hint: "Toca la tarjeta para ver la definición. «Mezclar» cambia el orden para repasar.",
+    glos_flash_next: "Siguiente [[arrow_right]]",
+    glos_flash_prev: "[[arrow_left]] Anterior",
+    glos_flash_shuffle: "Mezclar",
+    glos_gateway_def: "Punto de salida de una red local hacia otra red, normalmente la IP del router.",
+    glos_gateway_ex: "Ej.: en casa, la puerta de enlace suele ser 192.168.0.1.",
+    glos_gateway_term: "Puerta de enlace (Gateway)",
+    glos_gpu_def: "Procesa gráficos e imágenes y acelera tareas como juegos, video y diseño.",
+    glos_gpu_ex: "Ej.: una GPU dedicada rinde mejor en juegos que la integrada.",
+    glos_gpu_term: "GPU (Tarjeta gráfica)",
+    glos_hdd_def: "Disco duro mecánico con platos giratorios; más barato por GB, pero más lento que un SSD.",
+    glos_hdd_ex: "Ej.: un HDD sirve para guardar muchos archivos que no se usan a diario.",
+    glos_hdd_term: "HDD",
+    glos_ip_address_def: "Número único que identifica a un dispositivo dentro de una red, como 192.168.1.10.",
+    glos_ip_address_ex: "Ej.: el router asigna una IP a cada equipo conectado en casa.",
+    glos_ip_address_term: "Dirección IP",
+    glos_lan_def: "Red de área local: los equipos conectados dentro de una casa, oficina o salón.",
+    glos_lan_ex: "Ej.: tu PC, tu celular y tu TV forman una LAN en casa.",
+    glos_lan_term: "LAN",
+    glos_latency_def: "Tiempo que tarda un dato en ir de un punto a otro de la red; se mide en milisegundos (ms).",
+    glos_latency_ex: "Ej.: en juegos, una latencia alta se nota como retraso al responder.",
+    glos_latency_term: "Latencia",
+    glos_mac_address_def: "Identificador físico único de cada tarjeta de red, formado por 6 pares de caracteres hexadecimales.",
+    glos_mac_address_ex: "Ej.: viene impresa en la etiqueta del router.",
+    glos_mac_address_term: "Dirección MAC",
+    glos_malware_def: "Software malicioso diseñado para dañar, robar datos o controlar un equipo sin permiso.",
+    glos_malware_ex: "Ej.: un virus y un troyano son tipos de malware.",
+    glos_malware_term: "Malware",
+    glos_mode_cards: "Modo tarjetas",
+    glos_motherboard_def: "Tarjeta principal que conecta CPU, RAM, almacenamiento y demás componentes.",
+    glos_motherboard_ex: "Ej.: la placa base define qué CPU y cuánta RAM soporta el equipo.",
+    glos_motherboard_term: "Placa base (Motherboard)",
+    glos_nic_def: "Componente que conecta un equipo a una red, por cable o Wi-Fi, y tiene una dirección MAC única.",
+    glos_nic_ex: "Ej.: la NIC es lo que permite que tu PC se conecte al router.",
+    glos_nic_term: "NIC (Tarjeta de red)",
+    glos_nvme_def: "Tipo de SSD muy rápido que se conecta por PCIe y supera por mucho a un SSD SATA.",
+    glos_nvme_ex: "Ej.: un NVMe es ideal para el disco donde está Windows.",
+    glos_nvme_term: "NVMe",
+    glos_operating_system_def: "Software base que gestiona el hardware y permite usar programas, como Windows o Linux.",
+    glos_operating_system_ex: "Ej.: Windows 11 es el sistema operativo de muchos PCs.",
+    glos_operating_system_term: "Sistema operativo",
+    glos_osi_model_def: "Modelo de 7 capas (física, enlace, red, transporte, sesión, presentación, aplicación) para entender cómo se comunica una red.",
+    glos_osi_model_ex: "Ej.: el cable es capa física; una IP es capa de red.",
+    glos_osi_model_term: "Modelo OSI",
+    glos_packet_def: "Bloque de datos que viaja por la red con origen, destino y parte del mensaje completo.",
+    glos_packet_ex: "Ej.: un video se divide en muchos paquetes que se reordenan al llegar.",
+    glos_packet_term: "Packet (Paquete)",
+    glos_psu_def: "Convierte la corriente de la pared en energía segura para los componentes del PC.",
+    glos_psu_ex: "Ej.: una fuente débil puede apagar el PC al jugar.",
+    glos_psu_term: "Fuente de poder (PSU)",
+    glos_ram_def: "Memoria temporal y rápida donde trabajan los programas abiertos; se vacía al apagar.",
+    glos_ram_ex: "Ej.: con poca RAM, el PC se pone lento con varias apps abiertas.",
+    glos_ram_term: "RAM (Memoria)",
+    glos_router_def: "Dispositivo que conecta redes distintas y dirige el tráfico entre tu red local e internet.",
+    glos_router_ex: "Ej.: el router de una casa conecta su red local con internet.",
+    glos_router_term: "Router",
+    glos_search_label: "Buscar en el glosario",
+    glos_search_ph: "Buscar término… ej. DNS, RAM, latencia",
+    glos_ssd_def: "Almacenamiento rápido sin partes móviles, basado en memoria flash.",
+    glos_ssd_ex: "Ej.: Windows arranca en segundos desde un SSD.",
+    glos_ssd_term: "SSD",
+    glos_subnet_mask_def: "Número que separa la parte de red y la parte de host de una dirección IP, como 255.255.255.0.",
+    glos_subnet_mask_ex: "Ej.: con /24, una red tiene hasta 254 equipos.",
+    glos_subnet_mask_term: "Máscara de subred",
+    glos_switch_def: "Dispositivo que conecta varios equipos dentro de una misma red local y les pasa los datos.",
+    glos_switch_ex: "Ej.: un switch conecta por cable varias PCs de un salón.",
+    glos_switch_term: "Switch",
+    glos_tcp_def: "Protocolo que envía los datos de forma ordenada y verifica que lleguen completos.",
+    glos_tcp_ex: "Ej.: cargar una página web usa TCP porque no puede faltar nada.",
+    glos_tcp_term: "TCP",
+    glos_thermal_paste_def: "Compuesto que mejora el contacto entre el CPU y su disipador para transmitir el calor.",
+    glos_thermal_paste_ex: "Ej.: se cambia cuando el CPU se calienta más de lo normal.",
+    glos_thermal_paste_term: "Pasta térmica",
+    glos_throughput_def: "Cantidad real de datos que se transfieren con éxito por unidad de tiempo, normalmente en Mbps o Gbps.",
+    glos_throughput_ex: "Ej.: un enlace de 100 Mbps con 70 Mbps reales tiene un throughput de 70 Mbps.",
+    glos_throughput_term: "Throughput",
+    glos_udp_def: "Protocolo rápido que envía datos sin confirmar cada entrega; si algo se pierde, no se reenvía.",
+    glos_udp_ex: "Ej.: las videollamadas y los juegos usan UDP por su baja latencia.",
+    glos_udp_term: "UDP",
+    glos_wan_def: "Red de área amplia que conecta redes lejanas, como internet.",
+    glos_wan_ex: "Ej.: tu LAN se conecta a la WAN a través del router.",
+    glos_wan_term: "WAN",
+    glos_wifi6_def: "Versión de Wi-Fi más rápida y eficiente con muchos dispositivos a la vez, gracias a OFDMA y MU-MIMO.",
+    glos_wifi6_ex: "Ej.: muchos routers actuales ya traen Wi-Fi 6.",
+    glos_wifi6_term: "Wi-Fi 6",
+    hw_altair_badge: "Génesis del Microcomputador",
+    hw_altair_creators_title: "Creador y Pioneros",
+    hw_altair_gates_desc: "Escribieron el primer intérprete BASIC para el Altair 8800, hito que los llevó a fundar formalmente Micro-Soft en 1975.",
+    hw_altair_gates_name: "Bill Gates y Paul Allen",
+    hw_altair_gates_role: "Desarrolladores de Altair BASIC",
+    hw_altair_how_text: "La pequeña empresa MITS (Micro Instrumentation and Telemetry Systems) en Albuquerque, Nuevo México, estaba al borde de la quiebra vendiendo kits de calculadoras. Al conocer el nuevo microprocesador Intel 8080 de 8 bits, decidieron crear un computador en kit asequible para aficionados a la electrónica por menos de 400 dólares, presentándolo en la portada de la revista <em>Popular Electronics</em> de enero de 1975.",
+    hw_altair_how_title: "¿Cómo y por qué nació el Altair 8800?",
+    hw_altair_milestones_text: "El Altair 8800 desató la revolución del software y hardware abierto: motivó la creación del Homebrew Computer Club en Silicon Valley (donde Steve Wozniak diseñó el Apple I), definió el bus S-100 como estándar industrial y demostró que una persona común podía poseer su propia computadora.",
+    hw_altair_roberts_desc: "Médico e ingeniero considerado el 'padre del computador personal'. Diseñó el sistema y el legendario bus de expansión S-100.",
+    hw_altair_roberts_role: "Fundador de MITS y Creador del Altair",
+    hw_altair_specs_text: "Montaba el CPU Intel 8080 a 2 MHz con apenas 256 bytes de memoria RAM básica (expandible a 64 KB). No incluía teclado, monitor ni almacenamiento: se programaba manualmente introduciendo código binario interruptor por interruptor en el panel frontal y leyendo las respuestas a través de luces LED parpadeantes.",
+    hw_apple_badge: "Computación Personal de Consumo",
+    hw_apple_creators_title: "Creadores Clave",
+    hw_apple_how_text: "Tras el éxito artesanal del Apple I en placas sin chasis ni teclado, Steve Wozniak y Steve Jobs concibieron una computadora completamente integrada, lista para usar nada más sacarla de la caja por cualquier usuario, sin necesidad de saber electrónica. Fue presentada en la feria West Coast Computer Faire en abril de 1977.",
+    hw_apple_how_title: "¿Cómo y por qué nació el Apple II?",
+    hw_apple_jobs_desc: "Insistió en que tuviese una estética de electrodoméstico amigable con chasis plástico sin ventilador ruidoso para el hogar y la escuela.",
+    hw_apple_jobs_role: "Visión de Producto y Diseño",
+    hw_apple_milestones_text: "El Apple II transformó la computación de un pasatiempo de ingenieros a una herramienta masiva en hogares, escuelas y negocios. En 1979 se lanzó para Apple II la hoja de cálculo <em>VisiCalc</em>, la primera 'killer application' de la historia que catapultó la venta de computadores personales en el sector corporativo.",
+    hw_apple_specs_text: "Equipado con el microprocesador MOS Technology 6502 a 1,023 MHz, entre 4 KB y 48 KB de memoria RAM, teclado integrado en un gabinete de plástico beige moldeado, sonido integrado, ROM con Integer BASIC y una controladora de video capaz de generar gráficos a color en un televisor estándar. Incluía 8 ranuras internas de expansión (slots).",
+    hw_apple_wozniak_desc: "Diseñó por completo los circuitos electrónicos, la arquitectura de video en color y la ultra-eficiente controladora de disquete Disk II.",
+    hw_apple_wozniak_role: "Ingeniero y Diseñador de Hardware",
+    hw_ibm_amdahl_desc: "Lideraron la transición de la computación electrónica de válvulas hacia los circuitos integrados discretos por transistores (SMS cards).",
+    hw_ibm_amdahl_name: "Gene Amdahl & Equipo de Ingeniería de IBM",
+    hw_ibm_amdahl_role: "Arquitectura y Lógica Central",
+    hw_ibm_badge: "Mainframe de 2ª Generación",
+    hw_ibm_how_text: "En plena Guerra Fría y con el auge del programa espacial estadounidense, la Fuerza Aérea de EE.UU. y agencias científicas requerían procesar señales de radar en tiempo real para el sistema de alerta temprana de misiles balísticos (BMEWS). IBM transformó su arquitectura previa basada en tubos (el IBM 709) reemplazando cada válvula por módulos de transistores miniaturizados, creando el computador científico comercial más poderoso de su época.",
+    hw_ibm_how_title: "¿Cómo y por qué nació el IBM 7090?",
+    hw_ibm_milestones_text: "Fue la computadora utilizada por la NASA en los programas espaciales Mercury y Gemini para calcular las órbitas de los primeros astronautas estadounidenses, incluidos John Glenn. Además, fue el sistema pionero en el desarrollo de lenguajes como FORTRAN y LISP, y en él se creó la primera versión de síntesis de voz por computadora (\"Daisy Bell\") en los laboratorios Bell.",
+    hw_ibm_specs_text: "Constaba de más de 50.000 transistores de germanio, operaba con palabras de 36 bits y una velocidad de ciclo de memoria de 2,18 microsegundos, capaz de ejecutar 229.000 instrucciones por segundo. Su memoria de núcleos magnéticos ofrecía 32.768 palabras (equivalente a unos 144 KB), reduciendo el consumo de energía y calentamiento drásticamente frente a las válvulas.",
+    hw_ibm_team_title: "Creador y Equipo de Diseño",
+    hw_ibm_watson_desc: "Impulsó la millonaria inversión de la compañía para sustituir definitivamente la tecnología de bulbos por transistores de estado sólido.",
+    hw_ibm_watson_role: "Director Ejecutivo de IBM",
+    hw_milestones_title: "Hitos y Cosas Importantes",
+    hw_tech_specs_title: "Características Técnicas",
+    idx_card_hw_desc: "Historia de los computadores y los componentes que forman un equipo de cómputo.",
+    idx_card_hw_title: "Hardware<br>y Evolución",
+    idx_card_maint_desc: "Actualizaciones, antivirus, limpieza, copias de seguridad y una rutina para que tu equipo no falle.",
+    idx_card_maint_title: "Mantenimiento<br>por software",
+    idx_card_net_desc: "Tipos de redes, topologías y un simulador visual de tránsito de datos.",
+    idx_card_net_title: "Redes<br>y Simulación",
+    idx_card_res_desc: "Glosario técnico y laboratorio práctico para seguir aprendiendo a tu ritmo.",
+    idx_card_res_title: "Recursos de<br>Aprendizaje",
+    idx_explore_desc: "Selecciona un área para conocer la historia del hardware, entender las redes o practicar con recursos interactivos.",
+    idx_explore_title: "Explora NVISION",
+    lab_status_code: "Código",
+    lab_status_live: "En vivo",
+    lab_status_optional: "Módulo Opcional",
+    red_badge_ban: "Cuerpo Humano // < 1 m",
+    red_badge_can: "Campus // 1 a 5 km",
+    red_badge_gan: "Planetario // Global Total",
+    red_badge_host: "Arquitectura Host",
+    red_badge_lan: "Hogar / Edificio // ~100 m",
+    red_badge_link: "Capa de Enlace",
+    red_badge_man: "Metropolitana // Hasta 50 km",
+    red_badge_media: "Medio Físico",
+    red_badge_pan: "Personal // ~1 a 10 m",
+    red_badge_wan: "País / Continente // Extensa",
+    red_challenge_desc: "Pon a prueba lo aprendido sobre topologías: identifica estrella, bus, anillo, malla y árbol en 10 preguntas, suma puntos y conserva tus 3 vidas. ¿Llegas a los 100 puntos?",
+    red_challenge_play: "Jugar Redes Challenge",
+    red_insp_l2_init: "Origen: -- | Destino: --",
+    red_insp_stat_init: "RTT: -- ms | Pérdida: 0% | Estado: Esperando",
+    red_sim_console_init: "[SISTEMA] Simulador inicializado. Selecciona host origen y destino, luego pulsa 'Enviar Ping ICMP'.",
+    red_sim_opt_pc2_same: "PC 2 (192.168.1.20 - Misma LAN)",
+    red_sim_opt_server: "Servidor Web (10.0.0.80 - WAN / Cloud)",
+    red_sim_packet_sending: "Enviando datos",
+    red_sim_reset_title: "Reiniciar visualizador",
+    red_swl_device_sub: "NV-SW 08 · capa 2",
+    red_swl_mode_aria: "Modo del dispositivo",
+    red_swl_svg_aria: "Switch con cuatro computadores conectados por cable",
+    red_tag_bgp: "Enrutamiento BGP",
+    red_tag_biosensors: "Bio-sensores",
+    red_tag_fiber: "Fibra Óptica OM4",
+    red_tag_laser: "Laser Inter-satelital",
+    red_tag_leo: "Satélites LEO",
+    red_tag_sdh: "Anillos SDH / SONET",
+    red_tag_submarine: "Cables Submarinos",
+    red_topo_aria_bus: "Diagrama Topología en Bus",
+    red_topo_aria_hybrid: "Diagrama Topología Híbrida",
+    red_topo_aria_mesh: "Diagrama Topología en Malla",
+    red_topo_aria_ring: "Diagrama Topología en Anillo",
+    red_topo_aria_star: "Diagrama Topología en Estrella",
+    red_topo_aria_tree: "Diagrama Topología en Árbol"
   },
   en: {
     badge_hero: "Network Structure",
@@ -875,7 +1163,7 @@ const translations = {
     swl_cap_forward: "Found it, port {port}! It forwards the frame ONLY through that port: the other computers never see it.",
     swl_cap_flood: "It does not know {to}'s MAC yet: it sends the frame out through ALL ports (flooding) to see who answers.",
     swl_cap_reply: "The others ignore it; only {to} replies. With that reply, the switch also learns {to}'s MAC: port {port}.",
-    swl_cap_done: "✔ Frame delivered to {to}. And check the table: next time between these two computers the delivery will be direct, no flooding.",
+    swl_cap_done: "[[check]] Frame delivered to {to}. And check the table: next time between these two computers the delivery will be direct, no flooding.",
     swl_cap_hub: "The hub does not think or learn: it repeats the frame through ALL ports, always.",
     swl_cap_hub_done: "Everyone received the frame even though it was only for {to}: more traffic and zero privacy. That is why hubs disappeared and everything is a switch today.",
 
@@ -948,7 +1236,7 @@ const translations = {
     assistant_open: "Open section",
     assistant_tab_chat: "Chat",
     assistant_tab_train: "Train",
-    assistant_fallback: "I do not know how to answer that yet 🤔. Try other words, or teach me the answer so I know it next time.",
+    assistant_fallback: "I do not know how to answer that yet [[think]]. Try other words, or teach me the answer so I know it next time.",
     assistant_teach_title: "Teach a new answer",
     assistant_teach_q: "Ways to ask it (one per line)",
     assistant_teach_a: "Answer",
@@ -968,7 +1256,7 @@ const translations = {
     assistant_reset: "Erase learned",
     assistant_saved_toast: "Learned! I know this answer now.",
     assistant_need_both: "Write at least one question and the answer.",
-    assistant_thanks: "Thanks! 💚",
+    assistant_thanks: "Thanks! [[heart_green]]",
     assistant_teach_this: "Teach me this answer",
     assistant_up: "It helped",
     assistant_down: "Improve",
@@ -1447,14 +1735,14 @@ const translations = {
     ms_prog_kicker: "06 / Recommended programs",
     ms_prog_title: "The best programs, ranked straight",
     ms_prog_desc: "You do not need to install ten programs. This ranking uses three clear criteria: Best is the overall rating for preventive maintenance, Cost is what you pay for basic use, and Efficiency is how light and fast it runs on a normal computer. The stars are a guide, not a laboratory test: the best program is the one you will keep updated.",
-    ms_prog_note: "How to read the table: ★★★★★ is excellent, ★★★★☆ is very good and ★★★☆☆ is fine, but with limits. “Free” means basic use costs nothing; some offer a paid version with more features.",
-    ms_prog_best_badge: "🏆 Best overall",
+    ms_prog_note: "How to read the table: [[stars5]] is excellent, [[stars4]] is very good and [[stars3]] is fine, but with limits. “Free” means basic use costs nothing; some offer a paid version with more features.",
+    ms_prog_best_badge: "[[trophy]] Best overall",
     ms_prog_best_desc: "It already comes with Windows, updates itself and protects all the time without installing anything extra or paying anything. For most users, it is the right foundation.",
     ms_prog_best_tag: "Free · Built into Windows · Always active",
-    ms_prog_cost_badge: "💰 Best value",
+    ms_prog_cost_badge: "[[coin]] Best value",
     ms_prog_cost_desc: "The zero-cost combination: Defender protects and BleachBit cleans temporary files with no ads, no subscription and no extra weight. Ideal if you do not want to spend anything.",
     ms_prog_cost_tag: "Total cost: 0 · Open source · No subscription",
-    ms_prog_eff_badge: "⚡ Most efficient",
+    ms_prog_eff_badge: "[[bolt]] Most efficient",
     ms_prog_eff_desc: "They only work when asked: Winget updates programs in a moment and CrystalDiskInfo checks disk health without staying in the background consuming resources.",
     ms_prog_eff_tag: "Almost no consumption · Fast · Not resident",
     ms_prog_th_prog: "Program",
@@ -1505,7 +1793,247 @@ const translations = {
     ms_prog_pick3_title: "Fewer programs, more efficiency",
     ms_prog_pick3_desc: "Avoid heavy suites and two antivirus programs at once. Stick with Defender, light cleaning and disk checks: every extra resident program takes speed away.",
     ms_prog_credit: "Final tip: download each program only from its official site or from Windows. An “optimizer” from a pirate site can be just the opposite: the program that infects your computer.",
-    assistant_close_title: "Close"
+    assistant_close_title: "Close",
+    ms_img_antivirus: "Person using an antivirus scanning tool on a computer",
+    ms_img_backup: "Cloud backup illustration",
+    ms_img_circuit: "Close-up of a circuit board, which needs drivers to communicate with the software",
+    ms_img_code: "Laptop with code on screen on a work desk",
+    ms_img_disk: "Disk cleaning tool showing files that can be deleted",
+    ms_img_hero: "Computer board and circuits, the base of the system that keeps the software running",
+    ms_img_laptop: "Laptop powered on in the dark, ready for a performance check",
+    pc3d_tool_air_alt: "Compressed air",
+    pc3d_tool_brush_alt: "Full wide soft-bristle brush",
+    pc3d_tool_cloth_alt: "Full cleaning cloths",
+    pc3d_tool_drivers_alt: "Full Phillips and flat-head screwdrivers",
+    pc3d_tool_paste_alt: "Full thermal paste syringe with its cap",
+    pc3d_tool_ties_alt: "Full set of colored cable ties",
+    pc3d_tool_wrist_alt: "Full anti-static wrist strap with its cable and clip",
+    hw_optical_alt: "CD DVD optical disc drive",
+    sim_insp_calc: "Calculating latency...",
+    sim_insp_connected: "RTT: {rtt} ms | Loss: 0% | Status: Connected (OK)",
+    sim_insp_frame: "Frame: {a} -> {b}",
+    sim_log_dest_ok: "[DESTINATION] {name} receives the data correctly.",
+    sim_log_host_nic: "[HOST NIC] {name} encapsulates the IP packet in an 802.3 Ethernet frame and sends it over twisted pair to the LAN switch.",
+    sim_log_icmp_reply: "[ICMP REPLY] Sending the reply from {a} back to {b}...",
+    sim_log_icmp_start: "[ICMP START] Starting ping from {src} ({srcIp}) to {dst} ({dstIp})...",
+    sim_log_reset: "[SYSTEM] Simulator reset. Ready for a new test.",
+    sim_log_router_l3: "[ROUTER L3] Decapsulates the L2 frame. Checks the routing table: IP 10.0.0.80 is on the WAN interface. Decrements TTL to 63.",
+    sim_log_router_reply: "[ROUTER] Routes the WAN reply back to the LAN subnet 192.168.1.0/24 toward the switch.",
+    sim_log_router_wan: "[ROUTER -> WAN] Transmits the packet over a point-to-point link to {name}.",
+    sim_log_same_host: "[ERROR] Source and destination hosts cannot be the same.",
+    sim_log_success: "[SUCCESS] 64 bytes from {ip}: icmp_seq=1 ttl={ttl} time={rtt} ms",
+    sim_log_summary: "[SUMMARY] 1 packet transmitted, 1 received, 0% packet loss. Link verified.",
+    sim_log_switch_cam: "[SWITCH] Reads the Layer 2 header: port for the destination MAC found in the CAM table.",
+    sim_log_switch_final: "[SWITCH] Delivers the final Echo Reply to the port of {name}.",
+    sim_log_switch_reply: "[SWITCH] Switches the reply straight to the port of {name}.",
+    sim_log_switch_wan: "[SWITCH] Destination is outside the local subnet (192.168.1.0/24). Forwards the frame to the gateway MAC (Router).",
+    sim_log_web_server: "[WEB SERVER] The server receives the data and prepares the reply.",
+    sim_packet_received: "Data received",
+    sim_status_done: "COMPLETED (100%)",
+    sim_status_transmitting: "TRANSMITTING...",
+    glos_antivirus_def: "A program that detects, blocks and removes malicious software.",
+    glos_antivirus_ex: "E.g.: Windows Defender is the antivirus included in Windows.",
+    glos_antivirus_term: "Antivirus",
+    glos_backup_def: "A copy of your files in another place so you can recover them if the computer fails or is lost.",
+    glos_backup_ex: "E.g.: save your work on an external drive or in the cloud.",
+    glos_backup_term: "Backup",
+    glos_bandwidth_def: "The maximum theoretical amount of data a connection can carry in a given time.",
+    glos_bandwidth_ex: "E.g.: a 200 Mbps plan has that bandwidth as a cap, not as a guaranteed speed.",
+    glos_bandwidth_term: "Bandwidth",
+    glos_bios_uefi_def: "The startup program that boots the computer and checks the hardware before loading the system.",
+    glos_bios_uefi_ex: "E.g.: from UEFI you can change the PC's boot order.",
+    glos_bios_uefi_term: "BIOS / UEFI",
+    glos_cache_def: "Very fast, small memory that stores data the CPU uses frequently.",
+    glos_cache_ex: "E.g.: the cache keeps the CPU from waiting so long for the RAM.",
+    glos_cache_term: "Cache",
+    glos_cat_hardware: "Hardware",
+    glos_cat_mantenimiento: "Maintenance",
+    glos_cat_redes: "Networks",
+    glos_cpu_def: "The brain of the computer: it runs the instructions of programs.",
+    glos_cpu_ex: "E.g.: a faster CPU opens programs and responds sooner.",
+    glos_cpu_term: "CPU (Processor)",
+    glos_dhcp_def: "A protocol that automatically assigns IP addresses and other network data to devices.",
+    glos_dhcp_ex: "E.g.: when you connect to Wi-Fi, the router gives you an IP via DHCP.",
+    glos_dhcp_term: "DHCP",
+    glos_dns_def: "The system that translates domain names, such as nvision.social, into IP addresses.",
+    glos_dns_ex: "E.g.: without DNS you would have to type the site's IP instead of its name.",
+    glos_dns_term: "DNS",
+    glos_driver_def: "A program that lets the operating system use a component, such as the graphics card or Wi-Fi.",
+    glos_driver_ex: "E.g.: without the Wi-Fi driver, the PC can't see networks.",
+    glos_driver_term: "Driver",
+    glos_filter_all: "All",
+    glos_firewall_def: "A system that filters network traffic and blocks unauthorised access.",
+    glos_firewall_ex: "E.g.: the Windows firewall blocks suspicious connections.",
+    glos_firewall_term: "Firewall",
+    glos_flash_exit: "Back to list",
+    glos_flash_flip: "Flip",
+    glos_flash_hint: "Tap the card to see the definition. “Shuffle” changes the order so you can review.",
+    glos_flash_next: "Next [[arrow_right]]",
+    glos_flash_prev: "[[arrow_left]] Previous",
+    glos_flash_shuffle: "Shuffle",
+    glos_gateway_def: "The exit point of a local network to another network, usually the router's IP.",
+    glos_gateway_ex: "E.g.: at home, the gateway is usually 192.168.0.1.",
+    glos_gateway_term: "Gateway",
+    glos_gpu_def: "It processes graphics and images and speeds up tasks such as gaming, video and design.",
+    glos_gpu_ex: "E.g.: a dedicated GPU performs better in games than an integrated one.",
+    glos_gpu_term: "GPU (Graphics card)",
+    glos_hdd_def: "A mechanical hard drive with spinning platters; cheaper per GB, but slower than an SSD.",
+    glos_hdd_ex: "E.g.: an HDD is good for storing many files you don't use every day.",
+    glos_hdd_term: "HDD",
+    glos_ip_address_def: "A unique number that identifies a device within a network, such as 192.168.1.10.",
+    glos_ip_address_ex: "E.g.: the router assigns an IP to each device connected at home.",
+    glos_ip_address_term: "IP address",
+    glos_lan_def: "Local area network: the computers connected within a home, office or classroom.",
+    glos_lan_ex: "E.g.: your PC, your phone and your TV form a LAN at home.",
+    glos_lan_term: "LAN",
+    glos_latency_def: "The time it takes for data to go from one point of the network to another; measured in milliseconds (ms).",
+    glos_latency_ex: "E.g.: in games, high latency shows up as a delay when responding.",
+    glos_latency_term: "Latency",
+    glos_mac_address_def: "The unique physical identifier of each network card, made up of 6 pairs of hexadecimal characters.",
+    glos_mac_address_ex: "E.g.: it comes printed on the router's label.",
+    glos_mac_address_term: "MAC address",
+    glos_malware_def: "Malicious software designed to damage, steal data or control a computer without permission.",
+    glos_malware_ex: "E.g.: a virus and a trojan are types of malware.",
+    glos_malware_term: "Malware",
+    glos_mode_cards: "Flashcard mode",
+    glos_motherboard_def: "The main board that connects the CPU, RAM, storage and other components.",
+    glos_motherboard_ex: "E.g.: the motherboard defines which CPU and how much RAM the computer supports.",
+    glos_motherboard_term: "Motherboard",
+    glos_nic_def: "The component that connects a computer to a network, by cable or Wi-Fi, and has a unique MAC address.",
+    glos_nic_ex: "E.g.: the NIC is what lets your PC connect to the router.",
+    glos_nic_term: "NIC (Network card)",
+    glos_nvme_def: "A very fast type of SSD that connects via PCIe and far outperforms a SATA SSD.",
+    glos_nvme_ex: "E.g.: an NVMe is ideal for the drive where Windows is installed.",
+    glos_nvme_term: "NVMe",
+    glos_operating_system_def: "The base software that manages the hardware and lets you use programs, such as Windows or Linux.",
+    glos_operating_system_ex: "E.g.: Windows 11 is the operating system of many PCs.",
+    glos_operating_system_term: "Operating system",
+    glos_osi_model_def: "A 7-layer model (physical, data link, network, transport, session, presentation, application) for understanding how a network communicates.",
+    glos_osi_model_ex: "E.g.: the cable is the physical layer; an IP address is the network layer.",
+    glos_osi_model_term: "OSI model",
+    glos_packet_def: "A block of data that travels across the network with its origin, destination and part of the complete message.",
+    glos_packet_ex: "E.g.: a video is split into many packets that are put back in order when they arrive.",
+    glos_packet_term: "Packet",
+    glos_psu_def: "It converts the current from the wall outlet into safe power for the PC's components.",
+    glos_psu_ex: "E.g.: a weak power supply can shut the PC down while gaming.",
+    glos_psu_term: "Power supply (PSU)",
+    glos_ram_def: "Fast, temporary memory where open programs work; it empties when you turn the computer off.",
+    glos_ram_ex: "E.g.: with little RAM, the PC slows down with several apps open.",
+    glos_ram_term: "RAM (Memory)",
+    glos_router_def: "A device that connects different networks and directs traffic between your local network and the internet.",
+    glos_router_ex: "E.g.: the router in a home connects its local network to the internet.",
+    glos_router_term: "Router",
+    glos_search_label: "Search the glossary",
+    glos_search_ph: "Search a term… e.g. DNS, RAM, latency",
+    glos_ssd_def: "Fast storage with no moving parts, based on flash memory.",
+    glos_ssd_ex: "E.g.: Windows boots in seconds from an SSD.",
+    glos_ssd_term: "SSD",
+    glos_subnet_mask_def: "A number that separates the network part and the host part of an IP address, such as 255.255.255.0.",
+    glos_subnet_mask_ex: "E.g.: with /24, a network has up to 254 devices.",
+    glos_subnet_mask_term: "Subnet mask",
+    glos_switch_def: "A device that connects several computers within the same local network and passes data between them.",
+    glos_switch_ex: "E.g.: a switch connects several PCs in a classroom by cable.",
+    glos_switch_term: "Switch",
+    glos_tcp_def: "A protocol that sends data in order and checks that it arrives complete.",
+    glos_tcp_ex: "E.g.: loading a web page uses TCP because nothing can be missing.",
+    glos_tcp_term: "TCP",
+    glos_thermal_paste_def: "A compound that improves contact between the CPU and its heatsink to transfer heat.",
+    glos_thermal_paste_ex: "E.g.: it is replaced when the CPU runs hotter than normal.",
+    glos_thermal_paste_term: "Thermal paste",
+    glos_throughput_def: "The actual amount of data successfully transferred per unit of time, usually in Mbps or Gbps.",
+    glos_throughput_ex: "E.g.: a 100 Mbps link with 70 Mbps real speed has a throughput of 70 Mbps.",
+    glos_throughput_term: "Throughput",
+    glos_udp_def: "A fast protocol that sends data without confirming each delivery; if something is lost, it is not resent.",
+    glos_udp_ex: "E.g.: video calls and games use UDP because of its low latency.",
+    glos_udp_term: "UDP",
+    glos_wan_def: "A wide area network that connects distant networks, such as the internet.",
+    glos_wan_ex: "E.g.: your LAN connects to the WAN through the router.",
+    glos_wan_term: "WAN",
+    glos_wifi6_def: "A faster, more efficient version of Wi-Fi with many devices at once, thanks to OFDMA and MU-MIMO.",
+    glos_wifi6_ex: "E.g.: many current routers already come with Wi-Fi 6.",
+    glos_wifi6_term: "Wi-Fi 6",
+    hw_altair_badge: "Genesis of the Microcomputer",
+    hw_altair_creators_title: "Creator and Pioneers",
+    hw_altair_gates_desc: "They wrote the first BASIC interpreter for the Altair 8800, a milestone that led them to formally found Micro-Soft in 1975.",
+    hw_altair_gates_name: "Bill Gates and Paul Allen",
+    hw_altair_gates_role: "Altair BASIC Developers",
+    hw_altair_how_text: "The small company MITS (Micro Instrumentation and Telemetry Systems) in Albuquerque, New Mexico, was on the verge of bankruptcy selling calculator kits. When they learned about the new Intel 8080 8-bit microprocessor, they decided to create an affordable computer kit for electronics hobbyists for under 400 dollars, presenting it on the cover of <em>Popular Electronics</em> magazine in January 1975.",
+    hw_altair_how_title: "How and why was the Altair 8800 born?",
+    hw_altair_milestones_text: "The Altair 8800 unleashed the open software and hardware revolution: it inspired the creation of the Homebrew Computer Club in Silicon Valley (where Steve Wozniak designed the Apple I), established the S-100 bus as an industry standard, and proved that an ordinary person could own their own computer.",
+    hw_altair_roberts_desc: "A physician and engineer regarded as the 'father of the personal computer'. He designed the system and the legendary S-100 expansion bus.",
+    hw_altair_roberts_role: "MITS Founder and Creator of the Altair",
+    hw_altair_specs_text: "It mounted the Intel 8080 CPU at 2 MHz with just 256 bytes of basic RAM (expandable to 64 KB). It included no keyboard, monitor or storage: it was programmed manually by entering binary code switch by switch on the front panel and reading the answers through blinking LED lights.",
+    hw_apple_badge: "Consumer Personal Computing",
+    hw_apple_creators_title: "Key Creators",
+    hw_apple_how_text: "After the handcrafted success of the Apple I on bare boards with no chassis or keyboard, Steve Wozniak and Steve Jobs conceived a fully integrated computer, ready to use straight out of the box for any user, with no electronics knowledge needed. It was presented at the West Coast Computer Faire in April 1977.",
+    hw_apple_how_title: "How and why was the Apple II born?",
+    hw_apple_jobs_desc: "He insisted it should look like a friendly home appliance, with a plastic chassis and no noisy fan, for the home and school.",
+    hw_apple_jobs_role: "Product Vision and Design",
+    hw_apple_milestones_text: "The Apple II turned computing from an engineers' hobby into a mass-market tool for homes, schools and businesses. In 1979 the <em>VisiCalc</em> spreadsheet was released for the Apple II, the first 'killer application' in history, which catapulted personal computer sales in the corporate sector.",
+    hw_apple_specs_text: "Equipped with the MOS Technology 6502 microprocessor at 1.023 MHz, between 4 KB and 48 KB of RAM, a keyboard built into a molded beige plastic case, built-in sound, ROM with Integer BASIC and a video controller capable of generating color graphics on a standard television. It included 8 internal expansion slots.",
+    hw_apple_wozniak_desc: "He designed all the electronic circuits, the color video architecture and the ultra-efficient Disk II floppy controller.",
+    hw_apple_wozniak_role: "Hardware Engineer and Designer",
+    hw_ibm_amdahl_desc: "They led the transition from valve-based electronic computing to discrete transistor-based integrated circuits (SMS cards).",
+    hw_ibm_amdahl_name: "Gene Amdahl & IBM Engineering Team",
+    hw_ibm_amdahl_role: "Central Architecture and Logic",
+    hw_ibm_badge: "2nd-Generation Mainframe",
+    hw_ibm_how_text: "At the height of the Cold War and with the rise of the US space program, the US Air Force and scientific agencies needed to process radar signals in real time for the ballistic missile early warning system (BMEWS). IBM transformed its earlier tube-based architecture (the IBM 709), replacing every valve with miniaturized transistor modules and creating the most powerful commercial scientific computer of its time.",
+    hw_ibm_how_title: "How and why was the IBM 7090 born?",
+    hw_ibm_milestones_text: "It was the computer NASA used in the Mercury and Gemini space programs to calculate the orbits of the first American astronauts, including John Glenn. It was also the pioneering system in the development of languages such as FORTRAN and LISP, and the first version of computer speech synthesis (\"Daisy Bell\") was created on it at Bell Laboratories.",
+    hw_ibm_specs_text: "It used more than 50,000 germanium transistors, worked with 36-bit words and a memory cycle time of 2.18 microseconds, and could execute 229,000 instructions per second. Its magnetic-core memory offered 32,768 words (about 144 KB), drastically reducing power consumption and heating compared with valves.",
+    hw_ibm_team_title: "Creator and Design Team",
+    hw_ibm_watson_desc: "He drove the company's multimillion-dollar investment to definitively replace vacuum-tube technology with solid-state transistors.",
+    hw_ibm_watson_role: "IBM Chief Executive Officer",
+    hw_milestones_title: "Milestones and Key Facts",
+    hw_tech_specs_title: "Technical Specifications",
+    idx_card_hw_desc: "The history of computers and the components that make up a computer system.",
+    idx_card_hw_title: "Hardware<br>and Evolution",
+    idx_card_maint_desc: "Updates, antivirus, cleaning, backups, and a routine to keep your computer from failing.",
+    idx_card_maint_title: "Software<br>Maintenance",
+    idx_card_net_desc: "Types of networks, topologies, and a visual simulator of data transit.",
+    idx_card_net_title: "Networks<br>and Simulation",
+    idx_card_res_desc: "Technical glossary and hands-on lab to keep learning at your own pace.",
+    idx_card_res_title: "Learning<br>Resources",
+    idx_explore_desc: "Select an area to learn the history of hardware, understand networks, or practice with interactive resources.",
+    idx_explore_title: "Explore NVISION",
+    lab_status_code: "Code",
+    lab_status_live: "Live",
+    lab_status_optional: "Optional module",
+    red_badge_ban: "Human Body // < 1 m",
+    red_badge_can: "Campus // 1 to 5 km",
+    red_badge_gan: "Planetary // Total Global",
+    red_badge_host: "Host Architecture",
+    red_badge_lan: "Home / Building // ~100 m",
+    red_badge_link: "Link Layer",
+    red_badge_man: "Metropolitan // Up to 50 km",
+    red_badge_media: "Physical Medium",
+    red_badge_pan: "Personal // ~1 to 10 m",
+    red_badge_wan: "Country / Continent // Extensive",
+    red_challenge_desc: "Test what you learned about topologies: identify star, bus, ring, mesh, and tree in 10 questions, earn points, and keep your 3 lives. Can you reach 100 points?",
+    red_challenge_play: "Play Redes Challenge",
+    red_insp_l2_init: "Source: -- | Destination: --",
+    red_insp_stat_init: "RTT: -- ms | Loss: 0% | Status: Waiting",
+    red_sim_console_init: "[SYSTEM] Simulator initialized. Select a source host and destination, then press 'Send ICMP Ping'.",
+    red_sim_opt_pc2_same: "PC 2 (192.168.1.20 - Same LAN)",
+    red_sim_opt_server: "Web Server (10.0.0.80 - WAN / Cloud)",
+    red_sim_packet_sending: "Sending data",
+    red_sim_reset_title: "Reset viewer",
+    red_swl_device_sub: "NV-SW 08 · layer 2",
+    red_swl_mode_aria: "Device mode",
+    red_swl_svg_aria: "Switch with four computers connected by cable",
+    red_tag_bgp: "BGP Routing",
+    red_tag_biosensors: "Bio-sensors",
+    red_tag_fiber: "OM4 Optical Fiber",
+    red_tag_laser: "Inter-satellite Laser",
+    red_tag_leo: "LEO Satellites",
+    red_tag_sdh: "SDH / SONET Rings",
+    red_tag_submarine: "Submarine Cables",
+    red_topo_aria_bus: "Bus Topology Diagram",
+    red_topo_aria_hybrid: "Hybrid Topology Diagram",
+    red_topo_aria_mesh: "Mesh Topology Diagram",
+    red_topo_aria_ring: "Ring Topology Diagram",
+    red_topo_aria_star: "Star Topology Diagram",
+    red_topo_aria_tree: "Tree Topology Diagram"
   }
 };
 
@@ -1524,8 +2052,20 @@ function applyLanguage(lang) {
   elements.forEach((el) => {
     const key = el.getAttribute('data-i18n');
     if (translations[lang] && translations[lang][key]) {
-      el.textContent = translations[lang][key];
+      el.innerHTML = iconize(translations[lang][key]);
     }
+  });
+
+  document.querySelectorAll('[data-i18n-html]').forEach((el) => {
+    const key = el.getAttribute('data-i18n-html');
+    if (translations[lang] && translations[lang][key]) {
+      el.innerHTML = iconize(translations[lang][key]);
+    }
+  });
+
+  document.querySelectorAll('[data-i18n-alt]').forEach((el) => {
+    const key = el.getAttribute('data-i18n-alt');
+    if (translations[lang] && translations[lang][key]) el.setAttribute('alt', translations[lang][key]);
   });
 
   document.querySelectorAll('[data-i18n-placeholder]').forEach((el) => {
@@ -1954,9 +2494,9 @@ function setupLocalAssistant() {
     { c: 'Otro', k: ['que es bitlocker', 'bitlocker cifrado', 'cifrar el disco'], r: ['El **BitLocker** cifra todo el disco de Windows: si te roban el equipo, nadie lee tus archivos sin la clave, aunque saquen el disco. Actívalo en portátiles con datos importantes y guarda la clave de recuperación aparte.', '**BitLocker** encrypts the whole Windows disk: if the machine is stolen, nobody reads your files without the key, even pulling the disk out. Turn it on for laptops with important data and keep the recovery key elsewhere.'], href: 'mantenimiento-software.html#tareas' },
     { c: 'Otro', k: ['que es la autenticacion en dos pasos', '2fa que es', 'doble factor autenticacion'], r: ['La **autenticación en dos pasos (2FA)** pide, además de tu clave, un código de tu celular o llave: aunque te roben la contraseña, no entran sin ese segundo factor. Actívala en correo, redes y bancos.', '**Two-factor authentication (2FA)** asks, besides your password, for a code from your phone or key: even with your password stolen, attackers cannot enter without that second factor. Turn it on for mail, social and banks.'], href: 'mantenimiento-software.html#rutina' },
     { c: 'Otro', k: ['gestor de contraseñas', 'que es un gestor de claves', 'administrador de contraseñas'], r: ['Un **gestor de contraseñas** guarda todas tus claves cifradas bajo una sola clave maestra y genera claves largas y únicas por sitio: así no repites la misma en todo ni la anotas en papel.', 'A **password manager** stores all your passwords encrypted under one master password and generates long, unique passwords per site: no more reusing one everywhere or writing them on paper.'], href: 'mantenimiento-software.html#rutina' },
-    { c: 'Recursos', k: ['mejor antivirus gratis', 'que antivirus usar', 'microsoft defender', 'mejor programa mantenimiento'], r: ['🏆 **Mejor en general: Microsoft Defender** — ya viene con Windows, se actualiza solo y protege todo el tiempo sin instalar nada ni pagar nada. Para la mayoría de usuarios, es la base correcta.', '🏆 **Best overall: Microsoft Defender** — it already ships with Windows, updates itself and protects all the time with nothing to install or pay. For most users, it is the right base.'], href: 'mantenimiento-software.html#programas' },
-    { c: 'Recursos', k: ['programas gratis mantenimiento', 'mantenimiento costo cero', 'mejor costo programas'], r: ['💰 **Mejor costo: BleachBit + Defender** — costo total 0: Defender protege y BleachBit limpia temporales sin publicidad, sin suscripción y sin peso extra. Ideal si no quieres gastar nada.', '💰 **Best value: BleachBit + Defender** — total cost 0: Defender protects and BleachBit cleans temps with no ads, no subscription and no extra weight. Ideal if you do not want to spend anything.'], href: 'mantenimiento-software.html#programas' },
-    { c: 'Recursos', k: ['programas mas eficientes', 'winget que es', 'crystaldiskinfo que es'], r: ['⚡ **Más eficientes: Winget + CrystalDiskInfo** — solo trabajan cuando se les pide: Winget actualiza muchos programas a la vez desde Windows y CrystalDiskInfo revisa la salud SMART del disco sin quedarse en segundo plano.', '⚡ **Most efficient: Winget + CrystalDiskInfo** — they only work when asked: Winget updates many programs at once from Windows and CrystalDiskInfo checks disk SMART health without staying in the background.'], href: 'mantenimiento-software.html#programas' },
+    { c: 'Recursos', k: ['mejor antivirus gratis', 'que antivirus usar', 'microsoft defender', 'mejor programa mantenimiento'], r: ['[[trophy]] **Mejor en general: Microsoft Defender** — ya viene con Windows, se actualiza solo y protege todo el tiempo sin instalar nada ni pagar nada. Para la mayoría de usuarios, es la base correcta.', '[[trophy]] **Best overall: Microsoft Defender** — it already ships with Windows, updates itself and protects all the time with nothing to install or pay. For most users, it is the right base.'], href: 'mantenimiento-software.html#programas' },
+    { c: 'Recursos', k: ['programas gratis mantenimiento', 'mantenimiento costo cero', 'mejor costo programas'], r: ['[[coin]] **Mejor costo: BleachBit + Defender** — costo total 0: Defender protege y BleachBit limpia temporales sin publicidad, sin suscripción y sin peso extra. Ideal si no quieres gastar nada.', '[[coin]] **Best value: BleachBit + Defender** — total cost 0: Defender protects and BleachBit cleans temps with no ads, no subscription and no extra weight. Ideal if you do not want to spend anything.'], href: 'mantenimiento-software.html#programas' },
+    { c: 'Recursos', k: ['programas mas eficientes', 'winget que es', 'crystaldiskinfo que es'], r: ['[[bolt]] **Más eficientes: Winget + CrystalDiskInfo** — solo trabajan cuando se les pide: Winget actualiza muchos programas a la vez desde Windows y CrystalDiskInfo revisa la salud SMART del disco sin quedarse en segundo plano.', '[[bolt]] **Most efficient: Winget + CrystalDiskInfo** — they only work when asked: Winget updates many programs at once from Windows and CrystalDiskInfo checks disk SMART health without staying in the background.'], href: 'mantenimiento-software.html#programas' },
     { c: 'Recursos', k: ['tabla programas recomendados', 'que programas instalar mantenimiento', 'programas recomendados mantenimiento'], r: ['La tabla recomienda: **Defender** (antivirus), **Malwarebytes Free** (segunda opinión), **Winget** (actualizar todo), **Windows Update** (sistema y drivers), **BleachBit** (limpiar), **CCleaner Free** (limpieza guiada), **CrystalDiskInfo** (salud del disco) y **Copia de Windows / Veeam** (backup). Combo costo 0: Defender + Winget + BleachBit. Descarga todo solo desde su sitio oficial.', 'The table recommends: **Defender** (antivirus), **Malwarebytes Free** (second opinion), **Winget** (update everything), **Windows Update** (system and drivers), **BleachBit** (cleaning), **CCleaner Free** (guided cleaning), **CrystalDiskInfo** (disk health) and **Windows Backup / Veeam** (backup). Zero-cost combo: Defender + Winget + BleachBit. Download everything only from its official site.'], href: 'mantenimiento-software.html#programas' },
     { c: 'Recursos', k: ['que es tracert', 'tracert', 'traceroute que es'], r: ['El **tracert** (traceroute) muestra el camino que sigue un paquete hasta su destino, salto por salto con su tiempo: sirve para ver en qué punto se pierde o se demora la conexión. En Windows se escribe `tracert 8.8.8.8`.', '**Tracert** (traceroute) shows the path a packet takes to its destination, hop by hop with timing: it reveals where the connection is lost or delayed. On Windows you type `tracert 8.8.8.8`.'], href: 'recursos.html#laboratorio' },
     { c: 'Recursos', k: ['que es nslookup', 'nslookup para que sirve', 'nslookup dns'], r: ['El **nslookup** pregunta al DNS qué IP tiene un dominio (o al revés): sirve para comprobar si un sitio no abre por DNS o por otra cosa. Se escribe `nslookup nvision.social`.', '**Nslookup** asks DNS which IP a domain has (or vice versa): it checks whether a site fails because of DNS or something else. You type `nslookup nvision.social`.'], href: 'recursos.html#laboratorio' },
@@ -2014,7 +2554,7 @@ function setupLocalAssistant() {
     { c: 'Recursos', k: ['simulacion torre 3d', 'modelo 3d torre', 'three.js torre'], r: ['En Recursos hay un módulo opcional: la **simulación de torre 3D**, un espacio reservado para integrar Three.js/WebGL y rotar y desarmar una torre virtual. El visor 3D que sí funciona hoy está en PC3D.', 'Resources has an optional module: the **3D tower simulation**, a reserved space to integrate Three.js/WebGL and rotate and disassemble a virtual tower. The 3D viewer that works today is in PC3D.'], href: 'recursos.html#laboratorio' },
     { c: 'Recursos', k: ['bateria del detector', 'que muestra la bateria', 'detecta bateria'], r: ['El detector también muestra la **batería**: nivel y si está **cargando**. Es uno de los 7 datos que el navegador puede ver sin instalar nada.', 'The detector also shows the **battery**: level and whether it is **charging**. It is one of the 7 facts the browser can see with no installs.'], href: 'recursos.html#laboratorio' },
     { c: 'Otro', k: ['inicio de nvision', 'pagina principal nvision', 'que hay en el inicio', 'portada nvision'], r: ['La página principal presenta el sitio — **Arquitectura y Evolución de los Computadores** — y cuatro entradas: Hardware y Evolución, Redes y Simulación, Recursos de Aprendizaje y Mantenimiento por software.', 'The home page introduces the site — **Computer Architecture and Evolution** — and four entries: Hardware and Evolution, Networks and Simulation, Learning Resources and Software Maintenance.'] },
-    { c: 'Redes', k: ['del hardware a la red', 'como se enlaza el equipo a la red', 'capa de enlace'], r: ['La sección **Del Hardware a la Red** explica cómo el equipo físico se enlaza a una LAN: la MAC de la NIC (capa de enlace), los puertos RJ-45 y Wi-Fi por PCIe, y el flujo de datos RAM → CPU → NIC → medio físico.', 'The **From Hardware to Network** section explains how physical hardware joins a LAN: the NIC\u2019s MAC (link layer), RJ-45 and Wi-Fi ports over PCIe, and the data flow RAM → CPU → NIC → physical medium.'], href: 'redes.html#redes' },
+    { c: 'Redes', k: ['del hardware a la red', 'como se enlaza el equipo a la red', 'capa de enlace'], r: ['La sección **Del Hardware a la Red** explica cómo el equipo físico se enlaza a una LAN: la MAC de la NIC (capa de enlace), los puertos RJ-45 y Wi-Fi por PCIe, y el flujo de datos RAM [[arrow_right]] CPU [[arrow_right]] NIC [[arrow_right]] medio físico.', 'The **From Hardware to Network** section explains how physical hardware joins a LAN: the NIC\u2019s MAC (link layer), RJ-45 and Wi-Fi ports over PCIe, and the data flow RAM [[arrow_right]] CPU [[arrow_right]] NIC [[arrow_right]] physical medium.'], href: 'redes.html#redes' },
     { c: 'Otro', k: ['que es un sistema operativo', 'sistema operativo', 'que es windows', 'que es linux', 'que es el os'], r: ['El **sistema operativo** (Windows, Linux, macOS) es el programa base que administra hardware y programas: memoria, archivos, pantalla y red. Sin él, el PC no sabe qué hacer con sus piezas.', 'The **operating system** (Windows, Linux, macOS) is the base program that manages hardware and programs: memory, files, screen and network. Without it, the PC would not know what to do with its parts.'] },
     { c: 'Otro', k: ['que es un programa', 'que es una aplicacion', 'que es una app', 'que es el software de aplicacion'], r: ['Un **programa o app** es software que hace una tarea: navegador, ofimática, juegos. Corre sobre el sistema operativo y usa CPU, RAM y almacenamiento.', 'A **program or app** is software that performs a task: browser, office suite, games. It runs on the operating system and uses CPU, RAM and storage.'] },
     { c: 'Otro', k: ['que es un virus', 'que es malware', 'virus spyware ransomware', 'diferencia virus malware'], r: ['**Malware** es el término general para software dañino: **virus** (se replica), **spyware** (espía y roba datos) y **ransomware** (secuestra archivos pidiendo rescate). Contra todos: un antivirus actualizado y copias de seguridad.', '**Malware** is the general term for harmful software: **virus** (it replicates), **spyware** (it spies and steals data) and **ransomware** (it hijacks files demanding ransom). Against all of them: an updated antivirus and backups.'], href: 'mantenimiento-software.html#tareas' },
@@ -2031,23 +2571,23 @@ function setupLocalAssistant() {
     { c: 'Otro', k: ['internet o web', 'diferencia internet web', 'web que es'], r: ['**Internet** es la red física de redes; la **web** son las páginas y servicios que corren sobre ella (HTTP). Puedes tener internet sin web (correo, juegos en línea), pero no web sin internet.', '**Internet** is the physical network of networks; the **web** is the pages and services that run on it (HTTP). You can have internet without the web (email, online games) but not the web without the internet.'], href: 'redes.html#alcance-redes' },
     { c: 'Otro', k: ['que es un bit', 'que es un byte', 'bits y bytes', 'mb gb'], r: ['**Bit** es la unidad mínima (0 o 1); **byte** son 8 bits. El ancho de banda se mide en bits por segundo (bps) y el almacenamiento en bytes (KB, MB, GB, TB).', '**Bit** is the smallest unit (0 or 1); **byte** is 8 bits. Bandwidth is measured in bits per second (bps) and storage in bytes (KB, MB, GB, TB).'] },
     { c: 'Otro', k: ['wifi 6', 'que es wifi 6', '802.11ax'], r: ['**WiFi 6 (802.11ax)** es la generación actual de WiFi que usa la LAN de la página de Redes: más velocidad y mejor manejo de muchos equipos a la vez en la misma red.', '**WiFi 6 (802.11ax)** is the current WiFi generation used by the Networks page LAN: more speed and better handling of many devices at once on the same network.'], href: 'redes.html#alcance-redes' },
-    { c: 'Redes Challenge', k: ['redes challenge', 'el juego', 'juego de topologias', 'jugar redes challenge', 'donde esta el juego', 'como entro al juego'], r: ['**Redes Challenge** es el minijuego de NVISION para practicar topologías de red. Puedes entrar desde el menú **Redes → 🎮 Redes Challenge** (está en todas las páginas), desde la sección «Redes Challenge» en la página de Redes, o desde Recursos. Es gratis, corre en el navegador y tiene español e inglés.', '**Redes Challenge** is the NVISION mini-game for practicing network topologies. You can enter from the **Redes → 🎮 Redes Challenge** menu (on every page), from the "Redes Challenge" section on the Networks page, or from Recursos. It is free, runs in the browser and has Spanish and English.'], href: 'redes_challenge/index.html' },
-    { c: 'Redes Challenge', k: ['reglas del juego', 'como se juega', 'cuantas preguntas', 'como funcionan las vidas', 'puntos del juego'], r: ['Reglas de **Redes Challenge**: son **10 preguntas** de opción múltiple; cada acierto suma **10 puntos** (máximo **100**). Empiezas con **3 vidas ❤️❤️❤️** y pierdes una por cada error; el juego termina si te quedas sin vidas o al responder las 10 preguntas. Cada respuesta incluye una explicación corta de por qué es correcta.', '**Redes Challenge** rules: there are **10 multiple-choice questions**; each correct answer adds **10 points** (max **100**). You start with **3 lives ❤️❤️❤️** and lose one per mistake; the game ends if you run out of lives or finish all 10 questions. Every answer includes a short explanation of why it is correct.'], href: 'redes_challenge/index.html' },
-    { c: 'Redes Challenge', k: ['puntuacion del juego', 'cuanto es buena puntuacion', 'resultado final', 'que pasa si pierdo', 'volver a jugar'], r: ['Al terminar el juego: con **80 puntos o más** recibes «🏆 ¡Excelente trabajo!», con **50 o más** «👏 ¡Buen intento!», y con menos «📚 ¡Sigue practicando!». Si te quedas sin vidas puedes reiniciar con el botón **↻ Volver a jugar** y empezar de cero con las preguntas reordenadas.', 'At the end: **80 points or more** gives you «🏆 Excellent work!», **50 or more** «👏 Good try!», and below that «📚 Keep practicing!». If you run out of lives you can restart with the **↻ Play again** button and start fresh with shuffled questions.'], href: 'redes_challenge/index.html' },
+    { c: 'Redes Challenge', k: ['redes challenge', 'el juego', 'juego de topologias', 'jugar redes challenge', 'donde esta el juego', 'como entro al juego'], r: ['**Redes Challenge** es el minijuego de NVISION para practicar topologías de red. Puedes entrar desde el menú **Redes [[arrow_right]] [[gamepad]] Redes Challenge** (está en todas las páginas), desde la sección «Redes Challenge» en la página de Redes, o desde Recursos. Es gratis, corre en el navegador y tiene español e inglés.', '**Redes Challenge** is the NVISION mini-game for practicing network topologies. You can enter from the **Redes [[arrow_right]] [[gamepad]] Redes Challenge** menu (on every page), from the "Redes Challenge" section on the Networks page, or from Recursos. It is free, runs in the browser and has Spanish and English.'], href: 'redes_challenge/index.html' },
+    { c: 'Redes Challenge', k: ['reglas del juego', 'como se juega', 'cuantas preguntas', 'como funcionan las vidas', 'puntos del juego'], r: ['Reglas de **Redes Challenge**: son **10 preguntas** de opción múltiple; cada acierto suma **10 puntos** (máximo **100**). Empiezas con **3 vidas [[heart]][[heart]][[heart]]** y pierdes una por cada error; el juego termina si te quedas sin vidas o al responder las 10 preguntas. Cada respuesta incluye una explicación corta de por qué es correcta.', '**Redes Challenge** rules: there are **10 multiple-choice questions**; each correct answer adds **10 points** (max **100**). You start with **3 lives [[heart]][[heart]][[heart]]** and lose one per mistake; the game ends if you run out of lives or finish all 10 questions. Every answer includes a short explanation of why it is correct.'], href: 'redes_challenge/index.html' },
+    { c: 'Redes Challenge', k: ['puntuacion del juego', 'cuanto es buena puntuacion', 'resultado final', 'que pasa si pierdo', 'volver a jugar'], r: ['Al terminar el juego: con **80 puntos o más** recibes «[[trophy]] ¡Excelente trabajo!», con **50 o más** «[[medal]] ¡Buen intento!», y con menos «[[book]] ¡Sigue practicando!». Si te quedas sin vidas puedes reiniciar con el botón **[[refresh]] Volver a jugar** y empezar de cero con las preguntas reordenadas.', 'At the end: **80 points or more** gives you «[[trophy]] Excellent work!», **50 or more** «[[medal]] Good try!», and below that «[[book]] Keep practicing!». If you run out of lives you can restart with the **[[refresh]] Play again** button and start fresh with shuffled questions.'], href: 'redes_challenge/index.html' },
     { c: 'Redes Challenge', k: ['que topologias aparecen', 'topologias del juego', 'temas del juego', 'que aprendo en el juego'], r: ['El juego evalúa las **5 topologías** vistas en la página de Redes: **Estrella, Bus, Anillo, Malla y Árbol**. Primero te pregunta por el diagrama (identificar la estructura que dibuja) y luego por conceptos (¿cuál usa un switch central?, ¿cuál tiene caminos alternativos?, etc.).', 'The game tests the **5 topologies** covered on the Networks page: **Star, Bus, Ring, Mesh and Tree**. It first asks about the diagram (identify the drawn structure) and then about concepts (which one uses a central switch? which one has alternative paths?, etc.).'], href: 'redes.html#topologias' },
     { c: 'Redes Challenge', k: ['estrella en el juego', 'switch central', 'cual usa un switch'], r: ['La **estrella** es la topología con un **dispositivo central** (un **SW/switch**) al que se conectan todas las PC con enlaces propios. Pista del juego: «todos los equipos se conectan a un dispositivo central». Es la estándar de las LAN modernas.', '**Star** is the topology with a **central device** (an **SW/switch**) that every PC connects to with its own link. Game hint: "all devices connect to one central device". It is the standard for modern LANs.'], href: 'redes.html#topologias' },
     { c: 'Redes Challenge', k: ['bus en el juego', 'cable troncal', 'cable compartido'], r: ['La **bus** usa un **cable principal (troncal) compartido** al que se cuelgan todos los equipos en línea recta. Pista del juego: «todos los equipos comparten un cable principal». Hoy sobrevive en buses industriales como CAN.', '**Bus** uses a **shared backbone cable** where all devices hang in a straight line. Game hint: "all devices share one main cable". Today it survives in industrial buses like CAN.'], href: 'redes.html#topologias' },
-    { c: 'Redes Challenge', k: ['anillo en el juego', 'circuito cerrado', 'los equipos forman un ciclo'], r: ['El **anillo** conecta cada equipo con sus vecinos formando un **circuito cerrado** (PC1→PC2→PC3→PC4→PC1). Pista del juego: «los equipos forman un circuito cerrado».', '**Ring** connects each device to its neighbors forming a **closed loop** (PC1→PC2→PC3→PC4→PC1). Game hint: "devices form a closed circuit".'], href: 'redes.html#topologias' },
+    { c: 'Redes Challenge', k: ['anillo en el juego', 'circuito cerrado', 'los equipos forman un ciclo'], r: ['El **anillo** conecta cada equipo con sus vecinos formando un **circuito cerrado** (PC1[[arrow_right]]PC2[[arrow_right]]PC3[[arrow_right]]PC4[[arrow_right]]PC1). Pista del juego: «los equipos forman un circuito cerrado».', '**Ring** connects each device to its neighbors forming a **closed loop** (PC1[[arrow_right]]PC2[[arrow_right]]PC3[[arrow_right]]PC4[[arrow_right]]PC1). Game hint: "devices form a closed circuit".'], href: 'redes.html#topologias' },
     { c: 'Redes Challenge', k: ['malla en el juego', 'caminos alternativos', 'enlaces multiples', 'redundancia'], r: ['La **malla** tiene **múltiples enlaces entre los dispositivos**: cada nodo se conecta con todos los demás, así hay **rutas redundantes** si un enlace falla. Pista del juego: «existen múltiples enlaces entre los dispositivos».', '**Mesh** has **multiple links between devices**: every node connects to all the others, so there are **redundant paths** if one link fails. Game hint: "there are multiple links between devices".'], href: 'redes.html#topologias' },
     { c: 'Redes Challenge', k: ['arbol en el juego', 'jerarquia de niveles', 'estructura jerarquica', 'ramas de una organizacion'], r: ['El **árbol** organiza los dispositivos en **niveles jerárquicos**: un switch raíz (SW1) conecta switches secundarios (SW2, SW3) y estos a las PC. Se parece a las ramas de una organización. Pista del juego: «los dispositivos se organizan en niveles jerárquicos».', '**Tree** organizes devices in **hierarchical levels**: a root switch (SW1) connects secondary switches (SW2, SW3), and those connect the PCs. It looks like the branches of an organization. Game hint: "devices are organized in hierarchical levels".'], href: 'redes.html#topologias' },
-    { c: 'Redes Challenge', k: ['diagramas del juego', 'glosario y simulador', 'que mas ofrece el juego', 'idioma del juego'], r: ['Extras de **Redes Challenge**: los diagramas de topología son **SVG con efecto 3D** (se inclinan al mover el cursor), la barra superior muestra **puntos ⭐, pregunta ❔ y vidas ❤️**, y desde su menú lateral puedes saltar al **Glosario** de términos o al **Simulador Ping**. Funciona en **español e inglés** y también en el celular.', '**Redes Challenge** extras: the topology diagrams are **SVG with a 3D effect** (they tilt as you move the cursor), the top bar shows **points ⭐, question ❔ and lives ❤️**, and its side menu links to the **Glossary** and the **Ping Simulator**. It works in **Spanish and English** and on mobile too.'], href: 'redes_challenge/index.html' },
+    { c: 'Redes Challenge', k: ['diagramas del juego', 'glosario y simulador', 'que mas ofrece el juego', 'idioma del juego'], r: ['Extras de **Redes Challenge**: los diagramas de topología son **SVG con efecto 3D** (se inclinan al mover el cursor), la barra superior muestra **puntos [[star]], pregunta [[question]] y vidas [[heart]]**, y desde su menú lateral puedes saltar al **Glosario** de términos o al **Simulador Ping**. Funciona en **español e inglés** y también en el celular.', '**Redes Challenge** extras: the topology diagrams are **SVG with a 3D effect** (they tilt as you move the cursor), the top bar shows **points [[star]], question [[question]] and lives [[heart]]**, and its side menu links to the **Glossary** and the **Ping Simulator**. It works in **Spanish and English** and on mobile too.'], href: 'redes_challenge/index.html' },
     { c: 'Otro', k: ['mi pc no enciende', 'no prende el computador', 'no arranca el pc', 'pantalla negra no enciende'], r: ['Si **no enciende**: revisa en orden — cable y toma de corriente, botón de la fuente (atrás), monitor encendido y bien conectado, y si hay pitidos o luces. Si huele a quemado o no da señales, no insistas: servicio técnico.', 'If it **will not turn on**: check in order — power cable and outlet, the PSU switch (at the back), monitor on and well connected, and whether there are beeps or lights. If it smells burnt or shows no signs, do not insist: get a technician.'] },
     { c: 'Otro', k: ['pantalla negra', 'pantalla en negro con cursor', 'monitor negro'], r: ['Pantalla negra con el equipo encendido: revisa cable del monitor y fuente de video, prueba otro puerto, y si empezó tras actualizar, sospecha del **controlador de video** (vuelve al anterior). Si no hay imagen ni en el arranque, puede ser RAM o GPU.', 'Black screen with the machine on: check the monitor cable and video source, try another port, and if it started after an update, suspect the **video driver** (roll back). If there is no image even at boot, it may be RAM or GPU.'] },
     { c: 'Otro', k: ['no tengo sonido', 'sin sonido pc', 'no suena el computador'], r: ['Sin sonido: revisa volumen y salida correcta (parlantes/auriculares), que el dispositivo no esté silenciado, y el **controlador de audio** (actualízalo desde el fabricante). Si empezó de repente, vuelve al controlador anterior.', 'No sound: check volume and the right output (speakers/headphones), that the device is not muted, and the **audio driver** (update it from the manufacturer). If it started suddenly, roll back to the previous driver.'] },
     { c: 'Otro', k: ['wifi inestable', 'wifi se cae', 'wifi se desconecta solo', 'wifi intermitente'], r: ['WiFi que se cae: acerca el equipo al módem o revisa su ubicación, cambia el canal en 2.4 GHz (1, 6 u 11) y actualiza el **controlador de red** desde el fabricante. Si solo falla un equipo, el problema es ese equipo, no la red.', 'WiFi dropping out: move closer to the modem or check its placement, change the 2.4 GHz channel (1, 6 or 11) and update the **network driver** from the manufacturer. If only one device fails, the problem is that device, not the network.'], href: 'wifi.html#instalar-modem' },
     { c: 'Otro', k: ['ventiladores hacen mucho ruido', 'ruido fuerte pc', 'suena mucho el computador'], r: ['Ruido fuerte: casi siempre son **ventiladores con polvo o trabajando al máximo por calor**. Limpia filtros y ventiladores con aire comprimido (sujetándolos) y revisa temperaturas; si el ruido es eléctrico o hay olor a quemado, apaga y consulta técnico.', 'Loud noise: almost always **fans full of dust or running at max because of heat**. Clean filters and fans with compressed air (holding them) and check temperatures; if the noise is electrical or there is a burning smell, power off and consult a technician.'], href: 'pc3d.html#mantenimiento' },
     { c: 'Otro', k: ['no carga la bateria', 'bateria no carga', 'portatil no carga'], r: ['Si no carga: prueba otro toma y otro cargador compatible, revisa que el conector no esté flojo o sucio y observa la salud de la batería. Si está **hinchada**, no la cargues ni la pinches: servicio técnico.', 'If it will not charge: try another outlet and another compatible charger, check the connector is not loose or dirty and watch battery health. If it is **swollen**, do not charge or puncture it: get a technician.'] },
-    { c: 'Otro', k: ['hola', 'buenas', 'buenos dias', 'hey', 'saludos', 'hello', 'hi'], r: ['¡Hola! Soy el asistente de **NVISION** 🤖. Pregúntame de hardware, redes, el switch, el WiFi o del juego **Redes Challenge** 🎮. Toca una sugerencia o escribe tu duda.', 'Hi! I am the **NVISION** assistant 🤖. Ask me about hardware, networks, the switch, WiFi or the **Redes Challenge** game 🎮. Tap a suggestion or type your question.'] },
+    { c: 'Otro', k: ['hola', 'buenas', 'buenos dias', 'hey', 'saludos', 'hello', 'hi'], r: ['¡Hola! Soy el asistente de **NVISION** [[robot]]. Pregúntame de hardware, redes, el switch, el WiFi o del juego **Redes Challenge** [[gamepad]]. Toca una sugerencia o escribe tu duda.', 'Hi! I am the **NVISION** assistant [[robot]]. Ask me about hardware, networks, the switch, WiFi or the **Redes Challenge** game [[gamepad]]. Tap a suggestion or type your question.'] },
     { c: 'Otro', k: ['quien eres', 'que eres', 'que haces', 'para que sirves', 'ayuda', 'help', 'who are you', 'what can you do'], r: ['Soy un asistente **entrenado con el contenido de NVISION**: respondo desde una base de conocimiento guardada en la página, sin internet y sin IA externa. Si algo no lo sé, puedes **enseñármelo** en la pestaña «Entrenar» y lo aprendo en este navegador.', 'I am an assistant **trained on NVISION content**: I answer from a knowledge base stored in the page, no internet and no external AI. If I miss something, you can **teach me** in the "Train" tab and I learn it in this browser.'], },
     { c: 'Hardware', k: ['que es la cpu', 'procesador', 'cpu', 'cerebro del computador', 'what is the cpu', 'processor'], r: ['La **CPU** es el cerebro del PC: ejecuta las instrucciones de los programas. Se mide en núcleos e hilos (procesadores lógicos) y en GHz. En el detector del laboratorio puedes ver cuántos hilos tiene tu equipo.', 'The **CPU** is the brain of the PC: it runs program instructions. It is measured in cores and threads (logical processors) and in GHz. In the lab detector you can see how many threads your machine has.'], href: 'hardware.html#componentes' },
     { c: 'Hardware', k: ['que es la ram', 'memoria ram', 'ram', 'para que sirve la ram', 'what is ram'], r: ['La **RAM** es la memoria de trabajo: guarda lo que el PC está usando ahora mismo y se borra al apagar. Más RAM = más programas abiertos sin que el equipo se ponga lento.', '**RAM** is the working memory: it holds what the PC is using right now and it clears when you shut down. More RAM = more open programs without slowdowns.'], href: 'hardware.html#componentes' },
@@ -2079,8 +2619,8 @@ function setupLocalAssistant() {
     { c: 'WiFi', k: ['cambiar clave wifi', 'contraseña del router', 'seguridad wifi', 'wpa2 wpa3', 'change wifi password'], r: ['Cambia la clave del WiFi desde el panel del router (**192.168.1.1**): contraseña nueva de más de 12 caracteres y seguridad **WPA2 o WPA3**. Y nunca dejes el usuario admin de fábrica del panel.', 'Change the WiFi password from the router panel (**192.168.1.1**): a new password over 12 characters and **WPA2 or WPA3** security. And never keep the panel factory admin user.'], href: 'wifi.html#instalar-modem' },
     { c: 'WiFi', k: ['2.4 o 5 ghz', 'banda wifi', 'wifi lento', 'canal wifi', 'wifi slow', 'wifi band'], r: ['**2.4 GHz** llega más lejos y cruza paredes, pero es más lenta; **5 GHz** es mucho más rápida cerca del módem. Si el WiFi va lento en un edificio lleno de redes, cambia el canal (1, 6 u 11 en 2.4 GHz).', '**2.4 GHz** reaches farther and crosses walls, but it is slower; **5 GHz** is much faster near the modem. If WiFi is slow in a building full of networks, change the channel (1, 6 or 11 on 2.4 GHz).'], href: 'wifi.html#instalar-modem' },
     { c: 'Otro', k: ['por donde empiezo', 'ruta de aprendizaje', 'que ver primero', 'como usar el sitio', 'donde empiezo', 'learning path', 'where do i start'], r: ['Ruta sugerida: **1)** Historia y componentes en Hardware, **2)** el explorador 3D de PC3D, **3)** tipos de red y topologías en Redes, **4)** el laboratorio del switch y el simulador ping, **5)** los códigos y el glosario en Recursos, y **6)** la guía WiFi. En ese orden todo encaja.', 'Suggested path: **1)** History and components in Hardware, **2)** the PC3D 3D explorer, **3)** network types and topologies in Networks, **4)** the switch lab and the ping simulator, **5)** the codes and glossary in Resources, and **6)** the WiFi guide. In that order everything clicks.'] },
-    { c: 'Otro', k: ['gracias', 'muchas gracias', 'te agradezco', 'thanks', 'thank you'], r: ['¡Con gusto! 💚 Si te queda otra duda del sitio, pregúntame; y si alguna vez no sé algo, puedes enseñármelo en la pestaña «Entrenar».', 'You are welcome! 💚 If you have another question about the site, ask me; and if I ever miss something, you can teach me in the "Train" tab.'] },
-    { c: 'Otro', k: ['chao', 'adios', 'hasta luego', 'nos vemos', 'bye', 'see you'], r: ['¡Hasta pronto! 👋 Recuerda: el switch aprende solo si le envías tramas… y yo también aprendo si me enseñas.', 'See you soon! 👋 Remember: the switch only learns if you send it frames… and I learn too if you teach me.'] },
+    { c: 'Otro', k: ['gracias', 'muchas gracias', 'te agradezco', 'thanks', 'thank you'], r: ['¡Con gusto! [[heart_green]] Si te queda otra duda del sitio, pregúntame; y si alguna vez no sé algo, puedes enseñármelo en la pestaña «Entrenar».', 'You are welcome! [[heart_green]] If you have another question about the site, ask me; and if I ever miss something, you can teach me in the "Train" tab.'] },
+    { c: 'Otro', k: ['chao', 'adios', 'hasta luego', 'nos vemos', 'bye', 'see you'], r: ['¡Hasta pronto! [[wave]] Recuerda: el switch aprende solo si le envías tramas… y yo también aprendo si me enseñas.', 'See you soon! [[wave]] Remember: the switch only learns if you send it frames… and I learn too if you teach me.'] },
 { c: 'Hardware', k: ['diferencia entre ram y disco', 'ram vs ssd', 'ram o almacenamiento', 'memoria ram o disco duro', 'ram vs storage'], r: ['No es lo mismo: la **RAM** es el escritorio de trabajo (rápida, temporal, se vacía al apagar) y el **almacenamiento** es el archivador (permanente). Un PC necesita los dos: sin RAM no trabaja y sin disco no guarda nada.', '**RAM** is the work desk (fast, temporary, cleared at shutdown) and **storage** is the filing cabinet (permanent). A PC needs both: without RAM it cannot work and without a drive it cannot keep anything.'], href: 'hardware.html#componentes' },
     { c: 'Hardware', k: ['que son los nucleos', 'nucleos e hilos', 'cuantos nucleos necesito', 'hilos del procesador', 'cores and threads', 'what are cores'], r: ['Cada **núcleo** es un cerebro independiente dentro de la CPU; los **hilos** (procesadores lógicos) son las tareas que cada núcleo puede turnarse. Más núcleos = más tareas a la vez: para estudiar y navegar bastan 4; para editar video o jugar ayudan 6-8.', 'Each **core** is an independent brain inside the CPU; **threads** (logical processors) are the tasks each core can juggle. More cores = more tasks at once: 4 is enough for study and browsing; 6-8 help for video editing or gaming.'], href: 'hardware.html#componentes' },
     { c: 'Hardware', k: ['intel o amd', 'intel core o ryzen', 'que procesador es mejor', 'amd ryzen', 'intel vs amd', 'ryzen vs intel'], r: ['Las dos grandes marcas de CPU para PC son **Intel Core** y **AMD Ryzen** (y **ARM** domina en celulares). Ninguna gana siempre: se compite modelo contra modelo según precio y uso. En PC3D ves los tipos y qué mirar antes de elegir.', 'The two big PC CPU brands are **Intel Core** and **AMD Ryzen** (and **ARM** rules phones). Neither always wins: compare model against model by price and use. In PC3D you can see the types and what to check before choosing.'], href: 'pc3d.html#componentes-3d' },
@@ -2097,7 +2637,7 @@ function setupLocalAssistant() {
     { c: 'Hardware', k: ['que es hardware', 'que es software', 'diferencia hardware software', 'what is hardware'], r: ['**Hardware** es lo físico (lo que puedes tocar: CPU, RAM, pantalla). **Software** son los programas (lo que no se toca: sistema operativo, apps). Uno sin el otro no sirve: el hardware ejecuta lo que el software ordena.', '**Hardware** is the physical part (what you can touch: CPU, RAM, screen). **Software** is the programs (what you cannot touch: operating system, apps). Neither works alone: hardware runs what software commands.'], href: 'hardware.html#componentes' },
     { c: 'Hardware', k: ['perifericos', 'teclado mouse monitor', 'dispositivos de entrada y salida', 'peripherals'], r: ['Los **periféricos** conectan al PC con el mundo: de **entrada** (teclado, mouse, micrófono) y de **salida** (monitor, parlantes, impresora). Se enchufan por USB, Bluetooth o a la placa madre.', '**Peripherals** connect the PC to the world: **input** (keyboard, mouse, microphone) and **output** (monitor, speakers, printer). They plug in via USB, Bluetooth or the motherboard.'], href: 'hardware.html#componentes' },
     { c: 'Hardware', k: ['que es la bios', 'bios uefi', 'firmware del pc', 'what is bios'], r: ['La **BIOS/UEFI** es el programa mínimo grabado en la placa madre que despierta el hardware al encender y le pasa el control al sistema operativo. Desde ahí también se ajusta el orden de arranque.', 'The **BIOS/UEFI** is the tiny program stored on the motherboard that wakes the hardware at power-on and hands control to the operating system. Boot order is also set there.'], href: 'hardware.html#componentes' },
-    { c: 'Recursos', k: ['evolucion de los computadores', 'historia de la computacion', 'generaciones de computadores', 'history of computing'], r: ['La ruta: tubos de vacío (ENIAC) → transistores → circuitos integrados → microprocesador → el PC de hoy. Cada salto hizo los equipos más pequeños, baratos y potentes. La sección de Historia lo recorre con sus pioneros.', 'The path: vacuum tubes (ENIAC) → transistors → integrated circuits → microprocessor → today\u2019s PC. Each leap made machines smaller, cheaper and more powerful. The History section walks it with its pioneers.'], href: 'hardware.html#historia' },
+    { c: 'Recursos', k: ['evolucion de los computadores', 'historia de la computacion', 'generaciones de computadores', 'history of computing'], r: ['La ruta: tubos de vacío (ENIAC) [[arrow_right]] transistores [[arrow_right]] circuitos integrados [[arrow_right]] microprocesador [[arrow_right]] el PC de hoy. Cada salto hizo los equipos más pequeños, baratos y potentes. La sección de Historia lo recorre con sus pioneros.', 'The path: vacuum tubes (ENIAC) [[arrow_right]] transistors [[arrow_right]] integrated circuits [[arrow_right]] microprocessor [[arrow_right]] today\u2019s PC. Each leap made machines smaller, cheaper and more powerful. The History section walks it with its pioneers.'], href: 'hardware.html#historia' },
     { c: 'Redes', k: ['que es una ban', 'red corporal', 'body area network', 'red de area corporal', 'sensores en el cuerpo'], r: ['Una **BAN** es la red más pequeña: menos de 1 metro alrededor del cuerpo. Conecta biosensores y wearables de salud: marcapasos inteligentes, monitores de glucosa o de ritmo cardíaco (estándar IEEE 802.15.6).', 'A **BAN** is the smallest network: under 1 meter around the body. It connects health biosensors and wearables: smart pacemakers, glucose or heart-rate monitors (IEEE 802.15.6 standard).'], href: 'redes.html#alcance-redes' },
     { c: 'Redes', k: ['que es una pan', 'red personal', 'personal area network', 'red de area personal'], r: ['Una **PAN** cubre de 1 a 10 metros alrededor de una persona: enlaza su celular, reloj y audífonos por **Bluetooth**, NFC o Zigbee, con muy bajo consumo.', 'A **PAN** covers 1 to 10 meters around a person: it links their phone, watch and earbuds over **Bluetooth**, NFC or Zigbee, with very low power use.'], href: 'redes.html#alcance-redes' },
     { c: 'Redes', k: ['que es wlan', 'lan o wlan', 'red local inalambrica', 'wireless lan'], r: ['**LAN** es la red local por cable y **WLAN** es la misma red local pero inalámbrica (Wi-Fi). Cubren una casa u oficina, hasta unos 100 m por segmento de cable.', '**LAN** is the wired local network and **WLAN** is the same local network but wireless (Wi-Fi). They cover a home or office, up to about 100 m per cable segment.'], href: 'redes.html#alcance-redes' },
@@ -2454,11 +2994,11 @@ function setupLocalAssistant() {
     {"c":"Recursos","k":["liberador espacio mientras windows update descarga","disk cleanup while update downloading safe","usar limpieza disco durante actualizacion"],"r":["Usar el **Liberador de espacio** mientras Windows Update está descargando no suele romper nada, pero sí mete ruido. Los archivos en uso se saltan solos: Windows no deja borrar lo que una actualización está escribiendo en ese momento. El problema real es doble: limpieza y descarga pelean por el mismo disco, todo va más lento, y la opción delicada es «Limpieza de actualizaciones de Windows» a mitad de una instalación, que puede dejar la limpieza a medias. La solución ordenada: deja que la actualización termine, reinicia, busca actualizaciones otra vez para confirmar que no queda nada pendiente, y entonces sí, limpia con el equipo ya tranquilo.","Using **Disk Cleanup** while Windows Update is downloading does not usually break anything, but it does add noise. Files in use are skipped on their own: Windows will not let you delete what an update is writing at that moment. The real problem is double: cleanup and download fight over the same disk, everything slows down, and the delicate option is 'Windows Update Cleanup' in the middle of an installation, which can leave the cleanup half-done. The tidy solution: let the update finish, restart, check for updates again to confirm nothing is pending, and only then clean up, with the machine already calm."],"href":"mantenimiento-software.html#tareas"},
     {"c":"Recursos","k":["sensor almacenamiento no borre descargas sorpresa","configurar storage sense descargas nunca","storage sense configure downloads never"],"r":["El **Sensor de almacenamiento** libera espacio solo, pero hay que domarlo para que Descargas no sea su víctima. En Configuración > Sistema > Almacenamiento > Sensor de almacenamiento, pon «Eliminar archivos de mi carpeta Descargas» en **Nunca**: así solo tocará esa carpeta cuando tú lo ordenes. Deja en cambio activado el borrado de temporales y fija la Papelera a un plazo prudente, por ejemplo 30 días, que da margen para recuperar un borrado por error. Revisa la configuración tras cada gran actualización de Windows: a veces los valores vuelven a los predeterminados sin avisar.","**Storage Sense** frees space on its own, but it must be tamed so Downloads is not its victim. In Settings > System > Storage > Storage Sense, set 'Delete files in my Downloads folder' to **Never**: that way it only touches that folder when you order it. Instead, leave temporary-file deletion on and set the Recycle Bin to a prudent period, for example 30 days, which leaves margin to recover an accidental deletion. Recheck the settings after each major Windows update: sometimes the values silently return to the defaults."],"href":"mantenimiento-software.html#rutina"},
     {"c":"Hardware","k":["como usar el visor 3d","controles del visor 3d","agarrar piezas visor","boton derecho mover vista","doble clic enfocar pieza","how to use 3d viewer","drag parts pc3d"],"r":["En el **visor 3D** de PC3D agarras las piezas con el **botón izquierdo**: tira de una pieza para sacarla de la torre y suéltala donde quieras, queda flotando. Al acercarla a su sitio, una **línea roja** te guía y el imán la atrae; si la sueltas cerca, **se encaja sola**. El **botón derecho** mueve la vista, la **rueda** acerca de a poco y el **doble clic** enfoca una pieza.","In the PC3D **3D viewer** you grab parts with the **left button**: drag a part out of the tower and drop it anywhere, it stays floating. As you bring it near its slot, a **red line** guides you and the magnet pulls it in; drop it close and it **snaps into place**. The **right button** moves the view, the **wheel** zooms in gradually and **double-click** focuses a part."],"href":"pc3d.html#visor-3d"},
-    {"c":"Hardware","k":["como encender el pc virtual","encender pc3d","boton de encendido pc virtual","pc no enciende visor","falta una pieza no enciende","how to power on virtual pc","virtual pc wont boot missing part"],"r":["El PC virtual arranca **apagado**. Pulsa **Encender** (⏻) o el botón físico 3D del frontal: si las 8 piezas están en su sitio, verás el logo de Windows con la ruedita de carga y luego el escritorio. Si **falta una pieza, no enciende**: la pantalla muestra el error, el anillo del botón parpadea en rojo y los ventiladores giran un instante. Si sacas una pieza con el PC encendido, **se apaga de golpe**, como un equipo real.","The virtual PC starts **off**. Press **Power** (⏻) or the physical 3D button on the front: if all 8 parts are in place, you will see the Windows logo with the loading spinner and then the desktop. If a **part is missing, it will not boot**: the screen shows the error, the button ring blinks red and the fans spin briefly. If you pull a part out while the PC is on, it **shuts off instantly**, like a real machine."],"href":"pc3d.html#visor-3d"},
+    {"c":"Hardware","k":["como encender el pc virtual","encender pc3d","boton de encendido pc virtual","pc no enciende visor","falta una pieza no enciende","how to power on virtual pc","virtual pc wont boot missing part"],"r":["El PC virtual arranca **apagado**. Pulsa **Encender** ([[power]]) o el botón físico 3D del frontal: si las 8 piezas están en su sitio, verás el logo de Windows con la ruedita de carga y luego el escritorio. Si **falta una pieza, no enciende**: la pantalla muestra el error, el anillo del botón parpadea en rojo y los ventiladores giran un instante. Si sacas una pieza con el PC encendido, **se apaga de golpe**, como un equipo real.","The virtual PC starts **off**. Press **Power** ([[power]]) or the physical 3D button on the front: if all 8 parts are in place, you will see the Windows logo with the loading spinner and then the desktop. If a **part is missing, it will not boot**: the screen shows the error, the button ring blinks red and the fans spin briefly. If you pull a part out while the PC is on, it **shuts off instantly**, like a real machine."],"href":"pc3d.html#visor-3d"},
     {"c":"Hardware","k":["cuantas piezas tiene el visor","ocho piezas pc3d","piezas de la torre 3d","partes del pc virtual","what parts does the 3d viewer have","8 parts pc3d"],"r":["El visor tiene **8 piezas**: **placa madre, procesador (CPU), ventilador de CPU (cooler), memoria RAM, tarjeta gráfica (GPU), almacenamiento (SSD), fuente de poder (PSU) y unidad óptica**. El panel muestra cuántas van instaladas (01/08) y al hacer clic en una pieza ves su nombre y su función. Quitar el ventilador deja ver el chip; quitar el chip deja ver el zócalo en la placa.","The viewer has **8 parts**: **motherboard, processor (CPU), CPU cooler, RAM, graphics card (GPU), storage (SSD), power supply (PSU) and optical drive**. The panel shows how many are installed (01/08), and clicking a part shows its name and function. Removing the cooler reveals the chip; removing the chip reveals the socket on the board."],"href":"pc3d.html#componentes-3d"},
     {"c":"Hardware","k":["cinematicas visor 3d","vista general nucleo flujo energia","escenas del visor","vistas guiadas pc3d","viewer scenes overview core airflow","guided views pc3d"],"r":["El visor tiene **3 cinemáticas** (vistas guiadas): **01 Vista general**, que muestra el puesto entero con la torre abierta; **02 Núcleo de cálculo**, que enfoca la CPU y la RAM; y **03 Flujo y energía**, que sigue la energía y los datos con partículas de aire y los ventiladores más rápidos. Pulsa el botón de la vista que quieras y la cámara se mueve sola siguiendo la escena.","The viewer has **3 guided scenes**: **01 Overview**, showing the whole station with the open tower; **02 Compute core**, focusing on the CPU and RAM; and **03 Flow and power**, following energy and data with airflow particles and faster fans. Press a scene button and the camera moves on its own along that scene."],"href":"pc3d.html#visor-3d"},
     {"c":"Hardware","k":["desarmar todo visor","deslizador desarmar","como desarmar la torre 3d","restablecer vista visor","disassemble all 3d viewer","explode slider pc3d"],"r":["Con el deslizador **Desarmar** separas las piezas de la torre poco a poco (0 % a 100 %); **Desarmar todo** las separa de golpe. Cada pieza sale en su dirección y queda flotando; para volver a armar, baja el deslizador o usa **Restablecer vista**, que también vuelve a instalar las piezas quitadas.","With the **Disassemble** slider you pull the parts away from the tower little by little (0% to 100%); **Disassemble all** pulls them all apart at once. Each part moves out along its own direction and stays floating; to reassemble, lower the slider or use **Reset view**, which also reinstalls any removed parts."],"href":"pc3d.html#visor-3d"},
-    {"c":"Hardware","k":["etiquetas visor 3d","quitar etiquetas piezas","pantalla completa visor","fullscreen pc3d","labels 3d viewer","toggle labels pc3d"],"r":["El botón **Etiquetas** enciende o apaga los nombres de las piezas sobre el modelo 3D, para practicar reconociéndolas sin ayuda. **Pantalla completa** (⛶) agranda el visor a toda la pantalla; pulsa Escape o el mismo botón para salir.","The **Labels** button turns the part names on or off over the 3D model, so you can practice recognizing them without help. **Fullscreen** (⛶) enlarges the viewer to the whole screen; press Escape or the same button to exit."],"href":"pc3d.html#visor-3d"},
+    {"c":"Hardware","k":["etiquetas visor 3d","quitar etiquetas piezas","pantalla completa visor","fullscreen pc3d","labels 3d viewer","toggle labels pc3d"],"r":["El botón **Etiquetas** enciende o apaga los nombres de las piezas sobre el modelo 3D, para practicar reconociéndolas sin ayuda. **Pantalla completa** ([[fullscreen]]) agranda el visor a toda la pantalla; pulsa Escape o el mismo botón para salir.","The **Labels** button turns the part names on or off over the 3D model, so you can practice recognizing them without help. **Fullscreen** ([[fullscreen]]) enlarges the viewer to the whole screen; press Escape or the same button to exit."],"href":"pc3d.html#visor-3d"},
     {"c":"Hardware","k":["que es refrigeracion liquida","aio liquid cooler","enfriamiento liquido cpu","aio vs aire","what is aio cooling","liquid cooler vs air"],"r":["La **refrigeración líquida (AIO)** disipa el calor del procesador con un circuito cerrado de líquido, radiador y ventiladores de alta presión estática: un bloque con bomba va sobre el socket de la CPU y las mangueras llevan el líquido caliente al radiador, donde los ventiladores lo enfrían. Rinde más que el aire en CPU calientes y evita el **thermal throttling**, pero cuesta más y ocupa espacio para el radiador.","Liquid cooling (**AIO**) removes heat from the processor with a closed loop of liquid, a radiator and high-static-pressure fans: a pump block sits on the CPU socket and hoses carry the hot liquid to the radiator, where the fans cool it. It beats air cooling on hot CPUs and prevents **thermal throttling**, but it costs more and needs room for the radiator."],"href":"hardware.html#componentes"},
     {"c":"Hardware","k":["cada cuanto limpiar el pc","frecuencia limpieza pc","cada cuanto limpiar interior pc","limpieza cada cuantos meses","how often clean pc","pc cleaning schedule"],"r":["Frecuencia segura de limpieza del PC: **exterior y filtros cada 1 a 3 meses**, según el polvo, las mascotas y la ventilación; **interior cada 6 a 12 meses**, o antes si suben el ruido y la temperatura; **pasta térmica cada 2 a 4 años**, revisando antes las temperaturas. Trabaja siempre con el equipo **apagado y desconectado**.","Safe PC cleaning schedule: **exterior and filters every 1 to 3 months**, depending on dust, pets and ventilation; **interior every 6 to 12 months**, or sooner if noise and temperature rise; **thermal paste every 2 to 4 years**, checking temperatures first. Always work with the machine **off and unplugged**."],"href":"pc3d.html#mantenimiento"},
     {"c":"Hardware","k":["olor a quemado pc","pc se apaga solo","apagados repentinos pc","ruido electrico pc","burning smell pc","pc shuts down by itself"],"r":["Si hay **olor a quemado, apagados repentinos o ruido eléctrico, deja de usar el equipo y consulta servicio técnico**: no sigas encendiéndolo para probar. Son señales de un fallo eléctrico o de la fuente que puede dañar más piezas. Lo mismo si el equipo se calienta o se apaga solo sin razón clara: ve a revisión.","If there is a **burning smell, sudden shutdowns or electrical noise, stop using the machine and get technical service**: do not keep turning it on to test. These signal an electrical or PSU fault that can damage more parts. The same applies if the machine overheats or turns itself off for no clear reason: take it for service."],"href":"pc3d.html#mantenimiento"},
@@ -2654,7 +3194,7 @@ function setupLocalAssistant() {
   const L = () => (currentLang === 'en' ? 1 : 0);
   const T = () => translations[currentLang] || translations.es;
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  const fmt = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
+  const fmt = (s) => iconize(esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>'));
 
   /* ===== Chat ===== */
   function addMsg(role, text, q, href) {
@@ -2672,10 +3212,10 @@ function setupLocalAssistant() {
       const f = document.createElement('div');
       f.className = 'la-fb';
       const up = document.createElement('button');
-      up.type = 'button'; up.textContent = '👍'; up.title = T().assistant_up;
-      up.addEventListener('click', () => { f.textContent = T().assistant_thanks; });
+      up.type = 'button'; up.innerHTML = ICONS.thumb_up; up.title = T().assistant_up; up.setAttribute('aria-label', T().assistant_up);
+      up.addEventListener('click', () => { f.innerHTML = fmt(T().assistant_thanks); });
       const down = document.createElement('button');
-      down.type = 'button'; down.textContent = '👎 ' + T().assistant_down;
+      down.type = 'button'; down.innerHTML = ICONS.thumb_down + ' ' + esc(T().assistant_down);
       down.addEventListener('click', () => goTeach(q));
       f.append(up, down);
       d.appendChild(f);
@@ -3006,7 +3546,10 @@ function setupMaintenanceToolImages() {
     'Pulsera antiestática': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHIlvAxb8SWQnWT1tSrBmRa3LFzUeqdscmSiBerjNlcg&s=10',
     'Aire comprimido': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqSPbG2H8ImniMSLt5Xm3rwyTiNe8bgjbbZchfrYN19A&s=10',
     'Pasta térmica': 'https://acf.geeknetic.es/imgri/imagenes/auto/20/06/17/eaj-jgv-71t7np6iz6l-sl1500.jpg?f=webp',
-    'Paño de microfibra': 'https://www.esmero.com.co/wp-content/uploads/2020/06/esmero_panos_microfibra_azul_task.jpg'
+    'Paño de microfibra': 'https://www.esmero.com.co/wp-content/uploads/2020/06/esmero_panos_microfibra_azul_task.jpg',
+    'Compressed air': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqSPbG2H8ImniMSLt5Xm3rwyTiNe8bgjbbZchfrYN19A&s=10',
+    'Thermal paste': 'https://acf.geeknetic.es/imgri/imagenes/auto/20/06/17/eaj-jgv-71t7np6iz6l-sl1500.jpg?f=webp',
+    'Microfiber cloth': 'https://www.esmero.com.co/wp-content/uploads/2020/06/esmero_panos_microfibra_azul_task.jpg'
   };
 
   document.querySelectorAll('.pc3d-tool-card').forEach((card) => {
@@ -3050,7 +3593,7 @@ function setupSwitchLab() {
   function cap(key, params = {}) {
     let txt = t(key);
     for (const k in params) txt = txt.replaceAll('{' + k + '}', params[k]);
-    caption.textContent = txt;
+    caption.innerHTML = iconize(txt);
   }
   const pcName = i => 'PC' + (i + 1);
 
@@ -3262,6 +3805,12 @@ function setupNetworkSimulator() {
   let isRunning = false;
   let currentDevice = null;
 
+  const tr = (key, vars) => {
+    let out = (translations[currentLang] && translations[currentLang][key]) || (translations.es && translations.es[key]) || '';
+    if (vars) Object.keys(vars).forEach((k) => { out = out.split('{' + k + '}').join(String(vars[k])); });
+    return out;
+  };
+
   function log(msg, type = 'info') {
     if (!consoleBody) return;
     const p = document.createElement('p');
@@ -3346,12 +3895,12 @@ function setupNetworkSimulator() {
     document.querySelectorAll('.sim-device').forEach(d => {
       d.classList.remove('processing-packet', 'processing-reply');
     });
-    consoleBody.innerHTML = '<p class="console-line info">[SISTEMA] Simulador reiniciado. Listo para nueva prueba.</p>';
+    consoleBody.innerHTML = '<p class="console-line info">' + tr('sim_log_reset') + '</p>';
     statusTag.textContent = translations[currentLang]?.sim_status_ready || 'LISTO';
     statusTag.className = 'sim-status-idle';
-    inspL2.textContent = 'Origen: -- | Destino: --';
+    inspL2.textContent = tr('red_insp_l2_init');
     inspL3.textContent = 'IP Src: -- | IP Dst: -- | TTL: --';
-    inspStat.textContent = 'RTT: -- ms | Pérdida: 0% | Estado: Esperando';
+    inspStat.textContent = tr('red_insp_stat_init');
     updateSelectionsUI();
   });
 
@@ -3360,21 +3909,21 @@ function setupNetworkSimulator() {
     const dst = targetSelect.value;
 
     if (src === dst) {
-      log('[ERROR] El host de origen y el de destino no pueden ser el mismo.', 'info');
+      log(tr('sim_log_same_host'), 'info');
       return;
     }
 
     if (isRunning) return;
     isRunning = true;
     startBtn.disabled = true;
-    statusTag.textContent = 'TRANSMITIENDO...';
+    statusTag.textContent = tr('sim_status_transmitting');
     statusTag.className = 'sim-status-running';
     consoleBody.innerHTML = '';
 
     const srcDev = devices[src];
     const dstDev = devices[dst];
 
-    log(`[ICMP INICIO] Iniciando ping desde ${srcDev.name} (${srcDev.ip}) hacia ${dstDev.name} (${dstDev.ip})...`, 'req');
+    log(tr('sim_log_icmp_start', { src: srcDev.name, srcIp: srcDev.ip, dst: dstDev.name, dstIp: dstDev.ip }), 'req');
 
     // Posición inicial del paquete
     const initPos = getDeviceCenter(src);
@@ -3382,48 +3931,48 @@ function setupNetworkSimulator() {
     packet.className = 'packet-traveler';
     currentDevice = src;
     setActiveRoute(null, null);
-    packetText.textContent = 'Enviando datos';
+    packetText.textContent = tr('red_sim_packet_sending');
     positionPacket(initPos);
 
-    inspL2.textContent = `Trama: ${srcDev.mac} -> ${srcDev.ip.startsWith('192.168.1') && dstDev.ip.startsWith('10.0.0') ? devices.router.mac : dstDev.mac}`;
+    inspL2.textContent = tr('sim_insp_frame', { a: srcDev.mac, b: srcDev.ip.startsWith('192.168.1') && dstDev.ip.startsWith('10.0.0') ? devices.router.mac : dstDev.mac });
     inspL3.textContent = `IP Src: ${srcDev.ip} -> IP Dst: ${dstDev.ip} | Protocol: 1 (ICMP) | TTL: 64`;
-    inspStat.textContent = 'Calculando latencia...';
+    inspStat.textContent = tr('sim_insp_calc');
 
     // RUTA DE IDA
     const isSameSubnet = dst === 'pc2';
 
     // Paso 1: Salida del Host a Switch
     setTimeout(() => {
-      log(`[HOST NIC] ${srcDev.name} encapsula paquete IP en trama 802.3 Ethernet y lo envía por par trenzado al Switch LAN.`, 'l2');
+      log(tr('sim_log_host_nic', { name: srcDev.name }), 'l2');
       highlightDevice(src);
       movePacketTo('switch', () => {
         highlightDevice('switch');
-        log(`[SWITCH] Lee encabezado Capa 2: Puerto asociado a MAC destino detectado en CAM Table.`, 'l2');
+        log(tr('sim_log_switch_cam'), 'l2');
 
         if (isSameSubnet) {
           // Destino local: Switch entrega directo a PC2
           setTimeout(() => {
             movePacketTo(dst, () => {
               highlightDevice(dst);
-              log(`[DESTINO] ${dstDev.name} recibe los datos correctamente.`, 'rep');
+              log(tr('sim_log_dest_ok', { name: dstDev.name }), 'rep');
               startReturnTrip(srcDev, dstDev, true);
             });
           }, 600);
         } else {
           // Destino WAN: Switch entrega al Router Gateway
           setTimeout(() => {
-            log(`[SWITCH] Destino está fuera de la subred local (192.168.1.0/24). Reenvía trama a la MAC de la Gateway (Router).`, 'l2');
+            log(tr('sim_log_switch_wan'), 'l2');
             movePacketTo('router', () => {
               highlightDevice('router');
-              log(`[ROUTER L3] Desencapsula trama L2. Consulta tabla de rutas: IP 10.0.0.80 está en la interfaz WAN. Decrementa TTL a 63.`, 'l3');
+              log(tr('sim_log_router_l3'), 'l3');
               inspL3.textContent = `IP Src: ${srcDev.ip} -> IP Dst: ${dstDev.ip} | Protocol: 1 (ICMP) | TTL: 63`;
 
               // Router a Servidor
               setTimeout(() => {
-                log(`[ROUTER -> WAN] Transmite paquete a través de enlace punto a punto hacia ${dstDev.name}.`, 'l3');
+                log(tr('sim_log_router_wan', { name: dstDev.name }), 'l3');
                 movePacketTo('server', () => {
                   highlightDevice('server');
-                  log(`[WEB SERVER] El servidor recibe los datos y prepara la respuesta.`, 'rep');
+                  log(tr('sim_log_web_server'), 'rep');
                   startReturnTrip(srcDev, dstDev, false);
                 });
               }, 650);
@@ -3436,14 +3985,14 @@ function setupNetworkSimulator() {
     function startReturnTrip(srcD, dstD, isLocal) {
       setTimeout(() => {
         packet.classList.add('reply');
-        packetText.textContent = 'Datos recibidos';
-        log(`[ICMP RESPUESTA] Enviando respuesta desde ${dstD.ip} de vuelta a ${srcD.ip}...`, 'rep');
+        packetText.textContent = tr('sim_packet_received');
+        log(tr('sim_log_icmp_reply', { a: dstD.ip, b: srcD.ip }), 'rep');
         inspL2.textContent = `Trama: ${dstD.mac} -> ${srcD.mac}`;
 
         if (isLocal) {
           movePacketTo('switch', () => {
             highlightDevice('switch');
-            log(`[SWITCH] Conmuta respuesta directamente al puerto de ${srcD.name}.`, 'l2');
+            log(tr('sim_log_switch_reply', { name: srcD.name }), 'l2');
             setTimeout(() => {
               movePacketTo(src, () => finishPing(true));
             }, 600);
@@ -3451,11 +4000,11 @@ function setupNetworkSimulator() {
         } else {
           movePacketTo('router', () => {
             highlightDevice('router');
-            log(`[ROUTER] Enruta respuesta WAN de vuelta a subred LAN 192.168.1.0/24 hacia Switch.`, 'l3');
+            log(tr('sim_log_router_reply'), 'l3');
             setTimeout(() => {
               movePacketTo('switch', () => {
                 highlightDevice('switch');
-                log(`[SWITCH] Entrega Echo Reply final al puerto de ${srcD.name}.`, 'l2');
+                log(tr('sim_log_switch_final', { name: srcD.name }), 'l2');
                 setTimeout(() => {
                   movePacketTo(src, () => finishPing(false));
                 }, 600);
@@ -3469,10 +4018,10 @@ function setupNetworkSimulator() {
     function finishPing(isLocal) {
       highlightDevice(src);
       const rtt = isLocal ? (Math.random() * 2 + 1).toFixed(2) : (Math.random() * 8 + 24).toFixed(2);
-      log(`[ÉXITO] 64 bytes desde ${dstDev.ip}: icmp_seq=1 ttl=${isLocal ? 64 : 63} tiempo=${rtt} ms`, 'rep');
-      log(`[RESUMEN] 1 paquetes transmitidos, 1 recibidos, 0% packet loss. Enlace verificado.`, 'info');
-      inspStat.textContent = `RTT: ${rtt} ms | Pérdida: 0% | Estado: Conectado (OK)`;
-      statusTag.textContent = 'COMPLETADO (100%)';
+      log(tr('sim_log_success', { ip: dstDev.ip, ttl: isLocal ? 64 : 63, rtt }), 'rep');
+      log(tr('sim_log_summary'), 'info');
+      inspStat.textContent = tr('sim_insp_connected', { rtt });
+      statusTag.textContent = tr('sim_status_done');
       statusTag.className = 'sim-status-idle';
       startBtn.disabled = false;
       isRunning = false;

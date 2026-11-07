@@ -198,3 +198,23 @@ html.dark #theme-toggle svg {
   color: #f8fafc !important;
   stroke: #f8fafc !important;
 }
+
+/* Estrellas de valoracion (SVG inline, doradas) y grupos .rating */
+.rating {
+  display: inline-flex;
+  gap: 2px;
+  align-items: center;
+  vertical-align: middle;
+}
+.rating svg {
+  width: 1.05em;
+  height: 1.05em;
+}
+.rating-star {
+  color: #f59e0b;
+}
+/* Icono mono dentro de los botones de voto del asistente */
+.la-fb button .mono-icon {
+  width: 1rem;
+  height: 1rem;
+}

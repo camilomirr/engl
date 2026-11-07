@@ -129,11 +129,14 @@
 }
 
 .code-title::before {
-  content: '●';
-  color: #ef4444;
-  text-shadow: 10px 0 0 #f59e0b, 20px 0 0 #10b981;
-  margin-right: 1.2rem;
-  font-size: 0.8rem;
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ef4444;
+  box-shadow: 14px 0 0 #f59e0b, 28px 0 0 #10b981;
+  margin-right: 1.7rem;
+  flex-shrink: 0;
 }
 
 .copy-btn {

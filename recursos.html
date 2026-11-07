@@ -43,7 +43,7 @@
               <li><a href="redes.html#redes" data-i18n="nav_network">Del Hardware a la Red</a></li>
               <li><a href="redes.html#alcance-redes" data-i18n="nav_scope">Clasificación de Redes</a></li>
               <li><a href="redes.html#topologias" data-i18n="nav_topologies">Topologías</a></li>
-              <li><a href="redes_challenge/index.html" class="btn-challenge">🎮 Redes Challenge</a></li>
+              <li><a href="redes_challenge/index.html" class="btn-challenge"><span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 8h10.5a4 4 0 0 1 3.9 4.8l-.6 3.1a3 3 0 0 1-5.4 1.4L13.5 15.5h-3l-1.4 1.8a3 3 0 0 1-5.4-1.4l-.6-3.1A4 4 0 0 1 6.5 8z"/><path d="M8 11v3M6.5 12.5h3"/><circle cx="15.8" cy="11.6" r="0.4" fill="currentColor"/><circle cx="17.8" cy="13.4" r="0.4" fill="currentColor"/></svg></span> Redes Challenge</a></li>
               <li><a href="redes.html#simulador-red" data-i18n="nav_simulator">Simulador Ping</a></li>
               <li><a href="redes.html#switch-3d" data-i18n="nav_switch3d">El switch por dentro</a></li>
                           <li><a href="wifi.html" data-i18n="nav_wifi">WiFi Avanzado</a></li>
@@ -131,266 +131,266 @@
       </p>
 
       <div class="glossary-controls">
-        <input type="search" id="glos-q" class="glossary-search" placeholder="Buscar término… ej. DNS, RAM, latencia" aria-label="Buscar en el glosario">
-        <button type="button" class="glossary-btn active" data-gf="todos">Todos</button>
-        <button type="button" class="glossary-btn" data-gf="Redes">Redes</button>
-        <button type="button" class="glossary-btn" data-gf="Hardware">Hardware</button>
-        <button type="button" class="glossary-btn" data-gf="Mantenimiento">Mantenimiento</button>
-        <button type="button" id="glos-mode" class="glossary-btn glossary-btn-primary">Modo tarjetas</button>
+        <input type="search" id="glos-q" class="glossary-search" data-i18n-placeholder="glos_search_ph" placeholder="Buscar término… ej. DNS, RAM, latencia" data-i18n-title="glos_search_label" aria-label="Buscar en el glosario">
+        <button type="button" class="glossary-btn active" data-gf="todos" data-i18n="glos_filter_all">Todos</button>
+        <button type="button" class="glossary-btn" data-gf="Redes" data-i18n="glos_cat_redes">Redes</button>
+        <button type="button" class="glossary-btn" data-gf="Hardware" data-i18n="glos_cat_hardware">Hardware</button>
+        <button type="button" class="glossary-btn" data-gf="Mantenimiento" data-i18n="glos_cat_mantenimiento">Mantenimiento</button>
+        <button type="button" id="glos-mode" class="glossary-btn glossary-btn-primary" data-i18n="glos_mode_cards">Modo tarjetas</button>
       </div>
       <p id="glos-count" class="glossary-count" aria-live="polite"></p>
 
       <div class="glossary-grid" id="glos-list">
         <div class="glossary-card" data-cat="Redes">
-          <span class="glossary-tag">Redes</span>
-          <h4 class="glossary-term">Throughput</h4>
-          <p class="glossary-desc">Cantidad real de datos que se transfieren con éxito por unidad de tiempo, normalmente en Mbps o Gbps.</p>
-          <p class="glossary-ej">Ej.: un enlace de 100 Mbps con 70 Mbps reales tiene un throughput de 70 Mbps.</p>
+          <span class="glossary-tag" data-i18n="glos_cat_redes">Redes</span>
+          <h4 class="glossary-term" data-i18n="glos_throughput_term">Throughput</h4>
+          <p class="glossary-desc" data-i18n="glos_throughput_def">Cantidad real de datos que se transfieren con éxito por unidad de tiempo, normalmente en Mbps o Gbps.</p>
+          <p class="glossary-ej" data-i18n="glos_throughput_ex">Ej.: un enlace de 100 Mbps con 70 Mbps reales tiene un throughput de 70 Mbps.</p>
         </div>
 
         <div class="glossary-card" data-cat="Redes">
-          <span class="glossary-tag">Redes</span>
-          <h4 class="glossary-term">Bandwidth (Ancho de banda)</h4>
-          <p class="glossary-desc">Capacidad máxima teórica de datos que puede llevar una conexión en un tiempo dado.</p>
-          <p class="glossary-ej">Ej.: un plan de 200 Mbps tiene ese ancho de banda como tope, no como velocidad garantizada.</p>
+          <span class="glossary-tag" data-i18n="glos_cat_redes">Redes</span>
+          <h4 class="glossary-term" data-i18n="glos_bandwidth_term">Bandwidth (Ancho de banda)</h4>
+          <p class="glossary-desc" data-i18n="glos_bandwidth_def">Capacidad máxima teórica de datos que puede llevar una conexión en un tiempo dado.</p>
+          <p class="glossary-ej" data-i18n="glos_bandwidth_ex">Ej.: un plan de 200 Mbps tiene ese ancho de banda como tope, no como velocidad garantizada.</p>
         </div>
 
         <div class="glossary-card" data-cat="Redes">
-          <span class="glossary-tag">Redes</span>
-          <h4 class="glossary-term">NIC (Tarjeta de red)</h4>
-          <p class="glossary-desc">Componente que conecta un equipo a una red, por cable o Wi-Fi, y tiene una dirección MAC única.</p>
-          <p class="glossary-ej">Ej.: la NIC es lo que permite que tu PC se conecte al router.</p>
+          <span class="glossary-tag" data-i18n="glos_cat_redes">Redes</span>
+          <h4 class="glossary-term" data-i18n="glos_nic_term">NIC (Tarjeta de red)</h4>
+          <p class="glossary-desc" data-i18n="glos_nic_def">Componente que conecta un equipo a una red, por cable o Wi-Fi, y tiene una dirección MAC única.</p>
+          <p class="glossary-ej" data-i18n="glos_nic_ex">Ej.: la NIC es lo que permite que tu PC se conecte al router.</p>
         </div>
 
         <div class="glossary-card" data-cat="Redes">
-          <span class="glossary-tag">Redes</span>
-          <h4 class="glossary-term">Packet (Paquete)</h4>
-          <p class="glossary-desc">Bloque de datos que viaja por la red con origen, destino y parte del mensaje completo.</p>
-          <p class="glossary-ej">Ej.: un video se divide en muchos paquetes que se reordenan al llegar.</p>
+          <span class="glossary-tag" data-i18n="glos_cat_redes">Redes</span>
+          <h4 class="glossary-term" data-i18n="glos_packet_term">Packet (Paquete)</h4>
+          <p class="glossary-desc" data-i18n="glos_packet_def">Bloque de datos que viaja por la red con origen, destino y parte del mensaje completo.</p>
+          <p class="glossary-ej" data-i18n="glos_packet_ex">Ej.: un video se divide en muchos paquetes que se reordenan al llegar.</p>
         </div>
 
         <div class="glossary-card" data-cat="Redes">
-          <span class="glossary-tag">Redes</span>
-          <h4 class="glossary-term">Latencia</h4>
-          <p class="glossary-desc">Tiempo que tarda un dato en ir de un punto a otro de la red; se mide en milisegundos (ms).</p>
-          <p class="glossary-ej">Ej.: en juegos, una latencia alta se nota como retraso al responder.</p>
+          <span class="glossary-tag" data-i18n="glos_cat_redes">Redes</span>
+          <h4 class="glossary-term" data-i18n="glos_latency_term">Latencia</h4>
+          <p class="glossary-desc" data-i18n="glos_latency_def">Tiempo que tarda un dato en ir de un punto a otro de la red; se mide en milisegundos (ms).</p>
+          <p class="glossary-ej" data-i18n="glos_latency_ex">Ej.: en juegos, una latencia alta se nota como retraso al responder.</p>
         </div>
 
         <div class="glossary-card" data-cat="Redes">
-          <span class="glossary-tag">Redes</span>
-          <h4 class="glossary-term">Dirección IP</h4>
-          <p class="glossary-desc">Número único que identifica a un dispositivo dentro de una red, como 192.168.1.10.</p>
-          <p class="glossary-ej">Ej.: el router asigna una IP a cada equipo conectado en casa.</p>
+          <span class="glossary-tag" data-i18n="glos_cat_redes">Redes</span>
+          <h4 class="glossary-term" data-i18n="glos_ip_address_term">Dirección IP</h4>
+          <p class="glossary-desc" data-i18n="glos_ip_address_def">Número único que identifica a un dispositivo dentro de una red, como 192.168.1.10.</p>
+          <p class="glossary-ej" data-i18n="glos_ip_address_ex">Ej.: el router asigna una IP a cada equipo conectado en casa.</p>
         </div>
 
         <div class="glossary-card" data-cat="Redes">
-          <span class="glossary-tag">Redes</span>
-          <h4 class="glossary-term">DNS</h4>
-          <p class="glossary-desc">Sistema que traduce nombres de dominio, como nvision.social, a direcciones IP.</p>
-          <p class="glossary-ej">Ej.: sin DNS tendrías que escribir la IP del sitio en vez de su nombre.</p>
+          <span class="glossary-tag" data-i18n="glos_cat_redes">Redes</span>
+          <h4 class="glossary-term" data-i18n="glos_dns_term">DNS</h4>
+          <p class="glossary-desc" data-i18n="glos_dns_def">Sistema que traduce nombres de dominio, como nvision.social, a direcciones IP.</p>
+          <p class="glossary-ej" data-i18n="glos_dns_ex">Ej.: sin DNS tendrías que escribir la IP del sitio en vez de su nombre.</p>
         </div>
 
         <div class="glossary-card" data-cat="Redes">
-          <span class="glossary-tag">Redes</span>
-          <h4 class="glossary-term">DHCP</h4>
-          <p class="glossary-desc">Protocolo que asigna automáticamente direcciones IP y otros datos de red a los dispositivos.</p>
-          <p class="glossary-ej">Ej.: al conectarte al Wi-Fi, el router te da una IP por DHCP.</p>
+          <span class="glossary-tag" data-i18n="glos_cat_redes">Redes</span>
+          <h4 class="glossary-term" data-i18n="glos_dhcp_term">DHCP</h4>
+          <p class="glossary-desc" data-i18n="glos_dhcp_def">Protocolo que asigna automáticamente direcciones IP y otros datos de red a los dispositivos.</p>
+          <p class="glossary-ej" data-i18n="glos_dhcp_ex">Ej.: al conectarte al Wi-Fi, el router te da una IP por DHCP.</p>
         </div>
 
         <div class="glossary-card" data-cat="Redes">
-          <span class="glossary-tag">Redes</span>
-          <h4 class="glossary-term">Router</h4>
-          <p class="glossary-desc">Dispositivo que conecta redes distintas y dirige el tráfico entre tu red local e internet.</p>
-          <p class="glossary-ej">Ej.: el router de una casa conecta su red local con internet.</p>
+          <span class="glossary-tag" data-i18n="glos_cat_redes">Redes</span>
+          <h4 class="glossary-term" data-i18n="glos_router_term">Router</h4>
+          <p class="glossary-desc" data-i18n="glos_router_def">Dispositivo que conecta redes distintas y dirige el tráfico entre tu red local e internet.</p>
+          <p class="glossary-ej" data-i18n="glos_router_ex">Ej.: el router de una casa conecta su red local con internet.</p>
         </div>
 
         <div class="glossary-card" data-cat="Redes">
-          <span class="glossary-tag">Redes</span>
-          <h4 class="glossary-term">Switch</h4>
-          <p class="glossary-desc">Dispositivo que conecta varios equipos dentro de una misma red local y les pasa los datos.</p>
-          <p class="glossary-ej">Ej.: un switch conecta por cable varias PCs de un salón.</p>
+          <span class="glossary-tag" data-i18n="glos_cat_redes">Redes</span>
+          <h4 class="glossary-term" data-i18n="glos_switch_term">Switch</h4>
+          <p class="glossary-desc" data-i18n="glos_switch_def">Dispositivo que conecta varios equipos dentro de una misma red local y les pasa los datos.</p>
+          <p class="glossary-ej" data-i18n="glos_switch_ex">Ej.: un switch conecta por cable varias PCs de un salón.</p>
         </div>
 
         <div class="glossary-card" data-cat="Redes">
-          <span class="glossary-tag">Redes</span>
-          <h4 class="glossary-term">Modelo OSI</h4>
-          <p class="glossary-desc">Modelo de 7 capas (física, enlace, red, transporte, sesión, presentación, aplicación) para entender cómo se comunica una red.</p>
-          <p class="glossary-ej">Ej.: el cable es capa física; una IP es capa de red.</p>
+          <span class="glossary-tag" data-i18n="glos_cat_redes">Redes</span>
+          <h4 class="glossary-term" data-i18n="glos_osi_model_term">Modelo OSI</h4>
+          <p class="glossary-desc" data-i18n="glos_osi_model_def">Modelo de 7 capas (física, enlace, red, transporte, sesión, presentación, aplicación) para entender cómo se comunica una red.</p>
+          <p class="glossary-ej" data-i18n="glos_osi_model_ex">Ej.: el cable es capa física; una IP es capa de red.</p>
         </div>
 
         <div class="glossary-card" data-cat="Redes">
-          <span class="glossary-tag">Redes</span>
-          <h4 class="glossary-term">TCP</h4>
-          <p class="glossary-desc">Protocolo que envía los datos de forma ordenada y verifica que lleguen completos.</p>
-          <p class="glossary-ej">Ej.: cargar una página web usa TCP porque no puede faltar nada.</p>
+          <span class="glossary-tag" data-i18n="glos_cat_redes">Redes</span>
+          <h4 class="glossary-term" data-i18n="glos_tcp_term">TCP</h4>
+          <p class="glossary-desc" data-i18n="glos_tcp_def">Protocolo que envía los datos de forma ordenada y verifica que lleguen completos.</p>
+          <p class="glossary-ej" data-i18n="glos_tcp_ex">Ej.: cargar una página web usa TCP porque no puede faltar nada.</p>
         </div>
 
         <div class="glossary-card" data-cat="Redes">
-          <span class="glossary-tag">Redes</span>
-          <h4 class="glossary-term">UDP</h4>
-          <p class="glossary-desc">Protocolo rápido que envía datos sin confirmar cada entrega; si algo se pierde, no se reenvía.</p>
-          <p class="glossary-ej">Ej.: las videollamadas y los juegos usan UDP por su baja latencia.</p>
+          <span class="glossary-tag" data-i18n="glos_cat_redes">Redes</span>
+          <h4 class="glossary-term" data-i18n="glos_udp_term">UDP</h4>
+          <p class="glossary-desc" data-i18n="glos_udp_def">Protocolo rápido que envía datos sin confirmar cada entrega; si algo se pierde, no se reenvía.</p>
+          <p class="glossary-ej" data-i18n="glos_udp_ex">Ej.: las videollamadas y los juegos usan UDP por su baja latencia.</p>
         </div>
 
         <div class="glossary-card" data-cat="Redes">
-          <span class="glossary-tag">Redes</span>
-          <h4 class="glossary-term">Wi-Fi 6</h4>
-          <p class="glossary-desc">Versión de Wi-Fi más rápida y eficiente con muchos dispositivos a la vez, gracias a OFDMA y MU-MIMO.</p>
-          <p class="glossary-ej">Ej.: muchos routers actuales ya traen Wi-Fi 6.</p>
+          <span class="glossary-tag" data-i18n="glos_cat_redes">Redes</span>
+          <h4 class="glossary-term" data-i18n="glos_wifi6_term">Wi-Fi 6</h4>
+          <p class="glossary-desc" data-i18n="glos_wifi6_def">Versión de Wi-Fi más rápida y eficiente con muchos dispositivos a la vez, gracias a OFDMA y MU-MIMO.</p>
+          <p class="glossary-ej" data-i18n="glos_wifi6_ex">Ej.: muchos routers actuales ya traen Wi-Fi 6.</p>
         </div>
 
         <div class="glossary-card" data-cat="Redes">
-          <span class="glossary-tag">Redes</span>
-          <h4 class="glossary-term">LAN</h4>
-          <p class="glossary-desc">Red de área local: los equipos conectados dentro de una casa, oficina o salón.</p>
-          <p class="glossary-ej">Ej.: tu PC, tu celular y tu TV forman una LAN en casa.</p>
+          <span class="glossary-tag" data-i18n="glos_cat_redes">Redes</span>
+          <h4 class="glossary-term" data-i18n="glos_lan_term">LAN</h4>
+          <p class="glossary-desc" data-i18n="glos_lan_def">Red de área local: los equipos conectados dentro de una casa, oficina o salón.</p>
+          <p class="glossary-ej" data-i18n="glos_lan_ex">Ej.: tu PC, tu celular y tu TV forman una LAN en casa.</p>
         </div>
 
         <div class="glossary-card" data-cat="Redes">
-          <span class="glossary-tag">Redes</span>
-          <h4 class="glossary-term">WAN</h4>
-          <p class="glossary-desc">Red de área amplia que conecta redes lejanas, como internet.</p>
-          <p class="glossary-ej">Ej.: tu LAN se conecta a la WAN a través del router.</p>
+          <span class="glossary-tag" data-i18n="glos_cat_redes">Redes</span>
+          <h4 class="glossary-term" data-i18n="glos_wan_term">WAN</h4>
+          <p class="glossary-desc" data-i18n="glos_wan_def">Red de área amplia que conecta redes lejanas, como internet.</p>
+          <p class="glossary-ej" data-i18n="glos_wan_ex">Ej.: tu LAN se conecta a la WAN a través del router.</p>
         </div>
 
         <div class="glossary-card" data-cat="Redes">
-          <span class="glossary-tag">Redes</span>
-          <h4 class="glossary-term">Firewall (Cortafuegos)</h4>
-          <p class="glossary-desc">Sistema que filtra el tráfico de red y bloquea accesos no permitidos.</p>
-          <p class="glossary-ej">Ej.: el firewall de Windows bloquea conexiones sospechosas.</p>
+          <span class="glossary-tag" data-i18n="glos_cat_redes">Redes</span>
+          <h4 class="glossary-term" data-i18n="glos_firewall_term">Firewall (Cortafuegos)</h4>
+          <p class="glossary-desc" data-i18n="glos_firewall_def">Sistema que filtra el tráfico de red y bloquea accesos no permitidos.</p>
+          <p class="glossary-ej" data-i18n="glos_firewall_ex">Ej.: el firewall de Windows bloquea conexiones sospechosas.</p>
         </div>
 
         <div class="glossary-card" data-cat="Redes">
-          <span class="glossary-tag">Redes</span>
-          <h4 class="glossary-term">Dirección MAC</h4>
-          <p class="glossary-desc">Identificador físico único de cada tarjeta de red, formado por 6 pares de caracteres hexadecimales.</p>
-          <p class="glossary-ej">Ej.: viene impresa en la etiqueta del router.</p>
+          <span class="glossary-tag" data-i18n="glos_cat_redes">Redes</span>
+          <h4 class="glossary-term" data-i18n="glos_mac_address_term">Dirección MAC</h4>
+          <p class="glossary-desc" data-i18n="glos_mac_address_def">Identificador físico único de cada tarjeta de red, formado por 6 pares de caracteres hexadecimales.</p>
+          <p class="glossary-ej" data-i18n="glos_mac_address_ex">Ej.: viene impresa en la etiqueta del router.</p>
         </div>
 
         <div class="glossary-card" data-cat="Redes">
-          <span class="glossary-tag">Redes</span>
-          <h4 class="glossary-term">Puerta de enlace (Gateway)</h4>
-          <p class="glossary-desc">Punto de salida de una red local hacia otra red, normalmente la IP del router.</p>
-          <p class="glossary-ej">Ej.: en casa, la puerta de enlace suele ser 192.168.0.1.</p>
+          <span class="glossary-tag" data-i18n="glos_cat_redes">Redes</span>
+          <h4 class="glossary-term" data-i18n="glos_gateway_term">Puerta de enlace (Gateway)</h4>
+          <p class="glossary-desc" data-i18n="glos_gateway_def">Punto de salida de una red local hacia otra red, normalmente la IP del router.</p>
+          <p class="glossary-ej" data-i18n="glos_gateway_ex">Ej.: en casa, la puerta de enlace suele ser 192.168.0.1.</p>
         </div>
 
         <div class="glossary-card" data-cat="Redes">
-          <span class="glossary-tag">Redes</span>
-          <h4 class="glossary-term">Máscara de subred</h4>
-          <p class="glossary-desc">Número que separa la parte de red y la parte de host de una dirección IP, como 255.255.255.0.</p>
-          <p class="glossary-ej">Ej.: con /24, una red tiene hasta 254 equipos.</p>
+          <span class="glossary-tag" data-i18n="glos_cat_redes">Redes</span>
+          <h4 class="glossary-term" data-i18n="glos_subnet_mask_term">Máscara de subred</h4>
+          <p class="glossary-desc" data-i18n="glos_subnet_mask_def">Número que separa la parte de red y la parte de host de una dirección IP, como 255.255.255.0.</p>
+          <p class="glossary-ej" data-i18n="glos_subnet_mask_ex">Ej.: con /24, una red tiene hasta 254 equipos.</p>
         </div>
 
         <div class="glossary-card" data-cat="Hardware">
-          <span class="glossary-tag">Hardware</span>
-          <h4 class="glossary-term">CPU (Procesador)</h4>
-          <p class="glossary-desc">El cerebro del equipo: ejecuta las instrucciones de los programas.</p>
-          <p class="glossary-ej">Ej.: un CPU más rápido abre programas y responde antes.</p>
+          <span class="glossary-tag" data-i18n="glos_cat_hardware">Hardware</span>
+          <h4 class="glossary-term" data-i18n="glos_cpu_term">CPU (Procesador)</h4>
+          <p class="glossary-desc" data-i18n="glos_cpu_def">El cerebro del equipo: ejecuta las instrucciones de los programas.</p>
+          <p class="glossary-ej" data-i18n="glos_cpu_ex">Ej.: un CPU más rápido abre programas y responde antes.</p>
         </div>
 
         <div class="glossary-card" data-cat="Hardware">
-          <span class="glossary-tag">Hardware</span>
-          <h4 class="glossary-term">GPU (Tarjeta gráfica)</h4>
-          <p class="glossary-desc">Procesa gráficos e imágenes y acelera tareas como juegos, video y diseño.</p>
-          <p class="glossary-ej">Ej.: una GPU dedicada rinde mejor en juegos que la integrada.</p>
+          <span class="glossary-tag" data-i18n="glos_cat_hardware">Hardware</span>
+          <h4 class="glossary-term" data-i18n="glos_gpu_term">GPU (Tarjeta gráfica)</h4>
+          <p class="glossary-desc" data-i18n="glos_gpu_def">Procesa gráficos e imágenes y acelera tareas como juegos, video y diseño.</p>
+          <p class="glossary-ej" data-i18n="glos_gpu_ex">Ej.: una GPU dedicada rinde mejor en juegos que la integrada.</p>
         </div>
 
         <div class="glossary-card" data-cat="Hardware">
-          <span class="glossary-tag">Hardware</span>
-          <h4 class="glossary-term">RAM (Memoria)</h4>
-          <p class="glossary-desc">Memoria temporal y rápida donde trabajan los programas abiertos; se vacía al apagar.</p>
-          <p class="glossary-ej">Ej.: con poca RAM, el PC se pone lento con varias apps abiertas.</p>
+          <span class="glossary-tag" data-i18n="glos_cat_hardware">Hardware</span>
+          <h4 class="glossary-term" data-i18n="glos_ram_term">RAM (Memoria)</h4>
+          <p class="glossary-desc" data-i18n="glos_ram_def">Memoria temporal y rápida donde trabajan los programas abiertos; se vacía al apagar.</p>
+          <p class="glossary-ej" data-i18n="glos_ram_ex">Ej.: con poca RAM, el PC se pone lento con varias apps abiertas.</p>
         </div>
 
         <div class="glossary-card" data-cat="Hardware">
-          <span class="glossary-tag">Hardware</span>
-          <h4 class="glossary-term">SSD</h4>
-          <p class="glossary-desc">Almacenamiento rápido sin partes móviles, basado en memoria flash.</p>
-          <p class="glossary-ej">Ej.: Windows arranca en segundos desde un SSD.</p>
+          <span class="glossary-tag" data-i18n="glos_cat_hardware">Hardware</span>
+          <h4 class="glossary-term" data-i18n="glos_ssd_term">SSD</h4>
+          <p class="glossary-desc" data-i18n="glos_ssd_def">Almacenamiento rápido sin partes móviles, basado en memoria flash.</p>
+          <p class="glossary-ej" data-i18n="glos_ssd_ex">Ej.: Windows arranca en segundos desde un SSD.</p>
         </div>
 
         <div class="glossary-card" data-cat="Hardware">
-          <span class="glossary-tag">Hardware</span>
-          <h4 class="glossary-term">HDD</h4>
-          <p class="glossary-desc">Disco duro mecánico con platos giratorios; más barato por GB, pero más lento que un SSD.</p>
-          <p class="glossary-ej">Ej.: un HDD sirve para guardar muchos archivos que no se usan a diario.</p>
+          <span class="glossary-tag" data-i18n="glos_cat_hardware">Hardware</span>
+          <h4 class="glossary-term" data-i18n="glos_hdd_term">HDD</h4>
+          <p class="glossary-desc" data-i18n="glos_hdd_def">Disco duro mecánico con platos giratorios; más barato por GB, pero más lento que un SSD.</p>
+          <p class="glossary-ej" data-i18n="glos_hdd_ex">Ej.: un HDD sirve para guardar muchos archivos que no se usan a diario.</p>
         </div>
 
         <div class="glossary-card" data-cat="Hardware">
-          <span class="glossary-tag">Hardware</span>
-          <h4 class="glossary-term">NVMe</h4>
-          <p class="glossary-desc">Tipo de SSD muy rápido que se conecta por PCIe y supera por mucho a un SSD SATA.</p>
-          <p class="glossary-ej">Ej.: un NVMe es ideal para el disco donde está Windows.</p>
+          <span class="glossary-tag" data-i18n="glos_cat_hardware">Hardware</span>
+          <h4 class="glossary-term" data-i18n="glos_nvme_term">NVMe</h4>
+          <p class="glossary-desc" data-i18n="glos_nvme_def">Tipo de SSD muy rápido que se conecta por PCIe y supera por mucho a un SSD SATA.</p>
+          <p class="glossary-ej" data-i18n="glos_nvme_ex">Ej.: un NVMe es ideal para el disco donde está Windows.</p>
         </div>
 
         <div class="glossary-card" data-cat="Hardware">
-          <span class="glossary-tag">Hardware</span>
-          <h4 class="glossary-term">Placa base (Motherboard)</h4>
-          <p class="glossary-desc">Tarjeta principal que conecta CPU, RAM, almacenamiento y demás componentes.</p>
-          <p class="glossary-ej">Ej.: la placa base define qué CPU y cuánta RAM soporta el equipo.</p>
+          <span class="glossary-tag" data-i18n="glos_cat_hardware">Hardware</span>
+          <h4 class="glossary-term" data-i18n="glos_motherboard_term">Placa base (Motherboard)</h4>
+          <p class="glossary-desc" data-i18n="glos_motherboard_def">Tarjeta principal que conecta CPU, RAM, almacenamiento y demás componentes.</p>
+          <p class="glossary-ej" data-i18n="glos_motherboard_ex">Ej.: la placa base define qué CPU y cuánta RAM soporta el equipo.</p>
         </div>
 
         <div class="glossary-card" data-cat="Hardware">
-          <span class="glossary-tag">Hardware</span>
-          <h4 class="glossary-term">BIOS / UEFI</h4>
-          <p class="glossary-desc">Programa inicial que arranca el equipo y verifica el hardware antes de cargar el sistema.</p>
-          <p class="glossary-ej">Ej.: desde UEFI se cambia el orden de arranque del PC.</p>
+          <span class="glossary-tag" data-i18n="glos_cat_hardware">Hardware</span>
+          <h4 class="glossary-term" data-i18n="glos_bios_uefi_term">BIOS / UEFI</h4>
+          <p class="glossary-desc" data-i18n="glos_bios_uefi_def">Programa inicial que arranca el equipo y verifica el hardware antes de cargar el sistema.</p>
+          <p class="glossary-ej" data-i18n="glos_bios_uefi_ex">Ej.: desde UEFI se cambia el orden de arranque del PC.</p>
         </div>
 
         <div class="glossary-card" data-cat="Hardware">
-          <span class="glossary-tag">Hardware</span>
-          <h4 class="glossary-term">Fuente de poder (PSU)</h4>
-          <p class="glossary-desc">Convierte la corriente de la pared en energía segura para los componentes del PC.</p>
-          <p class="glossary-ej">Ej.: una fuente débil puede apagar el PC al jugar.</p>
+          <span class="glossary-tag" data-i18n="glos_cat_hardware">Hardware</span>
+          <h4 class="glossary-term" data-i18n="glos_psu_term">Fuente de poder (PSU)</h4>
+          <p class="glossary-desc" data-i18n="glos_psu_def">Convierte la corriente de la pared en energía segura para los componentes del PC.</p>
+          <p class="glossary-ej" data-i18n="glos_psu_ex">Ej.: una fuente débil puede apagar el PC al jugar.</p>
         </div>
 
         <div class="glossary-card" data-cat="Hardware">
-          <span class="glossary-tag">Hardware</span>
-          <h4 class="glossary-term">Pasta térmica</h4>
-          <p class="glossary-desc">Compuesto que mejora el contacto entre el CPU y su disipador para transmitir el calor.</p>
-          <p class="glossary-ej">Ej.: se cambia cuando el CPU se calienta más de lo normal.</p>
+          <span class="glossary-tag" data-i18n="glos_cat_hardware">Hardware</span>
+          <h4 class="glossary-term" data-i18n="glos_thermal_paste_term">Pasta térmica</h4>
+          <p class="glossary-desc" data-i18n="glos_thermal_paste_def">Compuesto que mejora el contacto entre el CPU y su disipador para transmitir el calor.</p>
+          <p class="glossary-ej" data-i18n="glos_thermal_paste_ex">Ej.: se cambia cuando el CPU se calienta más de lo normal.</p>
         </div>
 
         <div class="glossary-card" data-cat="Hardware">
-          <span class="glossary-tag">Hardware</span>
-          <h4 class="glossary-term">Caché</h4>
-          <p class="glossary-desc">Memoria muy rápida y pequeña que guarda datos que el CPU usa con frecuencia.</p>
-          <p class="glossary-ej">Ej.: la caché evita que el CPU espere tanto a la RAM.</p>
+          <span class="glossary-tag" data-i18n="glos_cat_hardware">Hardware</span>
+          <h4 class="glossary-term" data-i18n="glos_cache_term">Caché</h4>
+          <p class="glossary-desc" data-i18n="glos_cache_def">Memoria muy rápida y pequeña que guarda datos que el CPU usa con frecuencia.</p>
+          <p class="glossary-ej" data-i18n="glos_cache_ex">Ej.: la caché evita que el CPU espere tanto a la RAM.</p>
         </div>
 
         <div class="glossary-card" data-cat="Mantenimiento">
-          <span class="glossary-tag">Mantenimiento</span>
-          <h4 class="glossary-term">Sistema operativo</h4>
-          <p class="glossary-desc">Software base que gestiona el hardware y permite usar programas, como Windows o Linux.</p>
-          <p class="glossary-ej">Ej.: Windows 11 es el sistema operativo de muchos PCs.</p>
+          <span class="glossary-tag" data-i18n="glos_cat_mantenimiento">Mantenimiento</span>
+          <h4 class="glossary-term" data-i18n="glos_operating_system_term">Sistema operativo</h4>
+          <p class="glossary-desc" data-i18n="glos_operating_system_def">Software base que gestiona el hardware y permite usar programas, como Windows o Linux.</p>
+          <p class="glossary-ej" data-i18n="glos_operating_system_ex">Ej.: Windows 11 es el sistema operativo de muchos PCs.</p>
         </div>
 
         <div class="glossary-card" data-cat="Mantenimiento">
-          <span class="glossary-tag">Mantenimiento</span>
-          <h4 class="glossary-term">Antivirus</h4>
-          <p class="glossary-desc">Programa que detecta, bloquea y elimina software malicioso.</p>
-          <p class="glossary-ej">Ej.: Windows Defender es el antivirus incluido en Windows.</p>
+          <span class="glossary-tag" data-i18n="glos_cat_mantenimiento">Mantenimiento</span>
+          <h4 class="glossary-term" data-i18n="glos_antivirus_term">Antivirus</h4>
+          <p class="glossary-desc" data-i18n="glos_antivirus_def">Programa que detecta, bloquea y elimina software malicioso.</p>
+          <p class="glossary-ej" data-i18n="glos_antivirus_ex">Ej.: Windows Defender es el antivirus incluido en Windows.</p>
         </div>
 
         <div class="glossary-card" data-cat="Mantenimiento">
-          <span class="glossary-tag">Mantenimiento</span>
-          <h4 class="glossary-term">Copia de seguridad (Backup)</h4>
-          <p class="glossary-desc">Copia de tus archivos en otro lugar para recuperarlos si el equipo falla o se pierde.</p>
-          <p class="glossary-ej">Ej.: guarda tus trabajos en un disco externo o en la nube.</p>
+          <span class="glossary-tag" data-i18n="glos_cat_mantenimiento">Mantenimiento</span>
+          <h4 class="glossary-term" data-i18n="glos_backup_term">Copia de seguridad (Backup)</h4>
+          <p class="glossary-desc" data-i18n="glos_backup_def">Copia de tus archivos en otro lugar para recuperarlos si el equipo falla o se pierde.</p>
+          <p class="glossary-ej" data-i18n="glos_backup_ex">Ej.: guarda tus trabajos en un disco externo o en la nube.</p>
         </div>
 
         <div class="glossary-card" data-cat="Mantenimiento">
-          <span class="glossary-tag">Mantenimiento</span>
-          <h4 class="glossary-term">Controlador (Driver)</h4>
-          <p class="glossary-desc">Programa que permite que el sistema operativo use un componente, como la tarjeta gráfica o el Wi-Fi.</p>
-          <p class="glossary-ej">Ej.: sin el driver de Wi-Fi, el PC no ve las redes.</p>
+          <span class="glossary-tag" data-i18n="glos_cat_mantenimiento">Mantenimiento</span>
+          <h4 class="glossary-term" data-i18n="glos_driver_term">Controlador (Driver)</h4>
+          <p class="glossary-desc" data-i18n="glos_driver_def">Programa que permite que el sistema operativo use un componente, como la tarjeta gráfica o el Wi-Fi.</p>
+          <p class="glossary-ej" data-i18n="glos_driver_ex">Ej.: sin el driver de Wi-Fi, el PC no ve las redes.</p>
         </div>
 
         <div class="glossary-card" data-cat="Mantenimiento">
-          <span class="glossary-tag">Mantenimiento</span>
-          <h4 class="glossary-term">Malware</h4>
-          <p class="glossary-desc">Software malicioso diseñado para dañar, robar datos o controlar un equipo sin permiso.</p>
-          <p class="glossary-ej">Ej.: un virus y un troyano son tipos de malware.</p>
+          <span class="glossary-tag" data-i18n="glos_cat_mantenimiento">Mantenimiento</span>
+          <h4 class="glossary-term" data-i18n="glos_malware_term">Malware</h4>
+          <p class="glossary-desc" data-i18n="glos_malware_def">Software malicioso diseñado para dañar, robar datos o controlar un equipo sin permiso.</p>
+          <p class="glossary-ej" data-i18n="glos_malware_ex">Ej.: un virus y un troyano son tipos de malware.</p>
         </div>
       </div>
 
@@ -398,13 +398,13 @@
         <div class="glossary-fc" id="glos-fc" title="Toca para voltear"></div>
         <p id="glos-pos" class="glossary-count"></p>
         <div class="glossary-flash-nav">
-          <button type="button" class="glossary-btn" id="glos-prev">&larr; Anterior</button>
-          <button type="button" class="glossary-btn" id="glos-flip">Voltear</button>
-          <button type="button" class="glossary-btn" id="glos-shuffle">Mezclar</button>
-          <button type="button" class="glossary-btn" id="glos-next">Siguiente &rarr;</button>
-          <button type="button" class="glossary-btn" id="glos-exit">Volver a la lista</button>
+          <button type="button" class="glossary-btn" id="glos-prev" data-i18n="glos_flash_prev">&larr; Anterior</button>
+          <button type="button" class="glossary-btn" id="glos-flip" data-i18n="glos_flash_flip">Voltear</button>
+          <button type="button" class="glossary-btn" id="glos-shuffle" data-i18n="glos_flash_shuffle">Mezclar</button>
+          <button type="button" class="glossary-btn" id="glos-next" data-i18n="glos_flash_next">Siguiente &rarr;</button>
+          <button type="button" class="glossary-btn" id="glos-exit" data-i18n="glos_flash_exit">Volver a la lista</button>
         </div>
-        <p class="glossary-flash-hint">Toca la tarjeta para ver la definición. «Mezclar» cambia el orden para repasar.</p>
+        <p class="glossary-flash-hint" data-i18n="glos_flash_hint">Toca la tarjeta para ver la definición. «Mezclar» cambia el orden para repasar.</p>
       </div>
     </section>
 <section id="laboratorio" class="container">
@@ -418,7 +418,7 @@
       <div class="lab-grid">
         <!-- Módulo 3D opcional -->
         <div class="lab-card">
-          <span class="lab-status">Módulo Opcional</span>
+          <span class="lab-status" data-i18n="lab_status_optional">Módulo Opcional</span>
           <h3 data-i18n="model3d_title">Simulación de Torre 3D</h3>
           <p data-i18n="model3d_desc">
             Espacio reservado para integrar Three.js o un visor 3D interactivo que permita rotar y desarmar una torre de PC virtual.
@@ -431,7 +431,7 @@
 
         <!-- Módulo PowerShell con botón de copiar -->
         <div class="lab-card">
-          <span class="lab-status">Módulo Opcional</span>
+          <span class="lab-status" data-i18n="lab_status_optional">Módulo Opcional</span>
           <h3 data-i18n="ps_title">Diagnóstico de Hardware (PowerShell)</h3>
           <p data-i18n="ps_desc">
             Código nativo en Windows para consultar los componentes reales del equipo en el que se ejecuta la práctica de laboratorio:
@@ -449,7 +449,7 @@
         </div>
         <!-- Detector en el navegador -->
         <div class="lab-card">
-          <span class="lab-status">En vivo</span>
+          <span class="lab-status" data-i18n="lab_status_live">En vivo</span>
           <h3 data-i18n="detect_title">Detecta mi equipo</h3>
           <p data-i18n="detect_desc">Sin instalar nada ni ejecutar código: esto es lo único que tu navegador puede ver de tu equipo. Para el diagnóstico completo (modelo exacto del procesador y de la placa) usa el código de PowerShell.</p>
           <div>
@@ -467,7 +467,7 @@
         </div>
         <!-- Código: ipmac -->
         <div class="lab-card">
-          <span class="lab-status">Código</span>
+          <span class="lab-status" data-i18n="lab_status_code">Código</span>
           <h3 data-i18n="code_ipmac_title">Tu IP y tu MAC</h3>
           <p data-i18n="code_ipmac_desc">Muestra la dirección IP de tu equipo y la dirección física (MAC) de tu tarjeta de red: los dos datos que te identifican en la red.</p>
           <div>
@@ -482,7 +482,7 @@
         </div>
         <!-- Código: ping -->
         <div class="lab-card">
-          <span class="lab-status">Código</span>
+          <span class="lab-status" data-i18n="lab_status_code">Código</span>
           <h3 data-i18n="code_ping_title">¿Hay conexión? Haz ping</h3>
           <p data-i18n="code_ping_desc">Envía paquetes al servidor de Google (8.8.8.8). Si responde, tu conexión funciona; si todo se pierde, el problema está en tu red local.</p>
           <div>
@@ -497,7 +497,7 @@
         </div>
         <!-- Código: arp -->
         <div class="lab-card">
-          <span class="lab-status">Código</span>
+          <span class="lab-status" data-i18n="lab_status_code">Código</span>
           <h3 data-i18n="code_arp_title">¿Quién está en tu red?</h3>
           <p data-i18n="code_arp_desc">Lista los dispositivos de tu red local con su IP y su MAC: los equipos que el tuyo ya conoce.</p>
           <div>
@@ -512,7 +512,7 @@
         </div>
         <!-- Código: renew -->
         <div class="lab-card">
-          <span class="lab-status">Código</span>
+          <span class="lab-status" data-i18n="lab_status_code">Código</span>
           <h3 data-i18n="code_renew_title">Renueva tu IP</h3>
           <p data-i18n="code_renew_desc">Suelta tu IP actual y pide una nueva al router. Es el arreglo clásico cuando el internet se pone raro (ejecuta PowerShell como administrador).</p>
           <div>
@@ -547,6 +547,12 @@ ipconfig /renew</code>
     var count = document.getElementById('glos-count');
     var input = document.getElementById('glos-q');
     var filtro = 'todos', q = '';
+    function glosLang() { try { return localStorage.getItem('user_lang') || 'es'; } catch (e) { return 'es'; } }
+    function glosCat(c) { var m = { Redes: { es: 'Redes', en: 'Networks' }, Hardware: { es: 'Hardware', en: 'Hardware' }, Mantenimiento: { es: 'Mantenimiento', en: 'Maintenance' } }; return (m[c] && m[c][glosLang()]) || c; }
+    function glosCount(v, total) { return glosLang() === 'en' ? v + ' of ' + total + ' terms' : v + ' de ' + total + ' términos'; }
+    function glosEmpty() { return glosLang() === 'en' ? 'No results. Try another word.' : 'No hay resultados. Prueba otra palabra.'; }
+    function glosHint() { return glosLang() === 'en' ? 'Tap to see the definition' : 'Toca para ver la definición'; }
+    function glosPos(i, total, c) { return glosLang() === 'en' ? 'Card ' + i + ' of ' + total + ' \u00b7 ' + glosCat(c) : 'Tarjeta ' + i + ' de ' + total + ' \u00b7 ' + glosCat(c); }
     function visibles() {
       return cards.filter(function (c) {
         return (filtro === 'todos' || c.getAttribute('data-cat') === filtro) &&
@@ -556,11 +562,11 @@ ipconfig /renew</code>
     function render() {
       var v = visibles();
       cards.forEach(function (c) { c.style.display = v.indexOf(c) !== -1 ? '' : 'none'; });
-      if (count) count.textContent = v.length + ' de ' + cards.length + ' términos';
+      if (count) count.textContent = glosCount(v.length, cards.length);
       if (!v.length && !document.getElementById('glos-empty')) {
         var p = document.createElement('p');
         p.id = 'glos-empty'; p.className = 'glossary-count';
-        p.textContent = 'No hay resultados. Prueba otra palabra.';
+        p.textContent = glosEmpty();
         list.appendChild(p);
       }
       var e = document.getElementById('glos-empty');
@@ -589,7 +595,7 @@ ipconfig /renew</code>
       var g = orden[idx];
       fc.innerHTML = volteada
         ? '<div class="glossary-fc-back"><strong></strong><p class="d"></p><p class="e"></p></div>'
-        : '<div class="glossary-fc-front"></div><p class="glossary-flash-hint">Toca para ver la definición</p>';
+        : '<div class="glossary-fc-front"></div><p class="glossary-flash-hint">' + glosHint() + '</p>';
       if (volteada) {
         fc.querySelector('strong').textContent = g.t;
         fc.querySelector('.d').textContent = g.d;
@@ -597,7 +603,7 @@ ipconfig /renew</code>
       } else {
         fc.querySelector('.glossary-fc-front').textContent = g.t;
       }
-      pos.textContent = 'Tarjeta ' + (idx + 1) + ' de ' + orden.length + ' · ' + g.c;
+      pos.textContent = glosPos(idx + 1, orden.length, g.c);
     }
     function openFlash() {
       var v = visibles(); orden = (v.length ? v : cards).map(datos);

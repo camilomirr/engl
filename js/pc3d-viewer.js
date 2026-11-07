@@ -741,8 +741,8 @@ function init() {
     event.preventDefault();
     event.stopPropagation();
     let dy = event.deltaY;
-    if (event.deltaMode === 1) dy *= 33; // Firefox: líneas → píxeles
-    else if (event.deltaMode === 2) dy *= 500; // páginas → píxeles
+    if (event.deltaMode === 1) dy *= 33; // Firefox: líneas a píxeles
+    else if (event.deltaMode === 2) dy *= 500; // páginas a píxeles
     targetRadius = THREE.MathUtils.clamp(targetRadius * Math.exp(dy * 0.0009), ZOOM_MIN, ZOOM_MAX);
     controls.autoRotate = false;
     lastInteract = clock.elapsedTime;

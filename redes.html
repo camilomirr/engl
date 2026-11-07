@@ -43,7 +43,7 @@
               <li><a href="redes.html#redes" data-i18n="nav_network">Del Hardware a la Red</a></li>
               <li><a href="redes.html#alcance-redes" data-i18n="nav_scope">Clasificación de Redes</a></li>
               <li><a href="redes.html#topologias" data-i18n="nav_topologies">Topologías</a></li>
-              <li><a href="redes_challenge/index.html" class="btn-challenge">🎮 Redes Challenge</a></li>
+              <li><a href="redes_challenge/index.html" class="btn-challenge"><span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 8h10.5a4 4 0 0 1 3.9 4.8l-.6 3.1a3 3 0 0 1-5.4 1.4L13.5 15.5h-3l-1.4 1.8a3 3 0 0 1-5.4-1.4l-.6-3.1A4 4 0 0 1 6.5 8z"/><path d="M8 11v3M6.5 12.5h3"/><circle cx="15.8" cy="11.6" r="0.4" fill="currentColor"/><circle cx="17.8" cy="13.4" r="0.4" fill="currentColor"/></svg></span> Redes Challenge</a></li>
               <li><a href="redes.html#simulador-red" data-i18n="nav_simulator">Simulador Ping</a></li>
               <li><a href="redes.html#switch-3d" data-i18n="nav_switch3d">El switch por dentro</a></li>
                           <li><a href="wifi.html" data-i18n="nav_wifi">WiFi Avanzado</a></li>
@@ -132,7 +132,7 @@
 
       <div class="network-bridge-grid">
         <div class="network-bridge-card">
-          <span class="network-badge">Capa de Enlace</span>
+          <span class="network-badge" data-i18n="red_badge_link">Capa de Enlace</span>
           <h3 data-i18n="mac_title">Dirección MAC (Hardware Address)</h3>
           <p data-i18n="mac_desc">
             Identificador físico único de 48 bits grabado directamente en la memoria ROM de cada tarjeta de red (NIC) para la capa de enlace de datos.
@@ -140,7 +140,7 @@
         </div>
 
         <div class="network-bridge-card">
-          <span class="network-badge">Medio Físico</span>
+          <span class="network-badge" data-i18n="red_badge_media">Medio Físico</span>
           <h3 data-i18n="eth_title">Puertos Físicos y Conectividad</h3>
           <p data-i18n="eth_desc">
             Interfaces RJ-45 para cable de par trenzado (Ethernet) e interfaces de radiofrecuencia (Wi-Fi) conectadas mediante el bus PCIe.
@@ -148,7 +148,7 @@
         </div>
 
         <div class="network-bridge-card">
-          <span class="network-badge">Arquitectura Host</span>
+          <span class="network-badge" data-i18n="red_badge_host">Arquitectura Host</span>
           <h3 data-i18n="flow_title">Flujo de Datos en el Host</h3>
           <p data-i18n="flow_desc">
             Los paquetes viajan desde la memoria RAM, son procesados por la CPU y enviados al controlador NIC para su modulación y transmisión en el medio físico.
@@ -170,7 +170,7 @@
         <article class="scope-card">
           <div class="scope-img-wrap">
             <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80" alt="Body Area Network BAN Medical Sensors" class="scope-img" loading="lazy">
-            <span class="scope-badge ban">Cuerpo Humano // &lt; 1 m</span>
+            <span class="scope-badge ban" data-i18n="red_badge_ban">Cuerpo Humano // &lt; 1 m</span>
           </div>
           <div class="scope-body">
             <div class="scope-header">
@@ -190,7 +190,7 @@
             <div class="scope-tech-tags">
               <span>IEEE 802.15.6</span>
               <span>Bluetooth LE</span>
-              <span>Bio-sensores</span>
+              <span data-i18n="red_tag_biosensors">Bio-sensores</span>
             </div>
           </div>
         </article>
@@ -199,7 +199,7 @@
         <article class="scope-card">
           <div class="scope-img-wrap">
             <img src="https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=800&q=80" alt="Personal Area Network PAN Bluetooth" class="scope-img" loading="lazy">
-            <span class="scope-badge pan">Personal // ~1 a 10 m</span>
+            <span class="scope-badge pan" data-i18n="red_badge_pan">Personal // ~1 a 10 m</span>
           </div>
           <div class="scope-body">
             <div class="scope-header">
@@ -228,7 +228,7 @@
         <article class="scope-card">
           <div class="scope-img-wrap">
             <img src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=800&q=80" alt="Local Area Network LAN Cables and Switch" class="scope-img" loading="lazy">
-            <span class="scope-badge lan">Hogar / Edificio // ~100 m</span>
+            <span class="scope-badge lan" data-i18n="red_badge_lan">Hogar / Edificio // ~100 m</span>
           </div>
           <div class="scope-body">
             <div class="scope-header">
@@ -257,7 +257,7 @@
         <article class="scope-card">
           <div class="scope-img-wrap">
             <img src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=800&q=80" alt="Campus Area Network CAN University" class="scope-img" loading="lazy">
-            <span class="scope-badge can">Campus // 1 a 5 km</span>
+            <span class="scope-badge can" data-i18n="red_badge_can">Campus // 1 a 5 km</span>
           </div>
           <div class="scope-body">
             <div class="scope-header">
@@ -275,7 +275,7 @@
               <p data-i18n="can_example">Universidad, complejo hospitalario o parque industrial con múltiples facultades y laboratorios enlazados.</p>
             </div>
             <div class="scope-tech-tags">
-              <span>Fibra Óptica OM4</span>
+              <span data-i18n="red_tag_fiber">Fibra Óptica OM4</span>
               <span>Backbone 10GbE</span>
               <span>VLAN Trunking</span>
             </div>
@@ -286,7 +286,7 @@
         <article class="scope-card">
           <div class="scope-img-wrap">
             <img src="https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=800&q=80" alt="Metropolitan Area Network MAN City" class="scope-img" loading="lazy">
-            <span class="scope-badge man">Metropolitana // Hasta 50 km</span>
+            <span class="scope-badge man" data-i18n="red_badge_man">Metropolitana // Hasta 50 km</span>
           </div>
           <div class="scope-body">
             <div class="scope-header">
@@ -305,7 +305,7 @@
             </div>
             <div class="scope-tech-tags">
               <span>Metro Ethernet</span>
-              <span>Anillos SDH / SONET</span>
+              <span data-i18n="red_tag_sdh">Anillos SDH / SONET</span>
               <span>DWDM</span>
             </div>
           </div>
@@ -315,7 +315,7 @@
         <article class="scope-card">
           <div class="scope-img-wrap">
             <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80" alt="Wide Area Network WAN Global Internet" class="scope-img" loading="lazy">
-            <span class="scope-badge wan">País / Continente // Extensa</span>
+            <span class="scope-badge wan" data-i18n="red_badge_wan">País / Continente // Extensa</span>
           </div>
           <div class="scope-body">
             <div class="scope-header">
@@ -335,7 +335,7 @@
             <div class="scope-tech-tags">
               <span>MPLS</span>
               <span>SD-WAN</span>
-              <span>Enrutamiento BGP</span>
+              <span data-i18n="red_tag_bgp">Enrutamiento BGP</span>
             </div>
           </div>
         </article>
@@ -344,7 +344,7 @@
         <article class="scope-card">
           <div class="scope-img-wrap">
             <img src="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=800&q=80" alt="Global Area Network GAN Earth from Orbit Satellite" class="scope-img" loading="lazy">
-            <span class="scope-badge gan">Planetario // Global Total</span>
+            <span class="scope-badge gan" data-i18n="red_badge_gan">Planetario // Global Total</span>
           </div>
           <div class="scope-body">
             <div class="scope-header">
@@ -362,9 +362,9 @@
               <p data-i18n="gan_example">Redes de constelaciones satelitales en órbita baja (Starlink, OneWeb), GPS y cables submarinos transoceánicos.</p>
             </div>
             <div class="scope-tech-tags">
-              <span>Satélites LEO</span>
-              <span>Cables Submarinos</span>
-              <span>Laser Inter-satelital</span>
+              <span data-i18n="red_tag_leo">Satélites LEO</span>
+              <span data-i18n="red_tag_submarine">Cables Submarinos</span>
+              <span data-i18n="red_tag_laser">Laser Inter-satelital</span>
             </div>
           </div>
         </article>
@@ -389,7 +389,7 @@
             </div>
           </div>
 
-          <div class="topo-diagram-wrap" aria-label="Diagrama Topología en Estrella">
+          <div class="topo-diagram-wrap" aria-label="Diagrama Topología en Estrella" data-i18n-title="red_topo_aria_star">
             <svg class="topo-svg" viewBox="0 0 240 130" xmlns="http://www.w3.org/2000/svg">
               <line x1="120" y1="65" x2="45" y2="35" class="topo-line" />
               <line x1="120" y1="65" x2="195" y2="35" class="topo-line" />
@@ -437,7 +437,7 @@
             </div>
           </div>
 
-          <div class="topo-diagram-wrap" aria-label="Diagrama Topología en Bus">
+          <div class="topo-diagram-wrap" aria-label="Diagrama Topología en Bus" data-i18n-title="red_topo_aria_bus">
             <svg class="topo-svg" viewBox="0 0 240 130" xmlns="http://www.w3.org/2000/svg">
               <rect x="18" y="59" width="8" height="12" class="topo-terminator" />
               <rect x="214" y="59" width="8" height="12" class="topo-terminator" />
@@ -484,7 +484,7 @@
             </div>
           </div>
 
-          <div class="topo-diagram-wrap" aria-label="Diagrama Topología en Anillo">
+          <div class="topo-diagram-wrap" aria-label="Diagrama Topología en Anillo" data-i18n-title="red_topo_aria_ring">
             <svg class="topo-svg" viewBox="0 0 240 130" xmlns="http://www.w3.org/2000/svg">
               <ellipse cx="120" cy="65" rx="65" ry="42" class="topo-ring-path" />
               <circle cx="120" cy="23" r="9" class="topo-node" />
@@ -527,7 +527,7 @@
             </div>
           </div>
 
-          <div class="topo-diagram-wrap" aria-label="Diagrama Topología en Malla">
+          <div class="topo-diagram-wrap" aria-label="Diagrama Topología en Malla" data-i18n-title="red_topo_aria_mesh">
             <svg class="topo-svg" viewBox="0 0 240 130" xmlns="http://www.w3.org/2000/svg">
               <polygon points="120,20 185,50 160,110 80,110 55,50" class="topo-line-poly" />
               <line x1="120" y1="20" x2="160" y2="110" class="topo-line" />
@@ -574,7 +574,7 @@
             </div>
           </div>
 
-          <div class="topo-diagram-wrap" aria-label="Diagrama Topología en Árbol">
+          <div class="topo-diagram-wrap" aria-label="Diagrama Topología en Árbol" data-i18n-title="red_topo_aria_tree">
             <svg class="topo-svg" viewBox="0 0 240 130" xmlns="http://www.w3.org/2000/svg">
               <line x1="120" y1="22" x2="70" y2="65" class="topo-line" />
               <line x1="120" y1="22" x2="170" y2="65" class="topo-line" />
@@ -623,7 +623,7 @@
             </div>
           </div>
 
-          <div class="topo-diagram-wrap" aria-label="Diagrama Topología Híbrida">
+          <div class="topo-diagram-wrap" aria-label="Diagrama Topología Híbrida" data-i18n-title="red_topo_aria_hybrid">
             <svg class="topo-svg" viewBox="0 0 240 130" xmlns="http://www.w3.org/2000/svg">
               <line x1="75" y1="65" x2="165" y2="65" class="topo-line-dash" />
               <line x1="75" y1="65" x2="40" y2="35" class="topo-line" />
@@ -669,11 +669,11 @@
       <h2 class="section-title">
         <span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="6" y1="11" x2="10" y2="11"></line><line x1="8" y1="9" x2="8" y2="13"></line><line x1="15" y1="12" x2="15.01" y2="12"></line><line x1="18" y1="10" x2="18.01" y2="10"></line><path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"></path></svg></span> Redes Challenge
       </h2>
-      <p class="section-desc">
+      <p class="section-desc" data-i18n="red_challenge_desc">
         Pon a prueba lo aprendido sobre topologías: identifica estrella, bus, anillo, malla y árbol en 10 preguntas, suma puntos y conserva tus 3 vidas. ¿Llegas a los 100 puntos?
       </p>
       <p>
-        <a href="redes_challenge/index.html" class="btn-primary">🎮 Jugar Redes Challenge</a>
+        <a href="redes_challenge/index.html" class="btn-primary"><span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 8h10.5a4 4 0 0 1 3.9 4.8l-.6 3.1a3 3 0 0 1-5.4 1.4L13.5 15.5h-3l-1.4 1.8a3 3 0 0 1-5.4-1.4l-.6-3.1A4 4 0 0 1 6.5 8z"/><path d="M8 11v3M6.5 12.5h3"/><circle cx="15.8" cy="11.6" r="0.4" fill="currentColor"/><circle cx="17.8" cy="13.4" r="0.4" fill="currentColor"/></svg></span> <span data-i18n="red_challenge_play">Jugar Redes Challenge</span></a>
       </p>
     </section>
 <section id="simulador-red" class="container">
@@ -698,8 +698,8 @@
           <div class="sim-control-group">
             <label for="sim-target-select" class="sim-label" data-i18n="sim_lbl_target">Destino:</label>
             <select id="sim-target-select" class="sim-select">
-              <option value="server">Servidor Web (10.0.0.80 - WAN / Cloud)</option>
-              <option value="pc2">PC 2 (192.168.1.20 - Misma LAN)</option>
+              <option value="server" data-i18n="red_sim_opt_server">Servidor Web (10.0.0.80 - WAN / Cloud)</option>
+              <option value="pc2" data-i18n="red_sim_opt_pc2_same">PC 2 (192.168.1.20 - Misma LAN)</option>
             </select>
           </div>
 
@@ -708,7 +708,7 @@
             <span data-i18n="sim_btn_ping">Enviar Ping ICMP</span>
           </button>
 
-          <button id="sim-reset-btn" class="sim-btn-reset" type="button" title="Reiniciar visualizador">
+          <button id="sim-reset-btn" class="sim-btn-reset" type="button" title="Reiniciar visualizador" data-i18n-title="red_sim_reset_title">
             <span data-i18n="sim_btn_reset">Reiniciar</span>
           </button>
         </div>
@@ -788,7 +788,7 @@
 
           <!-- Indicador de paquete viajero animado -->
           <div class="packet-traveler" id="sim-packet" hidden>
-            <span class="packet-badge" id="packet-type-text">Enviando datos</span>
+            <span class="packet-badge" id="packet-type-text" data-i18n="red_sim_packet_sending">Enviando datos</span>
             <span class="packet-arrow"><span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg></span></span>
           </div>
         </div>
@@ -804,14 +804,14 @@
           </div>
 
           <div class="sim-console-body" id="sim-console">
-            <p class="console-line info">[SISTEMA] Simulador inicializado. Selecciona host origen y destino, luego pulsa 'Enviar Ping ICMP'.</p>
+            <p class="console-line info" data-i18n="red_sim_console_init">[SISTEMA] Simulador inicializado. Selecciona host origen y destino, luego pulsa 'Enviar Ping ICMP'.</p>
           </div>
 
           <!-- Inspección del encabezado de trama / paquete -->
           <div class="packet-inspector-grid">
             <div class="inspector-box">
               <span class="insp-title" data-i18n="insp_l2_title">Capa 2 - Trama Ethernet (MAC)</span>
-              <p id="insp-l2-info">Origen: -- &nbsp;|&nbsp; Destino: --</p>
+              <p id="insp-l2-info" data-i18n="red_insp_l2_init">Origen: -- &nbsp;|&nbsp; Destino: --</p>
             </div>
             <div class="inspector-box">
               <span class="insp-title" data-i18n="insp_l3_title">Capa 3 - Paquete IP (Protocolo 1 ICMP)</span>
@@ -819,7 +819,7 @@
             </div>
             <div class="inspector-box">
               <span class="insp-title" data-i18n="insp_stat_title">Métricas de Conectividad</span>
-              <p id="insp-stat-info">RTT: -- ms &nbsp;|&nbsp; Pérdida: 0% &nbsp;|&nbsp; Estado: Esperando</p>
+              <p id="insp-stat-info" data-i18n="red_insp_stat_init">RTT: -- ms &nbsp;|&nbsp; Pérdida: 0% &nbsp;|&nbsp; Estado: Esperando</p>
             </div>
           </div>
         </div>
@@ -835,11 +835,11 @@
 
       <div class="swl-wrapper">
         <div class="swl-stage">
-          <svg id="swl-svg" viewBox="0 0 760 420" role="img" aria-label="Switch con cuatro computadores conectados por cable">
+          <svg id="swl-svg" viewBox="0 0 760 420" role="img" aria-label="Switch con cuatro computadores conectados por cable" data-i18n-title="red_swl_svg_aria">
             <g class="swl-device">
               <rect x="230" y="30" width="300" height="80" rx="12"></rect>
               <text id="swl-device-name" class="swl-device-title" x="380" y="64" text-anchor="middle">SWITCH</text>
-              <text class="swl-device-sub" x="380" y="86" text-anchor="middle">NV-SW 08 · capa 2</text>
+              <text class="swl-device-sub" x="380" y="86" text-anchor="middle" data-i18n="red_swl_device_sub">NV-SW 08 · capa 2</text>
               <g class="swl-port" id="swl-port-1">
                 <text class="swl-port-num" x="290" y="100" text-anchor="middle">1</text>
                 <rect x="277" y="104" width="26" height="16" rx="3"></rect>
@@ -901,7 +901,7 @@
         <aside class="swl-panel">
           <div class="swl-panel-head">
             <span class="network-badge" data-i18n="switch3d_badge">Laboratorio L2</span>
-            <div class="swl-mode" role="group" aria-label="Modo del dispositivo">
+            <div class="swl-mode" role="group" aria-label="Modo del dispositivo" data-i18n-title="red_swl_mode_aria">
               <button type="button" id="swl-mode-switch" class="swl-mode-btn is-active" data-i18n="swl_mode_switch">Modo switch</button>
               <button type="button" id="swl-mode-hub" class="swl-mode-btn" data-i18n="swl_mode_hub">Modo hub</button>
             </div>
