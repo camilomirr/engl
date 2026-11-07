@@ -31,7 +31,7 @@
 @import url('modules/icons.css');
 
 /* 9. Asistente de búsqueda local */
-@import url('modules/local-assistant.css?v=2');
+@import url('modules/local-assistant.css?v=3');
 
 /* 10. Efecto de seguimiento del cursor */
 @import url('modules/cursor-effect.css');
@@ -43,5 +43,5 @@
 @import url('modules/mantenimiento-software.css');
 
 /* 13. Equipo NVISION — puente de tareas con Muse */
-@import url('modules/equipo.css?v=4');
+@import url('modules/equipo.css?v=5');
 

@@ -35,7 +35,7 @@
   display: flex;
   flex-direction: column;
   width: min(20rem, calc(100vw - 2rem));
-  max-height: calc(100vh - 5.5rem);
+  max-height: calc(100vh - 6.5rem);
   overflow: hidden;
   border: 1px solid #cbd5e1;
   border-radius: var(--radius-md);
@@ -95,7 +95,7 @@
 }
 
 .local-assistant-submit svg { width: 1rem; height: 1rem; }
-.local-assistant-results { display: grid; gap: 0.55rem; margin-top: 0.8rem; max-height: 15rem; overflow-y: auto; }
+.local-assistant-results { display: grid; gap: 0.55rem; margin-top: 0.8rem; max-height: 12rem; overflow-y: auto; }
 .local-assistant-result { padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: var(--radius-sm); background: #f8fafc; }
 .local-assistant-result strong { display: block; color: #0f172a; font-size: 0.72rem; }
 .local-assistant-result p { margin: 0.3rem 0 0.5rem; color: #334155; font: 0.68rem/1.45 'JetBrains Mono', monospace; }
@@ -116,7 +116,7 @@
   font: 700 0.72rem 'JetBrains Mono', monospace;
 }
 .la-tab.is-active { background: #0e7490; border-color: #0e7490; color: #ffffff; }
-.la-log { display: grid; gap: 0.55rem; max-height: 200px; overflow-y: auto; padding-right: 0.2rem; }
+.la-log { display: grid; gap: 0.55rem; max-height: 160px; overflow-y: auto; padding-right: 0.2rem; }
 .la-log:empty { display: none; }
 .la-msg {
   max-width: 92%; padding: 0.6rem 0.7rem; border-radius: 12px;
