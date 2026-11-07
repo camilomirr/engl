@@ -3721,6 +3721,13 @@ function setupSwitchLab() {
   const pcName = i => 'PC' + (i + 1);
 
   function renderTable(hiPort = null) {
+    // Las MAC debajo de cada PC solo aparecen cuando el switch ya las aprendió;
+    // en modo hub el hub no aprende nada, así que se ocultan todas.
+    const known = new Set([...learned.values()]);
+    for (let i = 0; i < 4; i++) {
+      const el = document.getElementById('swl-pc-' + i);
+      if (el) el.classList.toggle('is-known', mode === 'switch' && known.has(i));
+    }
     tbody.innerHTML = '';
     const row = cells => {
       const tr = document.createElement('tr');

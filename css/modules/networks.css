@@ -1432,6 +1432,9 @@
 .swl-mac-hi { fill: #94a3b8; }
 .swl-pc-mac.swl-mac-lo { font-weight: 700; fill: #f0f9ff; }
 .swl-mac-pill { fill: rgba(2, 20, 35, .9); stroke: #164e63; stroke-width: 1; }
+/* La MAC de cada PC solo se muestra cuando el switch ya la aprendió (ver JS: clase is-known) */
+.swl-pc .swl-mac-pill, .swl-pc .swl-pc-mac { opacity: 0; transition: opacity .5s; }
+.swl-pc.is-known .swl-mac-pill, .swl-pc.is-known .swl-pc-mac { opacity: 1; }
 .swl-pc-stand { stroke: #38bdf8; stroke-width: 2; opacity: .7; }
 .swl-pc.is-hit .swl-pc-body { stroke: #34d399; stroke-width: 2.4; }
 .swl-pc.is-hit .swl-pc-screen { fill: #065f46; }
