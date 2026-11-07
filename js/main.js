@@ -2524,6 +2524,60 @@ function setupLocalAssistant() {
     return top;
   }
 
+  /* ===== Contexto de conversación: seguir hablando del tema ===== */
+  /* Antes el chatbot no tenía memoria: cada pregunta se respondía sola y
+     "¿qué más?" no tenía tokens (STOP lo vaciaba) y caía en el fallback.
+     Ahora guarda el último tema respondido y las fichas ya mostradas. */
+  let lastTopic = null; // { e, key, c }
+  let shownKeys = new Set();
+  let shownKeyToks = new Set(); // tokens de k[0] ya mostrados: evita repetir casi la misma ficha (ej. dos de dual channel)
+  const FOLLOWUPS = new Set(['que mas', 'y que mas', 'dime mas', 'cuentame mas', 'sigue', 'continua', 'y eso', 'y de eso', 'algo mas', 'que mas hay', 'hay mas', 'y luego', 'y despues', 'mas', 'mas detalles', 'detalles', 'dame un ejemplo', 'un ejemplo', 'y un ejemplo', 'explicame mas', 'profundiza', 'what else', 'tell me more', 'more', 'go on', 'continue', 'more details', 'give me an example', 'an example', 'and then', 'tell me more about it', 'what about that']);
+  const isPureFollowUp = (q) => FOLLOWUPS.has(norm(q).trim().replace(/\s+/g, ' '));
+  function relatedEntries(topic) {
+    const tk = new Set(toks(topic.key));
+    const all = [...learned.map((e) => ({ c: e.c, k: e.k, r: [e.r, e.r], href: null })), ...KB];
+    return all
+      .filter((e) => e !== topic.e && !shownKeyToks.has(toks(e.k[0]).join(',')))
+      .map((e) => {
+        let s = 0;
+        if (e.c === topic.c) s += 2;
+        const kt = new Set();
+        e.k.forEach((k) => toks(k).forEach((w) => kt.add(w)));
+        tk.forEach((w) => { if (kt.has(w)) s += 1; });
+        return { e, s };
+      })
+      .filter((x) => x.s > 0)
+      .sort((a, b) => b.s - a.s);
+  }
+  function rememberTopic(b) {
+    lastTopic = { e: b.e, key: b.key, c: b.e.c };
+    shownKeys.add(b.e.k[0]);
+    shownKeyToks.add(toks(b.e.k[0]).join(','));
+  }
+  function askFollowUp(q) {
+    if (!lastTopic) {
+      say(L() === 1 ? 'First ask me about a topic — for example, "what is RAM?" — and then you can say "what else?" and I will keep going on that topic.' : 'Primero pregúntame de un tema —por ejemplo, "¿qué es la RAM?"— y después me puedes decir "¿qué más?" y sigo hablando de ese tema.', q, null, null);
+      return;
+    }
+    const rel = relatedEntries(lastTopic).filter((x) => !shownKeys.has(x.e.k[0]));
+    if (!rel.length) {
+      say(L() === 1 ? 'That was the main thing about ' + lastTopic.key + '. Ask me about another topic and I will keep going on that one.' : 'Eso era lo principal de ' + lastTopic.key + '. Pregúntame de otro tema y sigo hablando de ese.', q, null, lastTopic.e.href);
+      return;
+    }
+    const next = rel[0].e;
+    shownKeys.add(next.k[0]);
+    shownKeyToks.add(toks(next.k[0]).join(','));
+    lastTopic = { e: next, key: next.k[0], c: next.c };
+    const more = relatedEntries(lastTopic).filter((x) => !shownKeys.has(x.e.k[0])).slice(0, 2);
+    let extra = '';
+    if (more.length) {
+      extra = L() === 1
+        ? '\n\nYou can also ask me: «' + more.map((x) => x.e.k[0]).join('», «') + '».'
+        : '\n\nTambién puedes preguntarme: «' + more.map((x) => x.e.k[0]).join('», «') + '».';
+    }
+    say((L() === 1 ? 'Sure, about ' + next.k[0] + ' I can also tell you: ' : 'Claro, sobre ' + next.k[0] + ' también te cuento: ') + next.r[L()] + extra, q, null, next.href);
+  }
+
   /* ===== Construcción del panel ===== */
   const assistant = document.createElement('aside');
   assistant.className = 'local-assistant';
@@ -2633,6 +2687,14 @@ function setupLocalAssistant() {
   function say(text, q, teachQ, href) {
     setTimeout(() => {
       addMsg('bot', text, q, href);
+      if (q && lastTopic) {
+        const moreBtn = document.createElement('button');
+        moreBtn.type = 'button';
+        moreBtn.className = 'la-chip';
+        moreBtn.textContent = L() === 1 ? 'What else?' : '¿Qué más?';
+        moreBtn.addEventListener('click', () => ask(L() === 1 ? 'What else?' : '¿Qué más?'));
+        log.lastChild.appendChild(moreBtn);
+      }
       if (teachQ) {
         const b = document.createElement('button');
         b.type = 'button';
@@ -2647,8 +2709,23 @@ function setupLocalAssistant() {
     text = (text || '').trim();
     if (!text) return;
     addMsg('user', text);
+    // 1) "¿qué más?" solo: seguir con el último tema
+    if (isPureFollowUp(text)) { askFollowUp(text); return; }
+    // 2) "¿qué más de X?": quitar el "qué más" y buscar X; si no calza, seguir con el tema
+    const nq = norm(text);
+    if (nq.startsWith('que mas ') || nq.startsWith('what else ')) {
+      const rest = text.replace(/^[¿\s]*qu[eé]\s*m[aá]s\s*/i, '').replace(/^what else\s*/i, '');
+      const br = rest ? bestMatch(rest) : { score: 0 };
+      if (br.score >= 0.4) { rememberTopic(br); say(br.e.r[L()], text, null, br.e.href); return; }
+      askFollowUp(text); return;
+    }
+    // 3) "¿y eso cómo funciona / para qué sirve?": completar con el último tema
+    if (lastTopic && /\b(eso|esto|ello|esa|ese|esta|este|that|this|it)\b/.test(nq) && toks(text).length <= 4) {
+      const ba = bestMatch(text + ' ' + lastTopic.key);
+      if (ba.score >= 0.4) { rememberTopic(ba); say(ba.e.r[L()], text, null, ba.e.href); return; }
+    }
     const b = bestMatch(text);
-    if (b.score >= 0.4) { say(b.e.r[L()], text, null, b.e.href); return; }
+    if (b.score >= 0.4) { rememberTopic(b); say(b.e.r[L()], text, null, b.e.href); return; }
     if (!missed.includes(text)) {
       missed.unshift(text);
       missed = missed.slice(0, 30);
