@@ -3261,12 +3261,6 @@ function setupLocalAssistant() {
           <p class="local-assistant-welcome" data-i18n="assistant_welcome">Pregúntame sobre el contenido del sitio. Si no sé algo, puedes enseñármelo en la pestaña Entrenar.</p>
           <div class="la-log" aria-live="polite"></div>
           <div class="la-chips"></div>
-          <form class="local-assistant-form">
-            <input class="local-assistant-input" type="text" autocomplete="off" maxlength="300" data-i18n-placeholder="assistant_placeholder" placeholder="Escribe tu pregunta…">
-            <button class="local-assistant-submit" type="submit" data-i18n-title="assistant_search" title="Enviar" aria-label="Enviar">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"></path><path d="M22 2 11 13"></path></svg>
-            </button>
-          </form>
         </div>
         <div class="la-view la-view-train" hidden>
           <div class="la-stats"><span><b class="la-n-base">0</b> <span data-i18n="assistant_stats_base">respuestas base</span></span><span><b class="la-n-learn">0</b> <span data-i18n="assistant_stats_learned">enseñadas por ti</span></span></div>
@@ -3302,6 +3296,12 @@ function setupLocalAssistant() {
           </div>
         </div>
       </div>
+      <form class="local-assistant-form">
+        <input class="local-assistant-input" type="text" autocomplete="off" maxlength="300" data-i18n-placeholder="assistant_placeholder" placeholder="Escribe tu pregunta…">
+        <button class="local-assistant-submit" type="submit" data-i18n-title="assistant_search" title="Enviar" aria-label="Enviar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"></path><path d="M22 2 11 13"></path></svg>
+        </button>
+      </form>
     </div>
     <button class="local-assistant-toggle" type="button" aria-controls="local-assistant-panel" aria-expanded="false" title="Abrir asistente" aria-label="Abrir asistente" data-i18n-title="assistant_toggle_title">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11.5a7.5 7.5 0 0 1-8 7.5 8.5 8.5 0 0 1-4-.9L4 19l1.2-3.1A7.4 7.4 0 0 1 4.5 12 7.5 7.5 0 0 1 12 4.5a7.5 7.5 0 0 1 8 7z"></path><path d="M8 11h.01M12 11h.01M16 11h.01"></path></svg>
@@ -3415,6 +3415,7 @@ function setupLocalAssistant() {
     assistant.querySelectorAll('.la-tab').forEach((t) => t.classList.toggle('is-active', t.dataset.tab === name));
     $('.la-view-chat').hidden = name !== 'chat';
     $('.la-view-train').hidden = name !== 'train';
+    panel.classList.toggle('is-training', name === 'train');
     if (name === 'train') renderTrain();
   }
   assistant.querySelectorAll('.la-tab').forEach((t) => t.addEventListener('click', () => showTab(t.dataset.tab)));
