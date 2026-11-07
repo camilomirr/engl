@@ -129,7 +129,7 @@
 
     <div class="stats">
       <span class="pill">
-        <span class="big mono-icon rating-star"><svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="0" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span>
+        <span class="big mono-icon rating-star"><svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="0" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span>
         <span><span data-i18n="points">Puntos</span><strong id="score">0</strong></span>
       </span>
       <span class="divider"></span>
@@ -172,6 +172,72 @@
 
     <main class="panel">
       <div id="startScreen">
+        <h2><span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 8h10.5a4 4 0 0 1 3.9 4.8l-.6 3.1a3 3 0 0 1-5.4 1.4L13.5 15.5h-3l-1.4 1.8a3 3 0 0 1-5.4-1.4l-.6-3.1A4 4 0 0 1 6.5 8z"/><path d="M8 11v3M6.5 12.5h3"/><circle cx="15.8" cy="11.6" r="0.4" fill="currentColor"/><circle cx="17.8" cy="13.4" r="0.4" fill="currentColor"/></svg></span> Redes Challenge</h2>
+        <p data-i18n="startIntro">Escribe tu nombre y apellido y dale en Iniciar juego. Espera a que el admin le dé Start.</p>
+        <div id="joinForm">
+          <label for="firstName" data-i18n="firstName">Nombre</label>
+          <input id="firstName" maxlength="20" placeholder="Nombre" data-i18n-placeholder="firstNamePh" autocomplete="off">
+          <label for="lastName" data-i18n="lastName">Apellido</label>
+          <input id="lastName" maxlength="20" placeholder="Apellido" data-i18n-placeholder="lastNamePh" autocomplete="off">
+          <button id="btnJoin" class="primary" type="button">Iniciar juego</button>
+          <p id="joinStatus" aria-live="polite"></p>
+        </div>
+      </div>
+
+      <div id="lobbyScreen" class="hidden">
+        <h2 data-i18n="lobbyTitle">En la sala…</h2>
+        <p id="lobbyText">Estás dentro. Espera a que el admin le dé Start…</p>
+        <div id="countdown" class="hidden">5</div>
+        <h3 data-i18n="liveTopTitle">TOP en vivo</h3>
+        <ol id="liveTop"></ol>
+      </div>
+
+      <div id="adminModal" class="hidden">
+        <div class="admin-box">
+          <h2>Panel del admin</h2>
+          <div id="adminLoginBox">
+            <label for="adminUser">Usuario</label>
+            <input id="adminUser" autocomplete="off" autocapitalize="off" spellcheck="false">
+            <label for="adminPass">Clave</label>
+            <input id="adminPass" type="password" autocomplete="off">
+            <button id="btnAdminLogin" class="primary" type="button">Entrar</button>
+          </div>
+          <div id="adminControls" class="hidden">
+            <p><strong>Jugadores listos:</strong></p>
+            <ul id="adminPlayers"></ul>
+            <button id="btnNewSala" class="primary" type="button">Nueva partida / Abrir sala</button>
+            <button id="btnStart" class="primary" type="button">▶ Start — empezar para todos</button>
+            <button id="btnDeleteTop" type="button">Borrar leaderboard</button>
+            <button id="btnReset" type="button">Reiniciar juego</button>
+          </div>
+          <p id="adminStatus" aria-live="polite"></p>
+          <button id="btnAdminClose" type="button">Cerrar</button>
+        </div>
+      </div>
+
+      <div id="game" class="hidden">
+        <div class="questionbar">
+          <span class="questiontag" id="questionTag">Pregunta 1/10</span>
+          <h2 id="question"></h2>
+        </div>
+        <div class="diagram" id="diagram"></div>
+        <div class="options" id="options"></div>
+        <p id="inTopBanner" class="hidden">¡Estás en el TOP!</p>
+        <p id="feedback" aria-live="polite"></p>
+        <button id="next" class="primary hidden">Siguiente pregunta →</button>
+      </div>
+
+      <div id="end" class="hidden">
+        <h2 id="result"></h2>
+        <p id="summary"></p>
+        <p id="saveStatus" aria-live="polite"></p>
+        <div class="end-actions">
+          <button class="primary" id="restart">Volver a jugar</button>
+          <a href="../redes.html#topologias" class="btn-return-big">← Volver a NVISION Redes</a>
+        </div>
+      </div>
+
+      <section id="top10">
         <h2 data-i18n="topTitle">TOP 5</h2>
         <ol id="topList"></ol>
         <p id="topStatus"></p>
