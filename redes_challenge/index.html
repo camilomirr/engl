@@ -181,11 +181,23 @@
       <div id="end" class="hidden">
         <h2 id="result"></h2>
         <p id="summary"></p>
+        <div id="save-score">
+          <label for="playerName">Tu nombre</label>
+          <input id="playerName" maxlength="20" placeholder="Escribe tu nombre" autocomplete="off">
+          <button id="saveScore" class="primary" type="button">Guardar mi puntaje</button>
+          <p id="saveStatus" aria-live="polite"></p>
+        </div>
         <div class="end-actions">
           <button class="primary" id="restart">↻ Volver a jugar</button>
           <a href="../redes.html#topologias" class="btn-return-big">← Volver a NVISION Redes</a>
         </div>
       </div>
+
+      <section id="top10">
+        <h2>🏆 TOP 10</h2>
+        <ol id="topList"></ol>
+        <p id="topStatus"></p>
+      </section>
     </main>
 
     <aside class="rightart">

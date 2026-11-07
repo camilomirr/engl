@@ -74,3 +74,15 @@ html{overflow-x:hidden}
 /* ===== Barra NVISION: sus botones e iconos mandan sobre los estilos del juego ===== */
 .site-header .mono-icon svg{width:100%;height:100%}
 .site-header button{box-shadow:none}
+
+/* ===== TOP 10 Supabase ===== */
+#save-score{display:flex;flex-direction:column;gap:10px;margin:16px auto 4px;max-width:420px;text-align:left}
+#save-score label{font-weight:800}
+#playerName{padding:12px 14px;border:1px solid #e50914;border-radius:12px;font-size:16px;background:#fff;color:#262626}
+#saveScore{text-align:center}
+#saveStatus{min-height:20px;font-weight:700;margin:0}
+#top10{margin-top:22px;border-top:1px solid #e50914;padding-top:12px}
+#top10 h2{margin:0 0 8px;font-size:22px}
+#topList{margin:0;padding-left:24px;font-size:16px;line-height:1.9}
+#topList li b{margin-left:6px}
+#topStatus{color:#8f060d;font-weight:700}
