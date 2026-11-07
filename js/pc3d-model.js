@@ -943,12 +943,18 @@ export function buildPcModel() {
     add(box(0.5, 2.2, 7, darkMetal), 9.5, -1.5, 0.5);
     // bandeja para cables bajo el tablero, junto al borde trasero
     add(box(14, 0.12, 0.8, darkMetal), 0, -0.55, -3.0);
-    // cajonera bajo el tablero, a la derecha
-    add(box(2.2, 2.2, 4.5, mat(0x374151, { metal: 0.5, rough: 0.5 })), 3.4, -1.5, 0.3);
+    // cajonera bajo el tablero, a la derecha y cerca del borde frontal
+    // (antes quedaba enterrada en el medio, z=0.3; ahora su cara queda a 0.2
+    // del borde frontal del tablero, a la vista)
+    add(box(2.2, 2.2, 4.5, mat(0x374151, { metal: 0.5, rough: 0.5 })), 3.4, -1.5, 2.05);
     [-0.8, -1.5, -2.2].forEach((y) => {
-      add(box(0.06, 0.62, 4.0, mat(0x4b5563, { metal: 0.5, rough: 0.5 })), 4.53, y, 0.3);
-      add(box(0.05, 0.06, 0.5, METAL_MAT), 4.58, y, 0.3);
+      add(box(0.06, 0.62, 4.0, mat(0x4b5563, { metal: 0.5, rough: 0.5 })), 4.53, y, 2.05);
+      add(box(0.05, 0.06, 0.5, METAL_MAT), 4.58, y, 2.05);
     });
+    // panel de madera bajo el borde frontal: cierra el hueco del medio del
+    // escritorio (antes se veía a través, como un vidrio) para que el
+    // escritorio sea todo de madera; la tira LED queda por delante, a la vista
+    add(box(18.4, 2.2, 0.1, woodMat), 0, -1.5, 4.3);
     // monitor + teclado sobre el escritorio, a la izquierda de la torre
     // pantalla del monitor: off = apagada, boot = logo y puntos de carga,
     // windows = escritorio, error = falta una pieza (detail = nombre de la pieza)
