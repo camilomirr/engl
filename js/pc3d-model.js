@@ -685,7 +685,7 @@ export function buildPcModel() {
       t.colorSpace = THREE.SRGBColorSpace; t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(3, 2);
       return t;
     })();
-    const woodMat = new THREE.MeshStandardMaterial({ map: woodTex, roughness: 0.75, metalness: 0.05, transparent: true });
+    const woodMat = new THREE.MeshStandardMaterial({ map: woodTex, roughness: 0.75, metalness: 0.05 }); // madera OPACA (sin transparent: con transparent se veía la alfombra a través del tablero)
     const darkMetal = mat(0x1f2937, { metal: 0.7, rough: 0.4 });
     const wallMat = mat(0xe8e0d0, { metal: 0.05, rough: 0.95 }); // paredes claras y cálidas: cuarto bien iluminado
     const wallMat2 = mat(0xddd3c2, { metal: 0.05, rough: 0.95 });
@@ -722,7 +722,9 @@ export function buildPcModel() {
     })();
     const floorMat = new THREE.MeshStandardMaterial({ map: floorTex, roughness: 0.8, metalness: 0.05, transparent: true });
     add(box(76, 0.1, 44, floorMat), 0, -2.65, 0); // piso con grosor, cara superior en y=-2.6 (taller 72x40)
-    // alfombra bajo el escritorio y la silla
+    // alfombra bajo la silla, DELANTE del escritorio (antes estaba debajo del
+    // tablero y se veía a través de él en el medio del escritorio: era la
+    // "vaina transparente" azul de la foto de Camilo)
     const rugCanvas = document.createElement('canvas'); rugCanvas.width = rugCanvas.height = 256;
     const rctx = rugCanvas.getContext('2d');
     rctx.fillStyle = '#1e293b'; rctx.fillRect(0, 0, 256, 256);
@@ -730,8 +732,8 @@ export function buildPcModel() {
     rctx.strokeStyle = '#334155'; rctx.lineWidth = 3; rctx.strokeRect(24, 24, 208, 208);
     const rugTex = new THREE.CanvasTexture(rugCanvas); rugTex.colorSpace = THREE.SRGBColorSpace;
     const rug = new THREE.Mesh(new THREE.PlaneGeometry(16, 10),
-      new THREE.MeshStandardMaterial({ map: rugTex, roughness: 0.95, metalness: 0, transparent: true }));
-    rug.rotation.x = -Math.PI / 2; rug.position.set(0, -2.58, 1.5); rug.receiveShadow = true;
+      new THREE.MeshStandardMaterial({ map: rugTex, roughness: 0.95, metalness: 0 })); // OPACA
+    rug.rotation.x = -Math.PI / 2; rug.position.set(0, -2.58, 9.5); rug.receiveShadow = true;
     env.add(rug);
     // CUARTO REHECHO DESDE 0: más alto (techo en y=12, antes 9.4) para que las
     // puertas y la ventana sean de tamaño de verdad y el cuarto no se vea achatado.
