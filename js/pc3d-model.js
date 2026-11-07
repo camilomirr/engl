@@ -47,6 +47,8 @@ export function buildPcModel() {
   const COPPER_MAT = mat(0xb87333, { metal: 0.9, rough: 0.3 });
 
   const spinners = []; // ventiladores que giran { group, speed }
+  let inspectRingMat = null; // anillo cian de la mesa de inspección (lo anima el visor)
+  const INSPECT_SPOT = new THREE.Vector3(6.0, -0.37, 9.0); // sobre la alfombrilla de la mesa de inspección, en MUNDO
   function makeFan(radius, ringColor = 0x22d3ee, spin = true) { // spin=false: ventilador de repuesto, sin corriente no gira
     const group = new THREE.Group();
     const spinner = new THREE.Group();
@@ -1563,6 +1565,23 @@ export function buildPcModel() {
     add(minHand, -9.4, 6.67, -19.92); minHand.rotation.z = -0.52;
     const clockDot = new THREE.Mesh(new THREE.SphereGeometry(0.04, 10, 8), handMat);
     clockDot.position.set(-9.5, 6.5, -19.92); env.add(clockDot);
+    // ===== MESA DE INSPECCIÓN: mesa aparte frente al escritorio, a la
+    // derecha de la silla y sobre la alfombra (nada más ocupa ese hueco).
+    // Al hacer doble clic en una pieza, la pieza vuela hasta aquí y se
+    // muestra girando despacio sobre la alfombrilla, con su nombre, su
+    // función y sus tipos en una tarjeta (ver js/pc3d-viewer.js).
+    // Tablero de madera como el escritorio, patas de metal, repisa baja,
+    // alfombrilla antiestática verde y un anillo cian que marca el sitio.
+    add(box(3.4, 0.12, 2.2, woodMat), 6.0, -0.46, 9.0); // tablero, cara sup. y=-0.4
+    [[4.45, 8.05], [7.55, 8.05], [4.45, 9.95], [7.55, 9.95]].forEach(([lx, lz]) => {
+      add(box(0.12, 2.2, 0.12, darkMetal), lx, -1.5, lz);
+    });
+    add(box(3.0, 0.08, 1.9, darkMetal), 6.0, -2.2, 9.0); // repisa baja
+    add(box(2.6, 0.03, 1.6, mat(0x14532d, { metal: 0.1, rough: 0.9 })), 6.0, -0.385, 9.0); // alfombrilla, cara sup. y=-0.37
+    inspectRingMat = new THREE.MeshBasicMaterial({ color: 0x22d3ee, transparent: true, opacity: 0.15, side: THREE.DoubleSide });
+    const inspectRing = new THREE.Mesh(new THREE.RingGeometry(1.05, 1.15, 48), inspectRingMat);
+    inspectRing.rotation.x = -Math.PI / 2; inspectRing.position.set(6.0, -0.365, 9.0);
+    env.add(inspectRing);
     return env;
   }
   // la torre va a la DERECHA de la mesa y el monitor a la IZQUIERDA: ambos se ven
@@ -1581,6 +1600,7 @@ export function buildPcModel() {
   return {
     tower, frontPanel, rgbStrip, powerLedMat, hddLedMat,
     partGroups, partMeshes, partMats, spinners, cables,
-    ensureGhost, syncGhost, environment, powerButton, powerBtnRingMat, setScreen
+    ensureGhost, syncGhost, environment, powerButton, powerBtnRingMat, setScreen,
+    inspectSpot: INSPECT_SPOT, inspectRingMat
   };
 }

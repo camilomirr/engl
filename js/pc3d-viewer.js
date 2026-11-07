@@ -13,7 +13,7 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
-import { PARTS, buildPcModel } from './pc3d-model.js?v=20';
+import { PARTS, buildPcModel } from './pc3d-model.js?v=21';
 
 const mount = document.getElementById('pc-viewer3d');
 if (mount) init();
@@ -37,6 +37,11 @@ function init() {
   const statusText = document.getElementById('pc-part-status-text');
   const allBtn = document.getElementById('pc-disassemble-all');
   const allBtnLabel = allBtn ? allBtn.querySelector('span:last-child') : null;
+  const inspectCard = document.getElementById('pc-inspect-card');
+  const inspectNameEl = document.getElementById('pc-inspect-name');
+  const inspectFuncEl = document.getElementById('pc-inspect-func');
+  const inspectTypesEl = document.getElementById('pc-inspect-types');
+  const inspectReturnBtn = document.getElementById('pc-inspect-return');
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -179,7 +184,7 @@ function init() {
 
   // --- Modelo 3D (torre, piezas, cables, LED) ---
   const model = buildPcModel();
-  const { tower, frontPanel, rgbStrip, powerLedMat, hddLedMat, environment, powerButton, powerBtnRingMat, setScreen } = model;
+  const { tower, frontPanel, rgbStrip, powerLedMat, hddLedMat, environment, powerButton, powerBtnRingMat, setScreen, inspectSpot, inspectRingMat } = model;
   const { partGroups, partMeshes, partMats, spinners, cables } = model;
   scene.add(tower);
   scene.add(environment); // el taller: escritorio, cuarto, monitor y cosas
@@ -252,6 +257,7 @@ function init() {
   let hddOn = true;
   let dragId = null; // pieza que se está arrastrando
   let dragCandidate = null; // pieza bajo el cursor al presionar (posible arrastre)
+  let inspectedPart = null; // pieza que está sobre la mesa de inspección
   const clock = new THREE.Clock();
 
   // --- Ayudas de resaltado y panel ---
@@ -437,6 +443,13 @@ function init() {
   }
   function startDrag(id) {
     const g = partGroups[id];
+    if (g.userData.inspecting) {
+      // agarrar la pieza desde la mesa de inspección: se cancela la inspección
+      // y la pieza queda libre en la mano, como cualquier pieza retirada
+      g.userData.inspecting = false;
+      if (inspectedPart === id) inspectedPart = null;
+      hideInspectCard();
+    }
     dragId = id;
     dragCandidate = null;
     g.userData.dragging = true;
@@ -499,6 +512,7 @@ function init() {
     // los controles se reactivan en el pointerup, no aquí
   }
   function setAllRemoved(remove) {
+    if (inspectedPart) cancelInspectToHover(inspectedPart); // la pieza de la mesa se suma al desarme
     PARTS.forEach((p, i) => {
       setTimeout(() => {
         const g = partGroups[p.id];
@@ -511,6 +525,98 @@ function init() {
         checkPowerAfterRemoval(); // si el PC estaba encendido, se apaga de golpe
       }, i * 90);
     });
+  }
+
+  // --- Mesa de inspección: doble clic en una pieza y vuela hasta la mesa
+  // aparte, donde se queda girando despacio como en una vitrina, con su
+  // nombre, su función y sus tipos en la tarjeta. La pieza es hija de la
+  // torre, así que su destino se calcula en MUNDO y se pasa a local de la
+  // torre; el vuelo es un arco con una vuelta entera y llegada suave.
+  function showInspectCard(part) {
+    if (!inspectCard) return;
+    if (inspectNameEl) {
+      inspectNameEl.textContent = t(part.key);
+      inspectNameEl.dataset.i18n = part.key;
+    }
+    if (inspectFuncEl) {
+      inspectFuncEl.textContent = t(part.funcKey);
+      inspectFuncEl.dataset.i18n = part.funcKey;
+    }
+    if (inspectTypesEl) {
+      inspectTypesEl.innerHTML = '';
+      t(part.typesKey).split('·').map((s) => s.trim()).filter(Boolean).forEach((chip) => {
+        const el = document.createElement('span');
+        el.className = 'pc-inspect-chip';
+        el.textContent = chip;
+        inspectTypesEl.appendChild(el);
+      });
+    }
+    inspectCard.hidden = false;
+  }
+  function hideInspectCard() { if (inspectCard) inspectCard.hidden = true; }
+  // Vuelo de una pieza de un punto a otro (local a la torre): arco con giro.
+  // mode 'rest' = al llegar se queda girando sobre la mesa; 'snap' = al
+  // llegar se encaja en su sitio; 'release' = al llegar vuelve al control
+  // normal (posición desarmada).
+  function flyPartTo(id, toLocal, mode, dur = 1.4) {
+    const g = partGroups[id];
+    const ud = g.userData;
+    ud.inspecting = true;
+    ud.inspectMode = mode;
+    ud.inspectDur = dur;
+    ud.inspectK = 0;
+    ud.inspectFrom = g.position.clone();
+    ud.inspectTo = toLocal.clone();
+    ud.inspectFromRot = g.rotation.y;
+    ud.inspectPeak = Math.max(ud.inspectFrom.y, ud.inspectTo.y) + 2.0;
+  }
+  function startInspect(id) {
+    if (inspectedPart && inspectedPart !== id) cancelInspectToHover(inspectedPart);
+    const g = partGroups[id];
+    const ud = g.userData;
+    if (ud.dragging) return;
+    dragCandidate = null;
+    selectPart(id); // el panel lateral también sigue a la pieza inspeccionada
+    if (!ud.removed) {
+      ud.removed = true; // al sacarla de su sitio queda retirada (sale el fantasma)
+      model.syncGhost(id);
+      updateStatus();
+      updateAllButton();
+      applyDim();
+      checkPowerAfterRemoval(); // si el PC estaba encendido, se apaga de golpe
+    }
+    ud.freePos = null;
+    // la pieza descansa sobre la alfombrilla: su punto más bajo toca la mesa
+    tower.updateWorldMatrix(true, true);
+    const bb = new THREE.Box3().setFromObject(g);
+    const wp = new THREE.Vector3();
+    g.getWorldPosition(wp);
+    const restY = inspectSpot.y + (wp.y - bb.min.y) + 0.02;
+    const toLocal = tower.worldToLocal(new THREE.Vector3(inspectSpot.x, restY, inspectSpot.z));
+    flyPartTo(id, toLocal, 'rest', 1.5);
+    inspectedPart = id;
+    flyTo([inspectSpot.x, 1.8, inspectSpot.z + 5.6], [inspectSpot.x, -0.4, inspectSpot.z], 1.4);
+    controls.autoRotate = false;
+    lastInteract = clock.elapsedTime;
+    showInspectCard(partById[id]);
+  }
+  function returnInspect(id) {
+    const g = partGroups[id];
+    if (!g || !g.userData.inspecting) return;
+    inspectedPart = null;
+    hideInspectCard();
+    flyPartTo(id, g.userData.base.clone(), 'snap', 1.2);
+    flyTo(SCENES.overview.cam, SCENES.overview.tgt, 1.4); // la cámara vuelve a la vista general
+  }
+  function cancelInspectToHover(id) {
+    // la pieza deja la mesa y vuela a su sitio desarmado (flotando, sin encajar)
+    const g = partGroups[id];
+    if (!g || !g.userData.inspecting) return;
+    if (inspectedPart === id) inspectedPart = null;
+    hideInspectCard();
+    const ud = g.userData;
+    const hover = ud.base.clone().addScaledVector(ud.dir, explodeTarget * 1.6 + 2.1);
+    flyPartTo(id, hover, 'release', 1.1);
   }
 
   // --- Cámara y cinemáticas ---
@@ -736,22 +842,23 @@ function init() {
   canvas.addEventListener('dblclick', (event) => {
     if (clickTimer) { clearTimeout(clickTimer); clickTimer = null; }
     dragCandidate = null;
+    if (dragId) return; // en mitad de un arrastre no se inspecciona nada
     const id = pickPart(event);
     if (!id) return;
-    const target = new THREE.Vector3();
-    partGroups[id].getWorldPosition(target);
-    const dir = camera.position.clone().sub(controls.target).normalize();
-    flyTo(
-      [target.x + dir.x * 5, target.y + dir.y * 5 + 0.6, target.z + dir.z * 5],
-      [target.x, target.y, target.z],
-      1.1
-    );
+    // doble clic en la pieza que ya está en la mesa = devolverla a su sitio
+    if (inspectedPart === id) { returnInspect(id); return; }
+    startInspect(id);
     guideLine.visible = false;
     homeMarker.visible = false;
     controls.enabled = true;
     controls.autoRotate = false;
     lastInteract = clock.elapsedTime;
   });
+  // Escape devuelve la pieza de la mesa a su sitio
+  window.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && inspectedPart) returnInspect(inspectedPart);
+  });
+  if (inspectReturnBtn) inspectReturnBtn.addEventListener('click', () => { if (inspectedPart) returnInspect(inspectedPart); });
   // --- Zoom de rueda propio: proporcional a cuánto se gira y con suavizado ---
   // El zoom de OrbitControls da un paso fijo por CADA evento de rueda, sin mirar
   // cuánto se giró: una rueda que dispara muchos eventos (o un trackpad) salta de
@@ -790,6 +897,13 @@ function init() {
     resetBtn.addEventListener('click', () => {
       if (explodeInput) { explodeInput.value = '0'; explodeTarget = 0; }
       if (explodeVal) explodeVal.textContent = '0%';
+      if (inspectedPart) {
+        // la pieza de la mesa vuelve a su sitio volando y se encaja sola
+        const id = inspectedPart;
+        inspectedPart = null;
+        hideInspectCard();
+        flyPartTo(id, partGroups[id].userData.base.clone(), 'snap', 1.2);
+      }
       PARTS.forEach((p) => {
         partGroups[p.id].userData.removed = false;
         partGroups[p.id].userData.freePos = null;
@@ -942,11 +1056,30 @@ function init() {
     innerGlow.intensity += ((powered ? 18 : 0) - innerGlow.intensity) * Math.min(1, dt * 3);
 
     // vista desarmada escalonada + piezas retiradas con arco y flotación
-    Object.values(partGroups).forEach((g) => {
+    Object.entries(partGroups).forEach(([id, g]) => {
       const ud = g.userData;
       ud.explodeK += (explodeTarget - ud.explodeK) * Math.min(1, dt * ud.explodeRate);
       ud.removeK += ((ud.removed ? 1 : 0) - ud.removeK) * Math.min(1, dt * 5);
-      if (ud.dragging) {
+      if (ud.inspecting) {
+        // vuelo a la mesa (o de vuelta): arco con una vuelta entera, y al
+        // llegar gira despacio como en una vitrina
+        if (ud.inspectK < 1) {
+          ud.inspectK = Math.min(1, ud.inspectK + dt / (ud.inspectDur || 1.4));
+          const e = ud.inspectK * ud.inspectK * (3 - 2 * ud.inspectK);
+          g.position.lerpVectors(ud.inspectFrom, ud.inspectTo, e);
+          const yLin = THREE.MathUtils.lerp(ud.inspectFrom.y, ud.inspectTo.y, e);
+          g.position.y = yLin + Math.sin(e * Math.PI) * Math.max(0, ud.inspectPeak - yLin);
+          g.rotation.y = ud.inspectFromRot + e * Math.PI * 2;
+          if (ud.inspectK >= 1) {
+            if (ud.inspectMode === 'snap') { ud.inspecting = false; snapIn(id); }
+            else if (ud.inspectMode === 'release') { ud.inspecting = false; ud.freePos = null; }
+            // 'rest': se queda girando despacio sobre la mesa
+          }
+        } else {
+          g.position.copy(ud.inspectTo);
+          g.rotation.y += dt * 0.45;
+        }
+      } else if (ud.dragging) {
         // la posición la fija el puntero directamente
       } else if (ud.freePos) {
         g.position.lerp(ud.freePos, Math.min(1, dt * 8));
@@ -955,7 +1088,7 @@ function init() {
         g.position.copy(ud.base).addScaledVector(ud.dir, ud.explodeK * 1.6 + ud.removeK * 2.1);
         g.position.y += Math.sin(elapsed * 2 + ud.explodeRate) * 0.05 * ud.removeK;
       }
-      g.rotation.y = ud.removeK * 0.7;
+      if (!ud.inspecting) g.rotation.y = ud.removeK * 0.7;
     });
     // los cables se desvanecen cuando su pieza está retirada
     cables.forEach((c) => {
@@ -964,6 +1097,8 @@ function init() {
       c.mesh.visible = c.mesh.material.opacity > 0.02;
     });
     if (homeMarker.visible) homeMarker.scale.setScalar(1 + 0.15 * Math.sin(elapsed * 5));
+    // el anillo de la mesa de inspección respira mientras hay una pieza sobre ella
+    if (inspectRingMat) inspectRingMat.opacity = inspectedPart ? 0.4 + 0.2 * Math.sin(elapsed * 3) : 0.15;
     // pulso que viaja por la línea de guía mientras se arrastra una pieza
     if (guideLine.visible && dragId) {
       const g = partGroups[dragId];
