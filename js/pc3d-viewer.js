@@ -13,7 +13,7 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
-import { PARTS, buildPcModel } from './pc3d-model.js?v=15';
+import { PARTS, buildPcModel } from './pc3d-model.js?v=16';
 
 const mount = document.getElementById('pc-viewer3d');
 if (mount) init();
@@ -79,7 +79,7 @@ function init() {
   renderer.toneMappingExposure = 1.1;
 
   const scene = new THREE.Scene();
-  scene.fog = new THREE.Fog(0x0d1b2b, 15, 30);
+  scene.fog = new THREE.Fog(0x0d1b2b, 30, 60);
   scene.background = new THREE.Color(0x0d1b2b); // ya no hay vacío negro: el fondo es el mismo azul del taller
   const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
   camera.position.set(-9, 9, 5.2); // punto de partida de la intro cinematográfica: dentro del cuarto (antes estaba fuera, en 15, 8.5, 17)
@@ -105,14 +105,17 @@ function init() {
   controls.autoRotateSpeed = 0.9;
 
   // --- Habitación cerrada: la cámara no puede salir del cuarto ---
-  // El cuarto mide x -12..12, z -6..6, piso en y=-2.6 y techo en y=12: la
+  // El cuarto mide x -18..18, z -10..10, piso en y=-2.6 y techo en y=12: la
   // cámara y el punto al que mira se quedan dentro, con 0.3 de margen para
-  // que el plano cercano no se meta en la pared. Sin esto, el paneo con
-  // clic derecho se iba debajo del piso, afuera de la casa y a través de
-  // las paredes. La caja es convexa, así que los vuelos de cámara entre
-  // dos puntos de dentro (intro, cinemáticas, doble clic) tampoco salen.
-  const ROOM_CAM = { x: [-11.7, 11.7], y: [-2.3, 11.7], z: [-5.7, 5.7] };
-  const ROOM_TGT = { x: [-10, 10], y: [-1.5, 10], z: [-5, 5] };
+  // que el plano cercano no se meta en la pared. La pared frontal quedó a
+  // z=10, lejos de la cámara predeterminada (-9, 9, 5.2), que NO se movió:
+  // ahora hay sitio de sobra para girar, alejar y mover la vista. Sin esto,
+  // el paneo con clic derecho se iba debajo del piso, afuera de la casa y
+  // a través de las paredes. La caja es convexa, así que los vuelos de
+  // cámara entre dos puntos de dentro (intro, cinemáticas, doble clic)
+  // tampoco salen.
+  const ROOM_CAM = { x: [-17.7, 17.7], y: [-2.3, 11.7], z: [-9.7, 9.7] };
+  const ROOM_TGT = { x: [-15, 15], y: [-1.5, 10], z: [-8, 8] };
   const clampVec = (v, b) => {
     v.x = THREE.MathUtils.clamp(v.x, b.x[0], b.x[1]);
     v.y = THREE.MathUtils.clamp(v.y, b.y[0], b.y[1]);
@@ -134,8 +137,8 @@ function init() {
   keyLight.position.set(6, 9, 7);
   keyLight.castShadow = true;
   keyLight.shadow.mapSize.set(2048, 2048);
-  keyLight.shadow.camera.left = -7; keyLight.shadow.camera.right = 7;
-  keyLight.shadow.camera.top = 7; keyLight.shadow.camera.bottom = -7;
+  keyLight.shadow.camera.left = -12; keyLight.shadow.camera.right = 12;
+  keyLight.shadow.camera.top = 12; keyLight.shadow.camera.bottom = -12;
   scene.add(keyLight);
   const innerGlow = new THREE.PointLight(0x22d3ee, 18, 10, 2);
   innerGlow.position.set(3.9, 3.1, 0.8); // dentro de la torre (la torre está en x=3.5, y=0.1)
