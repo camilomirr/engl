@@ -76,7 +76,7 @@ function init() {
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.25; // un poco más de luz general: había zonas oscuras en el taller
+  renderer.toneMappingExposure = 1.3; // un poco más de luz general: había zonas oscuras en el taller
 
   const scene = new THREE.Scene();
   scene.fog = new THREE.Fog(0x0d1b2b, 30, 60);
@@ -132,18 +132,29 @@ function init() {
   composer.addPass(new OutputPass());
 
   // --- Luces ---
-  // El taller mide 72x40 y las luces viejas solo cubrían el escritorio: se sube
-  // la luz ambiente y la principal, se ensancha la caja de sombras a todo el
-  // cuarto y se agregan dos luces puntuales en los extremos (banco de trabajo y
-  // lado izquierdo), que eran las zonas oscuras.
-  scene.add(new THREE.AmbientLight(0x94a3b8, 0.85));
+  // El taller mide 72x40 y la luz principal viene de un solo lado (6,9,7):
+  // el techo (cara inferior), la pared frontal y la pared derecha no reciben
+  // nada de esa luz direccional, y las puntuales no llegan a las esquinas
+  // lejanas por su distancia de corte y la caída con el cuadrado de la
+  // distancia. Por eso quedaban zonas oscuras en las esquinas aunque se
+  // subiera la luz general. Arreglo: base ambiente más blanca y fuerte,
+  // luz de hemisferio (ilumina TODAS las orientaciones, incluido el techo),
+  // una direccional de rebote sin sombras desde el lado opuesto para las
+  // paredes que la principal no toca, y dos puntuales en las esquinas
+  // frontales, que eran las que quedaban fuera del alcance de las demás.
+  // También se ensancha la caja de sombras para cubrir todo el cuarto.
+  scene.add(new THREE.AmbientLight(0xffffff, 1.1));
+  scene.add(new THREE.HemisphereLight(0xdfe9ff, 0x9a8a70, 0.75));
   const keyLight = new THREE.DirectionalLight(0xffffff, 2.2);
   keyLight.position.set(6, 9, 7);
   keyLight.castShadow = true;
   keyLight.shadow.mapSize.set(2048, 2048);
-  keyLight.shadow.camera.left = -37; keyLight.shadow.camera.right = 37;
-  keyLight.shadow.camera.top = 24; keyLight.shadow.camera.bottom = -24;
+  keyLight.shadow.camera.left = -40; keyLight.shadow.camera.right = 40;
+  keyLight.shadow.camera.top = 30; keyLight.shadow.camera.bottom = -30;
   scene.add(keyLight);
+  const bounceLight = new THREE.DirectionalLight(0xfff2dd, 1.0);
+  bounceLight.position.set(-8, 8, -9); // rebote desde el lado opuesto: ilumina pared frontal, pared derecha y esquinas traseras sin sombras
+  scene.add(bounceLight);
   const innerGlow = new THREE.PointLight(0x22d3ee, 18, 10, 2);
   innerGlow.position.set(3.9, 3.1, 0.8); // dentro de la torre (la torre está en x=3.5, y=0.1)
   scene.add(innerGlow);
@@ -156,6 +167,12 @@ function init() {
   const westLight = new THREE.PointLight(0xffffff, 50, 28, 2);
   westLight.position.set(-24, 7, 2); // lado izquierdo del taller, lejos del escritorio
   scene.add(westLight);
+  const frontLeftLight = new THREE.PointLight(0xffffff, 45, 32, 2);
+  frontLeftLight.position.set(-30, 8, 16); // esquina frontal izquierda: fuera del alcance de westLight y benchLight
+  scene.add(frontLeftLight);
+  const frontRightLight = new THREE.PointLight(0xffffff, 45, 32, 2);
+  frontRightLight.position.set(30, 8, 16); // esquina frontal derecha: fuera del alcance de westLight y benchLight
+  scene.add(frontRightLight);
 
   // --- Suelo: anillos luminosos sobre el escritorio (la sombra la recibe el tablero) ---
   // (tenues, para que el escritorio se vea como escritorio y no como una alfombra de luz)
