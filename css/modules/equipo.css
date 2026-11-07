@@ -100,6 +100,9 @@
   border-radius: 999px; background: #22c55e; color: #fff; font-size: 0.75rem; font-weight: 700;
   display: inline-flex; align-items: center; justify-content: center;
 }
+/* Sin notificaciones no debe verse ni el 0: el display:inline-flex de arriba
+   pisaba el atributo hidden, igual que pasó con la barra de escribir. */
+.eqw-fab-badge[hidden] { display: none; }
 .eqw-panel {
   position: fixed; right: 1.25rem; bottom: 9.6rem; z-index: 60;
   width: min(21rem, calc(100vw - 2rem)); display: flex; flex-direction: column;
