@@ -57,6 +57,7 @@
         '<input id="eqwInput" type="text" maxlength="2000" required placeholder="Escribe un mensaje..." autocomplete="off">' +
         '<button class="btn-primary eqw-send" type="submit">Enviar</button>' +
       '</form>' +
+      '<p class="eqw-status" id="eqwStatus"></p>' +
     '</div>';
   document.body.appendChild(root);
 
@@ -161,12 +162,19 @@
   form.addEventListener('submit', async function (ev) {
     ev.preventDefault();
     var task = input.value.trim();
+    var status = document.getElementById('eqwStatus');
     if (!name || !task) return;
-    input.value = '';
+    status.textContent = 'Enviando…';
     try {
       await sbPost('/rest/v1/team_tasks', { name: name, page: 'Chat', task: task }, 'return=representation');
+      input.value = '';
+      status.textContent = '';
       loadTasks();
-    } catch (e) { /* se reintenta al enviar de nuevo */ }
+    } catch (e) {
+      // No tragarse el error: el mensaje se queda en la caja y se avisa.
+      input.value = task;
+      status.textContent = 'No se pudo enviar. Revisa tu conexión e inténtalo de nuevo.';
+    }
   });
 
   async function loadTasks() {

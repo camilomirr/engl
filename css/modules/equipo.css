@@ -137,3 +137,6 @@
 /* Nombre propio marcado en la lista del mini chatbot */
 .eqw-row-current { border-color: #22c55e; box-shadow: inset 0 0 0 1px #22c55e; }
 .eqw-you { font-size: 0.72rem; color: #15803d; font-weight: 700; }
+
+/* Aviso de error al enviar en el mini chatbot (antes se tragaba el error) */
+.eqw-status { margin: 0; padding: 0.2rem 0.8rem 0.6rem; font-size: 0.8rem; color: #dc2626; background: #fff; min-height: 0.4rem; }
