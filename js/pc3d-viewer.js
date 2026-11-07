@@ -105,17 +105,17 @@ function init() {
   controls.autoRotateSpeed = 0.9;
 
   // --- Habitación cerrada: la cámara no puede salir del cuarto ---
-  // El cuarto mide x -18..18, z -10..10, piso en y=-2.6 y techo en y=12: la
+  // El taller mide x -36..36, z -20..20, piso en y=-2.6 y techo en y=12: la
   // cámara y el punto al que mira se quedan dentro, con 0.3 de margen para
   // que el plano cercano no se meta en la pared. La pared frontal quedó a
-  // z=10, lejos de la cámara predeterminada (-9, 9, 5.2), que NO se movió:
+  // z=20, lejos de la cámara predeterminada (-9, 9, 5.2), que NO se movió:
   // ahora hay sitio de sobra para girar, alejar y mover la vista. Sin esto,
   // el paneo con clic derecho se iba debajo del piso, afuera de la casa y
   // a través de las paredes. La caja es convexa, así que los vuelos de
   // cámara entre dos puntos de dentro (intro, cinemáticas, doble clic)
   // tampoco salen.
-  const ROOM_CAM = { x: [-17.7, 17.7], y: [-2.3, 11.7], z: [-9.7, 9.7] };
-  const ROOM_TGT = { x: [-15, 15], y: [-1.5, 10], z: [-8, 8] };
+  const ROOM_CAM = { x: [-35.7, 35.7], y: [-2.3, 11.7], z: [-19.7, 19.7] };
+  const ROOM_TGT = { x: [-33, 33], y: [-1.5, 10], z: [-18, 18] };
   const clampVec = (v, b) => {
     v.x = THREE.MathUtils.clamp(v.x, b.x[0], b.x[1]);
     v.y = THREE.MathUtils.clamp(v.y, b.y[0], b.y[1]);
@@ -137,8 +137,8 @@ function init() {
   keyLight.position.set(6, 9, 7);
   keyLight.castShadow = true;
   keyLight.shadow.mapSize.set(2048, 2048);
-  keyLight.shadow.camera.left = -12; keyLight.shadow.camera.right = 12;
-  keyLight.shadow.camera.top = 12; keyLight.shadow.camera.bottom = -12;
+  keyLight.shadow.camera.left = -24; keyLight.shadow.camera.right = 24;
+  keyLight.shadow.camera.top = 24; keyLight.shadow.camera.bottom = -24;
   scene.add(keyLight);
   const innerGlow = new THREE.PointLight(0x22d3ee, 18, 10, 2);
   innerGlow.position.set(3.9, 3.1, 0.8); // dentro de la torre (la torre está en x=3.5, y=0.1)
@@ -754,7 +754,7 @@ function init() {
   // la distancia objetivo poco a poco. Se escucha en el contenedor, en fase de
   // captura, y se frena el evento para que OrbitControls no aplique su zoom encima.
   const ZOOM_MIN = 5.0;
-  const ZOOM_MAX = 16;
+  const ZOOM_MAX = 28; // el taller es el doble de grande: hay que poder alejarse más para verlo entero
   let targetRadius = new THREE.Vector3(...SCENES.overview.cam)
     .distanceTo(new THREE.Vector3(...SCENES.overview.tgt));
   let lastWheelAt = -10;

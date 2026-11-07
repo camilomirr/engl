@@ -717,11 +717,11 @@ export function buildPcModel() {
         x.beginPath(); x.moveTo(jx, y0); x.lineTo(jx, y0 + 64); x.stroke();
       }
       const t = new THREE.CanvasTexture(c);
-      t.colorSpace = THREE.SRGBColorSpace; t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(3, 2);
+      t.colorSpace = THREE.SRGBColorSpace; t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(6, 4);
       return t;
     })();
     const floorMat = new THREE.MeshStandardMaterial({ map: floorTex, roughness: 0.8, metalness: 0.05, transparent: true });
-    add(box(40, 0.1, 24, floorMat), 0, -2.65, 0); // piso con grosor, cara superior en y=-2.6 (cuarto 36x20)
+    add(box(76, 0.1, 44, floorMat), 0, -2.65, 0); // piso con grosor, cara superior en y=-2.6 (taller 72x40)
     // alfombra bajo el escritorio y la silla
     const rugCanvas = document.createElement('canvas'); rugCanvas.width = rugCanvas.height = 256;
     const rctx = rugCanvas.getContext('2d');
@@ -737,14 +737,14 @@ export function buildPcModel() {
     // puertas y la ventana sean de tamaño de verdad y el cuarto no se vea achatado.
     // pared trasera con hueco REAL para la ventana (x -7.5..-2.5, y 2.0..7.0):
     // una ventana grande por la que se ve el parque de afuera.
-    const backWallBot = box(36, 4.6, 0.3, wallMat);
-    add(backWallBot, 0, -0.3, -10.15); backWallBot.castShadow = false; // y -2.6..2.0
-    const backWallTop = box(36, 5.0, 0.3, wallMat);
-    add(backWallTop, 0, 9.5, -10.15); backWallTop.castShadow = false; // y 7.0..12.0
-    const backWallLeft = box(10.5, 5.0, 0.3, wallMat);
-    add(backWallLeft, -12.75, 4.5, -10.15); backWallLeft.castShadow = false; // x -18..-7.5
-    const backWallRight = box(20.5, 5.0, 0.3, wallMat);
-    add(backWallRight, 7.75, 4.5, -10.15); backWallRight.castShadow = false; // x -2.5..18
+    const backWallBot = box(72, 4.6, 0.3, wallMat);
+    add(backWallBot, 0, -0.3, -20.15); backWallBot.castShadow = false; // y -2.6..2.0
+    const backWallTop = box(72, 5.0, 0.3, wallMat);
+    add(backWallTop, 0, 9.5, -20.15); backWallTop.castShadow = false; // y 7.0..12.0
+    const backWallLeft = box(28.5, 5.0, 0.3, wallMat);
+    add(backWallLeft, -21.75, 4.5, -20.15); backWallLeft.castShadow = false; // x -36..-7.5
+    const backWallRight = box(38.5, 5.0, 0.3, wallMat);
+    add(backWallRight, 16.75, 4.5, -20.15); backWallRight.castShadow = false; // x -2.5..36
     // puertas GRANDES de verdad (3.4 de ancho × 10.5 de alto, del piso casi al
     // techo): las anteriores eran de 2.0 × 4.9 y se veían como una puertica de
     // alacena. Hueco real en la pared, marco blanco, hoja de madera con paneles
@@ -770,58 +770,58 @@ export function buildPcModel() {
       knobBase.rotation.z = Math.PI / 2; knobBase.position.set(x + face * 0.05, 2.4, z + 1.2); env.add(knobBase);
     };
     // pared derecha: hueco para la puerta en z=2 (z 0.3..3.7, y -2.6..7.9), paredes de 14.6 de alto
-    const rightWallBack = box(0.3, 14.6, 10.3, wallMat2);
-    add(rightWallBack, 18.15, 4.7, -4.85); rightWallBack.castShadow = false; // z -10..0.3
-    const rightWallFront = box(0.3, 14.6, 6.3, wallMat2);
-    add(rightWallFront, 18.15, 4.7, 6.85); rightWallFront.castShadow = false; // z 3.7..10
+    const rightWallBack = box(0.3, 14.6, 20.3, wallMat2);
+    add(rightWallBack, 36.15, 4.7, -9.85); rightWallBack.castShadow = false; // z -20..0.3
+    const rightWallFront = box(0.3, 14.6, 16.3, wallMat2);
+    add(rightWallFront, 36.15, 4.7, 11.85); rightWallFront.castShadow = false; // z 3.7..20
     const rightWallTop = box(0.3, 4.1, 3.4, wallMat2);
-    add(rightWallTop, 18.15, 9.95, 2.0); rightWallTop.castShadow = false; // y 7.9..12.0 sobre la puerta
-    makeDoor(18.15, 2.0, -1);
+    add(rightWallTop, 36.15, 9.95, 2.0); rightWallTop.castShadow = false; // y 7.9..12.0 sobre la puerta
+    makeDoor(36.15, 2.0, -1);
     // pared izquierda: hueco para la puerta en z=-1 (z -2.7..0.7, y -2.6..7.9)
-    const leftWallBack = box(0.3, 14.6, 7.3, wallMat2);
-    add(leftWallBack, -18.15, 4.7, -6.35); leftWallBack.castShadow = false; // z -10..-2.7
-    const leftWallFront = box(0.3, 14.6, 9.3, wallMat2);
-    add(leftWallFront, -18.15, 4.7, 5.35); leftWallFront.castShadow = false; // z 0.7..10
+    const leftWallBack = box(0.3, 14.6, 17.3, wallMat2);
+    add(leftWallBack, -36.15, 4.7, -11.35); leftWallBack.castShadow = false; // z -20..-2.7
+    const leftWallFront = box(0.3, 14.6, 19.3, wallMat2);
+    add(leftWallFront, -36.15, 4.7, 10.35); leftWallFront.castShadow = false; // z 0.7..20
     const leftWallTop = box(0.3, 4.1, 3.4, wallMat2);
-    add(leftWallTop, -18.15, 9.95, -1.0); leftWallTop.castShadow = false; // y 7.9..12.0 sobre la puerta
-    makeDoor(-18.15, -1.0, 1);
-    const ceiling = box(36, 0.3, 20, ceilMat);
+    add(leftWallTop, -36.15, 9.95, -1.0); leftWallTop.castShadow = false; // y 7.9..12.0 sobre la puerta
+    makeDoor(-36.15, -1.0, 1);
+    const ceiling = box(72, 0.3, 40, ceilMat);
     add(ceiling, 0, 12.15, 0); ceiling.castShadow = false; // cara inferior en y=12.0
     // pared frontal: el cuarto queda CERRADO por los cuatro lados (antes el
     // frente estaba abierto y la cámara se salía por ahí, debajo del piso y
     // a través de las paredes). Sin huecos: la vista es desde dentro.
-    const frontWall = box(36, 14.6, 0.3, wallMat2);
-    add(frontWall, 0, 4.7, 10.15); frontWall.castShadow = false; // z 10.0..10.3, y -2.6..12.0: lejos de la cámara (antes a 0.8 y no dejaba moverse)
+    const frontWall = box(72, 14.6, 0.3, wallMat2);
+    add(frontWall, 0, 4.7, 20.15); frontWall.castShadow = false; // z 20.0..20.3, y -2.6..12.0: lejos de la cámara (antes a 0.8 y no dejaba moverse)
     // cuadro en la pared FRONTAL (la nueva, lejos de la cámara): para que al girar
     // la vista hacia atrás no se vea una pared pelada. Marco oscuro y lienzo azul.
-    add(box(2.6, 1.9, 0.08, mat(0x1f2937, { metal: 0.3, rough: 0.5 })), -6, 5.5, 9.96);
+    add(box(2.6, 1.9, 0.08, mat(0x1f2937, { metal: 0.3, rough: 0.5 })), -6, 5.5, 19.96);
     const frontArt = new THREE.Mesh(new THREE.PlaneGeometry(2.3, 1.6),
       new THREE.MeshStandardMaterial({ color: 0x1e40af, roughness: 0.85, metalness: 0, transparent: true }));
-    frontArt.rotation.y = Math.PI; frontArt.position.set(-6, 5.5, 9.91); env.add(frontArt);
+    frontArt.rotation.y = Math.PI; frontArt.position.set(-6, 5.5, 19.91); env.add(frontArt);
     const frontArtDot = new THREE.Mesh(new THREE.CircleGeometry(0.45, 24),
       new THREE.MeshBasicMaterial({ color: 0x22d3ee }));
-    frontArtDot.rotation.y = Math.PI; frontArtDot.position.set(-6, 5.5, 9.9); env.add(frontArtDot);
+    frontArtDot.rotation.y = Math.PI; frontArtDot.position.set(-6, 5.5, 19.9); env.add(frontArtDot);
     // rodapiés: apoyados en el suelo (y=-2.6), a ras de cada pared (los laterales
     // se parten para no cruzar las puertas nuevas, más anchas)
-    add(box(36, 0.25, 0.06, mat(0x94a3b8, { metal: 0.2, rough: 0.6 })), 0, -2.475, -9.97);
-    add(box(36, 0.25, 0.06, mat(0x94a3b8, { metal: 0.2, rough: 0.6 })), 0, -2.475, 9.97);
-    add(box(0.06, 0.25, 7.3, mat(0x94a3b8, { metal: 0.2, rough: 0.6 })), -17.97, -2.475, -6.35);
-    add(box(0.06, 0.25, 9.3, mat(0x94a3b8, { metal: 0.2, rough: 0.6 })), -17.97, -2.475, 5.35);
-    add(box(0.06, 0.25, 10.3, mat(0x94a3b8, { metal: 0.2, rough: 0.6 })), 17.97, -2.475, -4.85);
-    add(box(0.06, 0.25, 6.3, mat(0x94a3b8, { metal: 0.2, rough: 0.6 })), 17.97, -2.475, 6.85);
+    add(box(72, 0.25, 0.06, mat(0x94a3b8, { metal: 0.2, rough: 0.6 })), 0, -2.475, -19.97);
+    add(box(72, 0.25, 0.06, mat(0x94a3b8, { metal: 0.2, rough: 0.6 })), 0, -2.475, 19.97);
+    add(box(0.06, 0.25, 17.3, mat(0x94a3b8, { metal: 0.2, rough: 0.6 })), -35.97, -2.475, -11.35);
+    add(box(0.06, 0.25, 19.3, mat(0x94a3b8, { metal: 0.2, rough: 0.6 })), -35.97, -2.475, 10.35);
+    add(box(0.06, 0.25, 20.3, mat(0x94a3b8, { metal: 0.2, rough: 0.6 })), 35.97, -2.475, -9.85);
+    add(box(0.06, 0.25, 16.3, mat(0x94a3b8, { metal: 0.2, rough: 0.6 })), 35.97, -2.475, 11.85);
     // ventana GRANDE (5×5) con vidrio TRANSPARENTE: por el hueco de la pared se
     // ve el parque de afuera (cielo, pasto, árboles). El sol entra por aquí.
     const winGlass = new THREE.Mesh(new THREE.PlaneGeometry(5.0, 5.0),
       new THREE.MeshStandardMaterial({ color: 0xcfe8ff, transparent: true, opacity: 0.12, roughness: 0.1, metalness: 0.1 }));
-    add(winGlass, -5, 4.5, -10.15); winGlass.castShadow = false;
+    add(winGlass, -5, 4.5, -20.15); winGlass.castShadow = false;
     const frameMat = mat(0x8a6a44, { metal: 0.2, rough: 0.6 }); // marco de madera
-    add(box(5.2, 0.16, 0.12, frameMat), -5, 7.05, -9.96);
-    add(box(5.2, 0.16, 0.12, frameMat), -5, 1.95, -9.96);
-    add(box(0.16, 5.2, 0.12, frameMat), -7.55, 4.5, -9.96);
-    add(box(0.16, 5.2, 0.12, frameMat), -2.45, 4.5, -9.96);
-    add(box(0.09, 5.0, 0.06, frameMat), -5, 4.5, -9.96); // travesaño vertical
-    add(box(5.0, 0.09, 0.06, frameMat), -5, 4.5, -9.96); // travesaño horizontal
-    add(box(5.4, 0.12, 0.3, frameMat), -5, 1.9, -9.85); // repisa: a ras de la pared, sin atravesarla
+    add(box(5.2, 0.16, 0.12, frameMat), -5, 7.05, -19.96);
+    add(box(5.2, 0.16, 0.12, frameMat), -5, 1.95, -19.96);
+    add(box(0.16, 5.2, 0.12, frameMat), -7.55, 4.5, -19.96);
+    add(box(0.16, 5.2, 0.12, frameMat), -2.45, 4.5, -19.96);
+    add(box(0.09, 5.0, 0.06, frameMat), -5, 4.5, -19.96); // travesaño vertical
+    add(box(5.0, 0.09, 0.06, frameMat), -5, 4.5, -19.96); // travesaño horizontal
+    add(box(5.4, 0.12, 0.3, frameMat), -5, 1.9, -19.85); // repisa: a ras de la pared, sin atravesarla
     // mancha de sol en el piso: la luz del sol entra por la ventana y cae aquí
     // (suave, sin brillo feo: opacidad baja)
     const sunPatch = new THREE.Mesh(new THREE.PlaneGeometry(5.5, 3.5),
@@ -843,10 +843,10 @@ export function buildPcModel() {
     const skyTex = new THREE.CanvasTexture(skyCanvas); skyTex.colorSpace = THREE.SRGBColorSpace;
     const sky = new THREE.Mesh(new THREE.PlaneGeometry(60, 18),
       new THREE.MeshBasicMaterial({ map: skyTex }));
-    sky.position.set(0, 6.7, -26); env.add(sky);
+    sky.position.set(0, 6.7, -36); env.add(sky);
     const sunDisc = new THREE.Mesh(new THREE.CircleGeometry(1.0, 24),
       new THREE.MeshBasicMaterial({ color: 0xffe9a8 }));
-    sunDisc.position.set(-10, 9, -25.5); env.add(sunDisc);
+    sunDisc.position.set(-10, 9, -35.5); env.add(sunDisc);
     // pasto (mismo nivel que el piso del cuarto)
     const grassCanvas = document.createElement('canvas'); grassCanvas.width = grassCanvas.height = 256;
     const gctx = grassCanvas.getContext('2d');
@@ -860,11 +860,11 @@ export function buildPcModel() {
     grassTex.wrapS = grassTex.wrapT = THREE.RepeatWrapping; grassTex.repeat.set(4, 2);
     const grass = new THREE.Mesh(new THREE.PlaneGeometry(44, 16),
       new THREE.MeshStandardMaterial({ map: grassTex, roughness: 1, metalness: 0, transparent: true }));
-    grass.rotation.x = -Math.PI / 2; grass.position.set(0, -2.6, -18); grass.receiveShadow = true; env.add(grass);
+    grass.rotation.x = -Math.PI / 2; grass.position.set(0, -2.6, -28); grass.receiveShadow = true; env.add(grass);
     // camino de piedra desde la ventana hacia el fondo del parque
     const path = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 12),
       new THREE.MeshStandardMaterial({ color: 0xd6c9a8, roughness: 0.95, metalness: 0, transparent: true }));
-    path.rotation.x = -Math.PI / 2; path.position.set(-5, -2.59, -16); path.receiveShadow = true; env.add(path);
+    path.rotation.x = -Math.PI / 2; path.position.set(-5, -2.59, -26); path.receiveShadow = true; env.add(path);
     // árboles (tronco + copa)
     const trunkMat = mat(0x6b4423, { metal: 0.1, rough: 0.9 });
     const leafMat2 = mat(0x2e7d32, { metal: 0.1, rough: 0.8 });
@@ -877,19 +877,19 @@ export function buildPcModel() {
         add(c, x + dx * s, -2.6 + dy * s, z + dz * s);
       });
     };
-    makeTree(-11, -16, 1.2); makeTree(-2, -19, 1.4); makeTree(5, -15, 1.0); makeTree(11, -20, 1.3); makeTree(-8.5, -13, 0.9);
+    makeTree(-11, -26, 1.2); makeTree(-2, -29, 1.4); makeTree(5, -25, 1.0); makeTree(11, -30, 1.3); makeTree(-8.5, -23, 0.9);
     // banca junto al camino
-    add(box(1.8, 0.08, 0.5, mat(0x8a6a44, { metal: 0.1, rough: 0.8 })), -2.5, -2.25, -15);
-    add(box(1.8, 0.5, 0.08, mat(0x8a6a44, { metal: 0.1, rough: 0.8 })), -2.5, -1.95, -15.25);
-    add(box(0.08, 0.35, 0.45, darkMetal), -3.2, -2.42, -15);
-    add(box(0.08, 0.35, 0.45, darkMetal), -1.8, -2.42, -15);
+    add(box(1.8, 0.08, 0.5, mat(0x8a6a44, { metal: 0.1, rough: 0.8 })), -2.5, -2.25, -25);
+    add(box(1.8, 0.5, 0.08, mat(0x8a6a44, { metal: 0.1, rough: 0.8 })), -2.5, -1.95, -25.25);
+    add(box(0.08, 0.35, 0.45, darkMetal), -3.2, -2.42, -25);
+    add(box(0.08, 0.35, 0.45, darkMetal), -1.8, -2.42, -25);
     // arbustos y flores
-    [[-7.5, -12], [-3, -14], [2, -17], [8, -13]].forEach(([bx, bz]) => {
+    [[-7.5, -22], [-3, -24], [2, -27], [8, -23]].forEach(([bx, bz]) => {
       const b = new THREE.Mesh(new THREE.SphereGeometry(0.55, 10, 8), leafMat2);
       add(b, bx, -2.25, bz);
     });
     const flowerCols = [0xef4444, 0xfacc15, 0xf8fafc, 0xec4899, 0xf97316];
-    [[-6.2, -12.5], [-4.2, -13.5], [-6.8, -15], [-3.8, -17], [0.5, -13], [3, -16]].forEach(([fx, fz], i) => {
+    [[-6.2, -22.5], [-4.2, -23.5], [-6.8, -25], [-3.8, -27], [0.5, -23], [3, -26]].forEach(([fx, fz], i) => {
       const f = new THREE.Mesh(new THREE.SphereGeometry(0.09, 8, 6),
         new THREE.MeshBasicMaterial({ color: flowerCols[i % flowerCols.length] }));
       add(f, fx, -2.45, fz);
@@ -912,23 +912,23 @@ export function buildPcModel() {
     const posterTex = new THREE.CanvasTexture(posterCanvas); posterTex.colorSpace = THREE.SRGBColorSpace;
     const poster = new THREE.Mesh(new THREE.PlaneGeometry(1.8, 2.4),
       new THREE.MeshStandardMaterial({ map: posterTex, roughness: 0.9, metalness: 0, transparent: true }));
-    add(poster, 1.5, 5, -9.96); poster.castShadow = false;
+    add(poster, 1.5, 5, -19.96); poster.castShadow = false;
     // estanterías con cajas de componentes en la pared trasera
     [5.0, 6.3].forEach((y) => {
-      add(box(4, 0.08, 0.9, woodMat), 6, y, -9.55);
-      [-0.5, 0.5].forEach((dx) => add(box(0.08, 0.3, 0.08, darkMetal), 6 + dx * 3.4, y - 0.18, -9.7));
+      add(box(4, 0.08, 0.9, woodMat), 6, y, -19.55);
+      [-0.5, 0.5].forEach((dx) => add(box(0.08, 0.3, 0.08, darkMetal), 6 + dx * 3.4, y - 0.18, -19.7));
     });
-    add(box(0.9, 0.7, 0.7, mat(0x1e3a5f, { metal: 0.3, rough: 0.6 })), 4.7, 5.4, -9.55);
-    add(box(0.7, 0.6, 0.6, mat(0x7f1d1d, { metal: 0.3, rough: 0.6 })), 5.9, 5.35, -9.55);
-    add(box(0.6, 0.9, 0.6, mat(0x334155, { metal: 0.4, rough: 0.5 })), 7.0, 5.5, -9.55);
-    add(box(0.8, 0.5, 0.7, mat(0x14532d, { metal: 0.3, rough: 0.6 })), 5.4, 6.6, -9.55);
-    add(box(0.6, 0.6, 0.6, mat(0x78350f, { metal: 0.3, rough: 0.6 })), 6.6, 6.65, -9.55);
+    add(box(0.9, 0.7, 0.7, mat(0x1e3a5f, { metal: 0.3, rough: 0.6 })), 4.7, 5.4, -19.55);
+    add(box(0.7, 0.6, 0.6, mat(0x7f1d1d, { metal: 0.3, rough: 0.6 })), 5.9, 5.35, -19.55);
+    add(box(0.6, 0.9, 0.6, mat(0x334155, { metal: 0.4, rough: 0.5 })), 7.0, 5.5, -19.55);
+    add(box(0.8, 0.5, 0.7, mat(0x14532d, { metal: 0.3, rough: 0.6 })), 5.4, 6.6, -19.55);
+    add(box(0.6, 0.6, 0.6, mat(0x78350f, { metal: 0.3, rough: 0.6 })), 6.6, 6.65, -19.55);
     const pot = cyl(0.18, 0.14, 0.25, mat(0x92400e, { metal: 0.2, rough: 0.7 }), 16);
-    add(pot, 4.5, 6.48, -9.55);
+    add(pot, 4.5, 6.48, -19.55);
     const leafMat = mat(0x22c55e, { metal: 0.1, rough: 0.7 });
     [[0, 0.25, 0], [0.1, 0.18, 0.08], [-0.1, 0.18, -0.06]].forEach(([dx, dy, dz]) => {
       const leaf = new THREE.Mesh(new THREE.SphereGeometry(0.14, 10, 8), leafMat);
-      add(leaf, 4.5 + dx, 6.6 + dy, -9.55 + dz);
+      add(leaf, 4.5 + dx, 6.6 + dy, -19.55 + dz);
     });
     // escritorio NUEVO: tablero ancho de madera (20 × 8, más grande que antes),
     // patas de panel modernas, bandeja para cables debajo y tira LED en el borde
@@ -1085,8 +1085,10 @@ export function buildPcModel() {
     padd(box(1.2, 0.08, 0.8, darkMetal), 0, 0.04, 0);
     padd(box(0.18, 0.9, 0.18, darkMetal), -0.1, 0.48, 0);
     padd(box(0.1, 2.5, 4.5, darkMetal), 0, 2.05, 0);
-    // alfombrilla grande bajo teclado y ratón: antes iban directo sobre la madera
-    padd(box(2.4, 0.02, 5.6, mat(0x1e293b, { metal: 0.1, rough: 0.9 })), 1.6, 0.01, 0.35);
+    // alfombrilla grande bajo teclado y ratón: antes iban directo sobre la madera.
+    // Todo el conjunto (pad, teclado y ratón) va corrido hacia atrás para que
+    // quede ENTERO sobre el tablero: antes el pad sobresalía por el borde frontal
+    padd(box(2.4, 0.02, 5.6, mat(0x1e293b, { metal: 0.1, rough: 0.9 })), 1.6, 0.01, -0.65);
     // (teclado, teclas y ratón suben 0.02 para apoyar SOBRE la alfombrilla, no dentro de ella)
     const screen = new THREE.Mesh(new THREE.PlaneGeometry(4.3, 2.35),
       new THREE.MeshBasicMaterial({ map: screenTex }));
@@ -1108,11 +1110,11 @@ export function buildPcModel() {
     kctx.fillStyle = '#1f2937';
     for (let c = 0; c < 4; c++) for (let r = 0; r < 14; r++) kctx.fillRect(6 + c * 22, 6 + r * 20, 18, 16);
     const keyTex = new THREE.CanvasTexture(keyCanvas); keyTex.colorSpace = THREE.SRGBColorSpace;
-    padd(box(1.5, 0.07, 4.0, mat(0x111827, { metal: 0.3, rough: 0.6 })), 1.6, 0.055, 0);
+    padd(box(1.5, 0.07, 4.0, mat(0x111827, { metal: 0.3, rough: 0.6 })), 1.6, 0.055, -1.0);
     const keys = new THREE.Mesh(new THREE.PlaneGeometry(1.3, 3.8),
       new THREE.MeshStandardMaterial({ map: keyTex, roughness: 0.6, metalness: 0.1, transparent: true }));
     keys.rotation.x = -Math.PI / 2;
-    padd(keys, 1.6, 0.095, 0);
+    padd(keys, 1.6, 0.095, -1.0);
     // ratón de verdad (no una lámina plana): cuerpo con lomo, rueda y base, en gris
     // claro para que se distinga del escritorio oscuro
     const mouse = new THREE.Group();
@@ -1123,7 +1125,7 @@ export function buildPcModel() {
     const wheel = cyl(0.05, 0.05, 0.07, mat(0x0f172a, { metal: 0.3, rough: 0.5 }), 12);
     wheel.rotation.z = Math.PI / 2;
     wheel.position.set(0.32, 0.2, 0); mouse.add(wheel);
-    padd(mouse, 1.6, 0.02, 2.4); mouse.rotation.y = -0.2;
+    padd(mouse, 1.6, 0.02, 1.4); mouse.rotation.y = -0.2;
     // cosas sueltas del taller sobre el escritorio (en el centro, atrás: fuera del
     // camino de las piezas que salen hacia +Z y de la torre, que con el giro de 90°
     // ocupa x 1.5..5.5 y z -1.1..1.1: nada puede pisar ese rectángulo)
@@ -1151,10 +1153,10 @@ export function buildPcModel() {
     // derecha (antes estaba a la derecha y el cable ethernet lo cruzaba). Arriba
     // contra la pared (z=-10.0) y abajo apoyado en el suelo.
     const sidePanel = box(4.0, 4.6, 0.06, mat(0x1f2937, { metal: 0.7, rough: 0.35 }));
-    sidePanel.position.set(-9, -0.36, -9.4); sidePanel.rotation.x = -0.26;
+    sidePanel.position.set(-9, -0.36, -19.4); sidePanel.rotation.x = -0.26;
     sidePanel.castShadow = true; sidePanel.receiveShadow = true; env.add(sidePanel);
     const sideGlass = box(3.4, 3.9, 0.02, mat(0x94a3b8, { metal: 0.9, rough: 0.1 }));
-    sideGlass.position.set(-9, -0.36, -9.36); sideGlass.rotation.x = -0.26; // cristal claro para que se distinga del panel oscuro
+    sideGlass.position.set(-9, -0.36, -19.36); sideGlass.rotation.x = -0.26; // cristal claro para que se distinga del panel oscuro
     env.add(sideGlass);
     // (lámpara quitada a pedido de Camilo: estaba detrás del monitor)
     // bandeja con tornillos junto al destornillador: lo que se quita al abrir el PC
@@ -1183,13 +1185,13 @@ export function buildPcModel() {
     }
     chair.position.set(-4.5, -2.6, 5.0); chair.rotation.y = 0.35; env.add(chair); // mirando al monitor, frente a él
     // planta grande en la esquina derecha, junto a la pared trasera (ahora en la
-    // esquina nueva del cuarto grande, x=15, z=-8.5)
+    // esquina nueva del taller grande, x=33, z=-18.5)
     const bigPot = cyl(0.35, 0.28, 0.5, mat(0x92400e, { metal: 0.2, rough: 0.7 }), 16);
-    add(bigPot, 15, -2.35, -8.5);
+    add(bigPot, 33, -2.35, -18.5);
     const bigLeafMat = mat(0x16a34a, { metal: 0.1, rough: 0.7 });
     [[0, 0.7, 0, 0.35], [0.3, 0.5, 0.15, 0.28], [-0.3, 0.55, -0.1, 0.3], [0.1, 0.9, -0.2, 0.26], [-0.15, 0.4, 0.25, 0.24]].forEach(([dx, dy, dz, r]) => {
       const leaf = new THREE.Mesh(new THREE.SphereGeometry(r, 10, 8), bigLeafMat);
-      add(leaf, 15 + dx, -2.1 + dy, -8.5 + dz);
+      add(leaf, 33 + dx, -2.1 + dy, -18.5 + dz);
     });
     // lámpara colgante sobre el escritorio (solo decoración: la luz real la da el visor)
     // el techo subió a y=12, así que el cable es más largo (de y=12 a la pantalla en y≈7)
@@ -1201,12 +1203,12 @@ export function buildPcModel() {
     pendantBulb.position.set(0, 6.72, 0.5); env.add(pendantBulb);
     // cable de internet del router a la pared: antes el router solo conectaba al PC, no tenía internet
     const wanJack = box(0.3, 0.4, 0.06, mat(0xf1f5f9, { metal: 0.1, rough: 0.5 }));
-    wanJack.position.set(6.5, -2.2, -9.97); wanJack.castShadow = true; env.add(wanJack);
+    wanJack.position.set(6.5, -2.2, -19.97); wanJack.castShadow = true; env.add(wanJack);
     const wanSocket = box(0.12, 0.12, 0.03, darkMetal);
-    wanSocket.position.set(6.5, -2.2, -9.93); env.add(wanSocket);
+    wanSocket.position.set(6.5, -2.2, -19.93); env.add(wanSocket);
     const wanPort = box(0.12, 0.08, 0.02, darkMetal); // boca WAN en la trasera del router
     wanPort.position.set(6.3, 0.08, -3.11); env.add(wanPort);
-    extCable([[6.3, 0.09, -3.11], [6.4, 0.09, -3.6], [6.45, 0.09, -3.75], [6.5, -0.6, -3.9], [6.5, -2.0, -6.0], [6.5, -2.55, -8.0], [6.5, -2.2, -9.93]], 0.025, 0xeab308);
+    extCable([[6.3, 0.09, -3.11], [6.4, 0.09, -3.6], [6.45, 0.09, -3.75], [6.5, -0.6, -3.9], [6.5, -2.0, -6.0], [6.5, -2.55, -18.0], [6.5, -2.2, -19.93]], 0.025, 0xeab308);
     // altavoces a ambos lados del monitor, girados hacia quien se sienta
     const makeSpeaker = (x, ry) => {
       const sp = new THREE.Group();
@@ -1221,6 +1223,111 @@ export function buildPcModel() {
     };
     makeSpeaker(-7.0, 0.3);
     makeSpeaker(-1.0, -0.3);
+    // ===== TALLER DE REPARACIÓN (el cuarto ahora es el doble de grande: 72x40) =====
+    // Banco de trabajo largo junto a la pared derecha, panel de herramientas,
+    // estantería de componentes, carro con ruedas, zona marcada en el piso y
+    // equipos en espera de reparación: un taller profesional de verdad.
+    // banco de trabajo: tablero a la misma altura que el escritorio (cara sup. y=0)
+    add(box(3.2, 0.35, 16, woodMat), 34.2, -0.175, -6); // tablero x 32.6..35.8, z -14..2
+    add(box(2.8, 2.25, 0.3, darkMetal), 34.2, -1.475, -13.5); // patas de panel
+    add(box(2.8, 2.25, 0.3, darkMetal), 34.2, -1.475, 1.5);
+    add(box(2.8, 0.1, 14, darkMetal), 34.2, -2.2, -6); // repisa baja del banco
+    // alfombrilla antiestática verde sobre el banco, con una placa en reparación
+    add(box(2.2, 0.03, 4, mat(0x14532d, { metal: 0.1, rough: 0.9 })), 34.2, 0.02, -8);
+    add(box(1.8, 0.06, 2.4, mat(0x166534, { metal: 0.2, rough: 0.6 })), 34.2, 0.06, -8); // placa base
+    add(box(0.5, 0.08, 0.5, mat(0x111827, { metal: 0.4, rough: 0.5 })), 34.2, 0.11, -8); // chip de la placa
+    add(box(0.9, 0.05, 0.3, mat(0x1f2937, { metal: 0.4, rough: 0.5 })), 33.9, 0.1, -7.0); // RAM suelta
+    // juego de destornilladores y multímetro sobre el banco
+    [[33.6, -4.5, 0xdc2626], [33.9, -4.3, 0x2563eb], [34.2, -4.5, 0xf59e0b]].forEach(([sx, sz, c]) => {
+      const sd = cyl(0.04, 0.04, 0.7, mat(c, { metal: 0.3, rough: 0.5 }), 10);
+      sd.rotation.z = Math.PI / 2; sd.rotation.y = 0.4;
+      add(sd, sx, 0.05, sz);
+    });
+    add(box(0.55, 0.15, 0.95, mat(0xfacc15, { metal: 0.2, rough: 0.6 })), 34.0, 0.08, -2.0); // multímetro
+    add(box(0.35, 0.02, 0.45, mat(0x111827, { metal: 0.3, rough: 0.5 })), 34.0, 0.16, -2.1); // pantalla del multímetro
+    // estación de soldadura junto al multímetro
+    add(box(0.9, 0.5, 0.9, mat(0x334155, { metal: 0.4, rough: 0.5 })), 34.3, 0.25, 0.5);
+    add(box(0.5, 0.06, 0.5, mat(0x0f172a, { metal: 0.3, rough: 0.5 })), 34.3, 0.53, 0.5);
+    // cajas de repuestos en la repisa baja del banco
+    add(box(0.8, 0.6, 0.9, mat(0x1e3a5f, { metal: 0.3, rough: 0.6 })), 34.2, -1.85, -11);
+    add(box(0.7, 0.5, 0.8, mat(0x7f1d1d, { metal: 0.3, rough: 0.6 })), 34.2, -1.9, -9);
+    add(box(0.7, 0.5, 0.8, mat(0x14532d, { metal: 0.3, rough: 0.6 })), 34.2, -1.9, -4);
+    // panel de herramientas (pegboard) en la pared derecha, sobre el banco
+    add(box(0.08, 4.5, 12, mat(0x78350f, { metal: 0.1, rough: 0.8 })), 35.92, 3.5, -6);
+    [2.2, 3.2, 4.2].forEach((ty) => {
+      [-11, -9, -7, -5, -3, -1].forEach((tz, i) => {
+        if (i % 2 === 0) {
+          const tool = cyl(0.045, 0.045, 0.7, mat(i % 4 === 0 ? 0xdc2626 : 0x9ca3af, { metal: 0.5, rough: 0.4 }), 8);
+          add(tool, 35.85, ty, tz);
+        } else {
+          add(box(0.06, 0.7, 0.18, mat(0x4b5563, { metal: 0.6, rough: 0.4 })), 35.85, ty, tz);
+        }
+      });
+    });
+    // lámpara colgante sobre el banco de trabajo (igual que la del escritorio)
+    const cord2 = cyl(0.02, 0.02, 5.0, darkMetal, 8);
+    add(cord2, 33, 9.5, -6);
+    const shade2 = new THREE.Mesh(new THREE.ConeGeometry(0.45, 0.5, 20, 1, true), mat(0x1f2937, { metal: 0.6, rough: 0.4 }));
+    shade2.position.set(33, 6.9, -6); shade2.castShadow = true; env.add(shade2);
+    const bulb2 = new THREE.Mesh(new THREE.SphereGeometry(0.12, 12, 10), new THREE.MeshBasicMaterial({ color: 0xffe9c4 }));
+    bulb2.position.set(33, 6.72, -6); env.add(bulb2);
+    // taburete del técnico frente al banco
+    add(cyl(0.5, 0.5, 0.1, mat(0x1f2937, { metal: 0.4, rough: 0.5 }), 20), 31.5, -1.3, -8);
+    add(cyl(0.06, 0.06, 1.2, METAL_MAT, 12), 31.5, -1.95, -8);
+    add(cyl(0.5, 0.5, 0.06, METAL_MAT, 24), 31.5, -2.57, -8);
+    // zona de trabajo marcada en el piso frente al banco (cinta amarilla)
+    const tapeMat = new THREE.MeshBasicMaterial({ color: 0xfacc15 });
+    [[28, -6], [32, -6]].forEach(([tx, tz]) => {
+      const t = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.012, 12), tapeMat);
+      t.position.set(tx, -2.59, tz); env.add(t);
+    });
+    [[30, -12], [30, 0]].forEach(([tx, tz]) => {
+      const t = new THREE.Mesh(new THREE.BoxGeometry(4.15, 0.012, 0.15), tapeMat);
+      t.position.set(tx, -2.59, tz); env.add(t);
+    });
+    // estantería de componentes en la pared izquierda (GPU, RAM, SSD...)
+    [1.5, 3.0, 4.5].forEach((y) => {
+      add(box(0.9, 0.08, 8, woodMat), -35.5, y, -8);
+      [-3.5, 3.5].forEach((dz) => add(box(0.08, 0.3, 0.08, darkMetal), -35.5, y - 0.18, -8 + dz));
+    });
+    add(box(0.7, 0.6, 1.2, mat(0x1e3a5f, { metal: 0.3, rough: 0.6 })), -35.4, 1.85, -10.5); // caja GPU
+    add(box(0.6, 0.5, 1.0, mat(0x7f1d1d, { metal: 0.3, rough: 0.6 })), -35.4, 1.8, -8.5);
+    add(box(0.6, 0.5, 0.9, mat(0x334155, { metal: 0.4, rough: 0.5 })), -35.4, 1.8, -6.5);
+    add(box(0.7, 0.5, 1.1, mat(0x14532d, { metal: 0.3, rough: 0.6 })), -35.4, 3.3, -10);
+    add(box(0.6, 0.45, 0.9, mat(0x78350f, { metal: 0.3, rough: 0.6 })), -35.4, 3.28, -7.5);
+    add(box(0.5, 0.4, 0.8, mat(0x1e3a5f, { metal: 0.3, rough: 0.6 })), -35.4, 4.75, -9);
+    // carro de herramientas con ruedas, junto al escritorio principal
+    add(box(2.0, 2.4, 1.4, mat(0xb91c1c, { metal: 0.4, rough: 0.5 })), 14, -1.4, 4);
+    [-1.9, -1.3, -0.7].forEach((y) => {
+      add(box(0.06, 0.5, 1.2, mat(0x7f1d1d, { metal: 0.4, rough: 0.5 })), 15.03, y, 4);
+      add(box(0.05, 0.05, 0.5, METAL_MAT), 15.08, y, 4);
+    });
+    [[13.2, 3.4], [14.8, 3.4], [13.2, 4.6], [14.8, 4.6]].forEach(([wx, wz]) => {
+      const caster = new THREE.Mesh(new THREE.SphereGeometry(0.09, 10, 8), darkMetal);
+      caster.position.set(wx, -2.53, wz); env.add(caster);
+    });
+    // dos torres en espera de reparación, en el piso junto al banco
+    [[28, 8], [28, 12.5]].forEach(([tx, tz]) => {
+      add(box(1.6, 4.2, 4.0, mat(0x1f2937, { metal: 0.7, rough: 0.35 })), tx, -0.5, tz);
+      add(box(0.1, 3.6, 3.4, mat(0x111827, { metal: 0.5, rough: 0.4 })), tx - 0.78, -0.5, tz); // lateral quitado: se ve el interior oscuro
+    });
+    // extintor en la pared derecha, junto a la puerta
+    add(cyl(0.18, 0.18, 0.9, mat(0xdc2626, { metal: 0.4, rough: 0.4 }), 16), 35.85, -1.4, 8.5);
+    add(cyl(0.05, 0.05, 0.25, mat(0x111827, { metal: 0.4, rough: 0.5 }), 8), 35.85, -0.88, 8.5);
+    add(box(0.06, 0.5, 0.3, darkMetal), 35.95, -1.4, 8.5); // soporte a la pared
+    // letrero del taller en la pared frontal: se ve al girar la vista
+    const signCanvas = document.createElement('canvas'); signCanvas.width = 512; signCanvas.height = 128;
+    const sg = signCanvas.getContext('2d');
+    sg.fillStyle = '#0f172a'; sg.fillRect(0, 0, 512, 128);
+    sg.strokeStyle = '#22d3ee'; sg.lineWidth = 6; sg.strokeRect(6, 6, 500, 116);
+    sg.fillStyle = '#22d3ee'; sg.font = 'bold 52px sans-serif'; sg.textAlign = 'center';
+    sg.fillText('TALLER NVISION', 256, 62);
+    sg.fillStyle = '#ffffff'; sg.font = '24px sans-serif';
+    sg.fillText('REPARACIÓN DE PC', 256, 102);
+    const signTex = new THREE.CanvasTexture(signCanvas); signTex.colorSpace = THREE.SRGBColorSpace;
+    const sign = new THREE.Mesh(new THREE.PlaneGeometry(6, 1.5),
+      new THREE.MeshStandardMaterial({ map: signTex, roughness: 0.85, metalness: 0, transparent: true }));
+    sign.rotation.y = Math.PI; sign.position.set(8, 8, 19.9); env.add(sign);
     // --- Cables de conexión: HDMI, energía, ethernet, regleta y router ---
     // Cada cable empieza y termina EN UN PUERTO de verdad (monitor o torre), no
     // flotando: la posición de los puertos del monitor se calcula (el grupo tiene
@@ -1257,7 +1364,7 @@ export function buildPcModel() {
     // cable de la regleta: baja por detrás del escritorio hasta el enchufe de la pared.
     // Sale por ENCIMA del borde trasero (a la altura de la mesa hasta pasar z=-3.5)
     // y luego cae por detrás: antes bajaba en diagonal y atravesaba la madera del borde.
-    extCable([[5.0, 0.09, -3.1], [5.1, 0.09, -3.6], [5.15, 0.09, -3.75], [5.2, -0.6, -3.9], [5.1, -2.0, -6.0], [5.0, -2.55, -8.0], [5.0, -2.2, -9.93]], 0.04, 0x111827);
+    extCable([[5.0, 0.09, -3.1], [5.1, 0.09, -3.6], [5.15, 0.09, -3.75], [5.2, -0.6, -3.9], [5.1, -2.0, -16.0], [5.0, -2.55, -18.0], [5.0, -2.2, -19.93]], 0.04, 0x111827);
     // regleta (multitoma) sobre el escritorio, atrás a la derecha, junto a la torre
     add(box(1.2, 0.12, 0.35, mat(0xe5e7eb, { metal: 0.2, rough: 0.5 })), 5.0, 0.06, -3.0);
     [4.65, 5.0, 5.35].forEach((sx) => add(box(0.14, 0.02, 0.14, mat(0x111827, { metal: 0.3, rough: 0.5 })), sx, 0.13, -3.0));
@@ -1279,20 +1386,20 @@ export function buildPcModel() {
     add(box(0.02, 0.08, 0.12, mat(0x1f2937, { metal: 0.3, rough: 0.6 })), 5.69, 0.08, -2.9);
     add(box(0.12, 0.08, 0.02, mat(0x1f2937, { metal: 0.3, rough: 0.6 })), 5.85, 0.08, -3.11);
     // enchufe en la pared trasera, junto al suelo, bajo la regleta
-    add(box(0.5, 0.7, 0.06, mat(0xe5e7eb, { metal: 0.2, rough: 0.5 })), 5.0, -2.2, -9.97);
-    add(box(0.12, 0.12, 0.03, mat(0x111827, { metal: 0.3, rough: 0.5 })), 4.88, -2.1, -9.93);
-    add(box(0.12, 0.12, 0.03, mat(0x111827, { metal: 0.3, rough: 0.5 })), 5.12, -2.1, -9.93);
+    add(box(0.5, 0.7, 0.06, mat(0xe5e7eb, { metal: 0.2, rough: 0.5 })), 5.0, -2.2, -19.97);
+    add(box(0.12, 0.12, 0.03, mat(0x111827, { metal: 0.3, rough: 0.5 })), 4.88, -2.1, -19.93);
+    add(box(0.12, 0.12, 0.03, mat(0x111827, { metal: 0.3, rough: 0.5 })), 5.12, -2.1, -19.93);
     // reloj de pared (las 10:10, como en los anuncios)
     const clockFace = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 0.06, 32), mat(0xf8fafc, { metal: 0.2, rough: 0.4 }));
     clockFace.rotation.x = Math.PI / 2;
-    add(clockFace, -9.5, 6.5, -9.96);
+    add(clockFace, -9.5, 6.5, -19.96);
     const handMat = mat(0x111827, { metal: 0.3, rough: 0.5 });
     const hourHand = box(0.04, 0.28, 0.02, handMat);
-    add(hourHand, -9.57, 6.62, -9.92); hourHand.rotation.z = 0.52;
+    add(hourHand, -9.57, 6.62, -19.92); hourHand.rotation.z = 0.52;
     const minHand = box(0.03, 0.4, 0.02, handMat);
-    add(minHand, -9.4, 6.67, -9.92); minHand.rotation.z = -0.52;
+    add(minHand, -9.4, 6.67, -19.92); minHand.rotation.z = -0.52;
     const clockDot = new THREE.Mesh(new THREE.SphereGeometry(0.04, 10, 8), handMat);
-    clockDot.position.set(-9.5, 6.5, -9.92); env.add(clockDot);
+    clockDot.position.set(-9.5, 6.5, -19.92); env.add(clockDot);
     return env;
   }
   // la torre va a la DERECHA de la mesa y el monitor a la IZQUIERDA: ambos se ven
