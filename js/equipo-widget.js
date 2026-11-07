@@ -118,20 +118,18 @@
     });
   }
 
-  function renderChat() {
+  function renderChat(forceBottom) {
     view = 'chat';
     localStorage.setItem('eqw_view', 'chat');
     document.getElementById('eqwHeadBack').hidden = false;
-    document.getElementById('eqwHeadLogo').hidden = true;
-    var headAvatar = document.getElementById('eqwHeadAvatar');
-    headAvatar.hidden = false;
-    headAvatar.textContent = initials(name);
+    document.getElementById('eqwHeadLogo').hidden = false;
+    document.getElementById('eqwHeadAvatar').hidden = true;
     document.getElementById('eqwTitle').textContent = name;
-    document.getElementById('eqwSub').textContent = 'Chat con Muse · en línea';
+    document.getElementById('eqwSub').textContent = 'Chat del equipo';
     form.hidden = false;
     var rows = lastRows.filter(function (t) { return t.name === name; }).slice().reverse();
     if (!rows.length) {
-      body.innerHTML = '<div class="eqw-empty"><span class="eq-avatar eqw-empty-avatar">' + esc(initials(name)) + '</span>' +
+      body.innerHTML = '<div class="eqw-empty"><img src="assets/muse-logo.webp" alt="Muse" class="eqw-empty-logo">' +
         '<strong>Hola, ' + esc(name) + '</strong>' +
         '<p>Este chat está vacío. Escríbele algo a Muse abajo, por ejemplo pedir un cambio en el sitio.</p>' +
         '<div class="eqw-chips">' +
@@ -143,6 +141,10 @@
       });
       return;
     }
+    // No bajar a la fuerza si está leyendo mensajes de arriba: solo baja
+    // si ya estaba abajo (o si acaba de abrir el chat / enviar un mensaje).
+    var atBottom = body.scrollHeight - body.scrollTop - body.clientHeight < 80;
+    var prevTop = body.scrollTop;
     body.innerHTML = rows.map(function (t) {
         var done = t.status === 'listo';
         var result = (t.result || '').trim();
@@ -157,14 +159,15 @@
           '<span class="eq-meta">' + esc(fmtHora(t.created_at)) + (done ? ' · ✓✓' : '') + '</span></div>' +
           museBubble + '</div>';
       }).join('');
-    body.scrollTop = body.scrollHeight;
+    if (forceBottom || atBottom) body.scrollTop = body.scrollHeight;
+    else body.scrollTop = prevTop;
   }
 
   function openChat(n) {
     name = n;
     localStorage.setItem('eq_name', n);
     markSeen(n);
-    renderChat();
+    renderChat(true);
     renderFabBadge();
   }
 
@@ -207,13 +210,23 @@
     }
   });
 
+  var lastSig = '';
+  function rowsSig(rows) {
+    return rows.map(function (t) { return t.id + ':' + t.status + ':' + (t.updated_at || ''); }).join('|');
+  }
+
   async function loadTasks() {
     try {
       lastRows = (await sbGet('/rest/v1/team_tasks?select=*&order=created_at.desc&limit=100')) || [];
+      var sig = rowsSig(lastRows);
       renderFabBadge();
-      if (open) {
-        if (view === 'chat' && name) renderChat();
+      // Si nada cambió, no se vuelve a dibujar: así el chat no se mueve solo.
+      if (open && sig !== lastSig) {
+        lastSig = sig;
+        if (view === 'chat' && name) renderChat(false);
         else if (view === 'picker') renderPicker();
+      } else {
+        lastSig = sig;
       }
     } catch (e) { /* sin conexión: reintenta en el próximo ciclo */ }
   }
@@ -221,7 +234,7 @@
   // Restaurar el estado al cambiar de página: mismo nombre y misma vista.
   if (open) {
     panel.hidden = false;
-    if (name && localStorage.getItem('eqw_view') === 'chat') { renderChat(); markSeen(name); }
+    if (name && localStorage.getItem('eqw_view') === 'chat') { renderChat(true); markSeen(name); }
     else renderPicker();
   }
   loadTasks();

@@ -109,28 +109,24 @@
 }
 @keyframes eqw-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 .eqw-panel[hidden] { display: none; }
+/* Encabezado como la página: blanco, texto oscuro, borde fino (nada de barra azul ni "en línea") */
 .eqw-head {
   display: flex; align-items: center; gap: 0.6rem; padding: 0.6rem 0.8rem;
-  background: linear-gradient(135deg, #2563eb, #0ea5e9); color: #fff;
-  box-shadow: 0 2px 8px rgba(2, 8, 23, 0.18); position: relative; z-index: 1;
+  background: #ffffff; color: #0f172a;
+  border-bottom: 1px solid #e2e8f0;
 }
 .eqw-head-logo { width: 34px; height: 34px; border-radius: 9px; object-fit: cover; }
 /* Botón para devolverse a la lista de chats: vive en el encabezado, siempre visible */
 .eqw-head-back {
-  font: inherit; font-size: 1.35rem; line-height: 1; color: #fff; background: none;
+  font: inherit; font-size: 1.35rem; line-height: 1; color: #0f172a; background: none;
   border: none; cursor: pointer; padding: 0.2rem 0.45rem; margin-left: -0.35rem;
   border-radius: 8px; flex: 0 0 auto;
 }
-.eqw-head-back:hover { background: rgba(255, 255, 255, 0.2); }
-.eqw-head-avatar {
-  width: 34px; height: 34px; flex: 0 0 34px; border-radius: 50%;
-  display: inline-flex; align-items: center; justify-content: center;
-  font-weight: 700; font-size: 0.85rem; color: #1d4ed8; background: #fff;
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.45);
-}
+.eqw-head-back:hover { background: #f1f5f9; }
 .eqw-head-who { flex: 1; display: flex; flex-direction: column; min-width: 0; }
-.eqw-head-who span { font-size: 0.75rem; opacity: 0.85; }
-.eqw-close { font: inherit; font-size: 1.3rem; color: #fff; background: none; border: none; cursor: pointer; padding: 0.1rem 0.4rem; }
+.eqw-head-who strong { font-size: 0.95rem; }
+.eqw-head-who span { font-size: 0.75rem; color: var(--text-muted, #64748b); }
+.eqw-close { font: inherit; font-size: 1.3rem; color: #0f172a; background: none; border: none; cursor: pointer; padding: 0.1rem 0.4rem; }
 .eqw-body {
   padding: 0.7rem; min-height: 240px; max-height: 55vh; overflow-y: auto;
   background: #f0f2f5; display: flex; flex-direction: column; gap: 0.4rem;
@@ -139,7 +135,7 @@
 .eqw-body .eq-chat-row:hover { background: #eff6ff; }
 /* Estado vacío del chat: saludo con avatar y atajos para empezar */
 .eqw-empty { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.5rem; padding: 1.6rem 0.8rem; margin: auto 0; }
-.eqw-empty-avatar { width: 60px; height: 60px; flex-basis: 60px; font-size: 1.3rem; }
+.eqw-empty-logo { width: 60px; height: 60px; border-radius: 16px; object-fit: cover; }
 .eqw-empty strong { font-size: 1.05rem; }
 .eqw-empty p { margin: 0; font-size: 0.88rem; color: var(--text-muted, #64748b); line-height: 1.5; }
 .eqw-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center; margin-top: 0.4rem; }
