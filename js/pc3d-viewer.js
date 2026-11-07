@@ -58,7 +58,7 @@ function init() {
   // centra el puesto entero (monitor a un lado, torre al otro, ambos visibles);
   // núcleo mira la CPU de frente (el lado abierto ya no mira a +X, mira a +Z)
   const SCENES = {
-    overview: { cam: [9.0, 4.5, 5.4], tgt: [0, 2.1, 0.5], focus: null, particles: false, fanBoost: 1, dur: 1.8 },
+    overview: { cam: [11.0, 5.4, 6.6], tgt: [0, 2.1, 0.5], focus: null, particles: false, fanBoost: 1, dur: 1.8 }, // un poco más lejos que antes (9.0, 4.5, 5.4): se ve el puesto entero sin alejarse demasiado
     core: { cam: [3.4, 4.3, 5.5], tgt: [3.4, 3.2, -0.55], focus: ['cpu', 'ram'], particles: false, fanBoost: 1 },
     airflow: { cam: [9.9, 5.5, 5.5], tgt: [3.5, 2.1, 0], focus: ['psu', 'gpu'], particles: true, fanBoost: 2.4 }
   };
@@ -76,7 +76,7 @@ function init() {
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.1;
+  renderer.toneMappingExposure = 1.25; // un poco más de luz general: había zonas oscuras en el taller
 
   const scene = new THREE.Scene();
   scene.fog = new THREE.Fog(0x0d1b2b, 30, 60);
@@ -132,12 +132,16 @@ function init() {
   composer.addPass(new OutputPass());
 
   // --- Luces ---
-  scene.add(new THREE.AmbientLight(0x94a3b8, 0.5));
-  const keyLight = new THREE.DirectionalLight(0xffffff, 1.9);
+  // El taller mide 72x40 y las luces viejas solo cubrían el escritorio: se sube
+  // la luz ambiente y la principal, se ensancha la caja de sombras a todo el
+  // cuarto y se agregan dos luces puntuales en los extremos (banco de trabajo y
+  // lado izquierdo), que eran las zonas oscuras.
+  scene.add(new THREE.AmbientLight(0x94a3b8, 0.85));
+  const keyLight = new THREE.DirectionalLight(0xffffff, 2.2);
   keyLight.position.set(6, 9, 7);
   keyLight.castShadow = true;
   keyLight.shadow.mapSize.set(2048, 2048);
-  keyLight.shadow.camera.left = -24; keyLight.shadow.camera.right = 24;
+  keyLight.shadow.camera.left = -37; keyLight.shadow.camera.right = 37;
   keyLight.shadow.camera.top = 24; keyLight.shadow.camera.bottom = -24;
   scene.add(keyLight);
   const innerGlow = new THREE.PointLight(0x22d3ee, 18, 10, 2);
@@ -146,6 +150,12 @@ function init() {
   const fillLight = new THREE.PointLight(0xf59e0b, 6, 12, 2);
   fillLight.position.set(-4, 2, -5);
   scene.add(fillLight);
+  const benchLight = new THREE.PointLight(0xffe7b3, 60, 24, 2);
+  benchLight.position.set(33, 6.5, -6); // bajo la lámpara colgante del banco de trabajo (antes esa lámpara no alumbraba)
+  scene.add(benchLight);
+  const westLight = new THREE.PointLight(0xffffff, 50, 28, 2);
+  westLight.position.set(-24, 7, 2); // lado izquierdo del taller, lejos del escritorio
+  scene.add(westLight);
 
   // --- Suelo: anillos luminosos sobre el escritorio (la sombra la recibe el tablero) ---
   // (tenues, para que el escritorio se vea como escritorio y no como una alfombra de luz)
