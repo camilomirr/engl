@@ -86,3 +86,17 @@ html{overflow-x:hidden}
 #topList{margin:0;padding-left:24px;font-size:16px;line-height:1.9}
 #topList li b{margin-left:6px}
 #topStatus{color:#8f060d;font-weight:700}
+
+/* ===== Modo Kahoot ===== */
+#startScreen,#lobbyScreen{padding:10px 4px}
+#joinForm{display:flex;flex-direction:column;gap:10px;max-width:420px;margin:12px auto;text-align:left}
+#joinForm label{font-weight:800}
+#joinForm input,#adminModal input{padding:12px 14px;border:1px solid #e50914;border-radius:12px;font-size:16px;background:#fff;color:#262626}
+#countdown{font-size:90px;font-weight:900;text-align:center;color:#e50914}
+#inTopBanner{font-size:20px;font-weight:900;text-align:center;color:#007e33}
+.admin-gear{background:none;border:none;font-size:26px;cursor:pointer}
+#adminModal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px}
+.admin-box{background:#fff;color:#262626;border-radius:18px;padding:20px;max-width:480px;width:100%;max-height:90vh;overflow:auto}
+.admin-box button{display:block;width:100%;margin-top:10px}
+#adminControls ul{margin:8px 0;padding-left:20px}
+#liveTop{margin:0;padding-left:24px;line-height:1.9}

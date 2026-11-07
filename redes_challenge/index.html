@@ -139,8 +139,12 @@
       </span>
       <span class="divider"></span>
       <span class="pill">
-        <span class="big" id="lives">❤️❤️❤️</span>
-        <span data-i18n="lives">Vidas</span>
+        <span class="big">⏱</span>
+        <span><span data-i18n="lives">Tiempo</span><strong id="timer">20</strong></span>
+      </span>
+      <span class="divider"></span>
+      <span class="pill">
+        <button id="btnAdminOpen" class="admin-gear" type="button" title="Admin">⚙️</button>
       </span>
     </div>
   </div>
@@ -167,13 +171,58 @@
     </aside>
 
     <main class="panel">
-      <div id="game">
+      <div id="startScreen">
+        <h2>🎮 Redes Challenge</h2>
+        <p>Escribe tu nombre y apellido y dale en Iniciar juego. Espera a que el admin le dé Start.</p>
+        <div id="joinForm">
+          <label for="firstName">Nombre</label>
+          <input id="firstName" maxlength="20" placeholder="Nombre" autocomplete="off">
+          <label for="lastName">Apellido</label>
+          <input id="lastName" maxlength="20" placeholder="Apellido" autocomplete="off">
+          <button id="btnJoin" class="primary" type="button">Iniciar juego</button>
+          <p id="joinStatus" aria-live="polite"></p>
+        </div>
+      </div>
+
+      <div id="lobbyScreen" class="hidden">
+        <h2>⏳ En la sala…</h2>
+        <p id="lobbyText">Estás dentro. Espera a que el admin le dé Start…</p>
+        <div id="countdown" class="hidden">5</div>
+        <h3>🏆 TOP en vivo</h3>
+        <ol id="liveTop"></ol>
+      </div>
+
+      <div id="adminModal" class="hidden">
+        <div class="admin-box">
+          <h2>⚙️ Panel del admin</h2>
+          <div id="adminLoginBox">
+            <label for="adminUser">Usuario</label>
+            <input id="adminUser" autocomplete="off" placeholder="redesjuego">
+            <label for="adminPass">Clave</label>
+            <input id="adminPass" type="password" placeholder="••••••••">
+            <button id="btnAdminLogin" class="primary" type="button">Entrar</button>
+          </div>
+          <div id="adminControls" class="hidden">
+            <p><strong>Jugadores listos:</strong></p>
+            <ul id="adminPlayers"></ul>
+            <button id="btnNewSala" class="primary" type="button">Nueva partida / Abrir sala</button>
+            <button id="btnStart" class="primary" type="button">▶ Start — empezar para todos</button>
+            <button id="btnDeleteTop" type="button">Borrar leaderboard</button>
+            <button id="btnReset" type="button">Reiniciar juego</button>
+          </div>
+          <p id="adminStatus" aria-live="polite"></p>
+          <button id="btnAdminClose" type="button">Cerrar</button>
+        </div>
+      </div>
+
+      <div id="game" class="hidden">
         <div class="questionbar">
           <span class="questiontag" id="questionTag">Pregunta 1/10</span>
           <h2 id="question"></h2>
         </div>
         <div class="diagram" id="diagram"></div>
         <div class="options" id="options"></div>
+        <p id="inTopBanner" class="hidden">🏆 ¡Estás en el TOP!</p>
         <p id="feedback" aria-live="polite"></p>
         <button id="next" class="primary hidden">Siguiente pregunta →</button>
       </div>
@@ -181,12 +230,7 @@
       <div id="end" class="hidden">
         <h2 id="result"></h2>
         <p id="summary"></p>
-        <div id="save-score">
-          <label for="playerName">Tu nombre</label>
-          <input id="playerName" maxlength="20" placeholder="Escribe tu nombre" autocomplete="off">
-          <button id="saveScore" class="primary" type="button">Guardar mi puntaje</button>
-          <p id="saveStatus" aria-live="polite"></p>
-        </div>
+        <p id="saveStatus" aria-live="polite"></p>
         <div class="end-actions">
           <button class="primary" id="restart">↻ Volver a jugar</button>
           <a href="../redes.html#topologias" class="btn-return-big">← Volver a NVISION Redes</a>
@@ -194,7 +238,7 @@
       </div>
 
       <section id="top10">
-        <h2>🏆 TOP 10</h2>
+        <h2>🏆 TOP 5</h2>
         <ol id="topList"></ol>
         <p id="topStatus"></p>
       </section>
