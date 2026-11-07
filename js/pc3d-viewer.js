@@ -13,7 +13,7 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
-import { PARTS, buildPcModel } from './pc3d-model.js?v=14';
+import { PARTS, buildPcModel } from './pc3d-model.js?v=15';
 
 const mount = document.getElementById('pc-viewer3d');
 if (mount) init();
@@ -59,8 +59,8 @@ function init() {
   // núcleo mira la CPU de frente (el lado abierto ya no mira a +X, mira a +Z)
   const SCENES = {
     overview: { cam: [9.0, 4.5, 5.4], tgt: [0, 2.1, 0.5], focus: null, particles: false, fanBoost: 1, dur: 1.8 },
-    core: { cam: [3.4, 4.3, 7.0], tgt: [3.4, 3.2, -0.55], focus: ['cpu', 'ram'], particles: false, fanBoost: 1 },
-    airflow: { cam: [9.9, 5.5, 7.4], tgt: [3.5, 2.1, 0], focus: ['psu', 'gpu'], particles: true, fanBoost: 2.4 }
+    core: { cam: [3.4, 4.3, 5.5], tgt: [3.4, 3.2, -0.55], focus: ['cpu', 'ram'], particles: false, fanBoost: 1 },
+    airflow: { cam: [9.9, 5.5, 5.5], tgt: [3.5, 2.1, 0], focus: ['psu', 'gpu'], particles: true, fanBoost: 2.4 }
   };
 
   // --- Renderizador ---
@@ -82,7 +82,7 @@ function init() {
   scene.fog = new THREE.Fog(0x0d1b2b, 15, 30);
   scene.background = new THREE.Color(0x0d1b2b); // ya no hay vacío negro: el fondo es el mismo azul del taller
   const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
-  camera.position.set(15, 8.5, 17); // punto de partida de la intro cinematográfica
+  camera.position.set(-9, 9, 5.2); // punto de partida de la intro cinematográfica: dentro del cuarto (antes estaba fuera, en 15, 8.5, 17)
 
   // Entorno de estudio: reflejos realistas en metales y vidrios
   const pmrem = new THREE.PMREMGenerator(renderer);
@@ -103,6 +103,23 @@ function init() {
   controls.enablePan = true;
   controls.autoRotate = !reduceMotion;
   controls.autoRotateSpeed = 0.9;
+
+  // --- Habitación cerrada: la cámara no puede salir del cuarto ---
+  // El cuarto mide x -12..12, z -6..6, piso en y=-2.6 y techo en y=12: la
+  // cámara y el punto al que mira se quedan dentro, con 0.3 de margen para
+  // que el plano cercano no se meta en la pared. Sin esto, el paneo con
+  // clic derecho se iba debajo del piso, afuera de la casa y a través de
+  // las paredes. La caja es convexa, así que los vuelos de cámara entre
+  // dos puntos de dentro (intro, cinemáticas, doble clic) tampoco salen.
+  const ROOM_CAM = { x: [-11.7, 11.7], y: [-2.3, 11.7], z: [-5.7, 5.7] };
+  const ROOM_TGT = { x: [-10, 10], y: [-1.5, 10], z: [-5, 5] };
+  const clampVec = (v, b) => {
+    v.x = THREE.MathUtils.clamp(v.x, b.x[0], b.x[1]);
+    v.y = THREE.MathUtils.clamp(v.y, b.y[0], b.y[1]);
+    v.z = THREE.MathUtils.clamp(v.z, b.z[0], b.z[1]);
+    return v;
+  };
+  const clampRoom = () => { clampVec(controls.target, ROOM_TGT); clampVec(camera.position, ROOM_CAM); };
 
   // --- Postproceso: bloom suave para que brillen los LED y el RGB ---
   const composer = new EffectComposer(renderer);
@@ -490,8 +507,9 @@ function init() {
   // --- Cámara y cinemáticas ---
   function flyTo(pos, tgt, dur = 1.0) {
     camTween = {
-      p0: camera.position.clone(), p1: new THREE.Vector3(...pos),
-      t0: controls.target.clone(), t1: new THREE.Vector3(...tgt), k: 0, dur
+      // el destino se recorta al cuarto: el vuelo nunca sale de la habitación
+      p0: camera.position.clone(), p1: clampVec(new THREE.Vector3(...pos), ROOM_CAM),
+      t0: controls.target.clone(), t1: clampVec(new THREE.Vector3(...tgt), ROOM_TGT), k: 0, dur
     };
   }
   function setScene(name) {
@@ -873,6 +891,7 @@ function init() {
       }
     }
     controls.update();
+    clampRoom(); // la cámara y el punto de mira nunca salen del cuarto (paneo, giro, zoom, auto-rotación y vuelos)
 
     // la cámara vuelve a girar sola tras 6 s sin tocar nada
     if (!reduceMotion && !camTween && clock.elapsedTime - lastInteract > 6) controls.autoRotate = true;

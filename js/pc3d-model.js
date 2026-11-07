@@ -787,6 +787,11 @@ export function buildPcModel() {
     makeDoor(-12.15, -1.0, 1);
     const ceiling = box(24, 0.3, 12, ceilMat);
     add(ceiling, 0, 12.15, 0); ceiling.castShadow = false; // cara inferior en y=12.0
+    // pared frontal: el cuarto queda CERRADO por los cuatro lados (antes el
+    // frente estaba abierto y la cámara se salía por ahí, debajo del piso y
+    // a través de las paredes). Sin huecos: la vista es desde dentro.
+    const frontWall = box(24, 14.6, 0.3, wallMat2);
+    add(frontWall, 0, 4.7, 6.15); frontWall.castShadow = false; // z 6.0..6.3, y -2.6..12.0
     // rodapiés: apoyados en el suelo (y=-2.6), a ras de cada pared (los laterales
     // se parten para no cruzar las puertas nuevas, más anchas)
     add(box(24, 0.25, 0.06, mat(0x94a3b8, { metal: 0.2, rough: 0.6 })), 0, -2.475, -5.97);
@@ -1116,9 +1121,9 @@ export function buildPcModel() {
     spareFan.rotation.x = -Math.PI / 2;
     spareFan.position.set(-0.5, 0.06, -2.5); // apoyado en la mesa (antes flotaba a 0.15)
     env.add(spareFan);
-    add(box(0.9, 0.6, 0.7, mat(0x9a7b4f, { metal: 0.1, rough: 0.85 })), 0.8, 0.3, -2.4);
-    const smallBox = box(0.6, 0.4, 0.5, mat(0x9a7b4f, { metal: 0.1, rough: 0.85 }));
-    add(smallBox, -0.6, 0.2, -1.2); smallBox.rotation.y = 0.4;
+    // (las dos cajas de cartón que había aquí se quitaron a pedido de Camilo:
+    // eran lo único marrón tipo cartón de la escena y se veían como un cartón
+    // tirado bajo la mesa)
     const screwHandle = cyl(0.05, 0.05, 0.35, mat(0xdc2626, { metal: 0.3, rough: 0.5 }), 12);
     screwHandle.rotation.z = Math.PI / 2;
     add(screwHandle, -1.8, 0.05, -2.8);
