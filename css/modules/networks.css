@@ -1468,3 +1468,31 @@
   .swl-wrapper { grid-template-columns: 1fr; }
   .swl-pc-mac { font-size: 12px; }
 }
+
+/* =========================================================
+   RESPONSIVE (móvil): laboratorio del switch legible
+   A 360px el SVG de 760px se encogía hasta ~5px por letra;
+   ahora se desplaza dentro de la tarjeta en vez de encogerse.
+   ========================================================= */
+@media (max-width: 640px) {
+  .swl-stage {
+    overflow-x: auto;
+    padding: 0.75rem 0.75rem 0.7rem;
+  }
+  .swl-stage svg {
+    min-width: 560px;
+  }
+  .swl-caption {
+    min-height: 0;
+    font-size: 0.88rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .swl-controls {
+    grid-template-columns: 1fr;
+  }
+  .swl-panel {
+    padding: 0.95rem;
+  }
+}

@@ -411,3 +411,22 @@
     width: 100%;
   }
 }
+
+/* =========================================================
+   RESPONSIVE (móvil): más aire para el texto de cada hito
+   ========================================================= */
+@media (max-width: 600px) {
+  .timeline-container {
+    padding-left: 0.85rem;
+    gap: 1.5rem;
+  }
+  .timeline-item {
+    margin-left: 0.85rem;
+  }
+  .timeline-item::before {
+    left: -1.95rem;
+  }
+  .timeline-body {
+    padding: 1.2rem;
+  }
+}

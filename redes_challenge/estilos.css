@@ -123,3 +123,16 @@ html{overflow-x:hidden}
 .admin-gear .mono-icon{width:1.5rem;height:1.5rem}
 .tip .mono-icon{width:1.4rem;height:1.4rem}
 #inTopBanner .mono-icon,#result .mono-icon,#feedback .mono-icon,#next .mono-icon,#restart .mono-icon,#btnStart .mono-icon{width:1.15em;height:1.15em}
+
+/* ===== Responsivo móvil (360-480px) ===== */
+@media (max-width: 720px) {
+  .game-hud { padding: 0 12px; }
+}
+@media (max-width: 480px) {
+  .divider { display: none; }
+  .stats { padding: 8px; gap: 8px; }
+  .questionbar { padding: 12px; }
+  .questiontag { padding: 10px 14px; }
+  #top10 h2 { font-size: 19px; }
+  #save-score { padding: 0 2px; }
+}

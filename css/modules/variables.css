@@ -78,6 +78,20 @@ html {
   scroll-behavior: smooth;
 }
 
+html, body {
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+img, svg, video, canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+pre, code {
+  overflow-x: auto;
+}
+
 body {
   font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   background-color: var(--bg-deep);
@@ -152,4 +166,23 @@ body {
   font-size: 1rem;
   margin-bottom: 2.5rem;
   max-width: 720px;
+}
+
+/* =========================================================
+   RESPONSIVE GLOBAL (móvil 360-480px)
+   ========================================================= */
+.section-title {
+  flex-wrap: wrap;
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 2.5rem 1rem;
+  }
+  .section-title {
+    gap: 0.45rem;
+  }
+  .section-desc {
+    margin-bottom: 1.6rem;
+  }
 }

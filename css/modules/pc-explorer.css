@@ -79,3 +79,19 @@
   height: 1rem;
   flex-shrink: 0;
 }
+
+/* =========================================================
+   RESPONSIVE (móvil): la píldora de estado no se sale
+   ========================================================= */
+@media (max-width: 760px) {
+  .pc-explorer-status {
+    white-space: normal;
+  }
+  .pc-explorer-panel {
+    padding: 1.35rem 1.1rem;
+  }
+  .pc-scene-hint {
+    left: 0.9rem;
+    bottom: 0.9rem;
+  }
+}
