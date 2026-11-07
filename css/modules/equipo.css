@@ -48,6 +48,17 @@
   background: #dc2626; color: #fff; font-size: 0.75rem; font-weight: 700;
   display: inline-flex; align-items: center; justify-content: center;
 }
+/* Chat en vivo: burbujas como WhatsApp */
+.eq-chat-thread { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem; }
+.eq-msg { max-width: 85%; padding: 0.7rem 0.9rem; border-radius: 12px; line-height: 1.5; }
+.eq-msg strong { display: block; font-size: 0.85rem; margin-bottom: 0.2rem; }
+.eq-msg p { margin: 0; overflow-wrap: anywhere; white-space: pre-wrap; }
+.eq-msg .eq-meta { display: block; margin-top: 0.3rem; font-size: 0.75rem; opacity: 0.75; }
+.eq-msg-user { align-self: flex-end; background: #2563eb; color: #fff; border-bottom-right-radius: 4px; }
+.eq-msg-user strong { color: #bfdbfe; }
+.eq-msg-muse { align-self: flex-start; background: #f1f5f9; border: 1px solid #e2e8f0; border-bottom-left-radius: 4px; }
+.eq-msg-muse strong { color: #1d4ed8; }
+.eq-typing p { color: var(--text-muted, #64748b); font-style: italic; }
 @media (max-width: 480px) {
   .equipo-wrap { padding: 1.2rem 1rem 2rem; }
   .equipo-form { padding: 1rem; }
