@@ -1428,7 +1428,8 @@
 .swl-pc-body { fill: #0d2a42; stroke: #38bdf8; stroke-width: 1.4; transition: stroke .25s; }
 .swl-pc-screen { fill: #10395c; transition: fill .25s; }
 .swl-pc-name { fill: #f0f9ff; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 15px; }
-.swl-pc-mac { fill: #94a3b8; font-family: 'JetBrains Mono', monospace; font-size: 10.5px; }
+.swl-pc-mac { fill: #e2e8f0; font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+.swl-mac-pill { fill: rgba(2, 20, 35, .9); stroke: #164e63; stroke-width: 1; }
 .swl-pc-stand { stroke: #38bdf8; stroke-width: 2; opacity: .7; }
 .swl-pc.is-hit .swl-pc-body { stroke: #34d399; stroke-width: 2.4; }
 .swl-pc.is-hit .swl-pc-screen { fill: #065f46; }

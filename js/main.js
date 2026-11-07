@@ -3578,10 +3578,10 @@ function setupSwitchLab() {
   const framesLayer = document.getElementById('swl-frames');
   const NS = 'http://www.w3.org/2000/svg';
   const PCS = [
-    { x: 290, mac: 'AA:BB:CC:00:00:01' },
-    { x: 357, mac: 'AA:BB:CC:00:00:02' },
-    { x: 423, mac: 'AA:BB:CC:00:00:03' },
-    { x: 490, mac: 'AA:BB:CC:00:00:04' }
+    { x: 180, mac: 'AA:BB:CC:00:00:01' },
+    { x: 320, mac: 'AA:BB:CC:00:00:02' },
+    { x: 460, mac: 'AA:BB:CC:00:00:03' },
+    { x: 600, mac: 'AA:BB:CC:00:00:04' }
   ];
   const MID_Y = 70, PC_Y = 292;
   const learned = new Map(); // puerto -> indice de PC
