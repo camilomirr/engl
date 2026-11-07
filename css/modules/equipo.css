@@ -35,6 +35,19 @@
   background: #f0fdf4; border: 1px solid #bbf7d0; line-height: 1.6; overflow-wrap: anywhere; white-space: pre-wrap;
 }
 .eq-commit { font-size: 0.85rem; color: #15803d; font-family: ui-monospace, monospace; }
+.eq-chats { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 2rem; }
+.eq-chat {
+  display: inline-flex; align-items: center; gap: 0.5rem; font: inherit; font-weight: 600;
+  padding: 0.4rem 0.9rem 0.4rem 0.45rem; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--border, #cbd5e1); background: var(--card-bg, #fff); color: inherit;
+}
+.eq-chat-active { border-color: #2563eb; background: #dbeafe; color: #1d4ed8; }
+.eq-avatar-sm { width: 30px; height: 30px; flex-basis: 30px; font-size: 0.8rem; }
+.eq-badge {
+  min-width: 20px; height: 20px; padding: 0 5px; border-radius: 999px;
+  background: #dc2626; color: #fff; font-size: 0.75rem; font-weight: 700;
+  display: inline-flex; align-items: center; justify-content: center;
+}
 @media (max-width: 480px) {
   .equipo-wrap { padding: 1.2rem 1rem 2rem; }
   .equipo-form { padding: 1rem; }

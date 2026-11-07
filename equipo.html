@@ -126,9 +126,15 @@
         <label>Tu nombre
           <input id="fName" type="text" maxlength="40" required placeholder="Ej. Camilo Miranda" list="teamNames" autocomplete="off">
           <datalist id="teamNames">
-            <option value="Camilo Miranda"></option>
-            <option value="ds529"></option>
-            <option value="Z User"></option>
+            <option value="Duay"></option>
+            <option value="Santiago"></option>
+            <option value="Samuel"></option>
+            <option value="Yurlei"></option>
+            <option value="Andres"></option>
+            <option value="Abraham"></option>
+            <option value="Juan"></option>
+            <option value="Deivison"></option>
+            <option value="Camilo"></option>
           </datalist>
         </label>
         <label>¿En qué página?
@@ -151,7 +157,11 @@
         <p id="formStatus" class="equipo-status" role="status"></p>
       </form>
 
-      <h2 class="section-title">Tareas del equipo</h2>
+      <h2 class="section-title">Chats del equipo</h2>
+      <p class="equipo-hint">Cada persona tiene su propio chat. Toca tu nombre para ver solo tus tareas y escribir como tú. Muse lee todos los chats.</p>
+      <div id="chatList" class="eq-chats"></div>
+
+      <h2 class="section-title" id="listTitle">Tareas del equipo</h2>
       <p class="equipo-hint">Se actualiza sola cada 15 segundos. Cuando una tarea está lista sale con el check verde y el mensaje de Muse debajo.</p>
       <div id="taskList" class="equipo-list"><p class="equipo-loading">Cargando tareas…</p></div>
     </section>
