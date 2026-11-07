@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Sistema de seguridad del código fuente: Política de Seguridad de Contenido (CSP).
+       Solo se pueden cargar recursos del propio sitio y de los CDN que la página usa.
+       Se bloquean scripts inyectados o externos no autorizados, objetos, iframes y
+       envíos de formularios a sitios ajenos. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; img-src 'self' data: https://images.unsplash.com https://encrypted-tbn0.gstatic.com https://acf.geeknetic.es https://jensa.vtexassets.com https://www.esmero.com.co https://pisces.bbystatic.com https://placaschinas.com https://th.bing.com https://www.cyberpuerta.mx https://www.legionmac.com https://www.ntcompatible.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://xiuztrujrwdgcpjrruxu.supabase.co; media-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>NVISION - PC Builder · Arma tu propio PC</title>
+  <!-- Hojas de estilo modular -->
+  <link rel="stylesheet" href="css/styles.css?v=11">
+</head>
+<body>
+
+  <!-- Encabezado y Barra de Navegación Adaptativa -->
+  <header class="site-header">
+    <div class="header-container">
+      <!-- Marca / Nombre de la página -->
+      <a href="index.html" class="brand-logo" aria-label="NVISION Home">
+        <span class="brand-text">NVISION</span>
+      </a>
+
+      <nav id="nav-menu" class="nav-menu">
+        <ul class="nav-links">
+          <!-- Menú 1: Hardware & Computadores -->
+          <li class="nav-item-dropdown">
+            <button type="button" class="nav-dropdown-trigger" aria-expanded="false">
+              <span data-i18n="nav_grp_hardware">Hardware</span>
+              <span class="nav-arrow mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+            </button>
+            <ul class="nav-submenu">
+              <li class="nav-mobile-back"><button type="button"><span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></span><span data-i18n="nav_back">Volver</span></button></li>
+              <li><a href="hardware.html#historia" data-i18n="nav_history">Historia</a></li>
+              <li><a href="hardware.html#componentes" data-i18n="nav_components">Componentes</a></li>
+            </ul>
+          </li>
+
+          <!-- Menú 2: Redes & Topologías -->
+          <li class="nav-item-dropdown">
+            <button type="button" class="nav-dropdown-trigger" aria-expanded="false">
+              <span data-i18n="nav_grp_networks">Redes</span>
+              <span class="nav-arrow mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+            </button>
+            <ul class="nav-submenu">
+              <li class="nav-mobile-back"><button type="button"><span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></span><span data-i18n="nav_back">Volver</span></button></li>
+              <li><a href="redes.html#redes" data-i18n="nav_network">Del Hardware a la Red</a></li>
+              <li><a href="redes.html#alcance-redes" data-i18n="nav_scope">Clasificación de Redes</a></li>
+              <li><a href="redes.html#topologias" data-i18n="nav_topologies">Topologías</a></li>
+              <li><a href="redes_challenge/index.html" class="btn-challenge"><span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 8h10.5a4 4 0 0 1 3.9 4.8l-.6 3.1a3 3 0 0 1-5.4 1.4L13.5 15.5h-3l-1.4 1.8a3 3 0 0 1-5.4-1.4l-.6-3.1A4 4 0 0 1 6.5 8z"/><path d="M8 11v3M6.5 12.5h3"/><circle cx="15.8" cy="11.6" r="0.4" fill="currentColor"/><circle cx="17.8" cy="13.4" r="0.4" fill="currentColor"/></svg></span> Redes Challenge</a></li>
+              <li><a href="redes.html#simulador-red" data-i18n="nav_simulator">Simulador Ping</a></li>
+              <li><a href="redes.html#switch-3d" data-i18n="nav_switch3d">El switch por dentro</a></li>
+                          <li><a href="wifi.html" data-i18n="nav_wifi">WiFi Avanzado</a></li>
+            </ul>
+          </li>
+
+          <!-- Menú 3: Recursos & Práctica -->
+          <li class="nav-item-dropdown">
+            <button type="button" class="nav-dropdown-trigger" aria-expanded="false">
+              <span data-i18n="nav_grp_resources">Recursos</span>
+              <span class="nav-arrow mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+            </button>
+            <ul class="nav-submenu">
+              <li class="nav-mobile-back"><button type="button"><span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></span><span data-i18n="nav_back">Volver</span></button></li>
+              <li><a href="recursos.html#glosario" data-i18n="nav_glossary">Glosario</a></li>
+              <li><a href="recursos.html#laboratorio" data-i18n="nav_lab">Laboratorio de Códigos</a></li>
+              <li><a href="mantenimiento-software.html" data-i18n="nav_ms">Mantenimiento por software</a></li>
+            </ul>
+          </li>
+          <li class="nav-item-dropdown">
+            <button type="button" class="nav-dropdown-trigger" aria-expanded="false">
+              <span data-i18n="nav_grp_pc3d">PC3D y más</span>
+              <span class="nav-arrow mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+            </button>
+            <ul class="nav-submenu">
+              <li class="nav-mobile-back"><button type="button"><span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></span><span data-i18n="nav_back">Volver</span></button></li>
+              <li><a href="pc3d.html#visor-3d" data-i18n="nav_pc3d_viewer">Visor 3D</a></li>
+              <li><a href="simulador-pc.html">Simulador PC Builder</a></li>
+              <li><a href="pc3d.html#componentes-3d" data-i18n="nav_pc3d_parts">Componentes y tipos</a></li>
+              <li><a href="pc3d.html#mantenimiento" data-i18n="nav_pc3d_maintenance">Mantenimiento del PC</a></li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Botones de acción: Idioma y Menú Hamburguesa en móvil -->
+      <div class="header-actions">
+        <!-- Boton Modo Claro / Oscuro -->
+        <button id="theme-toggle" class="theme-switch-btn" title="Modo Claro / Oscuro" aria-label="Cambiar tema" data-i18n-title="theme_toggle_title">
+          <span id="theme-icon" class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span>
+        </button>
+        <!-- Selector desplegable bilingüe de Idioma (Español / Inglés) -->
+        <div class="lang-dropdown-wrapper" id="lang-dropdown-wrapper">
+          <button id="lang-toggle" class="lang-dropdown-btn" type="button" aria-haspopup="true" aria-expanded="false" title="Seleccionar idioma / Select language">
+            <span class="mono-icon globe-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg></span>
+            <span id="lang-label" class="lang-label-text">ES</span>
+            <span class="lang-chevron mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+          </button>
+          <div class="lang-dropdown-menu" id="lang-dropdown-menu" role="menu">
+            <div class="lang-dropdown-header" data-i18n="lang_select_title">Seleccionar Idioma</div>
+            <button type="button" class="lang-dropdown-item active" data-lang="es" role="menuitem">
+              <span class="item-code">ES</span>
+              <div class="item-info">
+                <span class="item-name">Español</span>
+                <span class="item-native">Spanish</span>
+              </div>
+              <span class="item-check mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+            </button>
+            <button type="button" class="lang-dropdown-item" data-lang="en" role="menuitem">
+              <span class="item-code">EN</span>
+              <div class="item-info">
+                <span class="item-name">English</span>
+                <span class="item-native">Inglés</span>
+              </div>
+              <span class="item-check mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Botón de tres rayitas (Hamburguesa) para celulares -->
+        <button id="menu-toggle" class="menu-toggle-btn" aria-label="Abrir menú" aria-expanded="false" data-i18n-title="menu_toggle_title">
+          <span class="menu-icon-inner mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+<main>
+  <!-- Hero del simulador -->
+  <section class="container pb-hero">
+    <h2 class="section-title">🖥️ PC Builder NVISION — Arma tu propio PC</h2>
+    <p class="section-desc">Un simulador de ensamblaje estilo PC Building Simulator, hecho para todos: acepta encargos de clientes o arma libre, elige entre <b>51 componentes reales</b> (procesadores, placas, RAM DDR4/DDR5, gráficas, fuentes, gabinetes y refrigeración), respeta la compatibilidad de verdad — socket, tipo de RAM, watts de la fuente y tamaño de la gráfica — y enciende tu equipo para pasar el benchmark en el monitor del taller.</p>
+    <div id="pb-missions" class="pb-missions"></div>
+  </section>
+
+  <section class="container pb-layout">
+    <!-- Columna principal: HUD + catálogo -->
+    <div>
+      <div class="pb-panel">
+        <h3>Panel del taller</h3>
+        <div class="pb-hud">
+          <div class="pb-hud-box"><span>Total del armado</span><b id="pb-total">$0</b></div>
+          <div class="pb-hud-box"><span>Consumo estimado</span><b id="pb-watts">0 W</b></div>
+          <div class="pb-hud-box"><span>Temperatura en carga</span><b id="pb-temp">—</b></div>
+          <div class="pb-hud-box"><span>Puntaje general</span><b id="pb-score-overall">—</b></div>
+          <div class="pb-hud-box pb-budget" id="pb-budget-wrap">
+            <span>Presupuesto del cliente</span>
+            <div class="pb-budget-track"><div class="pb-budget-fill" id="pb-budget-bar"></div></div>
+            <div class="pb-budget-text" id="pb-budget-text"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pb-panel">
+        <h3>Catálogo de componentes
+          <select id="pb-sort" class="pb-sort" aria-label="Ordenar catálogo">
+            <option value="price-asc">Precio: menor a mayor</option>
+            <option value="price-desc">Precio: mayor a menor</option>
+            <option value="perf">Mejor rendimiento</option>
+          </select>
+        </h3>
+        <div id="pb-tabs" class="pb-tabs"></div>
+        <div id="pb-catalog" class="pb-grid"></div>
+      </div>
+
+      <div class="pb-how">
+        <div><b>1 · Elige tu plataforma</b><p>El procesador manda: su socket (LGA1700, AM4 o AM5) decide qué placas base puedes usar, y la placa decide si tu RAM es DDR4 o DDR5.</p></div>
+        <div><b>2 · Cuida la energía</b><p>Suma el consumo de las piezas y deja a la fuente un 30% de margen. Una RTX 4090 con una fuente de 450W no enciende ni a saludos.</p></div>
+        <div><b>3 · Que todo quepa</b><p>Una placa ATX no entra en un gabinete Mini-ITX y una gráfica de 336 mm tampoco. El simulador te avisa antes de que fuerces nada.</p></div>
+        <div><b>4 · Enciende y entrega</b><p>El POST revisa pieza por pieza y el benchmark mide FPS y temperatura. Si el cliente queda feliz, ganas estrellas y el encargo queda guardado.</p></div>
+      </div>
+    </div>
+
+    <!-- Columna lateral: gabinete, monitor y resumen -->
+    <aside class="pb-side">
+      <div class="pb-panel pb-case-wrap">
+        <h3>Tu PC en el banco de trabajo</h3>
+        <div class="pb-case" id="pb-case">
+          <div class="pb-case-top"><span id="pb-case-name">Mesa de trabajo · elige un gabinete</span><span class="pb-power-led" title="LED de encendido"></span></div>
+          <div class="pb-board">
+            <div class="pb-board-name" id="pb-slot-board">Sin placa base</div>
+            <div class="pb-slot pb-cpu" id="pb-slot-cpu"><div class="pb-empty">Socket vacío</div></div>
+            <div class="pb-slot" id="pb-slot-ram"><small>Sin RAM</small></div>
+            <div class="pb-slot" id="pb-slot-gpu" style="grid-column: 1 / -1;"><div class="pb-empty">Ranura PCIe · sin gráfica</div></div>
+            <div class="pb-slot" id="pb-slot-storage"><div class="pb-empty">Bahía vacía</div></div>
+            <div class="pb-slot" id="pb-slot-psu"><div class="pb-empty">Sin fuente</div></div>
+          </div>
+          <div class="pb-case-fans" id="pb-case-fans"></div>
+        </div>
+        <p class="pb-note">Los ventiladores giran y el RGB se enciende cuando el equipo supera el POST. Cambia cualquier pieza y el PC se apaga: así de frágil es el hardware real.</p>
+      </div>
+
+      <div class="pb-panel">
+        <h3>Monitor del taller</h3>
+        <div class="pb-monitor"><div class="pb-screen" id="pb-screen"></div></div>
+        <div class="pb-actions">
+          <button type="button" class="pb-btn pb-btn--power" id="pb-power">⏻ ENCENDER Y PROBAR</button>
+        </div>
+        <div id="pb-compat"></div>
+      </div>
+
+      <div class="pb-panel">
+        <h3>Resumen del armado</h3>
+        <ul id="pb-build-list"></ul>
+        <div class="pb-scores">
+          <div class="pb-score" id="pb-score-gaming"><span>Gaming</span><div class="pb-bar"><i style="width:0%"></i></div><b>0</b></div>
+          <div class="pb-score" id="pb-score-office"><span>Oficina</span><div class="pb-bar"><i style="width:0%"></i></div><b>0</b></div>
+          <div class="pb-score" id="pb-score-work"><span>Creación</span><div class="pb-bar"><i style="width:0%"></i></div><b>0</b></div>
+        </div>
+        <div class="pb-actions">
+          <button type="button" class="pb-btn" id="pb-random">🎲 Sorpréndeme</button>
+          <button type="button" class="pb-btn" id="pb-copy">📋 Copiar resumen</button>
+          <button type="button" class="pb-btn" id="pb-reset">🧹 Limpiar mesa</button>
+        </div>
+        <div class="pb-save-row">
+          <input type="text" id="pb-build-name" placeholder="Nombre de tu armado (ej: La Bestia de Duay)" maxlength="40">
+          <button type="button" class="pb-btn" id="pb-save">💾 Guardar</button>
+        </div>
+        <ul class="pb-saved" id="pb-saved"></ul>
+      </div>
+    </aside>
+  </section>
+</main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <p>© 2026 - <span data-i18n="footer_text">NVISION</span></p>
+  </footer>
+
+  <script src="js/main.js?v=3"></script>
+  <script src="js/pc-builder.js?v=1"></script>
+  <script src="js/equipo-widget.js?v=10" defer></script>
+</body>
+</html>
