@@ -1,0 +1,117 @@
+================================================================================
+GUIA Y SCRIPTS DE OPTIMIZACION TOTAL DE WINDOWS (MAXIMO RENDIMIENTO Y BAJA LATENCIA)
+================================================================================
+
+REQUISITO OBLIGATORIO:
+Todos estos comandos deben ejecutarse en PowerShell o Terminal con PRIVILEGIOS DE ADMINISTRADOR.
+(Clic derecho en Inicio -> Windows PowerShell / Terminal (Administrador) -> "Ejecutar como administrador").
+
+================================================================================
+BLOQUE 1: DESBLOQUEO DE POTENCIA BRUTA DEL PROCESADOR (CPU)
+================================================================================
+
+1. Desbloquear y activar el plan de energia oculto "Maximo Rendimiento" (Ultimate Performance):
+--------------------------------------------------------------------------------
+powercfg -duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61
+powercfg -setactive 51b87060-d687-41eb-a490-1a6d3bfb61c5
+
+2. Desactivar el estrangulamiento de energia de CPU (Power Throttling):
+--------------------------------------------------------------------------------
+if (-not (Test-Path "HKLM:\SYSTEM\CurrentControlSet\Control\Power\PowerThrottling")) { New-Item -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Power\PowerThrottling" -Force }
+Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Power\PowerThrottling" -Name "PowerThrottlingOff" -Value 1 -Force
+
+3. Prioridad maxima a la aplicacion/juego activo en pantalla (Win32PrioritySeparation):
+--------------------------------------------------------------------------------
+Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\PriorityControl" -Name "Win32PrioritySeparation" -Value 38 -Force
+
+4. Desactivar Dynamic Ticking del procesador (reducir latencia en teclado/mouse/juegos):
+--------------------------------------------------------------------------------
+bcdedit /set disabledynamictick yes
+bcdedit /set useplatformclock no
+
+================================================================================
+BLOQUE 2: LIBERACION DE RAM Y ELIMINACION DE PROCESOS PARASITOS
+================================================================================
+
+1. Desactivar telemetria y recoleccion de datos de Windows (DiagTrack):
+--------------------------------------------------------------------------------
+Stop-Service -Name DiagTrack -Force -ErrorAction SilentlyContinue
+Set-Service -Name DiagTrack -StartupType Disabled -ErrorAction SilentlyContinue
+
+2. Desactivar el servicio P2P de actualizaciones de Windows (Delivery Optimization - dosvc):
+--------------------------------------------------------------------------------
+Stop-Service -Name dosvc -Force -ErrorAction SilentlyContinue
+Set-Service -Name dosvc -StartupType Disabled -ErrorAction SilentlyContinue
+if (-not (Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeliveryOptimization")) { New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeliveryOptimization" -Force }
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeliveryOptimization" -Name "DODownloadMode" -Value 0 -Force
+
+3. Desactivar aplicaciones de Windows ejecutandose solas en segundo plano:
+--------------------------------------------------------------------------------
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications" -Name "GlobalUserDisabled" -Value 1 -Force
+if (-not (Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\AppPrivacy")) { New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\AppPrivacy" -Force }
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\AppPrivacy" -Name "LetAppsRunInBackground" -Value 2 -Force
+
+4. Bloquear que Microsoft Edge se precargue y corra en segundo plano:
+--------------------------------------------------------------------------------
+Stop-Process -Name msedge, msedgewebview2 -Force -ErrorAction SilentlyContinue
+if (-not (Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Edge")) { New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Edge" -Force }
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Edge" -Name "StartupBoostEnabled" -Value 0 -Force
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Edge" -Name "BackgroundModeEnabled" -Value 0 -Force
+Get-ScheduledTask | Where-Object { $_.TaskName -like "*Edge*" } | Disable-ScheduledTask -ErrorAction SilentlyContinue
+
+================================================================================
+BLOQUE 3: RESPUESTA INSTANTANEA DE LA INTERFAZ Y MENUS
+================================================================================
+
+1. Reducir el retardo de menus de 400ms a 10ms (apertura instantanea al hacer clic):
+--------------------------------------------------------------------------------
+Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name MenuShowDelay -Value "10" -Force
+
+2. Desactivar transparencias pesadas (libera memoria y graficos integrados):
+--------------------------------------------------------------------------------
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name EnableTransparency -Value 0 -Force
+
+3. Desactivar animaciones de minimizado lentas:
+--------------------------------------------------------------------------------
+Set-ItemProperty -Path "HKCU:\Control Panel\Desktop\WindowMetrics" -Name "MinAnimate" -Value "0" -Force
+
+4. Desactivar busquedas web de Bing en el Menu Inicio (busqueda local instantanea):
+--------------------------------------------------------------------------------
+if (-not (Test-Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search")) { New-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" -Force }
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" -Name "BingSearchEnabled" -Value 0 -Force
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" -Name "CortanaConsent" -Value 0 -Force
+if (-not (Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search")) { New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Force }
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "DisableWebSearch" -Value 1 -Force
+
+5. Desactivar grabacion en segundo plano GameDVR (ahorro de hilos de CPU):
+--------------------------------------------------------------------------------
+if (-not (Test-Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\GameDVR")) { New-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\GameDVR" -Force }
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\GameDVR" -Name "AppCaptureEnabled" -Value 0 -Force
+if (-not (Test-Path "HKCU:\System\GameConfigStore")) { New-Item -Path "HKCU:\System\GameConfigStore" -Force }
+Set-ItemProperty -Path "HKCU:\System\GameConfigStore" -Name "GameDVR_Enabled" -Value 0 -Force
+
+================================================================================
+BLOQUE 4: LIMPIEZA DE DISCO Y OPTIMIZACION DE ALMACENAMIENTO
+================================================================================
+
+1. Desactivar hibernacion (recupera de 8 GB a 32 GB de espacio en C:):
+--------------------------------------------------------------------------------
+powercfg /h off
+
+2. Limpiar archivos temporales de usuario y de sistema:
+--------------------------------------------------------------------------------
+Get-ChildItem -Path $env:TEMP | ForEach-Object { Remove-Item $_.FullName -Recurse -Force -ErrorAction SilentlyContinue }
+Remove-Item -Path "C:\Windows\Temp\*" -Recurse -Force -ErrorAction SilentlyContinue
+
+3. Vaciar cache DNS de red:
+--------------------------------------------------------------------------------
+ipconfig /flushdns
+
+4. Optimizar / Desfragmentar y TRIM del disco principal (C:):
+--------------------------------------------------------------------------------
+Optimize-Volume -DriveLetter C -Defrag -Verbose
+
+================================================================================
+PASO FINAL:
+Reiniciar el equipo para que todas las politicas de arranque, bcdedit y CPU entren en vigor.
+================================================================================
