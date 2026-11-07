@@ -72,10 +72,19 @@
 
   function seenKey(n) { return 'eq_seen_' + n; }
   function getSeen(n) { return localStorage.getItem(seenKey(n)) || '1970-01-01'; }
-  function markSeen(n) { localStorage.setItem(seenKey(n), new Date().toISOString()); }
+  function markSeen(n) {
+    // Guardar la fecha del mensaje más reciente, NO la hora del aparato:
+    // si el reloj del aparato va atrasado frente al servidor, el "visto"
+    // quedaba antes que el mensaje y el 1 no se quitaba nunca.
+    var latest = '1970-01-01';
+    lastRows.forEach(function (t) {
+      if (t.name === n) { var u = t.updated_at || t.created_at || ''; if (u > latest) latest = u; }
+    });
+    localStorage.setItem(seenKey(n), latest === '1970-01-01' ? new Date().toISOString() : latest);
+  }
   function unreadCount(n) {
-    var seen = getSeen(n);
-    return lastRows.filter(function (t) { return t.name === n && t.status === 'listo' && (t.updated_at || t.created_at) > seen; }).length;
+    var seen = Date.parse(getSeen(n)) || 0;
+    return lastRows.filter(function (t) { return t.name === n && t.status === 'listo' && Date.parse(t.updated_at || t.created_at || '') > seen; }).length;
   }
 
   function renderFabBadge() {
@@ -221,6 +230,8 @@
     try {
       lastRows = (await sbGet('/rest/v1/team_tasks?select=*&order=created_at.desc&limit=100')) || [];
       var sig = rowsSig(lastRows);
+      // Si está mirando el chat, marcar visto con las fechas que acaban de llegar.
+      if (open && view === 'chat' && name) markSeen(name);
       renderFabBadge();
       // Si nada cambió, no se vuelve a dibujar: así el chat no se mueve solo.
       if (open && sig !== lastSig) {
