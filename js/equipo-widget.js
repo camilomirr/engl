@@ -187,6 +187,9 @@
     panel.hidden = !v;
     if (v) {
       window.dispatchEvent(new CustomEvent('nvision-chat-open', { detail: { which: 'equipo' } }));
+      // Al abrir ya se ven los mensajes (vista previa en la lista), así que
+      // el 1 se quita de inmediato, sin esperar al chequeo de 5 s.
+      if (name) markSeen(name);
       // Al abrir el botón, SIEMPRE salen primero los nombres.
       renderPicker();
       renderFabBadge();
@@ -230,8 +233,11 @@
     try {
       lastRows = (await sbGet('/rest/v1/team_tasks?select=*&order=created_at.desc&limit=100')) || [];
       var sig = rowsSig(lastRows);
-      // Si está mirando el chat, marcar visto con las fechas que acaban de llegar.
-      if (open && view === 'chat' && name) markSeen(name);
+      // Si el panel está abierto, los mensajes se están viendo: en el chat se
+      // ve el hilo completo y en la lista se ve la vista previa con la
+      // respuesta de Muse. En cualquier caso, marcar visto para que el 1
+      // se quite al ver los mensajes (antes solo se marcaba en el chat).
+      if (open && name) markSeen(name);
       renderFabBadge();
       // Si nada cambió, no se vuelve a dibujar: así el chat no se mueve solo.
       if (open && sig !== lastSig) {

@@ -105,7 +105,7 @@
 .eqw-fab-badge[hidden] { display: none; }
 .eqw-panel {
   position: fixed; right: 1.25rem; bottom: 9.6rem; z-index: 60;
-  width: min(21rem, calc(100vw - 2rem)); display: flex; flex-direction: column;
+  width: min(19rem, calc(100vw - 2rem)); display: flex; flex-direction: column;
   border: 1px solid #cbd5e1; border-radius: 14px; overflow: hidden;
   background: #fff; box-shadow: 0 18px 48px rgba(2, 8, 23, 0.3);
   animation: eqw-in 0.18s ease;
@@ -131,7 +131,7 @@
 .eqw-head-who span { font-size: 0.75rem; color: var(--text-muted, #64748b); }
 .eqw-close { font: inherit; font-size: 1.3rem; color: #0f172a; background: none; border: none; cursor: pointer; padding: 0.1rem 0.4rem; }
 .eqw-body {
-  padding: 0.7rem; min-height: 210px; max-height: 48vh; overflow-y: auto;
+  padding: 0.7rem; min-height: 180px; max-height: 44vh; overflow-y: auto;
   background: #f0f2f5; display: flex; flex-direction: column; gap: 0.4rem;
 }
 .eqw-body .eq-chat-row { background: #fff; }
