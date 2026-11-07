@@ -84,3 +84,52 @@
   .eq-messages { max-height: 55vh; }
   .eq-msg { max-width: 92%; }
 }
+
+/* Widget flotante del chat del equipo — ENCIMA del botón del chatbot del sitio */
+.eqw-fab {
+  position: fixed; right: 1.25rem; bottom: 5.4rem; z-index: 60;
+  width: 3.4rem; height: 3.4rem; padding: 0; border: none; border-radius: 50%;
+  cursor: pointer; overflow: visible; background: #fff;
+  box-shadow: 0 10px 28px rgba(8, 47, 73, 0.35), 0 0 20px rgba(34, 211, 238, 0.22);
+  transition: transform 0.2s ease;
+}
+.eqw-fab:hover { transform: translateY(-3px); }
+.eqw-fab img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; }
+.eqw-fab-badge {
+  position: absolute; top: -4px; right: -4px; min-width: 20px; height: 20px; padding: 0 6px;
+  border-radius: 999px; background: #22c55e; color: #fff; font-size: 0.75rem; font-weight: 700;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.eqw-panel {
+  position: fixed; right: 1.25rem; bottom: 9.6rem; z-index: 60;
+  width: min(23rem, calc(100vw - 2rem)); display: flex; flex-direction: column;
+  border: 1px solid #cbd5e1; border-radius: 14px; overflow: hidden;
+  background: #fff; box-shadow: 0 18px 48px rgba(2, 8, 23, 0.3);
+}
+.eqw-panel[hidden] { display: none; }
+.eqw-head {
+  display: flex; align-items: center; gap: 0.6rem; padding: 0.6rem 0.8rem;
+  background: linear-gradient(135deg, #2563eb, #0ea5e9); color: #fff;
+}
+.eqw-head-logo { width: 34px; height: 34px; border-radius: 9px; object-fit: cover; }
+.eqw-head-who { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.eqw-head-who span { font-size: 0.75rem; opacity: 0.85; }
+.eqw-close { font: inherit; font-size: 1.3rem; color: #fff; background: none; border: none; cursor: pointer; padding: 0.1rem 0.4rem; }
+.eqw-body {
+  padding: 0.7rem; min-height: 240px; max-height: 55vh; overflow-y: auto;
+  background: #f0f2f5; display: flex; flex-direction: column; gap: 0.4rem;
+}
+.eqw-body .eq-chat-row { background: #fff; }
+.eqw-back {
+  align-self: flex-start; font: inherit; font-size: 0.8rem; color: #2563eb;
+  background: none; border: none; cursor: pointer; padding: 0.2rem 0; margin-bottom: 0.3rem;
+}
+.eqw-inputbar { display: flex; gap: 0.5rem; padding: 0.6rem; background: #fff; border-top: 1px solid #e2e8f0; }
+.eqw-inputbar input {
+  flex: 1; min-width: 0; font: inherit; padding: 0.6rem 0.8rem; border-radius: 999px;
+  border: 1px solid #cbd5e1; background: #f8fafc; color: inherit;
+}
+.eqw-send { border-radius: 999px; padding: 0.6rem 1.1rem; }
+@media (max-width: 480px) {
+  .eqw-body { max-height: 50vh; }
+}
