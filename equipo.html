@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <title>NVISION - Equipo: pídele algo a Muse</title>
+  <title>NVISION - Chat del equipo con Muse</title>
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -119,51 +119,32 @@
   </header>
 <main>
     <section class="container equipo-wrap">
-      <h1 class="section-title">Equipo NVISION — Pídele algo a Muse</h1>
-      <p class="equipo-intro">Escribe tu nombre, en qué página es el cambio y qué hay que hacer. Muse lo hace, lo sube a la página y te responde aquí mismo con lo que cambió y el número del cambio (commit). No necesitas cuenta ni pagar nada.</p>
+      <!-- Pantalla 1: escoger el nombre -->
+      <div id="pickerView">
+        <div class="eq-brand">
+          <img src="assets/muse-logo.webp" alt="Muse" class="eq-logo">
+          <h1 class="section-title">Chat del equipo con Muse</h1>
+          <p class="equipo-intro">Toca tu nombre para abrir tu chat con Muse. Escribe lo que necesites, como un mensaje normal, y Muse te responde aquí mismo. Los chats se quedan guardados.</p>
+        </div>
+        <div id="chatList" class="eq-chat-list"><p class="equipo-loading">Cargando chats…</p></div>
+      </div>
 
-      <form id="taskForm" class="equipo-form panel">
-        <label>Tu nombre
-          <input id="fName" type="text" maxlength="40" required placeholder="Ej. Camilo Miranda" list="teamNames" autocomplete="off">
-          <datalist id="teamNames">
-            <option value="Duay"></option>
-            <option value="Santiago"></option>
-            <option value="Samuel"></option>
-            <option value="Yurlei"></option>
-            <option value="Andres"></option>
-            <option value="Abraham"></option>
-            <option value="Juan"></option>
-            <option value="Deivison"></option>
-            <option value="Camilo"></option>
-          </datalist>
-        </label>
-        <label>¿En qué página?
-          <select id="fPage">
-            <option value="Inicio">Inicio</option>
-            <option value="Hardware">Hardware</option>
-            <option value="Redes">Redes</option>
-            <option value="WiFi">WiFi</option>
-            <option value="Recursos">Recursos</option>
-            <option value="Mantenimiento">Mantenimiento por software</option>
-            <option value="Visor 3D">Visor 3D (pc3d)</option>
-            <option value="Redes Challenge">Redes Challenge (juego)</option>
-            <option value="Otra">Otra / toda la página</option>
-          </select>
-        </label>
-        <label>¿Qué hay que cambiar o hacer?
-          <textarea id="fTask" rows="4" maxlength="2000" required placeholder="Ej. En redes.html el laboratorio del switch se ve corrido en el celular, arréglalo"></textarea>
-        </label>
-        <button class="btn-primary" type="submit" id="btnSend">Enviar a Muse</button>
+      <!-- Pantalla 2: chat en vivo -->
+      <div id="chatView" hidden>
+        <div class="eq-chat-head">
+          <button id="btnBack" class="eq-back" type="button" aria-label="Volver">←</button>
+          <img src="assets/muse-logo.webp" alt="Muse" class="eq-logo-sm">
+          <div class="eq-chat-who"><strong id="chatName"></strong><span id="chatStatus">Chat del equipo NVISION</span></div>
+        </div>
+        <div id="taskList" class="eq-messages"><p class="equipo-loading">Cargando mensajes…</p></div>
+        <form id="taskForm" class="eq-inputbar">
+          <input id="fName" type="hidden">
+          <input id="fPage" type="hidden" value="Chat">
+          <input id="fTask" type="text" maxlength="2000" required placeholder="Escribe un mensaje..." autocomplete="off">
+          <button class="btn-primary eq-send" type="submit" id="btnSend">Enviar</button>
+        </form>
         <p id="formStatus" class="equipo-status" role="status"></p>
-      </form>
-
-      <h2 class="section-title">Chats del equipo</h2>
-      <p class="equipo-hint">Cada persona tiene su propio chat en vivo. Toca tu nombre y se abre tu chat con Muse: escribes y te responde ahí mismo. Los chats no se borran, todo queda guardado.</p>
-      <div id="chatList" class="eq-chats"></div>
-
-      <h2 class="section-title" id="listTitle">Tareas del equipo</h2>
-      <p class="equipo-hint">Se actualiza sola cada 5 segundos. Cuando una tarea está lista sale con el check verde y el mensaje de Muse debajo.</p>
-      <div id="taskList" class="equipo-list"><p class="equipo-loading">Cargando tareas…</p></div>
+      </div>
     </section>
   </main>
 
