@@ -7,8 +7,8 @@
 }
 
 .local-assistant-toggle {
-  width: 3.4rem;
-  height: 3.4rem;
+  width: 3rem;
+  height: 3rem;
   display: grid;
   place-items: center;
   border: 1px solid rgba(103, 232, 249, 0.65);
@@ -26,13 +26,16 @@
   box-shadow: 0 14px 32px rgba(8, 47, 73, 0.42), 0 0 26px rgba(34, 211, 238, 0.34);
 }
 
-.local-assistant-toggle svg { width: 1.35rem; height: 1.35rem; }
+.local-assistant-toggle svg { width: 1.2rem; height: 1.2rem; }
 
 .local-assistant-panel {
   position: absolute;
   right: 0;
-  bottom: 4.25rem;
-  width: min(23rem, calc(100vw - 2rem));
+  bottom: 3.75rem;
+  display: flex;
+  flex-direction: column;
+  width: min(20rem, calc(100vw - 2rem));
+  max-height: calc(100vh - 5.5rem);
   overflow: hidden;
   border: 1px solid #cbd5e1;
   border-radius: var(--radius-md);
@@ -48,7 +51,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 0.85rem 1rem;
+  padding: 0.7rem 0.9rem;
   color: #0f172a;
   background: #ffffff;
   border-bottom: 1px solid #e2e8f0;
@@ -65,7 +68,7 @@
   cursor: pointer;
 }
 
-.local-assistant-body { padding: 0.9rem; background: #ffffff; }
+.local-assistant-body { flex: 1; min-height: 0; padding: 0.75rem; background: #ffffff; overflow-y: auto; }
 .local-assistant-welcome { margin: 0 0 0.75rem; color: #334155; font-size: 0.78rem; line-height: 1.5; }
 
 .local-assistant-form { display: flex; gap: 0.45rem; }
@@ -101,11 +104,10 @@
 
 @media (max-width: 600px) {
   .local-assistant { right: 0.8rem; bottom: 0.8rem; }
-  .local-assistant-panel { bottom: 4rem; }
+  .local-assistant-panel { bottom: 3.5rem; }
 }
 /* ===== Chat entrenado (modelo FinBot) ===== */
-.local-assistant-panel { width: min(25rem, calc(100vw - 2rem)); }
-.local-assistant-body { max-height: min(72vh, 600px); overflow-y: auto; }
+.local-assistant-body { overflow-y: auto; }
 .la-tabs { display: flex; gap: 0.4rem; margin-bottom: 0.8rem; }
 .la-tab {
   flex: 1; padding: 0.5rem; cursor: pointer;
@@ -114,11 +116,11 @@
   font: 700 0.72rem 'JetBrains Mono', monospace;
 }
 .la-tab.is-active { background: #0e7490; border-color: #0e7490; color: #ffffff; }
-.la-log { display: grid; gap: 0.55rem; max-height: 300px; overflow-y: auto; padding-right: 0.2rem; }
+.la-log { display: grid; gap: 0.55rem; max-height: 200px; overflow-y: auto; padding-right: 0.2rem; }
 .la-log:empty { display: none; }
 .la-msg {
   max-width: 92%; padding: 0.6rem 0.7rem; border-radius: 12px;
-  font-size: 0.78rem; line-height: 1.55; color: #0f172a; overflow-wrap: anywhere;
+  font-size: 0.74rem; line-height: 1.5; color: #0f172a; overflow-wrap: anywhere;
 }
 .la-msg.bot { background: #f1f5f9; border: 1px solid #e2e8f0; border-bottom-left-radius: 4px; justify-self: start; }
 .la-msg.user { background: #0e7490; color: #ffffff; border-bottom-right-radius: 4px; justify-self: end; }
