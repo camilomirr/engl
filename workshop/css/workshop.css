@@ -84,3 +84,19 @@
 .ws-task-row--done { opacity: 0.65; }
 .ws-task-row b { color: var(--accent-cyan); white-space: nowrap; }
 #ws-task-btn { margin-top: 0.35rem; }
+
+.ws-monitor { margin-top: 1rem; border-top: 1px solid var(--border-subtle); padding-top: 0.9rem; }
+.ws-monitor h4 { margin: 0 0 0.6rem; font-family: var(--font-heading); }
+.ws-screen { background: #05070d; border: 1px solid #1e293b; border-radius: var(--radius-md); padding: 0.7rem 0.8rem; min-height: 168px; max-height: 260px; overflow-y: auto; font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace; font-size: 0.8rem; line-height: 1.45; color: #cbd5e1; }
+.ws-line { margin: 0 0 0.25rem; }
+.ws-line--ok { color: #4ade80; }
+.ws-line--warn { color: #fbbf24; }
+.ws-line--err { color: #f87171; font-weight: 700; }
+.ws-line--dim { color: #94a3b8; }
+.ws-fault { border: 1px solid rgba(248,113,113,0.5); background: rgba(248,113,113,0.08); border-radius: var(--radius-sm); padding: 0.5rem 0.6rem; margin-top: 0.4rem; color: #fecaca; }
+.ws-fault p { margin: 0.3rem 0 0; }
+.ws-monitor-btns { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: 0.6rem; }
+.ws-monitor-btns .ws-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.ws-bios-row { display: flex; justify-content: space-between; gap: 1rem; border-bottom: 1px dashed rgba(148,163,184,0.25); padding: 0.15rem 0; }
+.ws-desktop { text-align: center; padding: 1rem 0.4rem; }
+.ws-desktop .ws-desk-emoji { font-size: 2rem; }

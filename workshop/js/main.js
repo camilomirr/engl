@@ -6,14 +6,16 @@
 // las reglas validan -> la pieza vuela a su punto de
 // montaje. El avance se guarda en localStorage.
 // =========================================================
-import { loadComponents } from './data/catalog.js?v=6';
-import { checkPlacement, missingParts, REQUIRED } from './core/rules.js?v=6';
-import { createScene } from './core/scene.js?v=6';
-import { loadState, saveState, buy as ecoBuy, sell as ecoSell, advanceDay } from './core/economy.js?v=6';
-import { createShop } from './ui/shop.js?v=6';
-import { tasksFor, doNextTask, assemblyPending, TOOLS } from './core/assembly.js?v=6';
-import { createTasksPanel } from './ui/tasks.js?v=6';
-import { createHud, t } from './ui/hud.js?v=6';
+import { loadComponents } from './data/catalog.js?v=7';
+import { checkPlacement, missingParts, REQUIRED } from './core/rules.js?v=7';
+import { createScene } from './core/scene.js?v=7';
+import { loadState, saveState, buy as ecoBuy, sell as ecoSell, advanceDay } from './core/economy.js?v=7';
+import { createShop } from './ui/shop.js?v=7';
+import { tasksFor, doNextTask, assemblyPending, TOOLS } from './core/assembly.js?v=7';
+import { createTasksPanel } from './ui/tasks.js?v=7';
+import { runPost, biosRows, stressTest, temps } from './core/boot.js?v=7';
+import { createMonitor } from './ui/monitor.js?v=7';
+import { createHud, t } from './ui/hud.js?v=7';
 
 const installed = {};   // categoria -> componente
 const game = loadState(); // dinero, dia, inventario propio y armado guardado
@@ -68,6 +70,69 @@ function refreshTasks() {
     partName: item.name,
     tasks: tasksFor(item, buildCtx()).map(tk => ({ label: tk.label[lang()], tool: tk.tool, count: tk.count, done: progress[tk.id] || 0 }))
   });
+}
+// ---------------- Fase 4: arranque, BIOS, SO, termicas ----------------
+const monitor = createMonitor();
+let bootState = 'off'; // off | needos | desktop
+const wait = ms => new Promise(r => setTimeout(r, ms));
+function setBtn(id, on) { const b = document.getElementById(id); if (b) b.disabled = !on; }
+function updateMonitorBtns() {
+  setBtn('ws-bios-btn', bootState === 'needos' || bootState === 'desktop');
+  setBtn('ws-os-btn', bootState === 'needos');
+  setBtn('ws-stress-btn', bootState === 'desktop');
+  const x = document.getElementById('ws-xmp-btn');
+  if (x) x.textContent = '⚡ XMP/EXPO: ' + (game.system.xmp ? 'ON' : 'OFF');
+}
+function powerDown(msg) {
+  if (scene) scene.setPowered(false);
+  bootState = 'off';
+  monitor.off(msg || (lang() === 'en' ? '— No signal —' : '— Sin señal —'));
+  updateMonitorBtns();
+}
+function showDesktop() {
+  const tp = temps(installed);
+  const en = lang() === 'en';
+  monitor.desktop('<div class="ws-desktop"><div class="ws-desk-emoji">🖥️</div><b>NVISION OS</b><p>' +
+    (en ? 'Desktop ready' : 'Escritorio listo') + ' · CPU ' + tp.idle + ' °C ' + (en ? 'idle' : 'en reposo') + ' · ' + tp.load + ' °C ' + (en ? 'est. load' : 'carga est.') + '</p><p class="ws-line--dim">' +
+    (en ? 'Run the stress test to check stability.' : 'Pasa la prueba de carga para comprobar la estabilidad.') + '</p></div>');
+  bootState = 'desktop';
+  updateMonitorBtns();
+}
+async function bootFlow() {
+  const s = t();
+  const missing = missingParts(installed);
+  if (missing.length) {
+    hud.log(s.powerMissing + missing.map(c => s.catNames[c]).join(', ') + '.', 'err');
+    powerDown();
+    return;
+  }
+  const pending = assemblyPending(installed, game.assembly, buildCtx());
+  if (pending.length) {
+    pending.slice(0, 4).forEach(p => hud.log('🔧 Falta: ' + p.task.label[lang()] + ' — ' + p.item.name + ' (' + p.done + '/' + p.task.count + ')', 'err'));
+    hud.log('Termina el montaje paso a paso antes de encender.', 'err');
+    powerDown();
+    return;
+  }
+  if (scene) scene.setPowered(true);
+  const post = runPost(installed, game.system);
+  const completed = await monitor.playLines(post.lines, lang());
+  if (!completed) return;
+  if (!post.ok) {
+    monitor.fault(post.fault, lang());
+    hud.log('⛔ POST: ' + post.fault.title[lang()], 'err');
+    if (scene) scene.setPowered(false);
+    bootState = 'off';
+    updateMonitorBtns();
+    return;
+  }
+  hud.log(s.powerOk, 'ok');
+  if (!game.system.osInstalled) {
+    bootState = 'needos';
+    monitor.line(lang() === 'en' ? 'No operating system found — press "Install system".' : 'Sin sistema operativo — pulsa «Instalar sistema».', 'warn');
+    updateMonitorBtns();
+  } else {
+    showDesktop();
+  }
 }
 function doStep() {
   const item = selectedCat ? installed[selectedCat] : null;
@@ -145,6 +210,7 @@ function attemptPlace(item) {
   if (installed[item.category] && scene) scene.remove(item.category);
   installed[item.category] = item;
   if (scene) { scene.place(item.category, item); scene.setPowered(false); }
+  if (bootState !== 'off') powerDown(lang() === 'en' ? '— No signal — You changed parts: power on again.' : '— Sin señal — Cambiaste piezas: vuelve a encender el equipo.');
   holding = null;
   selectedCat = item.category;
   hud.setSelected(item.category);
@@ -162,6 +228,7 @@ function removePart(cat) {
   }
   const item = installed[cat];
   if (!item) return;
+  if (bootState !== 'off') powerDown(lang() === 'en' ? '— No signal — You changed parts: power on again.' : '— Sin señal — Cambiaste piezas: vuelve a encender el equipo.');
   delete game.assembly[item.id];
   if (scene && cat === 'cpu') scene.setPaste(false);
   if (scene && cat === 'psu') ['atx', 'eps', 'pcie', 'sata'].forEach(k => scene.setCable(k, false));
@@ -229,24 +296,50 @@ async function init() {
     scene.setPanel(open);
     this.textContent = open ? t().panelOpen : t().panelClosed;
   });
-  document.getElementById('ws-power-btn').addEventListener('click', () => {
-    const s = t();
-    const missing = missingParts(installed);
-    if (missing.length) {
-      hud.log(s.powerMissing + missing.map(c => s.catNames[c]).join(', ') + '.', 'err');
-      if (scene) scene.setPowered(false);
-      return;
-    }
-    const pending = assemblyPending(installed, game.assembly, buildCtx());
-    if (pending.length) {
-      pending.slice(0, 4).forEach(p => hud.log('🔧 Falta: ' + p.task.label[lang()] + ' — ' + p.item.name + ' (' + p.done + '/' + p.task.count + ')', 'err'));
-      hud.log('Termina el montaje paso a paso antes de encender.', 'err');
-      if (scene) scene.setPowered(false);
-      return;
-    }
-    if (scene) scene.setPowered(true);
-    hud.log(s.powerOk, 'ok');
+  document.getElementById('ws-power-btn').addEventListener('click', () => { bootFlow(); });
+  document.getElementById('ws-bios-btn').addEventListener('click', () => {
+    const rows = biosRows(installed, game.system);
+    const en = lang() === 'en';
+    monitor.desktop('<b>NVISION UEFI SETUP</b>' + rows.map(r => '<div class="ws-bios-row"><span>' + (typeof r.k === 'string' ? r.k : r.k[lang()]) + '</span><b>' + (typeof r.v === 'string' ? r.v : r.v[lang()]) + '</b></div>').join('') +
+      '<p class="ws-line--dim">' + (en ? 'Press "Test power" to exit and boot.' : 'Pulsa «Probar encendido» para salir y arrancar.') + '</p>');
   });
+  document.getElementById('ws-os-btn').addEventListener('click', async () => {
+    if (bootState !== 'needos') return;
+    const en = lang() === 'en';
+    const steps = en
+      ? ['Preparing installer…', 'Copying system files… 35%', 'Copying system files… 70%', 'Installing drivers (chipset, GPU, network)…', 'Final setup…']
+      : ['Preparando el instalador…', 'Copiando archivos del sistema… 35%', 'Copiando archivos del sistema… 70%', 'Instalando controladores (chipset, GPU, red)…', 'Configuración final…'];
+    bootState = 'installing';
+    updateMonitorBtns();
+    for (const st of steps) { monitor.line(st, 'dim'); await wait(450); }
+    game.system.osInstalled = true;
+    save();
+    hud.log(en ? '💿 NVISION OS installed.' : '💿 NVISION OS instalado.', 'ok');
+    showDesktop();
+  });
+  document.getElementById('ws-stress-btn').addEventListener('click', async () => {
+    if (bootState !== 'desktop') return;
+    const res = stressTest(installed);
+    for (const ln of res.lines) { monitor.line(ln.text[lang()], ln.level); await wait(500); }
+    if (res.fault) {
+      monitor.fault(res.fault, lang());
+      hud.log('⛔ ' + res.fault.title[lang()], 'err');
+      if (scene) scene.setPowered(false);
+      bootState = 'off';
+      updateMonitorBtns();
+    } else if (res.outcome === 'throttle') {
+      hud.log('⚠ Throttling térmico: el equipo rinde menos bajo carga.', 'warn');
+    } else {
+      hud.log('🔥 Prueba de carga superada: equipo estable.', 'ok');
+    }
+  });
+  document.getElementById('ws-xmp-btn').addEventListener('click', () => {
+    game.system.xmp = !game.system.xmp;
+    save();
+    updateMonitorBtns();
+    hud.log('⚡ XMP/EXPO ' + (game.system.xmp ? 'ON' : 'OFF') + ' — se aplica en el próximo arranque.', 'info');
+  });
+  updateMonitorBtns();
   document.getElementById('ws-quality').addEventListener('change', function () {
     if (scene) scene.setQuality(this.value);
   });
