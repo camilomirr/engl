@@ -33,15 +33,7 @@
       { id: 'r5-5600',    name: 'AMD Ryzen 5 5600',    price: 120, watts: 65,  socket: 'AM4',     cores: 6,  game: 60, work: 55, igpu: false, desc: '6 núcleos · 4.4 GHz · rey del presupuesto AM4' },
       { id: 'r5-7600',    name: 'AMD Ryzen 5 7600',    price: 210, watts: 105, socket: 'AM5',     cores: 6,  game: 74, work: 68, igpu: true,  desc: '6 núcleos Zen 4 · 5.1 GHz · plataforma AM5' },
       { id: 'r7-7800x3d', name: 'AMD Ryzen 7 7800X3D', price: 380, watts: 120, socket: 'AM5',     cores: 8,  game: 97, work: 76, igpu: true,  desc: '8 núcleos + 3D V-Cache · el favorito para jugar' },
-      { id: 'r9-7950x',   name: 'AMD Ryzen 9 7950X',   price: 520, watts: 170, socket: 'AM5',     cores: 16, game: 90, work: 99, igpu: true,  desc: '16 núcleos Zen 4 · render y compilación extrema' },
-      { id: 'r7-5700x3d', name: 'AMD Ryzen 7 5700X3D', price: 200, watts: 105, socket: 'AM4',     cores: 8,  game: 78, work: 62, igpu: false, desc: '8 núcleos + 3D V-Cache · la gran despedida de AM4' },
-      { id: 'r5-9600x',   name: 'AMD Ryzen 5 9600X',   price: 260, watts: 65,  socket: 'AM5',     cores: 6,  game: 82, work: 78, igpu: true,  desc: '6 núcleos Zen 5 · fresco y rapidísimo en juegos' },
-      { id: 'r7-9700x',   name: 'AMD Ryzen 7 9700X',   price: 330, watts: 65,  socket: 'AM5',     cores: 8,  game: 86, work: 84, igpu: true,  desc: '8 núcleos Zen 5 · eficiencia de otro nivel' },
-      { id: 'r7-9800x3d', name: 'AMD Ryzen 7 9800X3D', price: 480, watts: 120, socket: 'AM5',     cores: 8,  game: 100, work: 82, igpu: true, desc: 'El rey actual del gaming · 3D V-Cache de 2ª gen' },
-      { id: 'r9-9950x',   name: 'AMD Ryzen 9 9950X',   price: 550, watts: 170, socket: 'AM5',     cores: 16, game: 94, work: 100, igpu: true, desc: '16 núcleos Zen 5 · lo máximo de AMD en escritorio' },
-      { id: 'u5-245k',    name: 'Intel Core Ultra 5 245K', price: 310, watts: 125, socket: 'LGA1851', cores: 14, game: 78, work: 80, igpu: true, desc: '14 núcleos Arrow Lake · nuevo socket LGA1851' },
-      { id: 'u7-265k',    name: 'Intel Core Ultra 7 265K', price: 390, watts: 125, socket: 'LGA1851', cores: 20, game: 85, work: 90, igpu: true, desc: '20 núcleos · gran salto en multitarea' },
-      { id: 'u9-285k',    name: 'Intel Core Ultra 9 285K', price: 590, watts: 125, socket: 'LGA1851', cores: 24, game: 90, work: 98, igpu: true, desc: '24 núcleos · el tope de Intel hoy' }
+      { id: 'r9-7950x',   name: 'AMD Ryzen 9 7950X',   price: 520, watts: 170, socket: 'AM5',     cores: 16, game: 90, work: 99, igpu: true,  desc: '16 núcleos Zen 4 · render y compilación extrema' }
     ],
     board: [
       { id: 'h610m',   name: 'H610M Básica',        price: 80,  watts: 12, socket: 'LGA1700', ramType: 'DDR4', form: 'mATX', desc: 'LGA1700 · DDR4 · Micro-ATX · lo justo para oficina' },
@@ -50,13 +42,7 @@
       { id: 'b550m',   name: 'B550M Aorus Elite',   price: 115, watts: 14, socket: 'AM4',     ramType: 'DDR4', form: 'mATX', desc: 'AM4 · DDR4 · Micro-ATX · clásica para Ryzen 5000' },
       { id: 'b650',    name: 'B650 Gaming Plus',    price: 210, watts: 16, socket: 'AM5',     ramType: 'DDR5', form: 'ATX',  desc: 'AM5 · DDR5 · ATX · PCIe 5.0 lista para futuro' },
       { id: 'b650i',   name: 'B650I Mini-ITX',      price: 260, watts: 13, socket: 'AM5',     ramType: 'DDR5', form: 'ITX',  desc: 'AM5 · DDR5 · Mini-ITX · para gabinetes mini' },
-      { id: 'x670e',   name: 'X670E Master',        price: 330, watts: 20, socket: 'AM5',     ramType: 'DDR5', form: 'ATX',  desc: 'AM5 · DDR5 · ATX · gama alta, puertos de sobra' },
-      { id: 'a620m',   name: 'A620M Económica',     price: 110, watts: 12, socket: 'AM5',     ramType: 'DDR5', form: 'mATX', desc: 'AM5 · DDR5 · Micro-ATX · entrada barata a Zen 4/5' },
-      { id: 'b650m',   name: 'B650M Gaming DDR5',   price: 170, watts: 14, socket: 'AM5',     ramType: 'DDR5', form: 'mATX', desc: 'AM5 · DDR5 · Micro-ATX · compacta y completa' },
-      { id: 'b850',    name: 'B850 Aorus Elite',    price: 230, watts: 16, socket: 'AM5',     ramType: 'DDR5', form: 'ATX',  desc: 'AM5 · DDR5 · ATX · pensada para Ryzen 9000' },
-      { id: 'x870e',   name: 'X870E Hero',          price: 360, watts: 20, socket: 'AM5',     ramType: 'DDR5', form: 'ATX',  desc: 'AM5 · DDR5 · ATX · USB4 y lo último de lo último' },
-      { id: 'b860m',   name: 'B860M Ultra',         price: 200, watts: 14, socket: 'LGA1851', ramType: 'DDR5', form: 'mATX', desc: 'LGA1851 · DDR5 · Micro-ATX · para Core Ultra' },
-      { id: 'z890',    name: 'Z890 Maximus',        price: 320, watts: 18, socket: 'LGA1851', ramType: 'DDR5', form: 'ATX',  desc: 'LGA1851 · DDR5 · ATX · overclock y gama alta Intel' }
+      { id: 'x670e',   name: 'X670E Master',        price: 330, watts: 20, socket: 'AM5',     ramType: 'DDR5', form: 'ATX',  desc: 'AM5 · DDR5 · ATX · gama alta, puertos de sobra' }
     ],
     ram: [
       { id: 'ram8d4',  name: '8 GB DDR4 3200',      price: 25,  watts: 3, type: 'DDR4', gb: 8,  speed: 3200, score: 30, rgb: false, desc: '1 módulo · oficina y tareas básicas' },
@@ -64,11 +50,7 @@
       { id: 'ram32d4', name: '32 GB DDR4 3600',     price: 85,  watts: 5, type: 'DDR4', gb: 32, speed: 3600, score: 72, rgb: false, desc: '2×16 GB · multitarea y edición sin ahogos' },
       { id: 'ram16d5', name: '16 GB DDR5 5600',     price: 55,  watts: 4, type: 'DDR5', gb: 16, speed: 5600, score: 62, rgb: false, desc: '2×8 GB DDR5 · entrada a la nueva generación' },
       { id: 'ram32d5', name: '32 GB DDR5 6000 RGB', price: 115, watts: 6, type: 'DDR5', gb: 32, speed: 6000, score: 84, rgb: true,  desc: '2×16 GB DDR5 · RGB · dulce para AM5 y gaming' },
-      { id: 'ram64d5', name: '64 GB DDR5 6000',     price: 210, watts: 8, type: 'DDR5', gb: 64, speed: 6000, score: 96, rgb: false, desc: '2×32 GB · workstations, máquinas virtuales, IA local' },
-      { id: 'ram8d5',  name: '8 GB DDR5 5200',      price: 30,  watts: 3, type: 'DDR5', gb: 8,  speed: 5200, score: 45, rgb: false, desc: '1 módulo DDR5 · solo si el presupuesto grita' },
-      { id: 'ram16d5r',name: '16 GB DDR5 6000 RGB', price: 70,  watts: 5, type: 'DDR5', gb: 16, speed: 6000, score: 70, rgb: true,  desc: '2×8 GB DDR5 RGB · bonita y rápida' },
-      { id: 'ram48d5', name: '48 GB DDR5 6400 RGB', price: 160, watts: 7, type: 'DDR5', gb: 48, speed: 6400, score: 90, rgb: true,  desc: '2×24 GB · el punto raro y dulce de los creadores' },
-      { id: 'ram96d5', name: '96 GB DDR5 5600',     price: 320, watts: 9, type: 'DDR5', gb: 96, speed: 5600, score: 100, rgb: false, desc: '2×48 GB · IA local y datasets sin tocar el disco' }
+      { id: 'ram64d5', name: '64 GB DDR5 6000',     price: 210, watts: 8, type: 'DDR5', gb: 64, speed: 6000, score: 96, rgb: false, desc: '2×32 GB · workstations, máquinas virtuales, IA local' }
     ],
     gpu: [
       { id: 'gpu-none', name: 'Sin gráfica dedicada', price: 0, watts: 0, len: 0, game: 8, work: 10, desc: 'Usa la gráfica integrada del procesador (si tiene)' },
@@ -77,14 +59,7 @@
       { id: 'rtx4060ti',name: 'RTX 4060 Ti 16 GB',    price: 450, watts: 165, len: 245, game: 74, work: 66, desc: '1440p cómodo · 16 GB para texturas y creación' },
       { id: 'rx7800xt', name: 'RX 7800 XT 16 GB',     price: 500, watts: 263, len: 287, game: 82, work: 68, desc: '1440p ultra · mucha VRAM por el precio' },
       { id: 'rtx4070s', name: 'RTX 4070 Super 12 GB', price: 590, watts: 220, len: 267, game: 86, work: 80, desc: '1440p ultra / 4K medio · DLSS 3.5' },
-      { id: 'rtx4090',  name: 'RTX 4090 24 GB',       price: 1600, watts: 450, len: 336, game: 100, work: 100, desc: '4K ultra sin discusión · enorme: mide tu gabinete' },
-      { id: 'arc-b580', name: 'Intel Arc B580 12 GB', price: 250, watts: 190, len: 272, game: 58, work: 50, fps: 58, desc: 'La sorpresa de Intel · 1440p a precio de 1080p' },
-      { id: 'rx9070',   name: 'RX 9070 16 GB',        price: 550, watts: 220, len: 240, game: 86, work: 70, fps: 88, desc: 'RDNA 4 · 1440p ultra con FSR 4' },
-      { id: 'rx9070xt', name: 'RX 9070 XT 16 GB',     price: 600, watts: 304, len: 267, game: 91, work: 74, fps: 96, desc: 'RDNA 4 · pelea con gráficas que cuestan el doble' },
-      { id: 'rtx5070',  name: 'RTX 5070 12 GB',       price: 550, watts: 250, len: 251, game: 88, work: 84, fps: 92, desc: 'Blackwell · DLSS 4 con Multi Frame Generation' },
-      { id: 'rtx5070ti',name: 'RTX 5070 Ti 16 GB',    price: 750, watts: 300, len: 306, game: 93, work: 90, fps: 101, desc: '1440p ultra / 4K con DLSS 4 · 16 GB' },
-      { id: 'rtx5080',  name: 'RTX 5080 16 GB',       price: 1000, watts: 360, len: 304, game: 97, work: 95, fps: 109, desc: '4K alto sin despeinarse · Blackwell gama alta' },
-      { id: 'rtx5090',  name: 'RTX 5090 32 GB',       price: 2000, watts: 575, len: 357, game: 100, work: 100, fps: 120, desc: 'La gráfica más potente del planeta · 32 GB GDDR7 · traga 575 W' }
+      { id: 'rtx4090',  name: 'RTX 4090 24 GB',       price: 1600, watts: 450, len: 336, game: 100, work: 100, desc: '4K ultra sin discusión · enorme: mide tu gabinete' }
     ],
     storage: [
       { id: 'hdd1',    name: 'Disco duro 1 TB',      price: 40,  watts: 8, kind: 'HDD',  gb: 1000, score: 15, desc: 'Mecánico · barato por TB, lento para arrancar' },
@@ -92,10 +67,7 @@
       { id: 'nvme500', name: 'NVMe 500 GB Gen3',     price: 50,  watts: 4, kind: 'NVMe', gb: 500,  score: 58, desc: '3.500 MB/s · Windows vuela al encender' },
       { id: 'nvme1',   name: 'NVMe 1 TB Gen4',       price: 85,  watts: 5, kind: 'NVMe', gb: 1000, score: 78, desc: '7.000 MB/s · el favorito gamer' },
       { id: 'nvme2',   name: 'NVMe 2 TB Gen4',       price: 150, watts: 5, kind: 'NVMe', gb: 2000, score: 88, desc: 'Espacio para toda la biblioteca de juegos' },
-      { id: 'nvme2g5', name: 'NVMe 2 TB Gen5',       price: 230, watts: 8, kind: 'NVMe', gb: 2000, score: 100, desc: '12.000 MB/s · lo más rápido del catálogo' },
-      { id: 'sata2',   name: 'SSD SATA 2 TB',        price: 110, watts: 3, kind: 'SATA', gb: 2000, score: 48, desc: 'Barato por TB para la biblioteca completa' },
-      { id: 'nvme4',   name: 'NVMe 4 TB Gen4',       price: 260, watts: 6, kind: 'NVMe', gb: 4000, score: 92, desc: '4 TB veloces · juegos + proyectos sin borrar nada' },
-      { id: 'nvme4g5', name: 'NVMe 4 TB Gen5',       price: 380, watts: 9, kind: 'NVMe', gb: 4000, score: 100, desc: '14.000 MB/s · el techo actual del almacenamiento' }
+      { id: 'nvme2g5', name: 'NVMe 2 TB Gen5',       price: 230, watts: 8, kind: 'NVMe', gb: 2000, score: 100, desc: '12.000 MB/s · lo más rápido del catálogo' }
     ],
     psu: [
       { id: 'psu450',  name: 'Fuente 450W Bronze',   price: 45,  wattsOut: 450,  tier: 'Bronze',   desc: 'Equipos de oficina y gama de entrada' },
@@ -103,9 +75,7 @@
       { id: 'psu650',  name: 'Fuente 650W Gold',     price: 85,  wattsOut: 650,  tier: 'Gold',     desc: 'El punto dulce gamer' },
       { id: 'psu750',  name: 'Fuente 750W Gold',     price: 105, wattsOut: 750,  tier: 'Gold',     desc: 'Gama alta con margen de sobra' },
       { id: 'psu850',  name: 'Fuente 850W Platinum', price: 140, wattsOut: 850,  tier: 'Platinum', desc: 'Silenciosa y eficiente para builds serios' },
-      { id: 'psu1000', name: 'Fuente 1000W Platinum',price: 180, wattsOut: 1000, tier: 'Platinum', desc: 'RTX 4090 y workstations sin pestañear' },
-      { id: 'psu850g', name: 'Fuente 850W Gold ATX 3.1', price: 115, wattsOut: 850, tier: 'Gold', desc: 'Conector 12V-2x6 listo para RTX serie 50' },
-      { id: 'psu1200', name: 'Fuente 1200W Platinum ATX 3.1', price: 220, wattsOut: 1200, tier: 'Platinum', desc: 'RTX 5090 y builds extremos · sobra por todos lados' }
+      { id: 'psu1000', name: 'Fuente 1000W Platinum',price: 180, wattsOut: 1000, tier: 'Platinum', desc: 'RTX 4090 y workstations sin pestañear' }
     ],
     case: [
       { id: 'case-office', name: 'Gabinete Oficina Compacto', price: 45,  formMax: 'mATX', gpuMax: 240, rgb: false, airflow: 40, desc: 'Micro-ATX · sobrio · GPU máx 240 mm' },
@@ -113,20 +83,14 @@
       { id: 'case-air',    name: 'Torre ATX Flujo de Aire',    price: 75,  formMax: 'ATX',  gpuMax: 320, rgb: false, airflow: 85, desc: 'Frente de malla · fresca y silenciosa' },
       { id: 'case-rgb',    name: 'Torre Cristal RGB',          price: 110, formMax: 'ATX',  gpuMax: 340, rgb: true,  airflow: 60, desc: 'Cristal templado · 4 ventiladores RGB' },
       { id: 'case-pano',   name: 'Torre Panorámica Premium',   price: 170, formMax: 'ATX',  gpuMax: 400, rgb: true,  airflow: 75, desc: 'Cristal doble · cabe cualquier gráfica' },
-      { id: 'case-ws',     name: 'Torre Workstation XL',       price: 150, formMax: 'ATX',  gpuMax: 380, rgb: false, airflow: 70, desc: 'Espacio de sobra y cero ruido' },
-      { id: 'case-retro',  name: 'Gabinete Retro Beige',       price: 60,  formMax: 'mATX', gpuMax: 280, rgb: false, airflow: 35, desc: 'Estética años 90 · por dentro, respeto' },
-      { id: 'case-bench',  name: 'Banco de pruebas abierto',   price: 130, formMax: 'ATX',  gpuMax: 999, rgb: false, airflow: 100, desc: 'Sin paredes: todo cabe y todo se enfría · el favorito del taller' },
-      { id: 'case-420',    name: 'Torre Cristal 420 XL',       price: 210, formMax: 'ATX',  gpuMax: 430, rgb: true,  airflow: 80, desc: 'Enorme y panorámica · radiadores de 420 mm y RTX 5090 sin sufrir' }
+      { id: 'case-ws',     name: 'Torre Workstation XL',       price: 150, formMax: 'ATX',  gpuMax: 380, rgb: false, airflow: 70, desc: 'Espacio de sobra y cero ruido' }
     ],
     cooler: [
       { id: 'cool-stock', name: 'Disipador de serie',   price: 0,   height: 55,  cooling: 45,  sockets: ['LGA1700', 'AM4', 'AM5'], liquid: false, desc: 'El que viene en la caja · cumple en CPUs frescos' },
-      { id: 'cool-tower', name: 'Torre de aire 120 mm', price: 35,  height: 155, cooling: 75,  sockets: ['LGA1700', 'LGA1851', 'AM4', 'AM5'], liquid: false, desc: 'El clásico confiable para 65-125W' },
-      { id: 'cool-dual',  name: 'Torre doble premium',  price: 55,  height: 162, cooling: 90,  sockets: ['LGA1700', 'LGA1851', 'AM4', 'AM5'], liquid: false, desc: 'Doble ventilador · casi nivel líquida' },
-      { id: 'cool-240',   name: 'Líquida AIO 240 mm',   price: 95,  height: 55,  cooling: 95,  sockets: ['LGA1700', 'LGA1851', 'AM4', 'AM5'], liquid: true,  desc: 'Radiador 240 · silencio y temperaturas bajas' },
-      { id: 'cool-360',   name: 'Líquida AIO 360 RGB',  price: 140, height: 55,  cooling: 100, sockets: ['LGA1700', 'LGA1851', 'AM5'], liquid: true,  desc: 'Radiador 360 RGB · ojo: no trae kit AM4' },
-      { id: 'cool-low',   name: 'Perfil bajo para ITX', price: 30,  height: 47,  cooling: 55,  sockets: ['LGA1700', 'LGA1851', 'AM4', 'AM5'], liquid: false, desc: '47 mm de alto · para gabinetes mini' },
-      { id: 'cool-xl',    name: 'Torre de aire doble XL', price: 90, height: 168, cooling: 97, sockets: ['LGA1700', 'LGA1851', 'AM4', 'AM5'], liquid: false, desc: 'El rey del aire · rivaliza con líquidas de 360' },
-      { id: 'cool-420',   name: 'Líquida AIO 420 RGB',  price: 180, height: 55,  cooling: 100, sockets: ['LGA1700', 'LGA1851', 'AM5'], liquid: true, desc: 'Radiador 420 · silencio absoluto para 170 W+' }
+      { id: 'cool-tower', name: 'Torre de aire 120 mm', price: 35,  height: 155, cooling: 75,  sockets: ['LGA1700', 'AM4', 'AM5'], liquid: false, desc: 'El clásico confiable para 65-125W' },
+      { id: 'cool-dual',  name: 'Torre doble premium',  price: 55,  height: 162, cooling: 90,  sockets: ['LGA1700', 'AM4', 'AM5'], liquid: false, desc: 'Doble ventilador · casi nivel líquida' },
+      { id: 'cool-240',   name: 'Líquida AIO 240 mm',   price: 95,  height: 55,  cooling: 95,  sockets: ['LGA1700', 'AM4', 'AM5'], liquid: true,  desc: 'Radiador 240 · silencio y temperaturas bajas' },
+      { id: 'cool-360',   name: 'Líquida AIO 360 RGB',  price: 140, height: 55,  cooling: 100, sockets: ['LGA1700', 'AM5'],        liquid: true,  desc: 'Radiador 360 RGB · ojo: no trae kit AM4' }
     ]
   };
 
@@ -137,7 +101,6 @@
     { id: 'oficina', name: 'Cliente: Oficina',  budget: 650,  goal: { key: 'office', min: 55 }, desc: 'Una oficina pide PCs que arranquen rápido y no hagan ruido. Presupuesto: $650 · Oficina ≥ 55.' },
     { id: 'gamer',   name: 'Cliente: Gamer 1440p', budget: 1300, goal: { key: 'gaming', min: 70 }, desc: 'Quiere jugar en 1440p sin vender un riñón. Presupuesto: $1.300 · Gaming ≥ 70.' },
     { id: 'creador', name: 'Cliente: Creador',  budget: 2200, goal: { key: 'work', min: 75, ramMin: 32, storageMin: 1000 }, desc: 'Edita video 4K: potencia de sobra, 32 GB de RAM o más y 1 TB o más. Presupuesto: $2.200 · Creación ≥ 75.' },
-    { id: 'ia',      name: 'Cliente: IA local', budget: 3000, goal: { key: 'work', min: 85, ramMin: 64 }, desc: 'Quiere correr modelos de IA en casa: mucha RAM (64 GB+) y potencia de creación. Presupuesto: $3.000 · Creación ≥ 85.' },
     { id: 'extremo', name: 'Cliente: Extremo',  budget: 3600, goal: { key: 'gaming', min: 90 }, desc: '“Lo mejor que exista, sin mirar el precio.” Bueno, casi: $3.600. Gaming ≥ 90.' }
   ];
 
@@ -146,7 +109,6 @@
   var mission = MISSIONS[0];
   var activeCat = 'cpu';
   var sortBy = 'price-asc';
-  var searchText = '';
   var powered = false;
   var busy = false;
 
@@ -246,20 +208,16 @@
   function renderCatalog() {
     var grid = $('pb-catalog');
     var items = CATALOG[activeCat].slice();
-    if (searchText) items = items.filter(function (i) { return (i.name + ' ' + i.desc).toLowerCase().indexOf(searchText) !== -1; });
     if (sortBy === 'price-asc') items.sort(function (a, b) { return a.price - b.price; });
     if (sortBy === 'price-desc') items.sort(function (a, b) { return b.price - a.price; });
     if (sortBy === 'perf') items.sort(function (a, b) { return perfOf(activeCat, b) - perfOf(activeCat, a); });
     grid.innerHTML = '';
-    if (!items.length) grid.innerHTML = '<p class="pb-note">Ningún componente coincide con tu búsqueda en esta categoría.</p>';
     items.forEach(function (item) {
       var selected = build[activeCat] && build[activeCat].id === item.id;
       var card = document.createElement('article');
       card.className = 'pb-card' + (selected ? ' pb-card--sel' : '');
       var chips = specsOf(activeCat, item).map(function (s) { return '<span class="pb-chip">' + s + '</span>'; }).join('');
-      var ART = { cpu: '🧠', board: '🧩', ram: '🧮', gpu: '🎮', storage: '💾', psu: '🔌', case: '🗄️', cooler: '❄️' };
       card.innerHTML =
-        '<div class="pb-card-art pb-art--' + activeCat + '"><span>' + (ART[activeCat] || '🔧') + '</span><small>' + catName(activeCat) + '</small></div>' +
         '<div class="pb-card-top"><h4>' + item.name + '</h4><span class="pb-price">' + (item.price ? money(item.price) : 'GRATIS') + '</span></div>' +
         '<p class="pb-card-desc">' + item.desc + '</p>' +
         '<div class="pb-chips">' + chips + '</div>' +
@@ -283,14 +241,30 @@
 
   /* ---------------- RENDER: GABINETE VISUAL ---------------- */
   function fanHTML(cls) { return '<span class="pb-fan ' + cls + '"><i></i><i></i><i></i><i></i><i></i><i></i></span>'; }
-  function snapshot3D() {
-    var parts = {};
-    Object.keys(build).forEach(function (k) { if (build[k]) parts[k] = build[k]; });
-    return { powered: powered, parts: parts, caseName: build.case ? build.case.name : null };
-  }
-  window.PB_GET_STATE = snapshot3D;
   function renderCase() {
-    window.dispatchEvent(new CustomEvent('pb:change', { detail: snapshot3D() }));
+    var kase = build.case;
+    var visual = $('pb-case');
+    visual.className = 'pb-case' + (powered ? ' pb-case--on' : '') + (kase && kase.rgb ? ' pb-case--rgb' : '');
+    var gpu = build.gpu && build.gpu.id !== 'gpu-none';
+    var ramSticks = build.ram ? Math.max(1, Math.min(4, Math.round(build.ram.gb / 8))) : 0;
+    var sticks = '';
+    for (var i = 0; i < 4; i++) sticks += '<span class="pb-stick' + (i < ramSticks ? ' pb-stick--in' + (build.ram.rgb ? ' pb-stick--rgb' : '') : '') + '"></span>';
+    $('pb-slot-gpu').innerHTML = gpu
+      ? '<div class="pb-gpu"><b>' + build.gpu.name + '</b><div class="pb-gpu-fans">' + fanHTML('') + fanHTML('') + '</div></div>'
+      : '<div class="pb-empty">Ranura PCIe · sin gráfica</div>';
+    $('pb-slot-cpu').innerHTML = build.cpu
+      ? '<div class="pb-cpu"><b>' + (build.cooler && build.cooler.liquid ? 'Bomba AIO' : 'CPU') + '</b>' + (build.cooler && !build.cooler.liquid ? fanHTML('pb-fan--cpu') : '') + '<small>' + build.cpu.name.replace('Intel Core ', '').replace('AMD ', '') + '</small></div>'
+      : '<div class="pb-empty">Socket vacío</div>';
+    $('pb-slot-ram').innerHTML = '<div class="pb-sticks">' + sticks + '</div>' + (build.ram ? '<small>' + build.ram.name + '</small>' : '<small>Sin RAM</small>');
+    $('pb-slot-board').textContent = build.board ? build.board.name + ' · ' + build.board.form : 'Sin placa base';
+    $('pb-slot-storage').innerHTML = build.storage
+      ? '<div class="pb-drive pb-drive--' + build.storage.kind.toLowerCase() + '"><b>' + build.storage.kind + '</b><small>' + build.storage.name + '</small></div>'
+      : '<div class="pb-empty">Bahía vacía</div>';
+    $('pb-slot-psu').innerHTML = build.psu
+      ? '<div class="pb-psu"><b>PSU ' + build.psu.wattsOut + 'W</b><small>' + build.psu.tier + '</small></div>'
+      : '<div class="pb-empty">Sin fuente</div>';
+    $('pb-case-name').textContent = kase ? kase.name : 'Mesa de trabajo · elige un gabinete';
+    $('pb-case-fans').innerHTML = fanHTML('pb-fan--case') + fanHTML('pb-fan--case') + fanHTML('pb-fan--case');
   }
   function popSlot(cat) {
     var map = { cpu: 'pb-slot-cpu', board: 'pb-slot-board', ram: 'pb-slot-ram', gpu: 'pb-slot-gpu', storage: 'pb-slot-storage', psu: 'pb-slot-psu', case: 'pb-case', cooler: 'pb-slot-cpu' };
@@ -366,8 +340,7 @@
     powered = true; renderCase();
     await wait(500);
     var sc = scores(), temp = estTemp();
-    var gpuFps = (build.gpu && build.gpu.fps) ? build.gpu.fps : sc.gaming;
-    var games = [['Cyberpunk 2077 (1440p)', gpuFps * 1.05], ['Fortnite (1080p)', gpuFps * 1.9], ['CS2 (1080p)', gpuFps * 2.6], ['Flight Simulator (1440p)', gpuFps * 0.62]];
+    var games = [['Cyberpunk 2077 (1440p)', sc.gaming * 1.05], ['Fortnite (1080p)', sc.gaming * 1.9], ['CS2 (1080p)', sc.gaming * 2.6], ['Flight Simulator (1440p)', sc.gaming * 0.62]];
     var lines = log.concat(['', '— BENCHMARK NVISION —']);
     screen(lines, 'pb-screen--run');
     for (var g = 0; g < games.length; g++) {
@@ -457,15 +430,6 @@
     });
   }
 
-  window.addEventListener('pb:remove', function (e) {
-    var cat = e.detail && e.detail.cat;
-    if (cat && build[cat]) { delete build[cat]; powered = false; renderAll(); }
-  });
-  window.addEventListener('pb:focus-cat', function (e) {
-    var cat = e.detail && e.detail.cat;
-    if (cat && CATALOG[cat]) { activeCat = cat; renderCatalog(); }
-  });
-
   /* ---------------- INICIO ---------------- */
   function init() {
     var tabs = $('pb-tabs');
@@ -477,8 +441,6 @@
       tabs.appendChild(b);
     });
     $('pb-sort').addEventListener('change', function () { sortBy = this.value; renderCatalog(); });
-    var searchEl = $('pb-search');
-    if (searchEl) searchEl.addEventListener('input', function () { searchText = this.value.trim().toLowerCase(); renderCatalog(); });
     $('pb-power').addEventListener('click', powerOn);
     $('pb-reset').addEventListener('click', function () { build = {}; powered = false; screen(['Mesa limpia. Elige la primera pieza en el catálogo.'], ''); renderAll(); });
     $('pb-random').addEventListener('click', function () {

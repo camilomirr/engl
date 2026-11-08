@@ -137,35 +137,3 @@
 .pb-how div { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 0.9rem; }
 .pb-how b { display: block; margin-bottom: 0.3rem; }
 .pb-how p { color: var(--text-secondary); font-size: 0.88rem; }
-
-/* ---------- Banco 3D interactivo ---------- */
-.pb-3d-section { padding-top: 0; padding-bottom: 0; }
-.pb-3d-panel { border-color: rgba(56, 189, 248, 0.35); }
-.pb-3d-hint { font-size: 0.78rem; font-weight: 500; color: var(--text-muted); }
-.pb-3d-wrap { position: relative; height: 460px; border-radius: var(--radius-md); overflow: hidden; background: #0a0f1a; border: 1px solid var(--border-subtle); }
-@media (max-width: 640px) { .pb-3d-wrap { height: 340px; } }
-.pb-3d-wrap canvas { display: block; width: 100%; height: 100%; touch-action: none; cursor: grab; }
-#pb-3d-tip { position: absolute; display: none; z-index: 5; pointer-events: none; background: rgba(2, 6, 23, 0.92); color: #e2e8f0; border: 1px solid rgba(56, 189, 248, 0.5); font-size: 0.78rem; padding: 0.3rem 0.55rem; border-radius: 6px; max-width: 260px; }
-#pb-3d-error { display: none; position: absolute; inset: auto 12px 12px 12px; z-index: 6; background: rgba(69, 10, 10, 0.92); color: #fecaca; border: 1px solid #ef4444; padding: 0.6rem 0.8rem; border-radius: 8px; font-size: 0.86rem; }
-.pb-3d-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; margin-top: 0.85rem; }
-.pb-3d-slider { display: flex; align-items: center; gap: 0.55rem; font-size: 0.88rem; font-weight: 600; color: var(--text-secondary); flex: 1; min-width: 210px; }
-.pb-3d-slider input[type="range"] { flex: 1; accent-color: var(--accent-cyan); height: 6px; cursor: pointer; }
-.pb-3d-check { display: flex; align-items: center; gap: 0.4rem; font-size: 0.88rem; color: var(--text-secondary); cursor: pointer; }
-.pb-3d-check input { accent-color: var(--accent-cyan); width: 17px; height: 17px; }
-.pb-3d-info { margin-top: 0.7rem; font-size: 0.9rem; color: var(--text-secondary); background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 0.6rem 0.8rem; }
-.pb-3d-info b { color: var(--text-primary); }
-
-/* ---------- Arte de tarjetas y buscador ---------- */
-.pb-card-art { display: flex; align-items: center; gap: 0.55rem; border-radius: var(--radius-sm); padding: 0.45rem 0.6rem; background: linear-gradient(120deg, rgba(56, 189, 248, 0.20), rgba(99, 102, 241, 0.20)); }
-.pb-card-art span { font-size: 1.35rem; line-height: 1; }
-.pb-card-art small { text-transform: uppercase; letter-spacing: 0.09em; font-size: 0.68rem; color: var(--text-secondary); font-weight: 700; }
-.pb-art--cpu { background: linear-gradient(120deg, rgba(245, 158, 11, 0.25), rgba(239, 68, 68, 0.18)); }
-.pb-art--gpu { background: linear-gradient(120deg, rgba(124, 58, 237, 0.28), rgba(56, 189, 248, 0.20)); }
-.pb-art--ram { background: linear-gradient(120deg, rgba(16, 185, 129, 0.25), rgba(56, 189, 248, 0.15)); }
-.pb-art--storage { background: linear-gradient(120deg, rgba(2, 132, 199, 0.28), rgba(16, 185, 129, 0.15)); }
-.pb-art--psu { background: linear-gradient(120deg, rgba(245, 158, 11, 0.28), rgba(120, 53, 15, 0.2)); }
-.pb-art--case { background: linear-gradient(120deg, rgba(100, 116, 139, 0.35), rgba(56, 189, 248, 0.15)); }
-.pb-art--cooler { background: linear-gradient(120deg, rgba(165, 243, 252, 0.30), rgba(59, 130, 246, 0.2)); }
-.pb-art--board { background: linear-gradient(120deg, rgba(21, 128, 61, 0.30), rgba(56, 189, 248, 0.15)); }
-.pb-search { font: inherit; font-size: 0.88rem; flex: 1; min-width: 180px; padding: 0.45rem 0.7rem; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); background: var(--bg-surface); color: var(--text-primary); }
-.pb-search:focus { outline: 2px solid var(--accent-cyan); outline-offset: 1px; }
