@@ -6,16 +6,18 @@
 // las reglas validan -> la pieza vuela a su punto de
 // montaje. El avance se guarda en localStorage.
 // =========================================================
-import { loadComponents } from './data/catalog.js?v=7';
-import { checkPlacement, missingParts, REQUIRED } from './core/rules.js?v=7';
-import { createScene } from './core/scene.js?v=7';
-import { loadState, saveState, buy as ecoBuy, sell as ecoSell, advanceDay } from './core/economy.js?v=7';
-import { createShop } from './ui/shop.js?v=7';
-import { tasksFor, doNextTask, assemblyPending, TOOLS } from './core/assembly.js?v=7';
-import { createTasksPanel } from './ui/tasks.js?v=7';
-import { runPost, biosRows, stressTest, temps } from './core/boot.js?v=7';
-import { createMonitor } from './ui/monitor.js?v=7';
-import { createHud, t } from './ui/hud.js?v=7';
+import { loadComponents } from './data/catalog.js?v=8';
+import { checkPlacement, missingParts, REQUIRED } from './core/rules.js?v=8';
+import { createScene } from './core/scene.js?v=8';
+import { loadState, saveState, buy as ecoBuy, sell as ecoSell, advanceDay } from './core/economy.js?v=8';
+import { createShop } from './ui/shop.js?v=8';
+import { tasksFor, doNextTask, assemblyPending, TOOLS } from './core/assembly.js?v=8';
+import { createTasksPanel } from './ui/tasks.js?v=8';
+import { runPost, biosRows, stressTest, temps } from './core/boot.js?v=8';
+import { createMonitor } from './ui/monitor.js?v=8';
+import { genOrders, evaluate as evalOrder, applyDelivery, levelFor } from './core/career.js?v=8';
+import { createOrders } from './ui/orders.js?v=8';
+import { createHud, t } from './ui/hud.js?v=8';
 
 const installed = {};   // categoria -> componente
 const game = loadState(); // dinero, dia, inventario propio y armado guardado
@@ -160,9 +162,64 @@ function applyAssemblyFx() {
     tasksFor(installed.psu, ctx).forEach(tk => { if (tk.cable && (progress[tk.id] || 0) >= tk.count) scene.setCable(tk.cable, true); });
   }
 }
+// ---------------- Fase 5: modo carrera ----------------
+function ensureOrders() {
+  const c = game.career;
+  if (c.active && game.day > c.active.deadlineDay) {
+    hud.log('⏰ El pedido de ' + c.active.client + ' venció y se canceló solo.', 'err');
+    c.active = null;
+  }
+  if (c.ordersDay !== game.day) {
+    c.orders = genOrders(game.day, levelFor(c.xp)).filter(o => !c.active || o.id !== c.active.id);
+    c.ordersDay = game.day;
+  }
+}
+function evalState() {
+  return {
+    missing: missingParts(installed),
+    pendingCount: assemblyPending(installed, game.assembly, buildCtx()).length,
+    osInstalled: !!game.system.osInstalled,
+    lastStress: game.system.lastStress
+  };
+}
+const ordersPanel = createOrders({
+  onAccept(order) {
+    game.career.active = { ...order, deadlineDay: game.day + order.days };
+    game.career.orders = game.career.orders.filter(o => o.id !== order.id);
+    hud.log('📋 Pedido aceptado: ' + order.client + ' — ' + order.purposeLabel[lang()] + ' por $' + order.budget + '. ¡A armar!', 'ok');
+    save();
+  },
+  onCancel() {
+    if (!game.career.active) return;
+    hud.log('Pedido de ' + game.career.active.client + ' abandonado.', 'info');
+    game.career.active = null;
+    save();
+  },
+  onDeliver() {
+    const order = game.career.active;
+    if (!order) return;
+    const ev = evalOrder(order, installed, evalState());
+    if (!ev.ready) { hud.log('🚚 Todavía falta: revisa la lista del pedido activo.', 'err'); return; }
+    const res = applyDelivery(game, { ...installed }, order);
+    Object.keys(installed).slice().reverse().forEach(cat => { if (scene) scene.remove(cat); delete installed[cat]; });
+    game.assembly = {};
+    game.system.osInstalled = false;
+    game.system.lastStress = null;
+    if (scene) { scene.setPaste(false); ['atx', 'eps', 'pcie', 'sata'].forEach(k => scene.setCable(k, false)); }
+    powerDown();
+    hud.log('🚚 ¡Equipo entregado a ' + order.client + '! Cobraste $' + res.payment + ' y ganaste ' + res.xpGain + ' XP.', 'ok');
+    if (res.leveledUp) hud.log('⭐ ¡Subiste al nivel ' + res.newLevel + '! La tienda desbloqueó piezas nuevas.', 'ok');
+    save();
+  }
+});
 function syncUI() {
+  ensureOrders();
   hud.setData(components, installed, game.owned, game);
-  shop.setData(components, game);
+  shop.setData(components, game, levelFor(game.career.xp));
+  ordersPanel.setData({
+    career: game.career, level: levelFor(game.career.xp), day: game.day,
+    evaluation: game.career.active ? evalOrder(game.career.active, installed, evalState()) : null
+  });
   refreshTasks();
 }
 function save() {
@@ -211,6 +268,8 @@ function attemptPlace(item) {
   installed[item.category] = item;
   if (scene) { scene.place(item.category, item); scene.setPowered(false); }
   if (bootState !== 'off') powerDown(lang() === 'en' ? '— No signal — You changed parts: power on again.' : '— Sin señal — Cambiaste piezas: vuelve a encender el equipo.');
+  game.system.lastStress = null;
+  if (item.category === 'storage') game.system.osInstalled = false;
   holding = null;
   selectedCat = item.category;
   hud.setSelected(item.category);
@@ -229,6 +288,8 @@ function removePart(cat) {
   const item = installed[cat];
   if (!item) return;
   if (bootState !== 'off') powerDown(lang() === 'en' ? '— No signal — You changed parts: power on again.' : '— Sin señal — Cambiaste piezas: vuelve a encender el equipo.');
+  game.system.lastStress = null;
+  if (cat === 'storage') game.system.osInstalled = false;
   delete game.assembly[item.id];
   if (scene && cat === 'cpu') scene.setPaste(false);
   if (scene && cat === 'psu') ['atx', 'eps', 'pcie', 'sata'].forEach(k => scene.setCable(k, false));
@@ -321,6 +382,8 @@ async function init() {
     if (bootState !== 'desktop') return;
     const res = stressTest(installed);
     for (const ln of res.lines) { monitor.line(ln.text[lang()], ln.level); await wait(500); }
+    game.system.lastStress = res.outcome;
+    save();
     if (res.fault) {
       monitor.fault(res.fault, lang());
       hud.log('⛔ ' + res.fault.title[lang()], 'err');
@@ -332,6 +395,7 @@ async function init() {
     } else {
       hud.log('🔥 Prueba de carga superada: equipo estable.', 'ok');
     }
+    syncUI();
   });
   document.getElementById('ws-xmp-btn').addEventListener('click', () => {
     game.system.xmp = !game.system.xmp;

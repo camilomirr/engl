@@ -20,6 +20,8 @@ solo como datos descriptivos (nombre y especificaciones), sin logos oficiales.
 - `js/ui/tasks.js` — barra de herramientas y panel de tareas (Fase 3).
 - `js/core/boot.js` — POST, BIOS, modelo térmico, fallas y prueba de carga (Fase 4).
 - `js/ui/monitor.js` — la pantalla del banco (Fase 4).
+- `js/core/career.js` — clientes, pedidos, evaluación y niveles (Fase 5).
+- `js/ui/orders.js` — panel de pedidos y checklist (Fase 5).
 - `js/ui/shop.js` — tienda con filtros, búsqueda y orden (Fase 2).
 - `js/core/scene.js` — escena 3D: banco, gabinete con panel, puntos de montaje, calidad gráfica.
 - `js/ui/hud.js` — inventario, HUD, mensajes y textos ES/EN.
