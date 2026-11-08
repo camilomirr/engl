@@ -111,3 +111,17 @@
 .ws-checks { list-style: none; margin: 0.3rem 0; padding: 0; font-size: 0.86rem; display: grid; gap: 0.2rem; }
 .ws-checks li.no { color: var(--text-muted); }
 .ws-checks li.ok { color: var(--text-primary); }
+
+.ws-bench { margin-top: 1rem; border-top: 1px solid var(--border-subtle); padding-top: 0.9rem; }
+.ws-bench h4 { margin: 0 0 0.6rem; font-family: var(--font-heading); }
+.ws-score { display: grid; grid-template-columns: 92px 1fr 34px; align-items: center; gap: 0.55rem; margin-bottom: 0.4rem; font-size: 0.86rem; }
+.ws-score-track { height: 9px; border-radius: 999px; background: var(--bg-surface); border: 1px solid var(--border-subtle); overflow: hidden; }
+.ws-score-fill { height: 100%; background: linear-gradient(90deg, var(--accent-cyan), var(--accent-violet)); }
+.ws-fps { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-top: 0.55rem; }
+.ws-fps th, .ws-fps td { padding: 0.3rem 0.45rem; border: 1px solid var(--border-subtle); text-align: right; }
+.ws-fps th:first-child, .ws-fps td:first-child { text-align: left; }
+.ws-fps td.good { color: var(--accent-emerald); font-weight: 700; }
+.ws-fps td.mid { color: var(--accent-amber); }
+.ws-fps td.low { color: #f87171; }
+.ws-import-row { display: flex; gap: 0.45rem; margin-top: 0.55rem; }
+.ws-import-row input { flex: 1; font: inherit; font-size: 0.85rem; background: var(--bg-surface); color: var(--text-primary); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 0.45rem 0.6rem; min-width: 0; }

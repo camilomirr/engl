@@ -11,7 +11,7 @@
   <title>NVISION PC Workshop - Taller virtual de armado de PC</title>
   <!-- Hojas de estilo modular -->
   <link rel="stylesheet" href="../css/styles.css?v=8">
-  <link rel="stylesheet" href="css/workshop.css?v=10">
+  <link rel="stylesheet" href="css/workshop.css?v=11">
   <script type="importmap">
     {
       "imports": {
@@ -185,6 +185,19 @@
           <button type="button" class="ws-btn" id="ws-xmp-btn">⚡ XMP/EXPO: OFF</button>
         </div>
       </div>
+      <div class="ws-bench">
+        <h4>🏆 Benchmarks y compartir</h4>
+        <div id="ws-bench-body"><p class="ws-note">Completa el equipo (8 piezas) para ver puntajes y FPS estimados.</p></div>
+        <div class="ws-monitor-btns">
+          <button type="button" class="ws-btn" id="ws-rgb-btn">🌈 RGB: OFF</button>
+          <button type="button" class="ws-btn" id="ws-copy-btn">📋 Copiar resumen</button>
+          <button type="button" class="ws-btn" id="ws-code-btn">🔗 Copiar código del equipo</button>
+        </div>
+        <div class="ws-import-row">
+          <input id="ws-code-input" type="text" placeholder="Pega un código NVW1-… para importar un equipo">
+          <button type="button" class="ws-btn" id="ws-import-btn">⬇️ Importar</button>
+        </div>
+      </div>
       <div class="ws-tasks-panel">
         <h4 id="ws-tasks-part">🔧 Montaje paso a paso</h4>
         <div class="ws-tools" id="ws-tools" role="group" aria-label="Herramientas">
@@ -249,6 +262,6 @@
   </footer>
 
   <script src="../js/main.js?v=3"></script>
-  <script type="module" src="js/main.js?v=10"></script>
+  <script type="module" src="js/main.js?v=11"></script>
 </body>
 </html>

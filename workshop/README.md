@@ -22,6 +22,7 @@ solo como datos descriptivos (nombre y especificaciones), sin logos oficiales.
 - `js/ui/monitor.js` — la pantalla del banco (Fase 4).
 - `js/core/career.js` — clientes, pedidos, evaluación y niveles (Fase 5).
 - `js/ui/orders.js` — panel de pedidos y checklist (Fase 5).
+- `js/core/bench.js` — puntajes, FPS estimados, resumen y códigos del equipo (Fase 6).
 - `js/ui/shop.js` — tienda con filtros, búsqueda y orden (Fase 2).
 - `js/core/scene.js` — escena 3D: banco, gabinete con panel, puntos de montaje, calidad gráfica.
 - `js/ui/hud.js` — inventario, HUD, mensajes y textos ES/EN.

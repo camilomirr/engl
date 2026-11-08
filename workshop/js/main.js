@@ -6,18 +6,19 @@
 // las reglas validan -> la pieza vuela a su punto de
 // montaje. El avance se guarda en localStorage.
 // =========================================================
-import { loadComponents } from './data/catalog.js?v=10';
-import { checkPlacement, missingParts, REQUIRED } from './core/rules.js?v=10';
-import { createScene } from './core/scene.js?v=10';
-import { loadState, saveState, buy as ecoBuy, sell as ecoSell, advanceDay } from './core/economy.js?v=10';
-import { createShop } from './ui/shop.js?v=10';
-import { tasksFor, doNextTask, assemblyPending, TOOLS } from './core/assembly.js?v=10';
-import { createTasksPanel } from './ui/tasks.js?v=10';
-import { runPost, biosRows, stressTest, temps } from './core/boot.js?v=10';
-import { createMonitor } from './ui/monitor.js?v=10';
-import { genOrders, evaluate as evalOrder, applyDelivery, levelFor } from './core/career.js?v=10';
-import { createOrders } from './ui/orders.js?v=10';
-import { createHud, t } from './ui/hud.js?v=10';
+import { loadComponents } from './data/catalog.js?v=11';
+import { checkPlacement, missingParts, REQUIRED } from './core/rules.js?v=11';
+import { createScene } from './core/scene.js?v=11';
+import { loadState, saveState, buy as ecoBuy, sell as ecoSell, advanceDay } from './core/economy.js?v=11';
+import { createShop } from './ui/shop.js?v=11';
+import { tasksFor, doNextTask, assemblyPending, TOOLS } from './core/assembly.js?v=11';
+import { createTasksPanel } from './ui/tasks.js?v=11';
+import { runPost, biosRows, stressTest, temps } from './core/boot.js?v=11';
+import { createMonitor } from './ui/monitor.js?v=11';
+import { genOrders, evaluate as evalOrder, applyDelivery, levelFor } from './core/career.js?v=11';
+import { createOrders } from './ui/orders.js?v=11';
+import { scores, fpsTable, buildSummary, buildCode, parseCode } from './core/bench.js?v=11';
+import { createHud, t } from './ui/hud.js?v=11';
 
 const installed = {};   // categoria -> componente
 const game = loadState(); // dinero, dia, inventario propio y armado guardado
@@ -215,8 +216,58 @@ const ordersPanel = createOrders({
     save();
   }
 });
+// ---------------- Fase 6: benchmarks, RGB y compartir ----------------
+function renderBench() {
+  const body = document.getElementById('ws-bench-body');
+  if (!body) return;
+  const en = lang() === 'en';
+  if (missingParts(installed).length) {
+    body.innerHTML = '<p class="ws-note">' + (en ? 'Complete the build (8 parts) to see scores and estimated FPS.' : 'Completa el equipo (8 piezas) para ver puntajes y FPS estimados.') + '</p>';
+    return;
+  }
+  const sc = scores(installed);
+  const bar = (label, v) => '<div class="ws-score"><span>' + label + '</span><div class="ws-score-track"><div class="ws-score-fill" style="width:' + v + '%"></div></div><b>' + v + '</b></div>';
+  let html = bar('🎮 Gaming', sc.gaming) + bar(en ? '💼 Work' : '💼 Trabajo', sc.work) + bar(en ? '🎬 Creation' : '🎬 Creación', sc.creation);
+  const cls = v => v >= 60 ? 'good' : v >= 30 ? 'mid' : 'low';
+  html += '<table class="ws-fps"><tr><th>' + (en ? 'Game' : 'Juego') + '</th><th>1080p</th><th>1440p</th><th>4K</th></tr>' +
+    fpsTable(installed).map(r => '<tr><td>' + r.game[lang()] + '</td><td class="' + cls(r['1080p']) + '">' + r['1080p'] + '</td><td class="' + cls(r['1440p']) + '">' + r['1440p'] + '</td><td class="' + cls(r['4K']) + '">' + r['4K'] + '</td></tr>').join('') + '</table>';
+  body.innerHTML = html;
+}
+async function copyText(text, okMsg) {
+  try { await navigator.clipboard.writeText(text); hud.log(okMsg, 'ok'); }
+  catch (e) {
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); hud.log(okMsg, 'ok'); } catch (e2) { hud.log('No se pudo copiar automáticamente.', 'err'); }
+    ta.remove();
+  }
+}
+function importBuild(codeStr) {
+  const parsed = parseCode(codeStr);
+  if (!parsed) { hud.log('🔗 Ese código no es válido (formato NVW1-…).', 'err'); return; }
+  if (scene) scene.setPanel(true);
+  const order = ['case', 'board', 'cpu', 'cooler', 'ram', 'gpu', 'storage', 'psu'];
+  let placedCount = 0; const missingNames = [];
+  order.forEach(cat => {
+    const id = parsed[cat];
+    if (!id) return;
+    const item = components.find(c => c.id === id);
+    if (!item) { missingNames.push(id); return; }
+    if (!(game.owned[item.id] > 0) && !(installed[cat] && installed[cat].id === item.id)) { missingNames.push(item.name); return; }
+    const chk = checkPlacement(item, installed);
+    if (!chk.ok) { missingNames.push(item.name + ' (incompatible aquí)'); return; }
+    if (installed[cat] && scene) scene.remove(cat);
+    installed[cat] = item;
+    if (scene) scene.place(cat, item);
+    placedCount++;
+  });
+  powerDown();
+  hud.log('⬇️ Equipo importado: ' + placedCount + ' piezas montadas.' + (missingNames.length ? ' No se pudieron montar: ' + missingNames.join(', ') + '.' : ''), missingNames.length ? 'warn' : 'ok');
+  save();
+}
 function syncUI() {
   ensureOrders();
+  renderBench();
   hud.setData(components, installed, game.owned, game);
   shop.setData(components, game, levelFor(game.career.xp));
   ordersPanel.setData({
@@ -404,6 +455,33 @@ async function init() {
       hud.log('🔥 Prueba de carga superada: equipo estable.', 'ok');
     }
     syncUI();
+  });
+  const rgbBtn = document.getElementById('ws-rgb-btn');
+  if (rgbBtn) {
+    rgbBtn.textContent = '🌈 RGB: ' + (game.system.rgb ? 'ON' : 'OFF');
+    if (scene) scene.setRGBMode(!!game.system.rgb);
+    rgbBtn.addEventListener('click', () => {
+      game.system.rgb = !game.system.rgb;
+      if (scene) scene.setRGBMode(game.system.rgb);
+      rgbBtn.textContent = '🌈 RGB: ' + (game.system.rgb ? 'ON' : 'OFF');
+      hud.log('🌈 RGB ' + (game.system.rgb ? 'activado — se ve al encender el equipo.' : 'desactivado.'), 'info');
+      save();
+    });
+  }
+  const copyBtn = document.getElementById('ws-copy-btn');
+  if (copyBtn) copyBtn.addEventListener('click', () => {
+    if (missingParts(installed).length) { hud.log('Completa el equipo para compartir su resumen.', 'err'); return; }
+    copyText(buildSummary(installed, game.system, lang()), '📋 Resumen copiado: pégalo donde quieras compartirlo.');
+  });
+  const codeBtn = document.getElementById('ws-code-btn');
+  if (codeBtn) codeBtn.addEventListener('click', () => {
+    if (missingParts(installed).length) { hud.log('Completa el equipo para copiar su código.', 'err'); return; }
+    copyText(buildCode(installed), '🔗 Código del equipo copiado: quien lo pegue en Importar verá tu misma configuración.');
+  });
+  const importBtn = document.getElementById('ws-import-btn');
+  if (importBtn) importBtn.addEventListener('click', () => {
+    const input = document.getElementById('ws-code-input');
+    importBuild(input ? input.value : '');
   });
   document.getElementById('ws-xmp-btn').addEventListener('click', () => {
     game.system.xmp = !game.system.xmp;
