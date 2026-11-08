@@ -96,7 +96,7 @@
   right: max(1.25rem, env(safe-area-inset-right));
   bottom: calc(5.4rem + env(safe-area-inset-bottom));
   z-index: 60;
-  width: 3.4rem; height: 3.4rem; padding: 0; border-radius: 50%;
+  width: 3.4rem; height: 3.4rem; padding: 0.42rem; border-radius: 50%;
   border: 1px solid var(--border-subtle);
   background: var(--bg-card);
   backdrop-filter: blur(14px) saturate(1.3);
