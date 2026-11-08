@@ -5,7 +5,7 @@
 /* Topologías */
 .topologies-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
   gap: 1.85rem;
 }
 
@@ -704,7 +704,7 @@
 
 .packet-inspector-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
   gap: 0.75rem;
   padding: 0.85rem;
   background: #090e1a;
@@ -838,7 +838,7 @@
 
 .network-scope-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
   gap: 1.85rem;
 }
 
@@ -1123,7 +1123,7 @@
 
 .nv-cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
   gap: 1.75rem;
 }
 
@@ -1438,7 +1438,7 @@
 /* =========================================================
    LABORATORIO DEL SWITCH: APRENDIZAJE MAC Y FLOODING
    ========================================================= */
-.swl-wrapper { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(280px, 1fr); gap: 1.25rem; align-items: start; }
+.swl-wrapper { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(min(280px, 100%), 1fr); gap: 1.25rem; align-items: start; }
 .swl-stage {
   background: radial-gradient(120% 130% at 50% 0%, #12334d 0%, #0a2236 55%, #071a2b 100%);
   border: 1px solid rgba(56, 189, 248, .35);

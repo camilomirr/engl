@@ -186,3 +186,7 @@ body {
     margin-bottom: 1.6rem;
   }
 }
+
+/* Red de seguridad responsiva: ningún medio se sale de su contenedor
+   en pantallas pequeñas (todas las páginas cargan este módulo). */
+img, svg, video { max-width: 100%; }

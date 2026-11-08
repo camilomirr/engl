@@ -3,7 +3,7 @@
    ========================================================= */
 
 /* 1. Variables, Temas, Tipografías y Reset Base */
-@import url('modules/variables.css?v=4');
+@import url('modules/variables.css?v=5');
 
 /* 2. Cabecera, Navegación, Submenús y Selector de Idioma */
 @import url('modules/header-nav.css?v=3');
@@ -15,17 +15,17 @@
 @import url('modules/timeline.css');
 
 /* 5. Cuadrícula de Componentes de Hardware y Modales */
-@import url('modules/components-grid.css');
+@import url('modules/components-grid.css?v=2');
 
 /* 6. Explorador 3D de componentes internos */
-@import url('modules/pc-explorer.css?v=2');
-@import url('modules/pc3d.css');
+@import url('modules/pc-explorer.css?v=4');
+@import url('modules/pc3d.css?v=2');
 
 /* 7. Redes, Topologías, Simulador de Ping y Cobertura */
-@import url('modules/networks.css');
+@import url('modules/networks.css?v=2');
 
 /* 7. Glosario de Términos, Laboratorio y Footer */
-@import url('modules/laboratory.css');
+@import url('modules/laboratory.css?v=2');
 
 /* 8. Sistema de Iconos SVG y Paleta Tecnológica */
 @import url('modules/icons.css');
@@ -37,10 +37,10 @@
 @import url('modules/cursor-effect.css');
 
 /* 11. Guía de configuración avanzada de WiFi */
-@import url('modules/wifi.css');
+@import url('modules/wifi.css?v=2');
 
 /* 12. Mantenimiento preventivo por software */
-@import url('modules/mantenimiento-software.css');
+@import url('modules/mantenimiento-software.css?v=2');
 
 /* 13. Equipo NVISION — puente de tareas con Muse */
 @import url('modules/equipo.css?v=13');

@@ -4,7 +4,8 @@
    ../css/styles.css del sitio)
    ========================================================= */
 .ws-hero { padding-bottom: 0.5rem; }
-.ws-layout { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(300px, 1fr); gap: 1.4rem; align-items: start; padding-top: 1rem; }
+.ws-layout > * { min-width: 0; }
+.ws-layout { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(min(300px, 100%), 1fr); gap: 1.4rem; align-items: start; padding-top: 1rem; }
 @media (max-width: 980px) { .ws-layout { grid-template-columns: 1fr; } }
 .ws-panel { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 1.1rem; margin-bottom: 1.2rem; }
 .ws-panel h3 { font-size: 1.05rem; margin-bottom: 0.45rem; }
@@ -64,7 +65,7 @@
 .ws-shop-filters { display: flex; flex-wrap: wrap; gap: 0.55rem; margin-bottom: 0.9rem; }
 .ws-shop-filters select, .ws-shop-filters input { font: inherit; font-size: 0.88rem; background: var(--bg-surface); color: var(--text-primary); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 0.45rem 0.6rem; }
 .ws-shop-filters input { flex: 1; min-width: 200px; }
-.ws-shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 0.7rem; }
+.ws-shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(230px, 100%), 1fr)); gap: 0.7rem; }
 .ws-shop-card { display: grid; gap: 0.3rem; padding: 0.75rem 0.85rem; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); background: var(--bg-surface); }
 .ws-shop-row { display: flex; justify-content: space-between; align-items: baseline; gap: 0.5rem; }
 .ws-shop-btns { display: flex; gap: 0.45rem; margin-top: 0.25rem; }
@@ -103,7 +104,7 @@
 
 .ws-orders-section { padding-top: 0; }
 .ws-career-stats { font-size: 0.85rem; color: var(--accent-cyan); font-family: var(--font-body); }
-.ws-orders-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 0.7rem; margin-top: 0.7rem; }
+.ws-orders-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr)); gap: 0.7rem; margin-top: 0.7rem; }
 .ws-order-card { display: grid; gap: 0.35rem; padding: 0.8rem 0.9rem; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); background: var(--bg-surface); }
 .ws-order-card--active { border-color: var(--accent-cyan); margin-bottom: 0.8rem; }
 .ws-req-chips { display: flex; flex-wrap: wrap; gap: 0.3rem; }
@@ -117,7 +118,8 @@
 .ws-score { display: grid; grid-template-columns: 92px 1fr 34px; align-items: center; gap: 0.55rem; margin-bottom: 0.4rem; font-size: 0.86rem; }
 .ws-score-track { height: 9px; border-radius: 999px; background: var(--bg-surface); border: 1px solid var(--border-subtle); overflow: hidden; }
 .ws-score-fill { height: 100%; background: linear-gradient(90deg, var(--accent-cyan), var(--accent-violet)); }
-.ws-fps { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-top: 0.55rem; }
+.ws-fps { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-top: 0.55rem; table-layout: fixed; }
+.ws-fps th, .ws-fps td { overflow-wrap: break-word; }
 .ws-fps th, .ws-fps td { padding: 0.3rem 0.45rem; border: 1px solid var(--border-subtle); text-align: right; }
 .ws-fps th:first-child, .ws-fps td:first-child { text-align: left; }
 .ws-fps td.good { color: var(--accent-emerald); font-weight: 700; }

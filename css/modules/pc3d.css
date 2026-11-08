@@ -14,9 +14,9 @@
 .pc3d-kicker { color: var(--accent-cyan); font: 700 .7rem 'JetBrains Mono', monospace; letter-spacing: .12em; text-transform: uppercase; }
 .pc3d-viewer { min-height: 600px; }
 .pc3d-viewer .pc-scene-shell { min-height: 600px; }
-.pc3d-viewer .pc-explorer-layout { grid-template-columns: minmax(0, 1.8fr) minmax(270px, .7fr); }
+.pc3d-viewer .pc-explorer-layout { grid-template-columns: minmax(0, 1.8fr) minmax(min(270px, 100%), .7fr); }
 .pc3d-viewer .pc-explorer-panel { min-height: 600px; }
-.pc3d-part-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 1rem; }
+.pc3d-part-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(270px, 100%), 1fr)); gap: 1rem; }
 .pc3d-part-card { display: grid; grid-template-columns: 58px 1fr; gap: .85rem; padding: 1.3rem; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); box-shadow: var(--shadow-sm); transition: var(--transition); }
 .pc3d-part-card::before { content: ''; grid-column: 1 / -1; height: 145px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); background-position: center; background-size: cover; background-repeat: no-repeat; filter: saturate(.82); }
 .pc3d-part-card:nth-child(1)::before { background-image: url('https://th.bing.com/th/id/OIP.pos0kN3-I5Oy6bl8r_T-PgHaEn?w=600&h=370&c=7&r=0&o=7&pid=1.7&rm=3'); }
@@ -36,7 +36,7 @@
 .pc3d-type { padding: .3rem .5rem; border-radius: 4px; background: rgba(14,165,233,.1); border: 1px solid rgba(14,165,233,.22); color: var(--accent-cyan); font: 600 .68rem 'JetBrains Mono', monospace; }
 .pc3d-maintenance { background: linear-gradient(180deg, rgba(15,23,42,.35), transparent); border-top: 1px solid var(--border-subtle); }
 .pc3d-tools-section { border-top: 1px solid var(--border-subtle); }
-.pc3d-tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(245px, 1fr)); gap: 1rem; }
+.pc3d-tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(245px, 100%), 1fr)); gap: 1rem; }
 .pc3d-tool-card { overflow: hidden; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); box-shadow: var(--shadow-sm); transition: var(--transition); }
 .pc3d-tool-card[hidden] { display: none; }
 .pc3d-tool-card:hover { transform: translateY(-4px); border-color: var(--border-hover); box-shadow: var(--shadow-md); }

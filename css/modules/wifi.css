@@ -4,7 +4,7 @@
 
 .wifi-hero {
   display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
+  grid-template-columns: minmax(0, 1.25fr) minmax(min(280px, 100%), 0.75fr);
   gap: 1.5rem;
   align-items: stretch;
 }
