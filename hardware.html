@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title data-i18n="page_title_hardware">NVISION - Hardware y Evolución</title>
   <!-- Hojas de estilo modular -->
-  <link rel="stylesheet" href="css/styles.css?v=25">
+  <link rel="stylesheet" href="css/styles.css?v=26">
     <link rel="preload" as="image" href="https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b6/2023_P%C5%82yta_g%C5%82%C3%B3wna_ASRock_A320M-DVS.jpg/960px-2023_P%C5%82yta_g%C5%82%C3%B3wna_ASRock_A320M-DVS.jpg">
     <link rel="preload" as="image" href="https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a3/AMD_Ryzen_9_7900X.jpg/960px-AMD_Ryzen_9_7900X.jpg">
     <link rel="preload" as="image" href="https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6c/RAM_Module_%28SDRAM-DDR4%29.jpg/960px-RAM_Module_%28SDRAM-DDR4%29.jpg">
@@ -89,6 +89,10 @@
 
       <!-- Botones de acción: Idioma y Menú Hamburguesa en móvil -->
       <div class="header-actions">
+        <!-- Botón buscador: despliega la barra de búsqueda bajo el encabezado -->
+        <button id="header-search-toggle" class="header-search-btn" type="button" aria-label="Buscar en NVISION" aria-expanded="false" aria-controls="header-search-panel" title="Buscar en NVISION" data-i18n-title="search_toggle_title">
+          <span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
+        </button>
         <!-- Boton Modo Claro / Oscuro -->
         <button id="theme-toggle" class="theme-switch-btn" title="Modo Claro / Oscuro" aria-label="Cambiar tema" data-i18n-title="theme_toggle_title">
           <span id="theme-icon" class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span>
@@ -125,6 +129,24 @@
         <button id="menu-toggle" class="menu-toggle-btn" aria-label="Abrir menú" aria-expanded="false" data-i18n-title="menu_toggle_title">
           <span class="menu-icon-inner mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></span>
         </button>
+      </div>
+    </div>
+    <!-- Buscador desplegable del encabezado: mismo buscador del inicio, en una barra que se despliega -->
+    <div class="header-search" id="header-search-panel">
+      <form class="header-search-box" id="header-search-form" role="search" autocomplete="off">
+        <span class="site-search-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
+        <input type="search" id="header-search-input" class="site-search-input" data-i18n-placeholder="search_placeholder" placeholder="Busca en todo NVISION: RAM, topologías, WiFi, malware…" aria-label="Buscar en NVISION">
+        <button type="button" id="header-search-clear" class="site-search-clear" aria-label="Limpiar búsqueda">×</button>
+        <div class="site-search-results" id="header-search-results"></div>
+      </form>
+      <div class="site-search-popular header-search-popular">
+        <span class="site-search-popular-label" data-i18n="search_popular">Populares:</span>
+        <button type="button" class="site-search-chip" data-q="RAM">RAM</button>
+        <button type="button" class="site-search-chip" data-q="topologías">Topologías</button>
+        <button type="button" class="site-search-chip" data-q="WiFi">WiFi</button>
+        <button type="button" class="site-search-chip" data-q="malware">Malware</button>
+        <button type="button" class="site-search-chip" data-q="visor 3D">Visor 3D</button>
+        <button type="button" class="site-search-chip" data-q="glosario">Glosario</button>
       </div>
     </div>
   </header>
@@ -655,6 +677,7 @@
 
   <!-- Script interactivo bilingüe y menú móvil -->
   <script src="js/main.js?v=6"></script>
+  <script src="js/site-search.js?v=3"></script>
   <script src="js/equipo-widget.js?v=14" defer></script>
 </body>
 </html>

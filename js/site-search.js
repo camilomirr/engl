@@ -1,7 +1,9 @@
 /* =========================================================
-   BUSCADOR DE LA PÁGINA PRINCIPAL (NVISION)
+   BUSCADOR DE NVISION
    Índice curado de los temas del sitio: al escribir, muestra
    resultados en vivo y cada uno lleva directo a su sección.
+   Vive en el encabezado de TODAS las páginas (botón lupa) y
+   también en la página principal, debajo de los botones.
    Bilingüe ES/EN: busca en los dos idiomas a la vez.
    ========================================================= */
 (function () {
@@ -41,6 +43,14 @@
   ];
 
   var MAX_RESULTS = 8;
+
+  // Los enlaces del índice son relativos a la raíz del sitio. Desde las
+  // subcarpetas (workshop/, redes_challenge/) hay que subir un nivel para
+  // que los resultados no apunten a workshop/hardware.html y similares.
+  var IN_SUBFOLDER = window.location.pathname.indexOf('/workshop/') !== -1 ||
+    window.location.pathname.indexOf('/redes_challenge/') !== -1;
+  var LINK_PREFIX = IN_SUBFOLDER ? '../' : '';
+  function resolveLink(u) { return LINK_PREFIX + u; }
 
   function langIndex() {
     return document.documentElement.lang === 'en' ? 1 : 0;
@@ -131,7 +141,7 @@
         results.forEach(function (item) {
           var a = document.createElement('a');
           a.className = 'site-search-result';
-          a.href = item.u;
+          a.href = resolveLink(item.u);
           var top = document.createElement('span');
           top.className = 'site-search-result-top';
           var title = document.createElement('span');
