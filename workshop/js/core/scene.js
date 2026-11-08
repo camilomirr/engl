@@ -35,6 +35,8 @@ const MATS = () => ({
 
 export function createScene(wrap, hooks = {}) {
   let renderer;
+  let rgbLight = null, rgbOn = false, rgbHue = 0, pasteMesh = null, cableGroup = null;
+  const cableMeshes = {};
   try {
     renderer = new THREE.WebGLRenderer({ antialias: true });
   } catch (e) {
@@ -65,6 +67,9 @@ export function createScene(wrap, hooks = {}) {
   controls.maxPolarAngle = 1.52;
 
   scene.add(new THREE.HemisphereLight(0xbcd7ff, 0x1a2436, 0.7));
+  rgbLight = new THREE.PointLight(0xffffff, 0, 7);
+  rgbLight.position.set(0.3, 2.1, 0.2);
+  scene.add(rgbLight);
   const keyLight = new THREE.DirectionalLight(0xffffff, 2.1);
   keyLight.position.set(-6, 9, 5);
   keyLight.castShadow = true;
@@ -378,6 +383,10 @@ export function createScene(wrap, hooks = {}) {
     }
     if (powered) {
       spinners.forEach(f => { if (f.userData.blades) f.userData.blades.rotation.z -= dt * 13; });
+      if (rgbLight) {
+        if (powered && rgbOn) { rgbHue = (rgbHue + dt * 0.07) % 1; rgbLight.intensity = 26; rgbLight.color.setHSL(rgbHue, 0.85, 0.55); }
+        else rgbLight.intensity = 0;
+      }
       const hue = (t * 0.12) % 1;
       rgbMats.forEach(m => { m.emissive.setHSL(hue, 0.85, 0.55); m.emissiveIntensity = 1.5; });
       inner.intensity = 6; inner.color.setHSL(hue, 0.8, 0.6);
@@ -403,6 +412,38 @@ export function createScene(wrap, hooks = {}) {
     isPanelOpen() { return panelGroup ? panelOpen : true; },
     setPowered(on) { powered = on; },
     setQuality,
-    focus(cat) { const p = placed[cat]; if (p) focusGoal = p.group.position.clone(); }
+    focus(cat) { const p = placed[cat]; if (p) focusGoal = p.group.position.clone(); },
+    setRGBMode(on) { rgbOn = !!on; },
+    setPaste(on) {
+      if (!pasteMesh) {
+        pasteMesh = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.075, 0.075, 0.016, 20),
+          new THREE.MeshStandardMaterial({ color: 0xe9e9e9, roughness: 0.55 })
+        );
+        pasteMesh.position.copy(SNAP_POS.cpu).add(new THREE.Vector3(0, 0.09, 0));
+        pasteMesh.visible = false;
+        scene.add(pasteMesh);
+      }
+      pasteMesh.visible = !!on;
+    },
+    setCable(id, on) {
+      if (!cableGroup) { cableGroup = new THREE.Group(); scene.add(cableGroup); }
+      if (cableMeshes[id]) { cableGroup.remove(cableMeshes[id]); cableMeshes[id].geometry.dispose(); delete cableMeshes[id]; }
+      if (!on) return;
+      const targets = {
+        'cable-atx': SNAP_POS.board.clone().add(new THREE.Vector3(-0.1, -0.3, 0.6)),
+        'cable-eps': SNAP_POS.board.clone().add(new THREE.Vector3(-0.2, 0.55, -0.3)),
+        'cable-pcie': SNAP_POS.gpu.clone().add(new THREE.Vector3(0.1, 0.1, 0)),
+        'cable-sata': SNAP_POS.storage.clone()
+      };
+      const colors = { 'cable-atx': 0xf59e0b, 'cable-eps': 0x38bdf8, 'cable-pcie': 0xef4444, 'cable-sata': 0xa78bfa };
+      const to = targets[id]; if (!to) return;
+      const from = SNAP_POS.psu.clone().add(new THREE.Vector3(0.15, 0.3, 0.35));
+      const mid = from.clone().lerp(to, 0.5).add(new THREE.Vector3(0, 0.3, 0.4));
+      const geo = new THREE.TubeGeometry(new THREE.CatmullRomCurve3([from, mid, to]), 20, 0.024, 6, false);
+      const mesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: colors[id] || 0xcccccc, roughness: 0.6 }));
+      cableGroup.add(mesh);
+      cableMeshes[id] = mesh;
+    }
   };
 }

@@ -6,19 +6,19 @@
 // las reglas validan -> la pieza vuela a su punto de
 // montaje. El avance se guarda en localStorage.
 // =========================================================
-import { loadComponents } from './data/catalog.js?v=12';
-import { checkPlacement, missingParts, REQUIRED } from './core/rules.js?v=12';
-import { createScene } from './core/scene.js?v=12';
-import { loadState, saveState, buy as ecoBuy, sell as ecoSell, advanceDay } from './core/economy.js?v=12';
-import { createShop } from './ui/shop.js?v=12';
-import { tasksFor, doNextTask, assemblyPending, TOOLS } from './core/assembly.js?v=12';
-import { createTasksPanel } from './ui/tasks.js?v=12';
-import { runPost, biosRows, stressTest, temps } from './core/boot.js?v=12';
-import { createMonitor } from './ui/monitor.js?v=12';
-import { genOrders, evaluate as evalOrder, applyDelivery, levelFor } from './core/career.js?v=12';
-import { createOrders } from './ui/orders.js?v=12';
-import { scores, fpsTable, buildSummary, buildCode, parseCode } from './core/bench.js?v=12';
-import { createHud, t } from './ui/hud.js?v=12';
+import { loadComponents } from './data/catalog.js?v=13';
+import { checkPlacement, missingParts, REQUIRED } from './core/rules.js?v=13';
+import { createScene } from './core/scene.js?v=13';
+import { loadState, saveState, buy as ecoBuy, sell as ecoSell, advanceDay } from './core/economy.js?v=13';
+import { createShop } from './ui/shop.js?v=13';
+import { tasksFor, doNextTask, assemblyPending, TOOLS } from './core/assembly.js?v=13';
+import { createTasksPanel } from './ui/tasks.js?v=13';
+import { runPost, biosRows, stressTest, temps } from './core/boot.js?v=13';
+import { createMonitor } from './ui/monitor.js?v=13';
+import { genOrders, evaluate as evalOrder, applyDelivery, levelFor } from './core/career.js?v=13';
+import { createOrders } from './ui/orders.js?v=13';
+import { scores, fpsTable, buildSummary, buildCode, parseCode } from './core/bench.js?v=13';
+import { createHud, t } from './ui/hud.js?v=13';
 
 const installed = {};   // categoria -> componente
 const game = loadState(); // dinero, dia, inventario propio y armado guardado
