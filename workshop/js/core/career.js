@@ -27,6 +27,15 @@ const PURPOSES = [
 function hashStr(s) {
   let h = 2166136261;
   for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+  // Mezcla final (avalancha): el FNV puro apenas mueve los bits
+  // altos cuando solo cambia un caracter de la semilla, y los 3
+  // pedidos del mismo dia salian casi siempre con el mismo
+  // proposito (y cliente/presupuesto correlados). Con la mezcla,
+  // cada hueco del dia varia de verdad; sigue siendo
+  // determinista: mismo dia = mismos pedidos.
+  h ^= h >>> 16;
+  h = Math.imul(h, 0x45d9f3b);
+  h ^= h >>> 16;
   return (h >>> 0) / 4294967295;
 }
 function pick(seed, arr) { return arr[Math.floor(hashStr(seed) * arr.length) % arr.length]; }

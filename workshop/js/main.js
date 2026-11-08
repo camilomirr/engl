@@ -6,21 +6,21 @@
 // las reglas validan -> la pieza vuela a su punto de
 // montaje. El avance se guarda en localStorage.
 // =========================================================
-import { loadComponents } from './data/catalog.js?v=18';
+import { loadComponents } from './data/catalog.js?v=19';
 import { checkPlacement, missingParts, REQUIRED } from './core/rules.js?v=18';
-import { createScene } from './core/scene.js?v=18';
+import { createScene } from './core/scene.js?v=19';
 import { loadState, saveState, buy as ecoBuy, sell as ecoSell, advanceDay } from './core/economy.js?v=18';
-import { createShop } from './ui/shop.js?v=18';
+import { createShop } from './ui/shop.js?v=19';
 import { tasksFor, doNextTask, assemblyPending, TOOLS } from './core/assembly.js?v=18';
 import { createTasksPanel } from './ui/tasks.js?v=18';
 import { runPost, biosRows, stressTest, temps } from './core/boot.js?v=18';
 import { createMonitor } from './ui/monitor.js?v=18';
-import { genOrders, evaluate as evalOrder, applyDelivery, levelFor } from './core/career.js?v=18';
+import { genOrders, evaluate as evalOrder, applyDelivery, levelFor } from './core/career.js?v=19';
 import { createOrders } from './ui/orders.js?v=18';
 import { scores, fpsTable, buildSummary, buildCode, parseCode } from './core/bench.js?v=18';
 import { sfx, setSoundEnabled } from './core/sfx.js?v=18';
 import { createTutorial } from './ui/tutorial.js?v=18';
-import { createHud, t } from './ui/hud.js?v=18';
+import { createHud, t } from './ui/hud.js?v=19';
 
 const installed = {};   // categoria -> componente
 const game = loadState(); // dinero, dia, inventario propio y armado guardado
@@ -109,6 +109,7 @@ async function bootFlow() {
   try { await bootFlowInner(); } catch (err) { hud.log('⛔ ' + (lang() === 'en' ? 'Power-on error: ' : 'Error al encender: ') + (err && err.message ? err.message : err), 'err'); }
 }
 async function bootFlowInner() {
+  if (bootState === 'installing') return; // no encender en mitad de la instalacion del SO
   const s = t();
   const missing = missingParts(installed);
   if (missing.length) {
@@ -256,6 +257,10 @@ function importBuild(codeStr) {
   const parsed = parseCode(codeStr);
   if (!parsed) { hud.log(lang() === 'en' ? '🔗 That code is not valid (NVW1-… format).' : '🔗 Ese código no es válido (formato NVW1-…).', 'err'); return; }
   if (scene) scene.setPanel(true);
+  // Limpia los efectos visuales antes de colocar: si el codigo trae
+  // una CPU o una fuente distintas, la pasta y los cables viejos no
+  // deben quedar dibujados sobre piezas cuyas tareas no estan hechas.
+  if (scene) { scene.setPaste(false); ['atx', 'eps', 'pcie', 'sata'].forEach(k => scene.setCable(k, false)); }
   const order = ['case', 'board', 'cpu', 'cooler', 'ram', 'gpu', 'storage', 'psu'];
   let placedCount = 0; const missingNames = [];
   order.forEach(cat => {
@@ -263,7 +268,9 @@ function importBuild(codeStr) {
     if (!id) return;
     const item = components.find(c => c.id === id);
     if (!item) { missingNames.push(id); return; }
-    if (!(game.owned[item.id] > 0) && !(installed[cat] && installed[cat].id === item.id)) { missingNames.push(item.name); return; }
+    // 'gpu-none' no es una pieza fisica: significa "usar la
+    // integrada", asi que no exige haberla comprado en la tienda.
+    if (item.id !== 'gpu-none' && !(game.owned[item.id] > 0) && !(installed[cat] && installed[cat].id === item.id)) { missingNames.push(item.name); return; }
     const chk = checkPlacement(item, installed);
     if (!chk.ok) { missingNames.push(item.name + (lang() === 'en' ? ' (incompatible here)' : ' (incompatible aquí)')); return; }
     if (installed[cat] && scene) scene.remove(cat);
@@ -271,6 +278,7 @@ function importBuild(codeStr) {
     if (scene) scene.place(cat, item);
     placedCount++;
   });
+  applyAssemblyFx(); // vuelve a dibujar pasta/cables solo de las tareas ya hechas
   powerDown();
   hud.log(lang() === 'en'
     ? '⬇️ Build imported: ' + placedCount + ' parts mounted.' + (missingNames.length ? ' Could not mount: ' + missingNames.join(', ') + '.' : '')
@@ -337,6 +345,11 @@ function attemptPlace(item) {
   if (installed[item.category] && scene) scene.remove(item.category);
   installed[item.category] = item;
   if (scene) { scene.place(item.category, item); scene.setPowered(false); }
+  // Sincroniza los efectos visuales con el avance real: si se
+  // reemplaza la CPU o la fuente, la pasta y los cables viejos no
+  // deben quedar dibujados sobre piezas con tareas pendientes.
+  if (scene) { scene.setPaste(false); ['atx', 'eps', 'pcie', 'sata'].forEach(k => scene.setCable(k, false)); }
+  applyAssemblyFx();
   if (bootState !== 'off') powerDown(lang() === 'en' ? '— No signal — You changed parts: power on again.' : '— Sin señal — Cambiaste piezas: vuelve a encender el equipo.');
   game.system.lastStress = null;
   if (item.category === 'storage') game.system.osInstalled = false;
@@ -459,24 +472,28 @@ async function init() {
     hud.log(en ? '💿 NVISION OS installed.' : '💿 NVISION OS instalado.', 'ok');
     showDesktop();
   });
+  let stressRunning = false;
   document.getElementById('ws-stress-btn').addEventListener('click', async () => {
-    if (bootState !== 'desktop') return;
-    const res = stressTest(installed);
-    for (const ln of res.lines) { monitor.line(ln.text[lang()], ln.level); await wait(500); }
-    game.system.lastStress = res.outcome;
-    save();
-    if (res.fault) {
-      monitor.fault(res.fault, lang());
-      hud.log('⛔ ' + res.fault.title[lang()], 'err');
-      if (scene) scene.setPowered(false);
-      bootState = 'off';
-      updateMonitorBtns();
-    } else if (res.outcome === 'throttle') {
-      hud.log(lang() === 'en' ? '⚠ Thermal throttling: the rig performs worse under load.' : '⚠ Throttling térmico: el equipo rinde menos bajo carga.', 'warn');
-    } else {
-      hud.log(lang() === 'en' ? '🔥 Stress test passed: stable rig.' : '🔥 Prueba de carga superada: equipo estable.', 'ok');
-    }
-    syncUI();
+    if (bootState !== 'desktop' || stressRunning) return;
+    stressRunning = true;
+    try {
+      const res = stressTest(installed);
+      for (const ln of res.lines) { monitor.line(ln.text[lang()], ln.level); await wait(500); }
+      game.system.lastStress = res.outcome;
+      save();
+      if (res.fault) {
+        monitor.fault(res.fault, lang());
+        hud.log('⛔ ' + res.fault.title[lang()], 'err');
+        if (scene) scene.setPowered(false);
+        bootState = 'off';
+        updateMonitorBtns();
+      } else if (res.outcome === 'throttle') {
+        hud.log(lang() === 'en' ? '⚠ Thermal throttling: the rig performs worse under load.' : '⚠ Throttling térmico: el equipo rinde menos bajo carga.', 'warn');
+      } else {
+        hud.log(lang() === 'en' ? '🔥 Stress test passed: stable rig.' : '🔥 Prueba de carga superada: equipo estable.', 'ok');
+      }
+      syncUI();
+    } finally { stressRunning = false; }
   });
   const rgbBtn = document.getElementById('ws-rgb-btn');
   if (rgbBtn) {
@@ -517,10 +534,16 @@ async function init() {
   });
   document.getElementById('ws-reset-btn').addEventListener('click', () => {
     Object.keys(installed).slice().reverse().forEach(cat => { if (scene) scene.remove(cat); delete installed[cat]; });
-    if (scene) scene.setPowered(false);
+    // Vaciar el banco tambien apaga el equipo: sin piezas no hay
+    // monitor, ni SO instalado, ni prueba de carga que valga, y la
+    // pasta y los cables no pueden quedar flotando en el 3D.
+    if (scene) { scene.setPowered(false); scene.setPaste(false); ['atx', 'eps', 'pcie', 'sata'].forEach(k => scene.setCable(k, false)); }
+    game.system.osInstalled = false;
+    game.system.lastStress = null;
     holding = null;
     hud.setHolding(null);
     hud.setSelected(null);
+    powerDown();
     save();
   });
   if (!game.settings) game.settings = { sound: true, tutorialSeen: false };
@@ -557,6 +580,11 @@ async function init() {
       hud.applyStaticTexts();
       syncSoundBtn();
       syncUI();
+      // Textos que dependen del estado, no solo del idioma: el
+      // boton del panel (abierto/cerrado) y el XMP/EXPO.
+      updateMonitorBtns();
+      const pb = document.getElementById('ws-panel-btn');
+      if (pb && scene) pb.textContent = scene.isPanelOpen() ? t().panelOpen : t().panelClosed;
     }
   }, 700);
   const dayBtn = document.getElementById('ws-day-btn');

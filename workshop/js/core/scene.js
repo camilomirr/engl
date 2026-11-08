@@ -431,12 +431,12 @@ export function createScene(wrap, hooks = {}) {
       if (cableMeshes[id]) { cableGroup.remove(cableMeshes[id]); cableMeshes[id].geometry.dispose(); delete cableMeshes[id]; }
       if (!on) return;
       const targets = {
-        'cable-atx': SNAP_POS.board.clone().add(new THREE.Vector3(-0.1, -0.3, 0.6)),
-        'cable-eps': SNAP_POS.board.clone().add(new THREE.Vector3(-0.2, 0.55, -0.3)),
-        'cable-pcie': SNAP_POS.gpu.clone().add(new THREE.Vector3(0.1, 0.1, 0)),
-        'cable-sata': SNAP_POS.storage.clone()
+        'atx': SNAP_POS.board.clone().add(new THREE.Vector3(-0.1, -0.3, 0.6)),
+        'eps': SNAP_POS.board.clone().add(new THREE.Vector3(-0.2, 0.55, -0.3)),
+        'pcie': SNAP_POS.gpu.clone().add(new THREE.Vector3(0.1, 0.1, 0)),
+        'sata': SNAP_POS.storage.clone()
       };
-      const colors = { 'cable-atx': 0xf59e0b, 'cable-eps': 0x38bdf8, 'cable-pcie': 0xef4444, 'cable-sata': 0xa78bfa };
+      const colors = { 'atx': 0xf59e0b, 'eps': 0x38bdf8, 'pcie': 0xef4444, 'sata': 0xa78bfa };
       const to = targets[id]; if (!to) return;
       const from = SNAP_POS.psu.clone().add(new THREE.Vector3(0.15, 0.3, 0.35));
       const mid = from.clone().lerp(to, 0.5).add(new THREE.Vector3(0, 0.3, 0.4));

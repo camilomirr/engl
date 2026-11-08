@@ -1951,7 +1951,7 @@ export const FALLBACK_COMPONENTS = [
   "specs": {
    "type": "DDR4",
    "gb": 8,
-   "modules": 2,
+   "modules": 1,
    "speed": 3200,
    "cl": 16,
    "rgb": false
@@ -1978,7 +1978,7 @@ export const FALLBACK_COMPONENTS = [
   "specs": {
    "type": "DDR5",
    "gb": 8,
-   "modules": 2,
+   "modules": 1,
    "speed": 5200,
    "cl": 36,
    "rgb": false

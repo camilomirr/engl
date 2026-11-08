@@ -147,6 +147,7 @@ export function createHud(handlers) {
     if (sp.type) bits.push(sp.type + ' ' + (sp.speed || ''));
     if (sp.gb) bits.push(sp.gb + ' GB');
     if (sp.lenMm) bits.push(sp.lenMm + ' mm');
+    if (sp.heightMm) bits.push(sp.heightMm + ' mm');
     if (sp.vramGb) bits.push(sp.vramGb + ' GB VRAM');
     if (sp.wattsOut) bits.push(sp.wattsOut + ' W');
     if (sp.form) bits.push(sp.form);

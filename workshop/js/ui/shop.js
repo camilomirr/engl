@@ -5,7 +5,7 @@
 // (la venta devuelve el 70% y no aplica a piezas montadas).
 // =========================================================
 import { priceToday, stockLeft } from '../core/economy.js?v=6';
-import { t, money, currentLang } from './hud.js?v=6';
+import { t, money, currentLang } from './hud.js?v=7';
 
 export function createShop(handlers) {
   const $ = id => document.getElementById(id);
@@ -13,13 +13,16 @@ export function createShop(handlers) {
   let components = [], state = null, playerLevel = 1, catFilter = 'all', query = '', sortBy = 'price-asc';
 
   function visible() {
-    let items = components.slice();
+    // 'gpu-none' no es una pieza comprable: solo significa "usar la
+    // integrada del procesador". Se monta desde un codigo importado
+    // o al no elegir grafica, pero no se vende en la tienda.
+    let items = components.filter(i => i.id !== 'gpu-none');
     if (catFilter !== 'all') items = items.filter(i => i.category === catFilter);
     if (query) items = items.filter(i => (i.name + ' ' + (i.blurb.es || '') + ' ' + (i.blurb.en || '')).toLowerCase().includes(query));
     const price = i => priceToday(i, state ? state.day : 1);
     if (sortBy === 'price-asc') items.sort((a, b) => price(a) - price(b));
     if (sortBy === 'price-desc') items.sort((a, b) => price(b) - price(a));
-    if (sortBy === 'perf') items.sort((a, b) => ((b.perf.gaming || b.perf.score || b.perf.cooling || 0) - (a.perf.gaming || a.perf.score || a.perf.cooling || 0)));
+    if (sortBy === 'perf') items.sort((a, b) => ((b.perf.gaming || b.perf.score || b.perf.cooling || b.perf.features || 0) - (a.perf.gaming || a.perf.score || a.perf.cooling || a.perf.features || 0)));
     return items;
   }
   function render() {
