@@ -74,3 +74,13 @@
 .ws-up { color: #f87171; }
 .ws-hud { grid-template-columns: repeat(3, 1fr); }
 @media (max-width: 640px) { .ws-hud { grid-template-columns: repeat(2, 1fr); } }
+
+.ws-tasks-panel { margin-top: 1rem; border-top: 1px solid var(--border-subtle); padding-top: 0.9rem; }
+.ws-tasks-panel h4 { margin: 0 0 0.6rem; font-family: var(--font-heading); }
+.ws-tools { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-bottom: 0.7rem; }
+.ws-tool { font: inherit; font-size: 0.85rem; font-weight: 600; padding: 0.42rem 0.7rem; border-radius: 999px; border: 1px solid var(--border-subtle); background: var(--bg-surface); color: var(--text-secondary); cursor: pointer; }
+.ws-tool--active { border-color: var(--accent-cyan); color: var(--accent-cyan); background: rgba(56,189,248,0.12); }
+.ws-task-row { display: flex; justify-content: space-between; gap: 0.6rem; padding: 0.4rem 0.55rem; border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); margin-bottom: 0.4rem; font-size: 0.87rem; background: var(--bg-surface); }
+.ws-task-row--done { opacity: 0.65; }
+.ws-task-row b { color: var(--accent-cyan); white-space: nowrap; }
+#ws-task-btn { margin-top: 0.35rem; }

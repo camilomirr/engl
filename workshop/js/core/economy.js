@@ -17,7 +17,7 @@ export const STARTER_IDS = ['case-airflow-atx', 'board-b650-atx', 'cpu-7800x3d',
 export function freshState() {
   const owned = {};
   STARTER_IDS.forEach(id => { owned[id] = 1; });
-  return { money: START_MONEY, day: 1, owned, installed: {}, shopSold: {} };
+  return { money: START_MONEY, day: 1, owned, installed: {}, shopSold: {}, assembly: {} };
 }
 
 export function loadState() {

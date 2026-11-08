@@ -6,12 +6,14 @@
 // las reglas validan -> la pieza vuela a su punto de
 // montaje. El avance se guarda en localStorage.
 // =========================================================
-import { loadComponents } from './data/catalog.js?v=5';
-import { checkPlacement, missingParts, REQUIRED } from './core/rules.js?v=5';
-import { createScene } from './core/scene.js?v=5';
-import { loadState, saveState, buy as ecoBuy, sell as ecoSell, advanceDay } from './core/economy.js?v=5';
-import { createShop } from './ui/shop.js?v=5';
-import { createHud, t } from './ui/hud.js?v=5';
+import { loadComponents } from './data/catalog.js?v=6';
+import { checkPlacement, missingParts, REQUIRED } from './core/rules.js?v=6';
+import { createScene } from './core/scene.js?v=6';
+import { loadState, saveState, buy as ecoBuy, sell as ecoSell, advanceDay } from './core/economy.js?v=6';
+import { createShop } from './ui/shop.js?v=6';
+import { tasksFor, doNextTask, assemblyPending, TOOLS } from './core/assembly.js?v=6';
+import { createTasksPanel } from './ui/tasks.js?v=6';
+import { createHud, t } from './ui/hud.js?v=6';
 
 const installed = {};   // categoria -> componente
 const game = loadState(); // dinero, dia, inventario propio y armado guardado
@@ -42,9 +44,61 @@ const shop = createShop({
     save();
   }
 });
+const lang = () => (localStorage.getItem('user_lang') === 'en' ? 'en' : 'es');
+function buildCtx() {
+  return {
+    gpuNeedsPower: !!(installed.gpu && installed.gpu.id !== 'gpu-none' && installed.gpu.specs.powerNeed && installed.gpu.specs.powerNeed !== 'none'),
+    storageSata: !!(installed.storage && installed.storage.specs.mount !== 'M.2'),
+    cpuProgress: installed.cpu ? (game.assembly[installed.cpu.id] || {}) : {}
+  };
+}
+function progressFor(item) {
+  if (!game.assembly[item.id]) game.assembly[item.id] = {};
+  return game.assembly[item.id];
+}
+const tasksPanel = createTasksPanel({
+  onTool() {},
+  onDo() { doStep(); }
+});
+function refreshTasks() {
+  const item = selectedCat ? installed[selectedCat] : null;
+  if (!item) { tasksPanel.setView(null); return; }
+  const progress = progressFor(item);
+  tasksPanel.setView({
+    partName: item.name,
+    tasks: tasksFor(item, buildCtx()).map(tk => ({ label: tk.label[lang()], tool: tk.tool, count: tk.count, done: progress[tk.id] || 0 }))
+  });
+}
+function doStep() {
+  const item = selectedCat ? installed[selectedCat] : null;
+  if (!item) return;
+  const progress = progressFor(item);
+  const res = doNextTask(item, progress, tasksPanel.getTool(), buildCtx(), installed);
+  if (!res.ok) {
+    if (res.error === 'tool') hud.log('🧰 Para ese paso necesitas: ' + TOOLS[res.task.tool].icon + ' ' + TOOLS[res.task.tool][lang()], 'err');
+    else if (res.error === 'paste') hud.log('🧴 ¡Falta la pasta térmica! Selecciona el procesador, elige la herramienta de pasta y aplícala antes de apretar el disipador.', 'err');
+    else if (res.error === 'needs') hud.log('🔌 Ese cable necesita la pieza destino montada primero.', 'err');
+    refreshTasks();
+    return;
+  }
+  if (res.task.id === 'paste' && scene) scene.setPaste(true);
+  if (res.task.cable && scene) scene.setCable(res.task.cable, true);
+  hud.log('🔧 ' + res.task.label[lang()] + (res.finished ? ' ✅' : ' (' + progress[res.task.id] + '/' + res.task.count + ')'), 'ok');
+  save();
+}
+function applyAssemblyFx() {
+  if (!scene) return;
+  const ctx = buildCtx();
+  if (installed.cpu && (game.assembly[installed.cpu.id] || {}).paste >= 1) scene.setPaste(true);
+  if (installed.psu) {
+    const progress = game.assembly[installed.psu.id] || {};
+    tasksFor(installed.psu, ctx).forEach(tk => { if (tk.cable && (progress[tk.id] || 0) >= tk.count) scene.setCable(tk.cable, true); });
+  }
+}
 function syncUI() {
   hud.setData(components, installed, game.owned, game);
   shop.setData(components, game);
+  refreshTasks();
 }
 function save() {
   const ids = {};
@@ -67,6 +121,7 @@ function pick(item) {
     if (scene) scene.focus(item.category);
     selectedCat = item.category;
     hud.setSelected(item.category);
+    refreshTasks();
     return;
   }
   holding = item;
@@ -91,6 +146,8 @@ function attemptPlace(item) {
   installed[item.category] = item;
   if (scene) { scene.place(item.category, item); scene.setPowered(false); }
   holding = null;
+  selectedCat = item.category;
+  hud.setSelected(item.category);
   hud.setHolding(null);
   if (scene) scene.showMarkersFor(null);
   hud.log(s.placed + item.name, 'ok');
@@ -105,6 +162,11 @@ function removePart(cat) {
   }
   const item = installed[cat];
   if (!item) return;
+  delete game.assembly[item.id];
+  if (scene && cat === 'cpu') scene.setPaste(false);
+  if (scene && cat === 'psu') ['atx', 'eps', 'pcie', 'sata'].forEach(k => scene.setCable(k, false));
+  if (scene && cat === 'gpu') scene.setCable('pcie', false);
+  if (scene && cat === 'storage') scene.setCable('sata', false);
   delete installed[cat];
   if (scene) { scene.remove(cat); scene.setPowered(false); }
   hud.setSelected(null);
@@ -148,10 +210,11 @@ async function init() {
   scene = createScene(wrap, {
     onError() { hud.log(t().webglError, 'err'); },
     onSnap() { if (holding) attemptPlace(holding); },
-    onPartClick(cat) { selectedCat = cat; hud.setSelected(cat); },
+    onPartClick(cat) { selectedCat = cat; hud.setSelected(cat); refreshTasks(); },
     onQualityDrop() { hud.log(t().qualityDropped, 'info'); const q = document.getElementById('ws-quality'); if (q) q.value = 'low'; }
   });
   restore();
+  applyAssemblyFx();
   syncUI();
   hud.log(t().welcome, 'info');
   if (scene && installed.case) scene.setPanel(true);
@@ -171,6 +234,13 @@ async function init() {
     const missing = missingParts(installed);
     if (missing.length) {
       hud.log(s.powerMissing + missing.map(c => s.catNames[c]).join(', ') + '.', 'err');
+      if (scene) scene.setPowered(false);
+      return;
+    }
+    const pending = assemblyPending(installed, game.assembly, buildCtx());
+    if (pending.length) {
+      pending.slice(0, 4).forEach(p => hud.log('🔧 Falta: ' + p.task.label[lang()] + ' — ' + p.item.name + ' (' + p.done + '/' + p.task.count + ')', 'err'));
+      hud.log('Termina el montaje paso a paso antes de encender.', 'err');
       if (scene) scene.setPowered(false);
       return;
     }
