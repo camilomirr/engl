@@ -46,9 +46,9 @@
   var name = localStorage.getItem('eq_name') || '';
   var open = localStorage.getItem('eqw_open') === '1';
 
-  // Modo del mensaje: '' (automático), 'ask' (solo preguntar) o 'edit' (hacer el cambio).
-  // Es de un solo mensaje: al enviar se vuelve a automático.
-  var eqMode = '';
+  // Modo del mensaje: 'ask' (solo preguntar) o 'edit' (hacer el cambio).
+  // El lápiz (Editar) viene encendido por defecto: se toca un botón y listo.
+  var eqMode = 'edit';
   function stripMode(s) {
     return String(s == null ? '' : s).replace(/^\[(PREGUNTA|EDITAR)\]\s*/, '');
   }
@@ -93,9 +93,11 @@
     askBtn.classList.toggle('is-on', eqMode === 'ask');
     editBtn.classList.toggle('is-on', eqMode === 'edit');
   }
-  function toggleMode(m) { eqMode = (eqMode === m) ? '' : m; renderMode(); }
+  // Siempre hay un modo encendido: tocar un botón lo enciende y apaga el otro.
+  function toggleMode(m) { eqMode = m; renderMode(); }
   askBtn.addEventListener('click', function () { toggleMode('ask'); input.focus(); });
   editBtn.addEventListener('click', function () { toggleMode('edit'); input.focus(); });
+  renderMode();
 
   function seenKey(n) { return 'eq_seen_' + n; }
   function getSeen(n) { return localStorage.getItem(seenKey(n)) || '1970-01-01'; }
@@ -165,11 +167,15 @@
         '<strong>Hola, ' + esc(name) + '</strong>' +
         '<p>Este chat está vacío. Escríbele algo a Muse abajo, por ejemplo pedir un cambio en el sitio.</p>' +
         '<div class="eqw-chips">' +
-        '<button type="button" class="eqw-chip" data-text="Quiero pedir un cambio en el sitio">Pedir un cambio</button>' +
-        '<button type="button" class="eqw-chip" data-text="¿Qué puedes hacer por el equipo?">¿Qué puedes hacer?</button>' +
+        '<button type="button" class="eqw-chip" data-mode="edit" data-text="Quiero pedir un cambio en el sitio">Pedir un cambio</button>' +
+        '<button type="button" class="eqw-chip" data-mode="ask" data-text="¿Qué puedes hacer por el equipo?">¿Qué puedes hacer?</button>' +
         '</div></div>';
       body.querySelectorAll('.eqw-chip').forEach(function (c) {
-        c.addEventListener('click', function () { input.value = c.getAttribute('data-text'); input.focus(); });
+        c.addEventListener('click', function () {
+          var m = c.getAttribute('data-mode');
+          if (m) toggleMode(m);
+          input.value = c.getAttribute('data-text'); input.focus();
+        });
       });
       return;
     }
@@ -241,7 +247,7 @@
     try {
       await sbPost('/rest/v1/team_tasks', { name: name, page: 'Chat', task: sendTask }, 'return=representation');
       input.value = '';
-      eqMode = '';
+      eqMode = 'edit';
       renderMode();
       status.textContent = '';
       loadTasks();
