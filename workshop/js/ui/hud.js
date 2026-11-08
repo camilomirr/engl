@@ -24,7 +24,7 @@ export const STRINGS = {
     placed: '✅ Montada: ', removed: '↩️ Pieza retirada al inventario: ',
     cantRemoveCase: 'No puedes retirar el gabinete con piezas dentro: vacíalo primero.',
     openPanelFirst: 'El panel lateral está cerrado: ábrelo antes de montar piezas internas.',
-    powerOk: '🎉 ¡El PC enciende! Ventiladores girando y RGB activo. (POST, BIOS y temperaturas llegan en la Fase 4.)',
+    powerOk: '🎉 ¡El PC enciende! Revisa el POST en el monitor del banco.',
     powerMissing: 'Todavía no puede encender. Faltan: ',
     savedNote: 'Tu avance se guarda solo en este navegador.',
     money: 'Dinero', day: 'Día', buy: 'Comprar', sell: 'Vender', shop: 'Tienda de componentes', shopHint: 'Precios del día (varían ±8% cada día) y stock limitado. Vender devuelve el 70%.', nextDay: '📅 Día siguiente',
