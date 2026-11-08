@@ -6,12 +6,12 @@
 // las reglas validan -> la pieza vuela a su punto de
 // montaje. El avance se guarda en localStorage.
 // =========================================================
-import { loadComponents } from './data/catalog.js?v=4';
-import { checkPlacement, missingParts, REQUIRED } from './core/rules.js?v=4';
-import { createScene } from './core/scene.js?v=4';
-import { loadState, saveState, buy as ecoBuy, sell as ecoSell, advanceDay } from './core/economy.js?v=4';
-import { createShop } from './ui/shop.js?v=4';
-import { createHud, t } from './ui/hud.js?v=4';
+import { loadComponents } from './data/catalog.js?v=5';
+import { checkPlacement, missingParts, REQUIRED } from './core/rules.js?v=5';
+import { createScene } from './core/scene.js?v=5';
+import { loadState, saveState, buy as ecoBuy, sell as ecoSell, advanceDay } from './core/economy.js?v=5';
+import { createShop } from './ui/shop.js?v=5';
+import { createHud, t } from './ui/hud.js?v=5';
 
 const installed = {};   // categoria -> componente
 const game = loadState(); // dinero, dia, inventario propio y armado guardado

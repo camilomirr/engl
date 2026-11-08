@@ -4,8 +4,8 @@
 // orden; precios del dia y stock visible; comprar y vender
 // (la venta devuelve el 70% y no aplica a piezas montadas).
 // =========================================================
-import { priceToday, stockLeft } from '../core/economy.js?v=4';
-import { t, money, currentLang } from './hud.js?v=4';
+import { priceToday, stockLeft } from '../core/economy.js?v=5';
+import { t, money, currentLang } from './hud.js?v=5';
 
 export function createShop(handlers) {
   const $ = id => document.getElementById(id);
