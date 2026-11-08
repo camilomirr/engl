@@ -3,10 +3,10 @@
    ========================================================= */
 
 /* 1. Variables, Temas, Tipografías y Reset Base */
-@import url('modules/variables.css');
+@import url('modules/variables.css?v=2');
 
 /* 2. Cabecera, Navegación, Submenús y Selector de Idioma */
-@import url('modules/header-nav.css');
+@import url('modules/header-nav.css?v=2');
 
 /* 3. Hero Section, Título Principal y Botones de Acción */
 @import url('modules/hero.css');

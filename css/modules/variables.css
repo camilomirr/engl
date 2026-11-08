@@ -11,7 +11,7 @@
   --bg-surface: rgba(15, 23, 42, 0.85);
   --bg-card: rgba(18, 26, 43, 0.75);
   --bg-card-hover: rgba(24, 35, 58, 0.9);
-  --header-bg: rgba(10, 14, 23, 0.85);
+  --header-bg: rgba(10, 14, 23, 0.55);
   --footer-bg: #070a10;
   
   --border-subtle: rgba(255, 255, 255, 0.08);
@@ -46,7 +46,7 @@
   --bg-surface: rgba(255, 255, 255, 0.92);
   --bg-card: #ffffff;
   --bg-card-hover: #ffffff;
-  --header-bg: rgba(255, 255, 255, 0.94);
+  --header-bg: rgba(255, 255, 255, 0.72);
   --footer-bg: #f1f5f9;
 
   --border-subtle: #e2e8f0;
