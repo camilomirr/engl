@@ -87,96 +87,174 @@
   .eq-msg { max-width: 92%; }
 }
 
-/* Widget flotante del chat del equipo — ENCIMA del botón del chatbot del sitio */
+/* Widget flotante del chat del equipo — ENCIMA del botón del chatbot del sitio.
+   Acorde a los píxeles de la página: cristal translúcido como el encabezado
+   (variables del tema + desenfoque de fondo), radios y sombras del sistema
+   de diseño, y tamaño responsivo ligado a la ventana real (vw / dvh). */
 .eqw-fab {
-  position: fixed; right: 1.25rem; bottom: 5.4rem; z-index: 60;
-  width: 3.4rem; height: 3.4rem; padding: 0; border: none; border-radius: 50%;
-  cursor: pointer; overflow: visible; background: #fff;
-  box-shadow: 0 10px 28px rgba(8, 47, 73, 0.35), 0 0 20px rgba(34, 211, 238, 0.22);
+  position: fixed;
+  right: max(1.25rem, env(safe-area-inset-right));
+  bottom: calc(5.4rem + env(safe-area-inset-bottom));
+  z-index: 60;
+  width: 3.4rem; height: 3.4rem; padding: 0; border-radius: 50%;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-card);
+  backdrop-filter: blur(14px) saturate(1.3);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  cursor: pointer; overflow: visible;
+  box-shadow: var(--shadow-md), 0 0 20px rgba(34, 211, 238, 0.22);
   transition: transform 0.2s ease;
 }
 .eqw-fab:hover { transform: translateY(-3px); }
 .eqw-fab img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; }
 .eqw-fab-badge {
   position: absolute; top: -4px; right: -4px; min-width: 20px; height: 20px; padding: 0 6px;
-  border-radius: 999px; background: #22c55e; color: #fff; font-size: 0.75rem; font-weight: 700;
+  border-radius: 999px; background: var(--accent-emerald); color: #fff; font-size: 0.75rem; font-weight: 700;
   display: inline-flex; align-items: center; justify-content: center;
 }
 /* Sin notificaciones no debe verse ni el 0: el display:inline-flex de arriba
    pisaba el atributo hidden, igual que pasó con la barra de escribir. */
 .eqw-fab-badge[hidden] { display: none; }
+
+/* El panel: la "barra lateral" del chat, translúcida como el header del sitio */
 .eqw-panel {
-  position: fixed; right: 1.25rem; bottom: 9.6rem; z-index: 60;
-  width: min(21rem, calc(100vw - 2rem)); display: flex; flex-direction: column;
-  border: 1px solid #cbd5e1; border-radius: 14px; overflow: hidden;
-  background: #fff; box-shadow: 0 18px 48px rgba(2, 8, 23, 0.3);
+  position: fixed;
+  right: max(1.25rem, env(safe-area-inset-right));
+  bottom: calc(9.6rem + env(safe-area-inset-bottom));
+  z-index: 60;
+  width: min(22.5rem, calc(100vw - 2.5rem));
+  max-height: min(36rem, calc(100dvh - 11.5rem));
+  display: flex; flex-direction: column;
+  color: var(--text-primary);
+  background: color-mix(in srgb, var(--bg-card) 82%, transparent);
+  backdrop-filter: blur(18px) saturate(1.4);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
   animation: eqw-in 0.18s ease;
 }
 @keyframes eqw-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 .eqw-panel[hidden] { display: none; }
-/* Encabezado como la página: blanco, texto oscuro, borde fino (nada de barra azul ni "en línea") */
 .eqw-head {
   display: flex; align-items: center; gap: 0.6rem; padding: 0.6rem 0.8rem;
-  background: #ffffff; color: #0f172a;
-  border-bottom: 1px solid #e2e8f0;
+  background: color-mix(in srgb, var(--bg-surface) 65%, transparent);
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-subtle);
+  flex: 0 0 auto;
 }
 .eqw-head-logo { width: 34px; height: 34px; border-radius: 9px; object-fit: cover; }
-/* Botón para devolverse a la lista de chats: vive en el encabezado, siempre visible */
 .eqw-head-back {
-  font: inherit; font-size: 1.35rem; line-height: 1; color: #0f172a; background: none;
+  font: inherit; font-size: 1.35rem; line-height: 1; color: var(--text-primary); background: none;
   border: none; cursor: pointer; padding: 0.2rem 0.45rem; margin-left: -0.35rem;
-  border-radius: 8px; flex: 0 0 auto;
+  border-radius: var(--radius-sm); flex: 0 0 auto;
 }
-.eqw-head-back:hover { background: #f1f5f9; }
+.eqw-head-back:hover { background: var(--bg-card-hover); }
 .eqw-head-who { flex: 1; display: flex; flex-direction: column; min-width: 0; }
 .eqw-head-who strong { font-size: 0.95rem; }
-.eqw-head-who span { font-size: 0.75rem; color: var(--text-muted, #64748b); }
-.eqw-close { font: inherit; font-size: 1.3rem; color: #0f172a; background: none; border: none; cursor: pointer; padding: 0.1rem 0.4rem; }
+.eqw-head-who span { font-size: 0.75rem; color: var(--text-muted); }
+.eqw-close { font: inherit; font-size: 1.3rem; color: var(--text-primary); background: none; border: none; cursor: pointer; padding: 0.1rem 0.4rem; }
 .eqw-body {
-  padding: 0.7rem; min-height: 210px; max-height: 48vh; overflow-y: auto;
-  background: #f0f2f5; display: flex; flex-direction: column; gap: 0.4rem;
+  flex: 1 1 auto; min-height: 12rem; overflow-y: auto;
+  padding: 0.7rem; background: transparent;
+  display: flex; flex-direction: column; gap: 0.4rem;
 }
-.eqw-body .eq-chat-row { background: #fff; }
-.eqw-body .eq-chat-row:hover { background: #eff6ff; }
+/* Filas de chats dentro del panel, con los tonos del tema */
+.eqw-body .eq-chat-row {
+  background: color-mix(in srgb, var(--bg-surface) 88%, transparent);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+}
+.eqw-body .eq-chat-row:hover { background: var(--bg-card-hover); }
+/* Burbujas dentro del panel (las de la página del equipo no cambian) */
+.eqw-panel .eq-msg { border-radius: var(--radius-md); }
+.eqw-panel .eq-msg-muse {
+  background: color-mix(in srgb, var(--bg-surface) 92%, transparent);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  border-bottom-left-radius: 4px;
+}
+.eqw-panel .eq-msg-muse strong { color: var(--accent-cyan); }
+.eqw-panel .eq-msg-user {
+  background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+  color: #fff;
+}
+.eqw-panel .eq-msg-done {
+  background: color-mix(in srgb, var(--accent-emerald) 16%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-emerald) 45%, transparent);
+}
+.eqw-panel .eq-msg-done strong { color: var(--accent-emerald); }
+.eqw-panel .eq-commit { color: var(--accent-emerald); }
+.eqw-panel .eq-reload { color: var(--accent-amber); }
 /* Estado vacío del chat: saludo con avatar y atajos para empezar */
 .eqw-empty { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.5rem; padding: 1.6rem 0.8rem; margin: auto 0; }
 .eqw-empty-logo { width: 60px; height: 60px; border-radius: 16px; object-fit: cover; }
 .eqw-empty strong { font-size: 1.05rem; }
-.eqw-empty p { margin: 0; font-size: 0.88rem; color: var(--text-muted, #64748b); line-height: 1.5; }
+.eqw-empty p { margin: 0; font-size: 0.88rem; color: var(--text-muted); line-height: 1.5; }
 .eqw-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center; margin-top: 0.4rem; }
 .eqw-chip {
-  font: inherit; font-size: 0.82rem; color: #1d4ed8; background: #dbeafe;
-  border: 1px solid #bfdbfe; border-radius: 999px; padding: 0.45rem 0.85rem; cursor: pointer;
+  font: inherit; font-size: 0.82rem; cursor: pointer;
+  color: var(--accent-cyan);
+  background: color-mix(in srgb, var(--accent-cyan) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-cyan) 35%, transparent);
+  border-radius: 999px; padding: 0.45rem 0.85rem;
 }
-.eqw-chip:hover { background: #bfdbfe; }
+.eqw-chip:hover { background: color-mix(in srgb, var(--accent-cyan) 22%, transparent); }
 /* Puntos animados mientras Muse trabaja */
 .eq-dots { display: inline-flex; gap: 2px; margin-left: 2px; }
-.eq-dots i { width: 4px; height: 4px; border-radius: 50%; background: #64748b; animation: eqw-dot 1.2s infinite; }
+.eq-dots i { width: 4px; height: 4px; border-radius: 50%; background: var(--text-muted); animation: eqw-dot 1.2s infinite; }
 .eq-dots i:nth-child(2) { animation-delay: 0.2s; }
 .eq-dots i:nth-child(3) { animation-delay: 0.4s; }
 @keyframes eqw-dot { 0%, 60%, 100% { opacity: 0.25; transform: translateY(0); } 30% { opacity: 1; transform: translateY(-2px); } }
-.eqw-inputbar { display: flex; gap: 0.5rem; padding: 0.6rem; background: #fff; border-top: 1px solid #e2e8f0; }
+.eqw-inputbar {
+  display: flex; gap: 0.5rem; padding: 0.6rem; flex: 0 0 auto;
+  background: color-mix(in srgb, var(--bg-surface) 65%, transparent);
+  border-top: 1px solid var(--border-subtle);
+}
 .eqw-inputbar input {
   flex: 1; min-width: 0; font: inherit; padding: 0.6rem 0.8rem; border-radius: 999px;
-  border: 1px solid #cbd5e1; background: #f8fafc; color: inherit;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  color: var(--text-primary);
 }
-.eqw-inputbar input:focus { outline: none; border-color: #2563eb; background: #fff; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+.eqw-inputbar input:focus {
+  outline: none; border-color: var(--accent-cyan); background: var(--bg-card);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-cyan) 25%, transparent);
+}
 .eqw-inputbar input:disabled { opacity: 0.6; }
 .eqw-send { border-radius: 999px; padding: 0.6rem 1.1rem; }
 .eqw-send:disabled { opacity: 0.55; cursor: wait; }
-@media (max-width: 480px) {
-  .eqw-body { max-height: 50vh; }
-}
 
 /* Nombre propio marcado en la lista del mini chatbot */
-.eqw-row-current { border-color: #22c55e; box-shadow: inset 0 0 0 1px #22c55e; }
-.eqw-you { font-size: 0.72rem; color: #15803d; font-weight: 700; }
+.eqw-row-current { border-color: var(--accent-emerald); box-shadow: inset 0 0 0 1px var(--accent-emerald); }
+.eqw-you { font-size: 0.72rem; color: var(--accent-emerald); font-weight: 700; }
 
 /* Aviso de error al enviar en el mini chatbot (antes se tragaba el error) */
-.eqw-status { margin: 0; padding: 0.2rem 0.8rem 0.6rem; font-size: 0.8rem; color: #dc2626; background: #fff; min-height: 0.4rem; }
+.eqw-status {
+  margin: 0; padding: 0.2rem 0.8rem 0.6rem; font-size: 0.8rem; min-height: 0.4rem;
+  color: #f87171; background: transparent; flex: 0 0 auto;
+}
+[data-theme="light"] .eqw-status { color: #dc2626; }
 
 /* La barra de escribir NO debe verse sin haber escogido nombre: el display:flex
    del CSS pisaba el atributo hidden; esta regla lo corrige. */
 .eqw-inputbar[hidden] { display: none; }
 /* Logo de Muse en cada fila de nombres, en vez de los círculos azules con letras */
-.eqw-row-logo { width: 46px; height: 46px; flex: 0 0 46px; border-radius: 12px; object-fit: cover; box-shadow: 0 2px 8px rgba(2, 8, 23, 0.15); }
+.eqw-row-logo { width: 46px; height: 46px; flex: 0 0 46px; border-radius: 12px; object-fit: cover; box-shadow: var(--shadow-sm); }
+
+/* Móvil: el panel se vuelve una hoja casi a pantalla completa, sin salirse
+   jamás de los píxeles de la ventana ni tapar las zonas seguras del móvil. */
+@media (max-width: 560px) {
+  .eqw-panel {
+    left: 0.75rem; right: 0.75rem; width: auto;
+    bottom: calc(0.75rem + env(safe-area-inset-bottom));
+    max-height: calc(100dvh - 1.5rem);
+  }
+  .eqw-body { min-height: 38dvh; }
+  .eqw-panel .eq-msg { max-width: 92%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .eqw-panel { animation: none; }
+  .eqw-fab { transition: none; }
+}
