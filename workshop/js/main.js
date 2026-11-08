@@ -6,19 +6,19 @@
 // las reglas validan -> la pieza vuela a su punto de
 // montaje. El avance se guarda en localStorage.
 // =========================================================
-import { loadComponents } from './data/catalog.js?v=11';
-import { checkPlacement, missingParts, REQUIRED } from './core/rules.js?v=11';
-import { createScene } from './core/scene.js?v=11';
-import { loadState, saveState, buy as ecoBuy, sell as ecoSell, advanceDay } from './core/economy.js?v=11';
-import { createShop } from './ui/shop.js?v=11';
-import { tasksFor, doNextTask, assemblyPending, TOOLS } from './core/assembly.js?v=11';
-import { createTasksPanel } from './ui/tasks.js?v=11';
-import { runPost, biosRows, stressTest, temps } from './core/boot.js?v=11';
-import { createMonitor } from './ui/monitor.js?v=11';
-import { genOrders, evaluate as evalOrder, applyDelivery, levelFor } from './core/career.js?v=11';
-import { createOrders } from './ui/orders.js?v=11';
-import { scores, fpsTable, buildSummary, buildCode, parseCode } from './core/bench.js?v=11';
-import { createHud, t } from './ui/hud.js?v=11';
+import { loadComponents } from './data/catalog.js?v=12';
+import { checkPlacement, missingParts, REQUIRED } from './core/rules.js?v=12';
+import { createScene } from './core/scene.js?v=12';
+import { loadState, saveState, buy as ecoBuy, sell as ecoSell, advanceDay } from './core/economy.js?v=12';
+import { createShop } from './ui/shop.js?v=12';
+import { tasksFor, doNextTask, assemblyPending, TOOLS } from './core/assembly.js?v=12';
+import { createTasksPanel } from './ui/tasks.js?v=12';
+import { runPost, biosRows, stressTest, temps } from './core/boot.js?v=12';
+import { createMonitor } from './ui/monitor.js?v=12';
+import { genOrders, evaluate as evalOrder, applyDelivery, levelFor } from './core/career.js?v=12';
+import { createOrders } from './ui/orders.js?v=12';
+import { scores, fpsTable, buildSummary, buildCode, parseCode } from './core/bench.js?v=12';
+import { createHud, t } from './ui/hud.js?v=12';
 
 const installed = {};   // categoria -> componente
 const game = loadState(); // dinero, dia, inventario propio y armado guardado
@@ -384,10 +384,12 @@ function moveGhost(ev) {
 }
 
 async function init() {
+  window.__WS_STAGE = 'catalogo';
   components = await loadComponents();
   syncUI();
   hud.applyStaticTexts();
 
+  window.__WS_STAGE = 'escena';
   const wrap = document.getElementById('ws-canvas-wrap');
   try {
     scene = createScene(wrap, {
@@ -400,9 +402,12 @@ async function init() {
     scene = null;
     hud.log('⚠️ La escena 3D no pudo iniciar en este navegador; el taller funciona sin ella.', 'err');
   }
+  window.__WS_STAGE = 'restore';
   try { restore(); } catch (err) { hud.log('⚠️ No se pudo restaurar todo el equipo guardado.', 'err'); }
+  window.__WS_STAGE = 'fx-syncui';
   try { applyAssemblyFx(); } catch (err) {}
   syncUI();
+  window.__WS_STAGE = 'listeners';
   hud.log(t().welcome, 'info');
   if (scene && installed.case) scene.setPanel(true);
 
@@ -501,6 +506,7 @@ async function init() {
     hud.setSelected(null);
     save();
   });
+  window.__WS_BOOTED = true;
   const dayBtn = document.getElementById('ws-day-btn');
   if (dayBtn) dayBtn.addEventListener('click', () => {
     advanceDay(game);
@@ -510,4 +516,4 @@ async function init() {
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
-else init();
+else init().catch(err => { window.__WS_ERROR = String(err && err.message || err); });
