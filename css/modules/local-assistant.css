@@ -121,6 +121,25 @@
 }
 
 .local-assistant-submit svg { width: 1rem; height: 1rem; }
+
+/* Botones junto a enviar: "?" (Solo preguntar, se activa) y lápiz (editar
+   el último mensaje). Mismo tamaño redondo que el de enviar. */
+.local-assistant-ask,
+.local-assistant-edit {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2.45rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  color: var(--accent-cyan);
+  background: transparent;
+  cursor: pointer;
+}
+.local-assistant-ask span { font: 700 1.05rem/1 'JetBrains Mono', monospace; }
+.local-assistant-edit svg { width: 1rem; height: 1rem; }
+.local-assistant-ask.is-active { color: #082f49; background: var(--accent-cyan); border-color: transparent; }
+.local-assistant-edit:disabled { opacity: 0.35; cursor: default; }
 .local-assistant-results { display: grid; gap: 0.55rem; margin-top: 0.8rem; max-height: 12rem; overflow-y: auto; }
 .local-assistant-result {
   padding: 0.65rem;

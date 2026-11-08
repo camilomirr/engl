@@ -249,6 +249,8 @@ const translations = {
     assistant_welcome: "Pregúntame sobre el contenido del sitio. Si no sé algo, puedes enseñármelo en la pestaña Entrenar.",
     assistant_placeholder: "Escribe tu pregunta…",
     assistant_search: "Enviar",
+    assistant_ask_only: "Solo preguntar: solo responde, no hace pasos",
+    assistant_edit_last: "Editar último mensaje",
     assistant_empty: "No encontré una coincidencia. Prueba con otra palabra clave.",
     assistant_open: "Abrir sección",
     assistant_tab_chat: "Chat",
@@ -1252,6 +1254,8 @@ const translations = {
     assistant_welcome: "Ask me about the site content. If I miss something, you can teach me in the Train tab.",
     assistant_placeholder: "Type your question…",
     assistant_search: "Send",
+    assistant_ask_only: "Ask only: just answers, no step-by-step",
+    assistant_edit_last: "Edit last message",
     assistant_empty: "I could not find a match. Try another keyword.",
     assistant_open: "Open section",
     assistant_tab_chat: "Chat",
@@ -3382,6 +3386,10 @@ function setupLocalAssistant() {
       </div>
       <form class="local-assistant-form">
         <input class="local-assistant-input" type="text" autocomplete="off" maxlength="300" data-i18n-placeholder="assistant_placeholder" placeholder="Escribe tu pregunta…">
+        <button class="local-assistant-ask" type="button" data-i18n-title="assistant_ask_only" title="Solo preguntar: solo responde, no hace pasos" aria-label="Solo preguntar" aria-pressed="false"><span aria-hidden="true">?</span></button>
+        <button class="local-assistant-edit" type="button" data-i18n-title="assistant_edit_last" title="Editar último mensaje" aria-label="Editar último mensaje" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path></svg>
+        </button>
         <button class="local-assistant-submit" type="submit" data-i18n-title="assistant_search" title="Enviar" aria-label="Enviar">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"></path><path d="M22 2 11 13"></path></svg>
         </button>
@@ -3400,6 +3408,14 @@ function setupLocalAssistant() {
   const input = $('.local-assistant-input');
   const log = $('.la-log');
   const chipsBox = $('.la-chips');
+  const askBtn = $('.local-assistant-ask');
+  const editBtn = $('.local-assistant-edit');
+  /* Modo "Solo preguntar": activado con el botón "?", el asistente solo
+     responde la pregunta y nunca da pasos ni hace nada por su cuenta. */
+  let askOnly = false;
+  /* Último mensaje del usuario, para el botón lápiz (editar y reenviar). */
+  let lastUserMsg = '';
+  let lastUserEl = null;
   const L = () => (currentLang === 'en' ? 1 : 0);
   const T = () => translations[currentLang] || translations.es;
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -3430,6 +3446,7 @@ function setupLocalAssistant() {
       d.appendChild(f);
     }
     log.appendChild(d);
+    if (role === 'user') lastUserEl = d;
     log.scrollTop = log.scrollHeight;
     return d;
   }
@@ -3443,12 +3460,14 @@ function setupLocalAssistant() {
         moreBtn.textContent = L() === 1 ? 'What else?' : '¿Qué más?';
         moreBtn.addEventListener('click', () => ask(L() === 1 ? 'What else?' : '¿Qué más?'));
         log.lastChild.appendChild(moreBtn);
-        const doBtn = document.createElement('button');
-        doBtn.type = 'button';
-        doBtn.className = 'la-chip';
-        doBtn.textContent = L() === 1 ? 'Do it' : 'Hazlo';
-        doBtn.addEventListener('click', () => ask(L() === 1 ? 'Do it' : 'Hazlo'));
-        log.lastChild.appendChild(doBtn);
+        if (!askOnly) {
+          const doBtn = document.createElement('button');
+          doBtn.type = 'button';
+          doBtn.className = 'la-chip';
+          doBtn.textContent = L() === 1 ? 'Do it' : 'Hazlo';
+          doBtn.addEventListener('click', () => ask(L() === 1 ? 'Do it' : 'Hazlo'));
+          log.lastChild.appendChild(doBtn);
+        }
       }
       if (teachQ) {
         const b = document.createElement('button');
@@ -3464,18 +3483,25 @@ function setupLocalAssistant() {
     text = (text || '').trim();
     if (!text) return;
     addMsg('user', text);
+    lastUserMsg = text;
+    editBtn.disabled = false;
     // 1) "¿qué más?" solo: seguir con el último tema
     if (isPureFollowUp(text)) { askFollowUp(text); return; }
     const nq = norm(text);
-    // 1b) "hazlo" solo: hacer lo del último tema, paso a paso
-    if (isDoIt(text)) { askDoIt(text); return; }
+    // 1b) "hazlo" solo: con "Solo preguntar" activo, solo responde con
+    // la ficha del último tema, sin dar pasos ni hacer nada.
+    if (isDoIt(text)) {
+      if (askOnly && lastTopic) { say(lastTopic.e.r[L()], text, null, lastTopic.e.href); return; }
+      askDoIt(text); return;
+    }
     // 1c) "hazlo de X" / "haz X" / "muéstrame X": quitar el imperativo y buscar X
     for (const p of DOIT_PREFIXES) {
       if (nq.startsWith(p)) {
         const rest = nq.slice(p.length).trim();
         const br = rest ? bestMatch(rest) : { score: 0 };
-        if (br.score >= 0.4) { rememberTopic(br); say((L() === 1 ? 'Sure — here is how to do it, step by step: ' : 'Claro, te lo hago paso a paso: ') + br.e.r[L()], text, null, br.e.href); return; }
-        askDoIt(text); return;
+        if (br.score >= 0.4) { rememberTopic(br); say((askOnly ? '' : (L() === 1 ? 'Sure — here is how to do it, step by step: ' : 'Claro, te lo hago paso a paso: ')) + br.e.r[L()], text, null, br.e.href); return; }
+        if (!askOnly) { askDoIt(text); return; }
+        break;
       }
     }
     // 2) "¿qué más de X?": quitar el "qué más" y buscar X; si no calza, seguir con el tema
@@ -3669,6 +3695,25 @@ function setupLocalAssistant() {
     const v = input.value;
     input.value = '';
     ask(v);
+  });
+  /* Botón "?" (Solo preguntar): se activa y queda marcado; mientras esté
+     activo el asistente solo responde, no da pasos ni hace nada. */
+  askBtn.addEventListener('click', () => {
+    askOnly = !askOnly;
+    askBtn.classList.toggle('is-active', askOnly);
+    askBtn.setAttribute('aria-pressed', String(askOnly));
+    input.focus();
+  });
+  /* Botón lápiz (Editar): devuelve el último mensaje enviado al cuadro
+     de texto para corregirlo y reenviarlo. */
+  editBtn.addEventListener('click', () => {
+    if (!lastUserMsg) return;
+    if (lastUserEl && lastUserEl.isConnected) lastUserEl.remove();
+    input.value = lastUserMsg;
+    lastUserMsg = '';
+    lastUserEl = null;
+    editBtn.disabled = true;
+    input.focus();
   });
 }
 

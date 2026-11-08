@@ -46,6 +46,13 @@
   var name = localStorage.getItem('eq_name') || '';
   var open = localStorage.getItem('eqw_open') === '1';
 
+  // Modo del mensaje: '' (automático), 'ask' (solo preguntar) o 'edit' (hacer el cambio).
+  // Es de un solo mensaje: al enviar se vuelve a automático.
+  var eqMode = '';
+  function stripMode(s) {
+    return String(s == null ? '' : s).replace(/^\[(PREGUNTA|EDITAR)\]\s*/, '');
+  }
+
   var root = document.createElement('div');
   root.className = 'eqw';
   root.innerHTML =
@@ -64,6 +71,8 @@
       '<div class="eqw-body" id="eqwBody"><p class="equipo-loading">Cargando…</p></div>' +
       '<form class="eqw-inputbar" id="eqwForm" hidden>' +
         '<input id="eqwInput" type="text" maxlength="2000" required placeholder="Escribe un mensaje..." autocomplete="off">' +
+        '<button type="button" class="eqw-mode eqw-mode-ask" id="eqwAskBtn" title="Preguntar: solo responde, sin hacer cambios" aria-label="Preguntar">?</button>' +
+        '<button type="button" class="eqw-mode eqw-mode-edit" id="eqwEditBtn" title="Editar: haz el cambio en la página" aria-label="Editar"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></button>' +
         '<button class="btn-primary eqw-send" type="submit">Enviar</button>' +
       '</form>' +
       '<p class="eqw-status" id="eqwStatus"></p>' +
@@ -76,6 +85,17 @@
   var body = document.getElementById('eqwBody');
   var form = document.getElementById('eqwForm');
   var input = document.getElementById('eqwInput');
+
+  // Botones de modo: se activan para un solo mensaje (tocar de nuevo apaga).
+  var askBtn = document.getElementById('eqwAskBtn');
+  var editBtn = document.getElementById('eqwEditBtn');
+  function renderMode() {
+    askBtn.classList.toggle('is-on', eqMode === 'ask');
+    editBtn.classList.toggle('is-on', eqMode === 'edit');
+  }
+  function toggleMode(m) { eqMode = (eqMode === m) ? '' : m; renderMode(); }
+  askBtn.addEventListener('click', function () { toggleMode('ask'); input.focus(); });
+  editBtn.addEventListener('click', function () { toggleMode('edit'); input.focus(); });
 
   function seenKey(n) { return 'eq_seen_' + n; }
   function getSeen(n) { return localStorage.getItem(seenKey(n)) || '1970-01-01'; }
@@ -115,7 +135,7 @@
       var unread = unreadCount(n);
       var when = last ? fmtHoraCorta(last.updated_at || last.created_at) : '';
       var preview = last
-        ? (last.status === 'listo' && (last.result || '').trim() ? 'Muse: ' + last.result.trim() : last.task)
+        ? (last.status === 'listo' && (last.result || '').trim() ? 'Muse: ' + last.result.trim() : stripMode(last.task))
         : 'Sin mensajes todavía.';
       var mine = n === name;
       return '<button type="button" class="eq-chat-row eqw-row' + (mine ? ' eqw-row-current' : '') + '" data-name="' + esc(n) + '">' +
@@ -167,7 +187,7 @@
             ? '<div class="eq-msg eq-msg-muse eq-typing"><strong>Muse</strong><p>Estoy trabajando en esto<span class="eq-dots"><i></i><i></i><i></i></span></p></div>'
             : '<div class="eq-msg eq-msg-muse eq-typing"><strong>Muse</strong><p>Recibido. Muse lo revisa en unos minutos y te responde aquí mismo.</p></div>');
         return '<div class="eq-chat-thread">' +
-          '<div class="eq-msg eq-msg-user"><p>' + esc(t.task) + '</p>' +
+          '<div class="eq-msg eq-msg-user"><p>' + esc(stripMode(t.task)) + '</p>' +
           '<span class="eq-meta">' + esc(fmtHora(t.created_at)) + (done ? ' · ✓✓' : '') + '</span></div>' +
           museBubble + '</div>';
       }).join('');
@@ -215,9 +235,14 @@
     status.textContent = 'Enviando…';
     sendBtn.disabled = true;
     input.disabled = true;
+    var sendTask = task;
+    if (eqMode === 'ask') sendTask = '[PREGUNTA] ' + task.slice(0, 1990);
+    else if (eqMode === 'edit') sendTask = '[EDITAR] ' + task.slice(0, 1990);
     try {
-      await sbPost('/rest/v1/team_tasks', { name: name, page: 'Chat', task: task }, 'return=representation');
+      await sbPost('/rest/v1/team_tasks', { name: name, page: 'Chat', task: sendTask }, 'return=representation');
       input.value = '';
+      eqMode = '';
+      renderMode();
       status.textContent = '';
       loadTasks();
     } catch (e) {
