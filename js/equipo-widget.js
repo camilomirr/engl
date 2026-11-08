@@ -71,7 +71,6 @@
       '<div class="eqw-body" id="eqwBody"><p class="equipo-loading">Cargando…</p></div>' +
       '<form class="eqw-inputbar" id="eqwForm" hidden>' +
         '<input id="eqwInput" type="text" maxlength="2000" required placeholder="Escribe un mensaje..." autocomplete="off">' +
-        '<button type="button" class="eqw-mode eqw-mode-ask" id="eqwAskBtn" title="Preguntar: solo responde, sin hacer cambios" aria-label="Preguntar">?</button>' +
         '<button type="button" class="eqw-mode eqw-mode-edit" id="eqwEditBtn" title="Editar: haz el cambio en la página" aria-label="Editar"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></button>' +
         '<button class="btn-primary eqw-send" type="submit">Enviar</button>' +
       '</form>' +
@@ -87,16 +86,19 @@
   var input = document.getElementById('eqwInput');
 
   // Botones de modo: se activan para un solo mensaje (tocar de nuevo apaga).
-  var askBtn = document.getElementById('eqwAskBtn');
   var editBtn = document.getElementById('eqwEditBtn');
   function renderMode() {
-    askBtn.classList.toggle('is-on', eqMode === 'ask');
-    editBtn.classList.toggle('is-on', eqMode === 'edit');
+    var on = eqMode === 'edit';
+    editBtn.classList.toggle('is-on', on);
+    editBtn.setAttribute('aria-pressed', String(on));
+    editBtn.title = on
+      ? 'Editar encendido: lo que escribas se hace como cambio. Toca para solo preguntar.'
+      : 'Editar apagado: solo responde, sin hacer cambios. Toca para hacer cambios.';
+    input.placeholder = on ? 'Escribe el cambio...' : 'Escribe tu pregunta...';
   }
-  // Siempre hay un modo encendido: tocar un botón lo enciende y apaga el otro.
-  function toggleMode(m) { eqMode = m; renderMode(); }
-  askBtn.addEventListener('click', function () { toggleMode('ask'); input.focus(); });
-  editBtn.addEventListener('click', function () { toggleMode('edit'); input.focus(); });
+  // Un solo botón: el lápiz prende y apaga el modo Editar.
+  function setMode(m) { eqMode = m; renderMode(); }
+  editBtn.addEventListener('click', function () { setMode(eqMode === 'edit' ? 'ask' : 'edit'); input.focus(); });
   renderMode();
 
   function seenKey(n) { return 'eq_seen_' + n; }
@@ -173,7 +175,7 @@
       body.querySelectorAll('.eqw-chip').forEach(function (c) {
         c.addEventListener('click', function () {
           var m = c.getAttribute('data-mode');
-          if (m) toggleMode(m);
+          if (m) setMode(m);
           input.value = c.getAttribute('data-text'); input.focus();
         });
       });
