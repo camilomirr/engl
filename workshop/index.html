@@ -11,7 +11,7 @@
   <title>NVISION PC Workshop - Taller virtual de armado de PC</title>
   <!-- Hojas de estilo modular -->
   <link rel="stylesheet" href="../css/styles.css?v=8">
-  <link rel="stylesheet" href="css/workshop.css?v=14">
+  <link rel="stylesheet" href="css/workshop.css?v=15">
   <script type="importmap">
     {
       "imports": {
@@ -159,6 +159,8 @@
         <button type="button" class="ws-btn ws-btn--power" id="ws-power-btn" data-ws="power">⏻ Probar encendido</button>
         <button type="button" class="ws-btn" id="ws-panel-btn" data-ws="panelOpen">Cerrar panel lateral</button>
         <button type="button" class="ws-btn" id="ws-reset-btn" data-ws="reset">Vaciar el banco</button>
+        <button type="button" class="ws-btn" id="ws-sound-btn" data-ws="soundBtn">🔊 Sonido</button>
+        <button type="button" class="ws-btn" id="ws-tut-btn" data-ws="tutBtn">🎓 Tutorial</button>
         <label class="ws-quality"><span data-ws="quality">Calidad gráfica</span>
           <select id="ws-quality">
             <option value="low">Baja</option>
@@ -198,7 +200,7 @@
           <button type="button" class="ws-btn" id="ws-import-btn">⬇️ Importar</button>
         </div>
       </div>
-      <div class="ws-tasks-panel">
+      <div class="ws-tasks-panel" id="ws-tasks">
         <h4 id="ws-tasks-part">🔧 Montaje paso a paso</h4>
         <div class="ws-tools" id="ws-tools" role="group" aria-label="Herramientas">
           <button type="button" class="ws-tool ws-tool--active" data-tool="hand">✋ Mano</button>
@@ -219,6 +221,20 @@
     </aside>
   </section>
 
+
+  <section class="container ws-help-section">
+    <details class="ws-help">
+      <summary data-ws="helpTitle">❓ Cómo jugar — ayuda rápida</summary>
+      <ol>
+        <li data-ws="help1"></li>
+        <li data-ws="help2"></li>
+        <li data-ws="help3"></li>
+        <li data-ws="help4"></li>
+        <li data-ws="help5"></li>
+        <li data-ws="help6"></li>
+      </ol>
+    </details>
+  </section>
 
   <section class="container ws-orders-section">
     <div class="ws-panel">
@@ -276,6 +292,6 @@ setTimeout(function () {
   }
 }, 8000);
 </script>
-<script type="module" src="js/main.js?v=14"></script>
+<script type="module" src="js/main.js?v=15"></script>
 </body>
 </html>

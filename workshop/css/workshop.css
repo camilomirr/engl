@@ -125,3 +125,16 @@
 .ws-fps td.low { color: #f87171; }
 .ws-import-row { display: flex; gap: 0.45rem; margin-top: 0.55rem; }
 .ws-import-row input { flex: 1; font: inherit; font-size: 0.85rem; background: var(--bg-surface); color: var(--text-primary); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 0.45rem 0.6rem; min-width: 0; }
+
+/* Fase 7: tutorial, ayuda y accesibilidad */
+.ws-highlight { outline: 3px solid var(--accent-amber) !important; outline-offset: 3px; border-radius: var(--radius-sm); }
+.ws-tutorial { position: fixed; left: 50%; bottom: 1rem; transform: translateX(-50%); z-index: 1200; width: min(520px, calc(100vw - 2rem)); background: var(--bg-card); border: 1px solid var(--accent-amber); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); padding: 1rem 1.1rem; }
+.ws-tutorial p { margin: 0.45rem 0 0.8rem; line-height: 1.45; }
+.ws-tutorial-btns { display: flex; gap: 0.5rem; justify-content: flex-end; }
+.ws-help { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1rem 1.2rem; }
+.ws-help summary { cursor: pointer; font-family: var(--font-heading); font-weight: 700; }
+.ws-help ol { margin: 0.7rem 0 0.2rem; padding-left: 1.3rem; line-height: 1.55; }
+.ws-btn:focus-visible, .ws-card:focus-visible, .ws-tool:focus-visible, .ws-shop-card button:focus-visible { outline: 3px solid var(--accent-cyan); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  .ws-layout *, .ws-tutorial { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}

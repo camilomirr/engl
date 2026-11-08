@@ -6,19 +6,21 @@
 // las reglas validan -> la pieza vuela a su punto de
 // montaje. El avance se guarda en localStorage.
 // =========================================================
-import { loadComponents } from './data/catalog.js?v=14';
-import { checkPlacement, missingParts, REQUIRED } from './core/rules.js?v=14';
-import { createScene } from './core/scene.js?v=14';
-import { loadState, saveState, buy as ecoBuy, sell as ecoSell, advanceDay } from './core/economy.js?v=14';
-import { createShop } from './ui/shop.js?v=14';
-import { tasksFor, doNextTask, assemblyPending, TOOLS } from './core/assembly.js?v=14';
-import { createTasksPanel } from './ui/tasks.js?v=14';
-import { runPost, biosRows, stressTest, temps } from './core/boot.js?v=14';
-import { createMonitor } from './ui/monitor.js?v=14';
-import { genOrders, evaluate as evalOrder, applyDelivery, levelFor } from './core/career.js?v=14';
-import { createOrders } from './ui/orders.js?v=14';
-import { scores, fpsTable, buildSummary, buildCode, parseCode } from './core/bench.js?v=14';
-import { createHud, t } from './ui/hud.js?v=14';
+import { loadComponents } from './data/catalog.js?v=15';
+import { checkPlacement, missingParts, REQUIRED } from './core/rules.js?v=15';
+import { createScene } from './core/scene.js?v=15';
+import { loadState, saveState, buy as ecoBuy, sell as ecoSell, advanceDay } from './core/economy.js?v=15';
+import { createShop } from './ui/shop.js?v=15';
+import { tasksFor, doNextTask, assemblyPending, TOOLS } from './core/assembly.js?v=15';
+import { createTasksPanel } from './ui/tasks.js?v=15';
+import { runPost, biosRows, stressTest, temps } from './core/boot.js?v=15';
+import { createMonitor } from './ui/monitor.js?v=15';
+import { genOrders, evaluate as evalOrder, applyDelivery, levelFor } from './core/career.js?v=15';
+import { createOrders } from './ui/orders.js?v=15';
+import { scores, fpsTable, buildSummary, buildCode, parseCode } from './core/bench.js?v=15';
+import { sfx, setSoundEnabled } from './core/sfx.js?v=15';
+import { createTutorial } from './ui/tutorial.js?v=15';
+import { createHud, t } from './ui/hud.js?v=15';
 
 const installed = {};   // categoria -> componente
 const game = loadState(); // dinero, dia, inventario propio y armado guardado
@@ -36,16 +38,18 @@ const shop = createShop({
   onBuy(item) {
     const s = t();
     const r = ecoBuy(game, item);
-    if (!r.ok) { hud.log(r.reason === 'nostock' ? s.noStock : s.noMoney + '$' + r.price, 'err'); return; }
+    if (!r.ok) { hud.log(r.reason === 'nostock' ? s.noStock : s.noMoney + '$' + r.price, 'err'); sfx.error(); return; }
     hud.log(s.bought + item.name + ' (-$' + r.price + ')', 'ok');
+    sfx.cash();
     save();
   },
   onSell(item) {
     const s = t();
     const isIn = installed[item.category] && installed[item.category].id === item.id;
     const r = ecoSell(game, item, isIn);
-    if (!r.ok) { hud.log(r.reason === 'installed' ? s.cantSellInstalled : s.noStock, 'err'); return; }
+    if (!r.ok) { hud.log(r.reason === 'installed' ? s.cantSellInstalled : s.noStock, 'err'); sfx.error(); return; }
     hud.log(s.sold + item.name + ' (+$' + r.gain + ')', 'ok');
+    sfx.click();
     save();
   }
 });
@@ -120,18 +124,21 @@ async function bootFlowInner() {
     return;
   }
   if (scene) scene.setPowered(true);
+  sfx.beep();
   const post = runPost(installed, game.system);
   const completed = await monitor.playLines(post.lines, lang());
   if (!completed) return;
   if (!post.ok) {
     monitor.fault(post.fault, lang());
     hud.log('⛔ POST: ' + post.fault.title[lang()], 'err');
+    sfx.error();
     if (scene) scene.setPowered(false);
     bootState = 'off';
     updateMonitorBtns();
     return;
   }
   hud.log(s.powerOk, 'ok');
+  sfx.powerOk();
   if (!game.system.osInstalled) {
     bootState = 'needos';
     monitor.line(lang() === 'en' ? 'No operating system found — press "Install system".' : 'Sin sistema operativo — pulsa «Instalar sistema».', 'warn');
@@ -149,9 +156,11 @@ function doStep() {
     if (res.error === 'tool') hud.log('🧰 Para ese paso necesitas: ' + TOOLS[res.task.tool].icon + ' ' + TOOLS[res.task.tool][lang()], 'err');
     else if (res.error === 'paste') hud.log('🧴 ¡Falta la pasta térmica! Selecciona el procesador, elige la herramienta de pasta y aplícala antes de apretar el disipador.', 'err');
     else if (res.error === 'needs') hud.log('🔌 Ese cable necesita la pieza destino montada primero.', 'err');
+    sfx.error();
     refreshTasks();
     return;
   }
+  if (res.task.id === 'paste') sfx.paste(); else if (res.task.tool === 'screwdriver') sfx.ratchet(); else sfx.click();
   if (res.task.id === 'paste' && scene) scene.setPaste(true);
   if (res.task.cable && scene) scene.setCable(res.task.cable, true);
   hud.log('🔧 ' + res.task.label[lang()] + (res.finished ? ' ✅' : ' (' + progress[res.task.id] + '/' + res.task.count + ')'), 'ok');
@@ -204,6 +213,7 @@ const ordersPanel = createOrders({
     if (!order) return;
     const ev = evalOrder(order, installed, evalState());
     if (!ev.ready) { hud.log('🚚 Todavía falta: revisa la lista del pedido activo.', 'err'); return; }
+    sfx.deliver();
     const res = applyDelivery(game, { ...installed }, order);
     Object.keys(installed).slice().reverse().forEach(cat => { if (scene) scene.remove(cat); delete installed[cat]; });
     game.assembly = {};
@@ -315,6 +325,7 @@ function attemptPlace(item) {
   const chk = checkPlacement(item, installed);
   if (!chk.ok) {
     chk.reasons.forEach(r => hud.log('⛔ ' + (document.documentElement.lang === 'en' || localStorage.getItem('user_lang') === 'en' ? r.en : r.es), 'err'));
+    sfx.error();
     return;
   }
   chk.warnings.forEach(r2 => hud.log('⚠️ ' + (localStorage.getItem('user_lang') === 'en' ? r2.en : r2.es), 'warn'));
@@ -330,6 +341,7 @@ function attemptPlace(item) {
   hud.setHolding(null);
   if (scene) scene.showMarkersFor(null);
   hud.log(s.placed + item.name, 'ok');
+  sfx.snap();
   save();
 }
 
@@ -506,6 +518,25 @@ async function init() {
     hud.setSelected(null);
     save();
   });
+  if (!game.settings) game.settings = { sound: true, tutorialSeen: false };
+  setSoundEnabled(game.settings.sound !== false);
+  const soundBtn = document.getElementById('ws-sound-btn');
+  if (soundBtn) {
+    soundBtn.textContent = game.settings.sound === false ? '🔇' : '🔊 ' + (lang() === 'en' ? 'Sound' : 'Sonido');
+    soundBtn.addEventListener('click', () => {
+      game.settings.sound = game.settings.sound === false ? true : false;
+      setSoundEnabled(game.settings.sound);
+      soundBtn.textContent = game.settings.sound ? '🔊 ' + (lang() === 'en' ? 'Sound' : 'Sonido') : '🔇';
+      if (game.settings.sound) sfx.click();
+      save();
+    });
+  }
+  const tutorial = createTutorial(lang(), () => {
+    if (!game.settings.tutorialSeen) { game.settings.tutorialSeen = true; save(); }
+  });
+  const tutBtn = document.getElementById('ws-tut-btn');
+  if (tutBtn) tutBtn.addEventListener('click', () => tutorial.start());
+  if (!game.settings.tutorialSeen) setTimeout(() => tutorial.start(), 900);
   window.__WS_BOOTED = true;
   const dayBtn = document.getElementById('ws-day-btn');
   if (dayBtn) dayBtn.addEventListener('click', () => {
