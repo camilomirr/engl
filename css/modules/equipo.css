@@ -121,7 +121,7 @@
   position: fixed;
   right: max(1.25rem, env(safe-area-inset-right));
   bottom: calc(9.6rem + env(safe-area-inset-bottom));
-  z-index: 60;
+  z-index: 200;
   width: min(22.5rem, calc(100vw - 2.5rem));
   max-height: min(36rem, calc(100dvh - 11.5rem));
   display: flex; flex-direction: column;
@@ -249,7 +249,7 @@
   .eqw-panel {
     left: 0.75rem; right: 0.75rem; width: auto;
     bottom: calc(0.75rem + env(safe-area-inset-bottom));
-    max-height: calc(100dvh - 1.5rem);
+    max-height: min(80dvh, calc(100dvh - 5.75rem));
   }
   .eqw-body { min-height: 38dvh; }
   .eqw-panel .eq-msg { max-width: 92%; }
