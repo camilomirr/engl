@@ -6,18 +6,18 @@
 // las reglas validan -> la pieza vuela a su punto de
 // montaje. El avance se guarda en localStorage.
 // =========================================================
-import { loadComponents } from './data/catalog.js?v=8';
-import { checkPlacement, missingParts, REQUIRED } from './core/rules.js?v=8';
-import { createScene } from './core/scene.js?v=8';
-import { loadState, saveState, buy as ecoBuy, sell as ecoSell, advanceDay } from './core/economy.js?v=8';
-import { createShop } from './ui/shop.js?v=8';
-import { tasksFor, doNextTask, assemblyPending, TOOLS } from './core/assembly.js?v=8';
-import { createTasksPanel } from './ui/tasks.js?v=8';
-import { runPost, biosRows, stressTest, temps } from './core/boot.js?v=8';
-import { createMonitor } from './ui/monitor.js?v=8';
-import { genOrders, evaluate as evalOrder, applyDelivery, levelFor } from './core/career.js?v=8';
-import { createOrders } from './ui/orders.js?v=8';
-import { createHud, t } from './ui/hud.js?v=8';
+import { loadComponents } from './data/catalog.js?v=9';
+import { checkPlacement, missingParts, REQUIRED } from './core/rules.js?v=9';
+import { createScene } from './core/scene.js?v=9';
+import { loadState, saveState, buy as ecoBuy, sell as ecoSell, advanceDay } from './core/economy.js?v=9';
+import { createShop } from './ui/shop.js?v=9';
+import { tasksFor, doNextTask, assemblyPending, TOOLS } from './core/assembly.js?v=9';
+import { createTasksPanel } from './ui/tasks.js?v=9';
+import { runPost, biosRows, stressTest, temps } from './core/boot.js?v=9';
+import { createMonitor } from './ui/monitor.js?v=9';
+import { genOrders, evaluate as evalOrder, applyDelivery, levelFor } from './core/career.js?v=9';
+import { createOrders } from './ui/orders.js?v=9';
+import { createHud, t } from './ui/hud.js?v=9';
 
 const installed = {};   // categoria -> componente
 const game = loadState(); // dinero, dia, inventario propio y armado guardado

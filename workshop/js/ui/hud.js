@@ -8,7 +8,7 @@
 export const STRINGS = {
   es: {
     title: 'NVISION PC Workshop',
-    subtitle: 'Taller virtual de armado de PC · Fase 1: banco 3D, puntos de montaje y compatibilidad al montar',
+    subtitle: 'Taller virtual de armado de PC · Modo carrera: arma, enciende, supera la prueba de carga y entrega equipos a tus clientes',
     inventory: 'Inventario del taller',
     inventoryHint: 'Toca una pieza para tomarla, suéltala sobre el banco (o pulsa su punto brillante) para montarla. También puedes arrastrarla.',
     bench: 'Banco de trabajo 3D',
