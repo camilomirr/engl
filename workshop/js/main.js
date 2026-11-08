@@ -6,7 +6,7 @@
 // las reglas validan -> la pieza vuela a su punto de
 // montaje. El avance se guarda en localStorage.
 // =========================================================
-import { loadComponents } from './data/catalog.js?v=2';
+import { loadComponents } from './data/catalog.js?v=3';
 import { checkPlacement, missingParts, REQUIRED } from './core/rules.js?v=2';
 import { createScene } from './core/scene.js?v=2';
 import { loadState, saveState, buy as ecoBuy, sell as ecoSell, advanceDay } from './core/economy.js?v=2';
