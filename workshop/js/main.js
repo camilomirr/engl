@@ -6,18 +6,18 @@
 // las reglas validan -> la pieza vuela a su punto de
 // montaje. El avance se guarda en localStorage.
 // =========================================================
-import { loadComponents } from './data/catalog.js?v=9';
-import { checkPlacement, missingParts, REQUIRED } from './core/rules.js?v=9';
-import { createScene } from './core/scene.js?v=9';
-import { loadState, saveState, buy as ecoBuy, sell as ecoSell, advanceDay } from './core/economy.js?v=9';
-import { createShop } from './ui/shop.js?v=9';
-import { tasksFor, doNextTask, assemblyPending, TOOLS } from './core/assembly.js?v=9';
-import { createTasksPanel } from './ui/tasks.js?v=9';
-import { runPost, biosRows, stressTest, temps } from './core/boot.js?v=9';
-import { createMonitor } from './ui/monitor.js?v=9';
-import { genOrders, evaluate as evalOrder, applyDelivery, levelFor } from './core/career.js?v=9';
-import { createOrders } from './ui/orders.js?v=9';
-import { createHud, t } from './ui/hud.js?v=9';
+import { loadComponents } from './data/catalog.js?v=10';
+import { checkPlacement, missingParts, REQUIRED } from './core/rules.js?v=10';
+import { createScene } from './core/scene.js?v=10';
+import { loadState, saveState, buy as ecoBuy, sell as ecoSell, advanceDay } from './core/economy.js?v=10';
+import { createShop } from './ui/shop.js?v=10';
+import { tasksFor, doNextTask, assemblyPending, TOOLS } from './core/assembly.js?v=10';
+import { createTasksPanel } from './ui/tasks.js?v=10';
+import { runPost, biosRows, stressTest, temps } from './core/boot.js?v=10';
+import { createMonitor } from './ui/monitor.js?v=10';
+import { genOrders, evaluate as evalOrder, applyDelivery, levelFor } from './core/career.js?v=10';
+import { createOrders } from './ui/orders.js?v=10';
+import { createHud, t } from './ui/hud.js?v=10';
 
 const installed = {};   // categoria -> componente
 const game = loadState(); // dinero, dia, inventario propio y armado guardado
@@ -101,6 +101,9 @@ function showDesktop() {
   updateMonitorBtns();
 }
 async function bootFlow() {
+  try { await bootFlowInner(); } catch (err) { hud.log('⛔ Error al encender: ' + (err && err.message ? err.message : err), 'err'); }
+}
+async function bootFlowInner() {
   const s = t();
   const missing = missingParts(installed);
   if (missing.length) {
@@ -335,14 +338,19 @@ async function init() {
   hud.applyStaticTexts();
 
   const wrap = document.getElementById('ws-canvas-wrap');
-  scene = createScene(wrap, {
-    onError() { hud.log(t().webglError, 'err'); },
-    onSnap() { if (holding) attemptPlace(holding); },
-    onPartClick(cat) { selectedCat = cat; hud.setSelected(cat); refreshTasks(); },
-    onQualityDrop() { hud.log(t().qualityDropped, 'info'); const q = document.getElementById('ws-quality'); if (q) q.value = 'low'; }
-  });
-  restore();
-  applyAssemblyFx();
+  try {
+    scene = createScene(wrap, {
+      onError() { hud.log(t().webglError, 'err'); },
+      onSnap() { if (holding) attemptPlace(holding); },
+      onPartClick(cat) { selectedCat = cat; hud.setSelected(cat); refreshTasks(); },
+      onQualityDrop() { hud.log(t().qualityDropped, 'info'); const q = document.getElementById('ws-quality'); if (q) q.value = 'low'; }
+    });
+  } catch (err) {
+    scene = null;
+    hud.log('⚠️ La escena 3D no pudo iniciar en este navegador; el taller funciona sin ella.', 'err');
+  }
+  try { restore(); } catch (err) { hud.log('⚠️ No se pudo restaurar todo el equipo guardado.', 'err'); }
+  try { applyAssemblyFx(); } catch (err) {}
   syncUI();
   hud.log(t().welcome, 'info');
   if (scene && installed.case) scene.setPanel(true);
