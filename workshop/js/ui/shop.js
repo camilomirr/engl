@@ -4,8 +4,8 @@
 // orden; precios del dia y stock visible; comprar y vender
 // (la venta devuelve el 70% y no aplica a piezas montadas).
 // =========================================================
-import { priceToday, stockLeft } from '../core/economy.js?v=5';
-import { t, money, currentLang } from './hud.js?v=5';
+import { priceToday, stockLeft } from '../core/economy.js?v=6';
+import { t, money, currentLang } from './hud.js?v=6';
 
 export function createShop(handlers) {
   const $ = id => document.getElementById(id);
@@ -15,7 +15,7 @@ export function createShop(handlers) {
   function visible() {
     let items = components.slice();
     if (catFilter !== 'all') items = items.filter(i => i.category === catFilter);
-    if (query) items = items.filter(i => (i.name + ' ' + (i.blurb.es || '')).toLowerCase().includes(query));
+    if (query) items = items.filter(i => (i.name + ' ' + (i.blurb.es || '') + ' ' + (i.blurb.en || '')).toLowerCase().includes(query));
     const price = i => priceToday(i, state ? state.day : 1);
     if (sortBy === 'price-asc') items.sort((a, b) => price(a) - price(b));
     if (sortBy === 'price-desc') items.sort((a, b) => price(b) - price(a));
@@ -27,7 +27,7 @@ export function createShop(handlers) {
     const s = t();
     grid.innerHTML = '';
     const items = visible();
-    if (!items.length) grid.innerHTML = '<p class="ws-note">Sin resultados para ese filtro.</p>';
+    if (!items.length) grid.innerHTML = '<p class="ws-note">' + (currentLang() === 'en' ? 'No results for that filter.' : 'Sin resultados para ese filtro.') + '</p>';
     items.forEach(item => {
       const price = priceToday(item, state.day);
       const left = stockLeft(state, item);
@@ -37,12 +37,12 @@ export function createShop(handlers) {
       const card = document.createElement('article');
       card.className = 'ws-shop-card';
       card.innerHTML =
-        '<span class="ws-card-cat">' + (s.catNames[item.category] || item.category) + (owned ? ' · ×' + owned + ' en tu taller' : '') + (locked ? ' · 🔒 Nivel ' + item.unlockLevel : '') + '</span>' +
+        '<span class="ws-card-cat">' + (s.catNames[item.category] || item.category) + (owned ? ' · ×' + owned + (currentLang() === 'en' ? ' in your workshop' : ' en tu taller') : '') + (locked ? ' · 🔒 ' + (currentLang() === 'en' ? 'Level ' : 'Nivel ') + item.unlockLevel : '') + '</span>' +
         '<b>' + item.name + '</b>' +
         '<span class="ws-card-blurb">' + (item.blurb[currentLang()] || item.blurb.es || '') + '</span>' +
         '<span class="ws-shop-row"><span class="ws-card-price">' + money(price) +
         (delta ? ' <small class="' + (delta < 0 ? 'ws-down' : 'ws-up') + '">' + (delta > 0 ? '▲' : '▼') + ' ' + Math.abs(delta) + '%</small>' : '') +
-        '</span><span class="ws-card-state">' + (left > 0 ? 'Stock: ' + left : '⛔ Agotado hoy') + '</span></span>' +
+        '</span><span class="ws-card-state">' + (left > 0 ? 'Stock: ' + left : (currentLang() === 'en' ? '⛔ Sold out today' : '⛔ Agotado hoy')) + '</span></span>' +
         '<span class="ws-shop-btns">' +
         '<button type="button" class="ws-btn ws-btn--install" data-act="buy"' + (locked || left <= 0 || state.money < price ? ' disabled' : '') + '>🛒 ' + s.buy + '</button>' +
         '<button type="button" class="ws-btn" data-act="sell"' + (owned <= 0 ? ' disabled' : '') + '>' + s.sell + ' ' + money(Math.floor(price * 0.7)) + '</button></span>';

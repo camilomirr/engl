@@ -6,21 +6,21 @@
 // las reglas validan -> la pieza vuela a su punto de
 // montaje. El avance se guarda en localStorage.
 // =========================================================
-import { loadComponents } from './data/catalog.js?v=17';
-import { checkPlacement, missingParts, REQUIRED } from './core/rules.js?v=17';
-import { createScene } from './core/scene.js?v=17';
-import { loadState, saveState, buy as ecoBuy, sell as ecoSell, advanceDay } from './core/economy.js?v=17';
-import { createShop } from './ui/shop.js?v=17';
-import { tasksFor, doNextTask, assemblyPending, TOOLS } from './core/assembly.js?v=17';
-import { createTasksPanel } from './ui/tasks.js?v=17';
-import { runPost, biosRows, stressTest, temps } from './core/boot.js?v=17';
-import { createMonitor } from './ui/monitor.js?v=17';
-import { genOrders, evaluate as evalOrder, applyDelivery, levelFor } from './core/career.js?v=17';
-import { createOrders } from './ui/orders.js?v=17';
-import { scores, fpsTable, buildSummary, buildCode, parseCode } from './core/bench.js?v=17';
-import { sfx, setSoundEnabled } from './core/sfx.js?v=17';
-import { createTutorial } from './ui/tutorial.js?v=17';
-import { createHud, t } from './ui/hud.js?v=17';
+import { loadComponents } from './data/catalog.js?v=18';
+import { checkPlacement, missingParts, REQUIRED } from './core/rules.js?v=18';
+import { createScene } from './core/scene.js?v=18';
+import { loadState, saveState, buy as ecoBuy, sell as ecoSell, advanceDay } from './core/economy.js?v=18';
+import { createShop } from './ui/shop.js?v=18';
+import { tasksFor, doNextTask, assemblyPending, TOOLS } from './core/assembly.js?v=18';
+import { createTasksPanel } from './ui/tasks.js?v=18';
+import { runPost, biosRows, stressTest, temps } from './core/boot.js?v=18';
+import { createMonitor } from './ui/monitor.js?v=18';
+import { genOrders, evaluate as evalOrder, applyDelivery, levelFor } from './core/career.js?v=18';
+import { createOrders } from './ui/orders.js?v=18';
+import { scores, fpsTable, buildSummary, buildCode, parseCode } from './core/bench.js?v=18';
+import { sfx, setSoundEnabled } from './core/sfx.js?v=18';
+import { createTutorial } from './ui/tutorial.js?v=18';
+import { createHud, t } from './ui/hud.js?v=18';
 
 const installed = {};   // categoria -> componente
 const game = loadState(); // dinero, dia, inventario propio y armado guardado
@@ -106,7 +106,7 @@ function showDesktop() {
   updateMonitorBtns();
 }
 async function bootFlow() {
-  try { await bootFlowInner(); } catch (err) { hud.log('⛔ Error al encender: ' + (err && err.message ? err.message : err), 'err'); }
+  try { await bootFlowInner(); } catch (err) { hud.log('⛔ ' + (lang() === 'en' ? 'Power-on error: ' : 'Error al encender: ') + (err && err.message ? err.message : err), 'err'); }
 }
 async function bootFlowInner() {
   const s = t();
@@ -118,8 +118,8 @@ async function bootFlowInner() {
   }
   const pending = assemblyPending(installed, game.assembly, buildCtx());
   if (pending.length) {
-    pending.slice(0, 4).forEach(p => hud.log('🔧 Falta: ' + p.task.label[lang()] + ' — ' + p.item.name + ' (' + p.done + '/' + p.task.count + ')', 'err'));
-    hud.log('Termina el montaje paso a paso antes de encender.', 'err');
+    pending.slice(0, 4).forEach(p => hud.log('🔧 ' + (lang() === 'en' ? 'Missing: ' : 'Falta: ') + p.task.label[lang()] + ' — ' + p.item.name + ' (' + p.done + '/' + p.task.count + ')', 'err'));
+    hud.log(lang() === 'en' ? 'Finish the step-by-step assembly before powering on.' : 'Termina el montaje paso a paso antes de encender.', 'err');
     powerDown();
     return;
   }
@@ -153,9 +153,9 @@ function doStep() {
   const progress = progressFor(item);
   const res = doNextTask(item, progress, tasksPanel.getTool(), buildCtx(), installed);
   if (!res.ok) {
-    if (res.error === 'tool') hud.log('🧰 Para ese paso necesitas: ' + TOOLS[res.task.tool].icon + ' ' + TOOLS[res.task.tool][lang()], 'err');
-    else if (res.error === 'paste') hud.log('🧴 ¡Falta la pasta térmica! Selecciona el procesador, elige la herramienta de pasta y aplícala antes de apretar el disipador.', 'err');
-    else if (res.error === 'needs') hud.log('🔌 Ese cable necesita la pieza destino montada primero.', 'err');
+    if (res.error === 'tool') hud.log('🧰 ' + (lang() === 'en' ? 'For that step you need: ' : 'Para ese paso necesitas: ') + TOOLS[res.task.tool].icon + ' ' + TOOLS[res.task.tool][lang()], 'err');
+    else if (res.error === 'paste') hud.log(lang() === 'en' ? '🧴 Thermal paste missing! Select the processor, pick the paste tool and apply it before tightening the cooler.' : '🧴 ¡Falta la pasta térmica! Selecciona el procesador, elige la herramienta de pasta y aplícala antes de apretar el disipador.', 'err');
+    else if (res.error === 'needs') hud.log(lang() === 'en' ? '🔌 That cable needs its destination part mounted first.' : '🔌 Ese cable necesita la pieza destino montada primero.', 'err');
     sfx.error();
     refreshTasks();
     return;
@@ -179,7 +179,7 @@ function applyAssemblyFx() {
 function ensureOrders() {
   const c = game.career;
   if (c.active && game.day > c.active.deadlineDay) {
-    hud.log('⏰ El pedido de ' + c.active.client + ' venció y se canceló solo.', 'err');
+    hud.log('⏰ ' + (lang() === 'en' ? c.active.client + '\u2019s order expired and was cancelled automatically.' : 'El pedido de ' + c.active.client + ' venció y se canceló solo.'), 'err');
     c.active = null;
   }
   if (c.ordersDay !== game.day) {
@@ -199,12 +199,12 @@ const ordersPanel = createOrders({
   onAccept(order) {
     game.career.active = { ...order, deadlineDay: game.day + order.days };
     game.career.orders = game.career.orders.filter(o => o.id !== order.id);
-    hud.log('📋 Pedido aceptado: ' + order.client + ' — ' + order.purposeLabel[lang()] + ' por $' + order.budget + '. ¡A armar!', 'ok');
+    hud.log(lang() === 'en' ? '📋 Order accepted: ' + order.client + ' — ' + order.purposeLabel[lang()] + ' for $' + order.budget + '. Time to build!' : '📋 Pedido aceptado: ' + order.client + ' — ' + order.purposeLabel[lang()] + ' por $' + order.budget + '. ¡A armar!', 'ok');
     save();
   },
   onCancel() {
     if (!game.career.active) return;
-    hud.log('Pedido de ' + game.career.active.client + ' abandonado.', 'info');
+    hud.log(lang() === 'en' ? game.career.active.client + '\u2019s order dropped.' : 'Pedido de ' + game.career.active.client + ' abandonado.', 'info');
     game.career.active = null;
     save();
   },
@@ -212,7 +212,7 @@ const ordersPanel = createOrders({
     const order = game.career.active;
     if (!order) return;
     const ev = evalOrder(order, installed, evalState());
-    if (!ev.ready) { hud.log('🚚 Todavía falta: revisa la lista del pedido activo.', 'err'); return; }
+    if (!ev.ready) { hud.log(lang() === 'en' ? '🚚 Not ready yet: check the active order checklist.' : '🚚 Todavía falta: revisa la lista del pedido activo.', 'err'); return; }
     sfx.deliver();
     const res = applyDelivery(game, { ...installed }, order);
     Object.keys(installed).slice().reverse().forEach(cat => { if (scene) scene.remove(cat); delete installed[cat]; });
@@ -221,8 +221,8 @@ const ordersPanel = createOrders({
     game.system.lastStress = null;
     if (scene) { scene.setPaste(false); ['atx', 'eps', 'pcie', 'sata'].forEach(k => scene.setCable(k, false)); }
     powerDown();
-    hud.log('🚚 ¡Equipo entregado a ' + order.client + '! Cobraste $' + res.payment + ' y ganaste ' + res.xpGain + ' XP.', 'ok');
-    if (res.leveledUp) hud.log('⭐ ¡Subiste al nivel ' + res.newLevel + '! La tienda desbloqueó piezas nuevas.', 'ok');
+    hud.log(lang() === 'en' ? '🚚 PC delivered to ' + order.client + '! You earned $' + res.payment + ' and ' + res.xpGain + ' XP.' : '🚚 ¡Equipo entregado a ' + order.client + '! Cobraste $' + res.payment + ' y ganaste ' + res.xpGain + ' XP.', 'ok');
+    if (res.leveledUp) hud.log(lang() === 'en' ? '⭐ You reached level ' + res.newLevel + '! The shop unlocked new parts.' : '⭐ ¡Subiste al nivel ' + res.newLevel + '! La tienda desbloqueó piezas nuevas.', 'ok');
     save();
   }
 });
@@ -248,13 +248,13 @@ async function copyText(text, okMsg) {
   catch (e) {
     const ta = document.createElement('textarea');
     ta.value = text; document.body.appendChild(ta); ta.select();
-    try { document.execCommand('copy'); hud.log(okMsg, 'ok'); } catch (e2) { hud.log('No se pudo copiar automáticamente.', 'err'); }
+    try { document.execCommand('copy'); hud.log(okMsg, 'ok'); } catch (e2) { hud.log(lang() === 'en' ? 'Could not copy automatically.' : 'No se pudo copiar automáticamente.', 'err'); }
     ta.remove();
   }
 }
 function importBuild(codeStr) {
   const parsed = parseCode(codeStr);
-  if (!parsed) { hud.log('🔗 Ese código no es válido (formato NVW1-…).', 'err'); return; }
+  if (!parsed) { hud.log(lang() === 'en' ? '🔗 That code is not valid (NVW1-… format).' : '🔗 Ese código no es válido (formato NVW1-…).', 'err'); return; }
   if (scene) scene.setPanel(true);
   const order = ['case', 'board', 'cpu', 'cooler', 'ram', 'gpu', 'storage', 'psu'];
   let placedCount = 0; const missingNames = [];
@@ -265,14 +265,16 @@ function importBuild(codeStr) {
     if (!item) { missingNames.push(id); return; }
     if (!(game.owned[item.id] > 0) && !(installed[cat] && installed[cat].id === item.id)) { missingNames.push(item.name); return; }
     const chk = checkPlacement(item, installed);
-    if (!chk.ok) { missingNames.push(item.name + ' (incompatible aquí)'); return; }
+    if (!chk.ok) { missingNames.push(item.name + (lang() === 'en' ? ' (incompatible here)' : ' (incompatible aquí)')); return; }
     if (installed[cat] && scene) scene.remove(cat);
     installed[cat] = item;
     if (scene) scene.place(cat, item);
     placedCount++;
   });
   powerDown();
-  hud.log('⬇️ Equipo importado: ' + placedCount + ' piezas montadas.' + (missingNames.length ? ' No se pudieron montar: ' + missingNames.join(', ') + '.' : ''), missingNames.length ? 'warn' : 'ok');
+  hud.log(lang() === 'en'
+    ? '⬇️ Build imported: ' + placedCount + ' parts mounted.' + (missingNames.length ? ' Could not mount: ' + missingNames.join(', ') + '.' : '')
+    : '⬇️ Equipo importado: ' + placedCount + ' piezas montadas.' + (missingNames.length ? ' No se pudieron montar: ' + missingNames.join(', ') + '.' : ''), missingNames.length ? 'warn' : 'ok');
   save();
 }
 function syncUI() {
@@ -415,10 +417,10 @@ async function init() {
     });
   } catch (err) {
     scene = null;
-    hud.log('⚠️ La escena 3D no pudo iniciar en este navegador; el taller funciona sin ella.', 'err');
+    hud.log(lang() === 'en' ? '⚠️ The 3D scene could not start in this browser; the workshop works without it.' : '⚠️ La escena 3D no pudo iniciar en este navegador; el taller funciona sin ella.', 'err');
   }
   window.__WS_STAGE = 'restore';
-  try { restore(); } catch (err) { hud.log('⚠️ No se pudo restaurar todo el equipo guardado.', 'err'); }
+  try { restore(); } catch (err) { hud.log(lang() === 'en' ? '⚠️ Could not restore all of the saved build.' : '⚠️ No se pudo restaurar todo el equipo guardado.', 'err'); }
   window.__WS_STAGE = 'fx-syncui';
   try { applyAssemblyFx(); } catch (err) {}
   syncUI();
@@ -470,9 +472,9 @@ async function init() {
       bootState = 'off';
       updateMonitorBtns();
     } else if (res.outcome === 'throttle') {
-      hud.log('⚠ Throttling térmico: el equipo rinde menos bajo carga.', 'warn');
+      hud.log(lang() === 'en' ? '⚠ Thermal throttling: the rig performs worse under load.' : '⚠ Throttling térmico: el equipo rinde menos bajo carga.', 'warn');
     } else {
-      hud.log('🔥 Prueba de carga superada: equipo estable.', 'ok');
+      hud.log(lang() === 'en' ? '🔥 Stress test passed: stable rig.' : '🔥 Prueba de carga superada: equipo estable.', 'ok');
     }
     syncUI();
   });
@@ -484,19 +486,19 @@ async function init() {
       game.system.rgb = !game.system.rgb;
       if (scene) scene.setRGBMode(game.system.rgb);
       rgbBtn.textContent = '🌈 RGB: ' + (game.system.rgb ? 'ON' : 'OFF');
-      hud.log('🌈 RGB ' + (game.system.rgb ? 'activado — se ve al encender el equipo.' : 'desactivado.'), 'info');
+      hud.log(lang() === 'en' ? '🌈 RGB ' + (game.system.rgb ? 'on — visible when the PC powers on.' : 'off.') : '🌈 RGB ' + (game.system.rgb ? 'activado — se ve al encender el equipo.' : 'desactivado.'), 'info');
       save();
     });
   }
   const copyBtn = document.getElementById('ws-copy-btn');
   if (copyBtn) copyBtn.addEventListener('click', () => {
-    if (missingParts(installed).length) { hud.log('Completa el equipo para compartir su resumen.', 'err'); return; }
-    copyText(buildSummary(installed, game.system, lang()), '📋 Resumen copiado: pégalo donde quieras compartirlo.');
+    if (missingParts(installed).length) { hud.log(lang() === 'en' ? 'Complete the build to share its summary.' : 'Completa el equipo para compartir su resumen.', 'err'); return; }
+    copyText(buildSummary(installed, game.system, lang()), lang() === 'en' ? '📋 Summary copied: paste it wherever you want to share it.' : '📋 Resumen copiado: pégalo donde quieras compartirlo.');
   });
   const codeBtn = document.getElementById('ws-code-btn');
   if (codeBtn) codeBtn.addEventListener('click', () => {
-    if (missingParts(installed).length) { hud.log('Completa el equipo para copiar su código.', 'err'); return; }
-    copyText(buildCode(installed), '🔗 Código del equipo copiado: quien lo pegue en Importar verá tu misma configuración.');
+    if (missingParts(installed).length) { hud.log(lang() === 'en' ? 'Complete the build to copy its code.' : 'Completa el equipo para copiar su código.', 'err'); return; }
+    copyText(buildCode(installed), lang() === 'en' ? '🔗 Build code copied: anyone who pastes it in Import will see your exact configuration.' : '🔗 Código del equipo copiado: quien lo pegue en Importar verá tu misma configuración.');
   });
   const importBtn = document.getElementById('ws-import-btn');
   if (importBtn) importBtn.addEventListener('click', () => {
@@ -507,7 +509,7 @@ async function init() {
     game.system.xmp = !game.system.xmp;
     save();
     updateMonitorBtns();
-    hud.log('⚡ XMP/EXPO ' + (game.system.xmp ? 'ON' : 'OFF') + ' — se aplica en el próximo arranque.', 'info');
+    hud.log('⚡ XMP/EXPO ' + (game.system.xmp ? 'ON' : 'OFF') + (lang() === 'en' ? ' — applies on the next boot.' : ' — se aplica en el próximo arranque.'), 'info');
   });
   updateMonitorBtns();
   document.getElementById('ws-quality').addEventListener('change', function () {
@@ -524,27 +526,43 @@ async function init() {
   if (!game.settings) game.settings = { sound: true, tutorialSeen: false };
   setSoundEnabled(game.settings.sound !== false);
   const soundBtn = document.getElementById('ws-sound-btn');
-  if (soundBtn) {
+  function syncSoundBtn() {
+    if (!soundBtn) return;
     soundBtn.textContent = game.settings.sound === false ? '🔇' : '🔊 ' + (lang() === 'en' ? 'Sound' : 'Sonido');
+  }
+  if (soundBtn) {
+    syncSoundBtn();
     soundBtn.addEventListener('click', () => {
       game.settings.sound = game.settings.sound === false ? true : false;
       setSoundEnabled(game.settings.sound);
-      soundBtn.textContent = game.settings.sound ? '🔊 ' + (lang() === 'en' ? 'Sound' : 'Sonido') : '🔇';
+      syncSoundBtn();
       if (game.settings.sound) sfx.click();
       save();
     });
   }
-  const tutorial = createTutorial(lang(), () => {
+  const tutorial = createTutorial(lang, () => {
     if (!game.settings.tutorialSeen) { game.settings.tutorialSeen = true; save(); }
   });
   const tutBtn = document.getElementById('ws-tut-btn');
   if (tutBtn) tutBtn.addEventListener('click', () => tutorial.start());
   if (!game.settings.tutorialSeen) setTimeout(() => tutorial.start(), 900);
   window.__WS_BOOTED = true;
+  // Seguir el selector de idioma del sitio: al cambiar ES/EN se
+  // repintan tienda, pedidos, tareas, benchmarks y botones.
+  let lastLang = lang();
+  setInterval(() => {
+    const now = lang();
+    if (now !== lastLang) {
+      lastLang = now;
+      hud.applyStaticTexts();
+      syncSoundBtn();
+      syncUI();
+    }
+  }, 700);
   const dayBtn = document.getElementById('ws-day-btn');
   if (dayBtn) dayBtn.addEventListener('click', () => {
     advanceDay(game);
-    hud.log(t().newDay + game.day + ' — precios y stock actualizados.', 'info');
+    hud.log(t().newDay + game.day + (lang() === 'en' ? ' — prices and stock updated.' : ' — precios y stock actualizados.'), 'info');
     save();
   });
 }

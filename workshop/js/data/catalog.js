@@ -18,7 +18,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "LGA1700 · DDR4 · Micro-ATX · lo justo para oficina",
-   "en": "Motherboard: check socket and RAM type."
+   "en": "LGA1700 · DDR4 · Micro-ATX · just enough for office work"
   },
   "specs": {
    "chipset": "H610M",
@@ -51,7 +51,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "LGA1700 · DDR4 · Micro-ATX · sólida y económica",
-   "en": "Motherboard: check socket and RAM type."
+   "en": "LGA1700 · DDR4 · Micro-ATX · solid and affordable"
   },
   "specs": {
    "chipset": "B660",
@@ -84,7 +84,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "AM5 · DDR5 · Micro-ATX · entrada barata a Zen 4/5",
-   "en": "Motherboard: check socket and RAM type."
+   "en": "AM5 · DDR5 · Micro-ATX · a cheap way into Zen 4/5"
   },
   "specs": {
    "chipset": "A620",
@@ -117,7 +117,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "AM4 · DDR4 · Micro-ATX · clásica para Ryzen 5000",
-   "en": "Motherboard: check socket and RAM type."
+   "en": "AM4 · DDR4 · Micro-ATX · a classic for Ryzen 5000"
   },
   "specs": {
    "chipset": "B550",
@@ -150,7 +150,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "AM5 · DDR5 · Micro-ATX · compacta y completa",
-   "en": "Motherboard: check socket and RAM type."
+   "en": "AM5 · DDR5 · Micro-ATX · compact and complete"
   },
   "specs": {
    "chipset": "B650",
@@ -183,7 +183,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "LGA1700 · DDR5 · ATX · WiFi 6E y buen VRM",
-   "en": "Motherboard: check socket and RAM type."
+   "en": "LGA1700 · DDR5 · ATX · WiFi 6E and a good VRM"
   },
   "specs": {
    "chipset": "B760",
@@ -216,7 +216,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "LGA1851 · DDR5 · Micro-ATX · para Core Ultra",
-   "en": "Motherboard: check socket and RAM type."
+   "en": "LGA1851 · DDR5 · Micro-ATX · for Core Ultra"
   },
   "specs": {
    "chipset": "B860",
@@ -249,7 +249,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "AM5 · DDR5 · ATX · PCIe 5.0 lista para futuro",
-   "en": "Motherboard: check socket and RAM type."
+   "en": "AM5 · DDR5 · ATX · PCIe 5.0 ready for the future"
   },
   "specs": {
    "chipset": "B650",
@@ -282,7 +282,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "AM5 · DDR5 · ATX · pensada para Ryzen 9000",
-   "en": "Motherboard: check socket and RAM type."
+   "en": "AM5 · DDR5 · ATX · built for Ryzen 9000"
   },
   "specs": {
    "chipset": "B850",
@@ -315,7 +315,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "AM5 · DDR5 · Mini-ITX · para gabinetes mini",
-   "en": "Motherboard: check socket and RAM type."
+   "en": "AM5 · DDR5 · Mini-ITX · for mini cases"
   },
   "specs": {
    "chipset": "B650",
@@ -348,7 +348,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "LGA1851 · DDR5 · ATX · overclock y gama alta Intel",
-   "en": "Motherboard: check socket and RAM type."
+   "en": "LGA1851 · DDR5 · ATX · overclocking and high-end Intel"
   },
   "specs": {
    "chipset": "Z890",
@@ -381,7 +381,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "AM5 · DDR5 · ATX · gama alta, puertos de sobra",
-   "en": "Motherboard: check socket and RAM type."
+   "en": "AM5 · DDR5 · ATX · high-end, ports to spare"
   },
   "specs": {
    "chipset": "X670E",
@@ -414,7 +414,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "AM5 · DDR5 · ATX · USB4 y lo último de lo último",
-   "en": "Motherboard: check socket and RAM type."
+   "en": "AM5 · DDR5 · ATX · USB4 and the very latest"
   },
   "specs": {
    "chipset": "X870E",
@@ -447,7 +447,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "Micro-ATX · sobrio · GPU máx 240 mm",
-   "en": "PC case for your build."
+   "en": "Micro-ATX · sober · max GPU 240 mm"
   },
   "specs": {
    "formMax": "mATX",
@@ -473,7 +473,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "Estética años 90 · por dentro, respeto",
-   "en": "PC case for your build."
+   "en": "90s looks · respectable where it counts"
   },
   "specs": {
    "formMax": "mATX",
@@ -499,7 +499,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "Frente de malla · fresca y silenciosa",
-   "en": "PC case for your build."
+   "en": "Mesh front · cool and quiet"
   },
   "specs": {
    "formMax": "ATX",
@@ -525,7 +525,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "Mini-ITX · escritorio pequeño · GPU máx 200 mm",
-   "en": "PC case for your build."
+   "en": "Mini-ITX · small desk · max GPU 200 mm"
   },
   "specs": {
    "formMax": "ITX",
@@ -551,7 +551,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "Cristal templado · 4 ventiladores RGB",
-   "en": "PC case for your build."
+   "en": "Tempered glass · 4 RGB fans"
   },
   "specs": {
    "formMax": "ATX",
@@ -577,7 +577,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "Sin paredes: todo cabe y todo se enfría · el favorito del taller",
-   "en": "PC case for your build."
+   "en": "No walls: everything fits and everything cools · the workshop favorite"
   },
   "specs": {
    "formMax": "ATX",
@@ -603,7 +603,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "Espacio de sobra y cero ruido",
-   "en": "PC case for your build."
+   "en": "Room to spare and zero noise"
   },
   "specs": {
    "formMax": "ATX",
@@ -629,7 +629,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "Cristal doble · cabe cualquier gráfica",
-   "en": "PC case for your build."
+   "en": "Dual glass · any graphics card fits"
   },
   "specs": {
    "formMax": "ATX",
@@ -655,7 +655,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "Enorme y panorámica · radiadores de 420 mm y RTX 5090 sin sufrir",
-   "en": "PC case for your build."
+   "en": "Huge and panoramic · 420 mm radiators and an RTX 5090 with room to spare"
   },
   "specs": {
    "formMax": "ATX",
@@ -681,7 +681,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "El que viene en la caja · cumple en CPUs frescos",
-   "en": "Cooling: keeps clocks and silence."
+   "en": "The one in the box · fine for cool-running CPUs"
   },
   "specs": {
    "type": "air",
@@ -710,7 +710,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "47 mm de alto · para gabinetes mini",
-   "en": "Cooling: keeps clocks and silence."
+   "en": "47 mm tall · for mini cases"
   },
   "specs": {
    "type": "air",
@@ -740,7 +740,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "El clásico confiable para 65-125W",
-   "en": "Cooling: keeps clocks and silence."
+   "en": "The reliable classic for 65-125 W"
   },
   "specs": {
    "type": "air",
@@ -770,7 +770,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "Doble ventilador · casi nivel líquida",
-   "en": "Cooling: keeps clocks and silence."
+   "en": "Dual fan · almost liquid-cooler level"
   },
   "specs": {
    "type": "air",
@@ -800,7 +800,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "El rey del aire · rivaliza con líquidas de 360",
-   "en": "Cooling: keeps clocks and silence."
+   "en": "The air-cooling king · rivals 360 liquid coolers"
   },
   "specs": {
    "type": "air",
@@ -830,7 +830,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "Radiador 240 · silencio y temperaturas bajas",
-   "en": "Cooling: keeps clocks and silence."
+   "en": "240 radiator · silence and low temperatures"
   },
   "specs": {
    "type": "liquid",
@@ -860,7 +860,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "Radiador 360 RGB · ojo: no trae kit AM4",
-   "en": "Cooling: keeps clocks and silence."
+   "en": "360 RGB radiator · note: no AM4 kit included"
   },
   "specs": {
    "type": "liquid",
@@ -889,7 +889,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "Radiador 420 · silencio absoluto para 170 W+",
-   "en": "Cooling: keeps clocks and silence."
+   "en": "420 radiator · absolute silence for 170 W+"
   },
   "specs": {
    "type": "liquid",
@@ -918,7 +918,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "4 núcleos · 4.3 GHz · ideal oficina y eSports ligeros",
-   "en": "Processor: the socket rules everything."
+   "en": "4 cores · 4.3 GHz · great for office and light esports"
   },
   "specs": {
    "socket": "LGA1700",
@@ -946,7 +946,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "6 núcleos · 4.4 GHz · rey del presupuesto AM4",
-   "en": "Processor: the socket rules everything."
+   "en": "6 cores · 4.4 GHz · the AM4 budget king"
   },
   "specs": {
    "socket": "AM4",
@@ -974,7 +974,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "6 núcleos · 4.4 GHz · el equilibrio clásico",
-   "en": "Processor: the socket rules everything."
+   "en": "6 cores · 4.4 GHz · the classic balance"
   },
   "specs": {
    "socket": "LGA1700",
@@ -1002,7 +1002,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "8 núcleos + 3D V-Cache · la gran despedida de AM4",
-   "en": "Processor: the socket rules everything."
+   "en": "8 cores + 3D V-Cache · AM4's great farewell"
   },
   "specs": {
    "socket": "AM4",
@@ -1030,7 +1030,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "6 núcleos Zen 4 · 5.1 GHz · plataforma AM5",
-   "en": "Processor: the socket rules everything."
+   "en": "6 Zen 4 cores · 5.1 GHz · AM5 platform"
   },
   "specs": {
    "socket": "AM5",
@@ -1058,7 +1058,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "6 núcleos Zen 5 · fresco y rapidísimo en juegos",
-   "en": "Processor: the socket rules everything."
+   "en": "6 Zen 5 cores · cool and very fast in games"
   },
   "specs": {
    "socket": "AM5",
@@ -1086,7 +1086,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "14 núcleos (6P+8E) · 5.1 GHz · gamer y creador",
-   "en": "Processor: the socket rules everything."
+   "en": "14 cores (6P+8E) · 5.1 GHz · gamer and creator"
   },
   "specs": {
    "socket": "LGA1700",
@@ -1114,7 +1114,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "14 núcleos Arrow Lake · nuevo socket LGA1851",
-   "en": "Processor: the socket rules everything."
+   "en": "14 Arrow Lake cores · new LGA1851 socket"
   },
   "specs": {
    "socket": "LGA1851",
@@ -1142,7 +1142,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "8 núcleos Zen 5 · eficiencia de otro nivel",
-   "en": "Processor: the socket rules everything."
+   "en": "8 Zen 5 cores · efficiency on another level"
   },
   "specs": {
    "socket": "AM5",
@@ -1170,7 +1170,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "8 núcleos + 3D V-Cache · el favorito para jugar",
-   "en": "Processor: the socket rules everything."
+   "en": "8 cores + 3D V-Cache · the favorite for gaming"
   },
   "specs": {
    "socket": "AM5",
@@ -1198,7 +1198,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "20 núcleos · gran salto en multitarea",
-   "en": "Processor: the socket rules everything."
+   "en": "20 cores · a big leap in multitasking"
   },
   "specs": {
    "socket": "LGA1851",
@@ -1226,7 +1226,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 2,
   "blurb": {
    "es": "20 núcleos (8P+12E) · 5.6 GHz · tope Intel",
-   "en": "Processor: the socket rules everything."
+   "en": "20 cores (8P+12E) · 5.6 GHz · Intel's top"
   },
   "specs": {
    "socket": "LGA1700",
@@ -1254,7 +1254,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 2,
   "blurb": {
    "es": "El rey actual del gaming · 3D V-Cache de 2ª gen",
-   "en": "Processor: the socket rules everything."
+   "en": "The current gaming king · 2nd-gen 3D V-Cache"
   },
   "specs": {
    "socket": "AM5",
@@ -1282,7 +1282,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 2,
   "blurb": {
    "es": "16 núcleos Zen 4 · render y compilación extrema",
-   "en": "Processor: the socket rules everything."
+   "en": "16 Zen 4 cores · extreme rendering and compiling"
   },
   "specs": {
    "socket": "AM5",
@@ -1310,7 +1310,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 2,
   "blurb": {
    "es": "16 núcleos Zen 5 · lo máximo de AMD en escritorio",
-   "en": "Processor: the socket rules everything."
+   "en": "16 Zen 5 cores · AMD's best on desktop"
   },
   "specs": {
    "socket": "AM5",
@@ -1338,7 +1338,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 2,
   "blurb": {
    "es": "24 núcleos · el tope de Intel hoy",
-   "en": "Processor: the socket rules everything."
+   "en": "24 cores · Intel's top today"
   },
   "specs": {
    "socket": "LGA1851",
@@ -1366,7 +1366,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "Usa la gráfica integrada del procesador (si tiene)",
-   "en": "Use the CPU integrated graphics, if it has any."
+   "en": "Use the processor's integrated graphics (if it has any)"
   },
   "specs": {
    "vramGb": 0,
@@ -1392,7 +1392,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "1080p en juegos ligeros · no pide conector extra",
-   "en": "Graphics card: mind length and power."
+   "en": "1080p in light games · needs no extra connector"
   },
   "specs": {
    "vramGb": 4,
@@ -1418,7 +1418,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "La sorpresa de Intel · 1440p a precio de 1080p",
-   "en": "Graphics card: mind length and power."
+   "en": "Intel's surprise · 1440p at a 1080p price"
   },
   "specs": {
    "vramGb": 12,
@@ -1444,7 +1444,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "1080p alto / 1440p medio · DLSS 3 · muy eficiente",
-   "en": "Graphics card: mind length and power."
+   "en": "High 1080p / medium 1440p · DLSS 3 · very efficient"
   },
   "specs": {
    "vramGb": 8,
@@ -1470,7 +1470,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 2,
   "blurb": {
    "es": "1440p cómodo · 16 GB para texturas y creación",
-   "en": "Graphics card: mind length and power."
+   "en": "Comfortable 1440p · 16 GB for textures and creation"
   },
   "specs": {
    "vramGb": 16,
@@ -1496,7 +1496,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 2,
   "blurb": {
    "es": "1440p ultra · mucha VRAM por el precio",
-   "en": "Graphics card: mind length and power."
+   "en": "Ultra 1440p · lots of VRAM for the price"
   },
   "specs": {
    "vramGb": 16,
@@ -1522,7 +1522,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 2,
   "blurb": {
    "es": "RDNA 4 · 1440p ultra con FSR 4",
-   "en": "Graphics card: mind length and power."
+   "en": "RDNA 4 · ultra 1440p with FSR 4"
   },
   "specs": {
    "vramGb": 16,
@@ -1548,7 +1548,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 2,
   "blurb": {
    "es": "Blackwell · DLSS 4 con Multi Frame Generation",
-   "en": "Graphics card: mind length and power."
+   "en": "Blackwell · DLSS 4 with Multi Frame Generation"
   },
   "specs": {
    "vramGb": 12,
@@ -1574,7 +1574,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 2,
   "blurb": {
    "es": "1440p ultra / 4K medio · DLSS 3.5",
-   "en": "Graphics card: mind length and power."
+   "en": "Ultra 1440p / medium 4K · DLSS 3.5"
   },
   "specs": {
    "vramGb": 12,
@@ -1600,7 +1600,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 2,
   "blurb": {
    "es": "RDNA 4 · pelea con gráficas que cuestan el doble",
-   "en": "Graphics card: mind length and power."
+   "en": "RDNA 4 · fights cards that cost twice as much"
   },
   "specs": {
    "vramGb": 16,
@@ -1626,7 +1626,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 2,
   "blurb": {
    "es": "1440p ultra / 4K con DLSS 4 · 16 GB",
-   "en": "Graphics card: mind length and power."
+   "en": "Ultra 1440p / 4K with DLSS 4 · 16 GB"
   },
   "specs": {
    "vramGb": 16,
@@ -1652,7 +1652,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 3,
   "blurb": {
    "es": "4K alto sin despeinarse · Blackwell gama alta",
-   "en": "Graphics card: mind length and power."
+   "en": "High 4K without breaking a sweat · high-end Blackwell"
   },
   "specs": {
    "vramGb": 16,
@@ -1678,7 +1678,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 3,
   "blurb": {
    "es": "4K ultra sin discusión · enorme: mide tu gabinete",
-   "en": "Graphics card: mind length and power."
+   "en": "Ultra 4K, no debate · huge: measure your case"
   },
   "specs": {
    "vramGb": 24,
@@ -1704,7 +1704,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 3,
   "blurb": {
    "es": "La gráfica más potente del planeta · 32 GB GDDR7 · traga 575 W",
-   "en": "Graphics card: mind length and power."
+   "en": "The most powerful graphics card on the planet · 32 GB GDDR7 · draws 575 W"
   },
   "specs": {
    "vramGb": 32,
@@ -1754,7 +1754,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "Equipos de oficina y gama de entrada",
-   "en": "Power supply: never cheap out here."
+   "en": "Office PCs and entry-level builds"
   },
   "specs": {
    "wattsOut": 450,
@@ -1778,7 +1778,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "Para gráficas de consumo moderado",
-   "en": "Power supply: never cheap out here."
+   "en": "For graphics cards with moderate power draw"
   },
   "specs": {
    "wattsOut": 550,
@@ -1802,7 +1802,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "El punto dulce gamer",
-   "en": "Power supply: never cheap out here."
+   "en": "The gamer sweet spot"
   },
   "specs": {
    "wattsOut": 650,
@@ -1826,7 +1826,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "Gama alta con margen de sobra",
-   "en": "Power supply: never cheap out here."
+   "en": "High-end with headroom to spare"
   },
   "specs": {
    "wattsOut": 750,
@@ -1850,7 +1850,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "Conector 12V-2x6 listo para RTX serie 50",
-   "en": "Power supply: never cheap out here."
+   "en": "12V-2x6 connector ready for RTX 50 series"
   },
   "specs": {
    "wattsOut": 850,
@@ -1874,7 +1874,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "Silenciosa y eficiente para builds serios",
-   "en": "Power supply: never cheap out here."
+   "en": "Quiet and efficient for serious builds"
   },
   "specs": {
    "wattsOut": 850,
@@ -1898,7 +1898,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "RTX 4090 y workstations sin pestañear",
-   "en": "Power supply: never cheap out here."
+   "en": "RTX 4090 and workstations without blinking"
   },
   "specs": {
    "wattsOut": 1000,
@@ -1922,7 +1922,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "RTX 5090 y builds extremos · sobra por todos lados",
-   "en": "Power supply: never cheap out here."
+   "en": "RTX 5090 and extreme builds · headroom everywhere"
   },
   "specs": {
    "wattsOut": 1200,
@@ -1946,7 +1946,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "1 módulo · oficina y tareas básicas",
-   "en": "Memory kit: type and speed matter."
+   "en": "1 module · office and basic tasks"
   },
   "specs": {
    "type": "DDR4",
@@ -1973,7 +1973,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "1 módulo DDR5 · solo si el presupuesto grita",
-   "en": "Memory kit: type and speed matter."
+   "en": "1 DDR5 module · only if the budget is screaming"
   },
   "specs": {
    "type": "DDR5",
@@ -2000,7 +2000,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "2×8 GB · el mínimo cómodo para jugar",
-   "en": "Memory kit: type and speed matter."
+   "en": "2×8 GB · the comfortable minimum for gaming"
   },
   "specs": {
    "type": "DDR4",
@@ -2027,7 +2027,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "2×8 GB DDR5 · entrada a la nueva generación",
-   "en": "Memory kit: type and speed matter."
+   "en": "2×8 GB DDR5 · a way into the new generation"
   },
   "specs": {
    "type": "DDR5",
@@ -2054,7 +2054,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "2×8 GB DDR5 RGB · bonita y rápida",
-   "en": "Memory kit: type and speed matter."
+   "en": "2×8 GB DDR5 RGB · pretty and fast"
   },
   "specs": {
    "type": "DDR5",
@@ -2081,7 +2081,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "2×16 GB · multitarea y edición sin ahogos",
-   "en": "Memory kit: type and speed matter."
+   "en": "2×16 GB · multitasking and editing without choking"
   },
   "specs": {
    "type": "DDR4",
@@ -2108,7 +2108,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "2×16 GB DDR5 · RGB · dulce para AM5 y gaming",
-   "en": "Memory kit: type and speed matter."
+   "en": "2×16 GB DDR5 · RGB · sweet for AM5 and gaming"
   },
   "specs": {
    "type": "DDR5",
@@ -2135,7 +2135,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "2×24 GB · el punto raro y dulce de los creadores",
-   "en": "Memory kit: type and speed matter."
+   "en": "2×24 GB · the odd sweet spot for creators"
   },
   "specs": {
    "type": "DDR5",
@@ -2162,7 +2162,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "2×32 GB · workstations, máquinas virtuales, IA local",
-   "en": "Memory kit: type and speed matter."
+   "en": "2×32 GB · workstations, virtual machines, local AI"
   },
   "specs": {
    "type": "DDR5",
@@ -2189,7 +2189,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "2×48 GB · IA local y datasets sin tocar el disco",
-   "en": "Memory kit: type and speed matter."
+   "en": "2×48 GB · local AI and datasets without touching the disk"
   },
   "specs": {
    "type": "DDR5",
@@ -2216,7 +2216,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "Mecánico · barato por TB, lento para arrancar",
-   "en": "Storage drive for the system and games."
+   "en": "Mechanical · cheap per TB, slow to boot"
   },
   "specs": {
    "kind": "HDD",
@@ -2240,7 +2240,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "Un salto enorme frente al disco duro",
-   "en": "Storage drive for the system and games."
+   "en": "A huge leap over the hard drive"
   },
   "specs": {
    "kind": "SATA",
@@ -2264,7 +2264,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "3.500 MB/s · Windows vuela al encender",
-   "en": "Storage drive for the system and games."
+   "en": "3,500 MB/s · Windows flies at boot"
   },
   "specs": {
    "kind": "NVMe",
@@ -2288,7 +2288,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "7.000 MB/s · el favorito gamer",
-   "en": "Storage drive for the system and games."
+   "en": "7,000 MB/s · the gamer favorite"
   },
   "specs": {
    "kind": "NVMe",
@@ -2312,7 +2312,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "Barato por TB para la biblioteca completa",
-   "en": "Storage drive for the system and games."
+   "en": "Cheap per TB for the whole library"
   },
   "specs": {
    "kind": "SATA",
@@ -2336,7 +2336,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "Espacio para toda la biblioteca de juegos",
-   "en": "Storage drive for the system and games."
+   "en": "Room for the entire game library"
   },
   "specs": {
    "kind": "NVMe",
@@ -2360,7 +2360,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "12.000 MB/s · lo más rápido del catálogo",
-   "en": "Storage drive for the system and games."
+   "en": "12,000 MB/s · the fastest in the catalog"
   },
   "specs": {
    "kind": "NVMe",
@@ -2384,7 +2384,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "4 TB veloces · juegos + proyectos sin borrar nada",
-   "en": "Storage drive for the system and games."
+   "en": "Fast 4 TB · games + projects without deleting anything"
   },
   "specs": {
    "kind": "NVMe",
@@ -2408,7 +2408,7 @@ export const FALLBACK_COMPONENTS = [
   "unlockLevel": 1,
   "blurb": {
    "es": "14.000 MB/s · el techo actual del almacenamiento",
-   "en": "Storage drive for the system and games."
+   "en": "14,000 MB/s · the current storage ceiling"
   },
   "specs": {
    "kind": "NVMe",

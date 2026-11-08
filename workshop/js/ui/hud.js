@@ -36,6 +36,16 @@ export const STRINGS = {
     powerMissing: 'Todavía no puede encender. Faltan: ',
     savedNote: 'Tu avance se guarda solo en este navegador.',
     money: 'Dinero', day: 'Día', buy: 'Comprar', sell: 'Vender', shop: 'Tienda de componentes', shopHint: 'Precios del día (varían ±8% cada día) y stock limitado. Vender devuelve el 70%.', nextDay: '📅 Día siguiente',
+    monitorTitle: '🖥️ Monitor del banco', noSignal: '— Sin señal — Enciende el equipo para ver el POST.',
+    biosBtn: '⌨️ Entrar a la BIOS', osBtn: '💿 Instalar sistema', stressBtn: '🔥 Prueba de carga',
+    benchTitle: '🏆 Benchmarks y compartir', copySummary: '📋 Copiar resumen', copyCode: '🔗 Copiar código del equipo',
+    importBtn: '⬇️ Importar', importPh: 'Pega un código NVW1-… para importar un equipo',
+    toolHand: '✋ Mano', toolScrewdriver: '🪛 Destornillador', toolPaste: '🧴 Pasta térmica',
+    ordersTitle: 'Pedidos de clientes',
+    shopCatAll: 'Todas las categorías', shopCatCpu: 'Procesadores', shopCatBoard: 'Placas base', shopCatRam: 'Memoria RAM',
+    shopCatGpu: 'Tarjetas gráficas', shopCatStorage: 'Almacenamiento', shopCatPsu: 'Fuentes de poder', shopCatCase: 'Gabinetes', shopCatCooler: 'Refrigeración',
+    shopSearchPh: '🔎 Buscar (ej: RTX 5080, DDR5, 9800X3D)…',
+    sortPriceAsc: 'Precio: menor a mayor', sortPriceDesc: 'Precio: mayor a menor', sortPerf: 'Mejor rendimiento',
     bought: '🛒 Comprado: ', sold: '💰 Vendido: ',
     noMoney: '💸 No te alcanza: necesitas ', noStock: '⛔ Agotado por hoy: vuelve mañana (botón Día siguiente en la tienda).',
     cantSellInstalled: 'Esa pieza está montada en el PC: retírala antes de venderla.',
@@ -47,7 +57,7 @@ export const STRINGS = {
   },
   en: {
     title: 'NVISION PC Workshop',
-    subtitle: 'Virtual PC building workshop · Phase 1: 3D bench, snap points and fit checks',
+    subtitle: 'Virtual PC building workshop · Career mode: build, power on, pass the stress test and deliver rigs to your clients',
     inventory: 'Workshop inventory',
     inventoryHint: 'Tap a part to pick it up, drop it on the bench (or click its glowing point) to mount it. Dragging works too.',
     bench: '3D workbench',
@@ -71,10 +81,20 @@ export const STRINGS = {
     placed: '✅ Mounted: ', removed: '↩️ Part returned to inventory: ',
     cantRemoveCase: 'You cannot remove the case with parts inside: empty it first.',
     openPanelFirst: 'The side panel is closed: open it before mounting internal parts.',
-    powerOk: '🎉 The PC powers on! Fans spinning and RGB alive. (POST, BIOS and thermals arrive in Phase 4.)',
+    powerOk: '🎉 The PC powers on! Check the POST on the bench monitor.',
     powerMissing: 'It cannot power on yet. Missing: ',
     savedNote: 'Your progress saves automatically in this browser.',
     money: 'Money', day: 'Day', buy: 'Buy', sell: 'Sell', shop: 'Component shop', shopHint: 'Daily prices (±8% each day) and limited stock. Selling returns 70%.', nextDay: '📅 Next day',
+    monitorTitle: '🖥️ Bench monitor', noSignal: '— No signal — Power the PC on to see the POST.',
+    biosBtn: '⌨️ Enter BIOS', osBtn: '💿 Install system', stressBtn: '🔥 Stress test',
+    benchTitle: '🏆 Benchmarks & sharing', copySummary: '📋 Copy summary', copyCode: '🔗 Copy build code',
+    importBtn: '⬇️ Import', importPh: 'Paste an NVW1-… code to import a build',
+    toolHand: '✋ Hand', toolScrewdriver: '🪛 Screwdriver', toolPaste: '🧴 Thermal paste',
+    ordersTitle: 'Client orders',
+    shopCatAll: 'All categories', shopCatCpu: 'Processors', shopCatBoard: 'Motherboards', shopCatRam: 'Memory (RAM)',
+    shopCatGpu: 'Graphics cards', shopCatStorage: 'Storage', shopCatPsu: 'Power supplies', shopCatCase: 'Cases', shopCatCooler: 'Cooling',
+    shopSearchPh: '🔎 Search (e.g. RTX 5080, DDR5, 9800X3D)…',
+    sortPriceAsc: 'Price: low to high', sortPriceDesc: 'Price: high to low', sortPerf: 'Best performance',
     bought: '🛒 Bought: ', sold: '💰 Sold: ',
     noMoney: '💸 Not enough money: you need ', noStock: '⛔ Sold out today: come back tomorrow (Next day button in the shop).',
     cantSellInstalled: 'That part is mounted in the PC: remove it before selling.',
@@ -104,6 +124,10 @@ export function createHud(handlers) {
       const k = el.getAttribute('data-ws');
       if (s[k]) el.textContent = s[k];
     });
+    document.querySelectorAll('[data-ws-ph]').forEach(el => {
+      const k = el.getAttribute('data-ws-ph');
+      if (s[k]) el.setAttribute('placeholder', s[k]);
+    });
     const q = $('ws-quality');
     if (q) { q.options[0].textContent = s.qLow; q.options[1].textContent = s.qMedium; q.options[2].textContent = s.qHigh; }
     render();
@@ -119,7 +143,7 @@ export function createHud(handlers) {
     const sp = item.specs || {};
     const bits = [];
     if (sp.socket) bits.push(sp.socket);
-    if (sp.cores) bits.push(sp.cores + ' núcleos');
+    if (sp.cores) bits.push(sp.cores + (currentLang() === 'en' ? ' cores' : ' núcleos'));
     if (sp.type) bits.push(sp.type + ' ' + (sp.speed || ''));
     if (sp.gb) bits.push(sp.gb + ' GB');
     if (sp.lenMm) bits.push(sp.lenMm + ' mm');
@@ -145,7 +169,7 @@ export function createHud(handlers) {
         '<span class="ws-card-specs">' + specLine(item) + '</span>' +
         '<span class="ws-card-blurb">' + (item.blurb[s ? currentLang() : 'es'] || item.blurb.es || '') + '</span>' +
         '<span class="ws-card-foot"><span class="ws-card-price">' + money(item.price) + '</span>' +
-        '<span class="ws-card-state">' + (isIn ? '🔩 En el PC' : '📦 ×' + (ownedMap[item.id] || 0)) + '</span></span>';
+        '<span class="ws-card-state">' + (isIn ? (currentLang() === 'en' ? '🔩 In the PC' : '🔩 En el PC') : '📦 ×' + (ownedMap[item.id] || 0)) + '</span></span>';
       card.addEventListener('click', () => handlers.onPick(item));
       card.addEventListener('pointerdown', ev => handlers.onDragStart(item, ev));
       invEl.appendChild(card);

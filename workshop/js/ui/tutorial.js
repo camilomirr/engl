@@ -16,6 +16,9 @@ export const TUTORIAL_STEPS = [
   { el: 'ws-shop', text: L('En la tienda compras y vendes piezas. Los precios cambian cada día: compra barato, vende caro y sube de nivel para desbloquear hardware.', 'In the shop you buy and sell parts. Prices change daily: buy low, sell high and level up to unlock better hardware.') }
 ];
 export function createTutorial(lang, onDone) {
+  // lang puede ser el idioma ('es'/'en') o una funcion que lo devuelve,
+  // para que el tutorial salga en el idioma activo aunque cambie despues.
+  const getLang = typeof lang === 'function' ? lang : () => lang;
   let idx = -1, card = null, currentEl = null;
   function cleanup() {
     if (currentEl) currentEl.classList.remove('ws-highlight');
@@ -40,9 +43,10 @@ export function createTutorial(lang, onDone) {
       card.setAttribute('aria-live', 'polite');
       document.body.appendChild(card);
     }
-    const en = lang === 'en';
+    const langNow = getLang();
+    const en = langNow === 'en';
     card.innerHTML = '<b>🎓 ' + (en ? 'Workshop tour' : 'Visita guiada') + ' · ' + (i + 1) + '/' + TUTORIAL_STEPS.length + '</b>' +
-      '<p>' + step.text[lang] + '</p>' +
+      '<p>' + step.text[langNow] + '</p>' +
       '<div class="ws-tutorial-btns">' +
       '<button type="button" class="ws-btn" data-tut="skip">' + (en ? 'Skip' : 'Omitir') + '</button>' +
       '<button type="button" class="ws-btn ws-btn--install" data-tut="next">' + (i === TUTORIAL_STEPS.length - 1 ? (en ? 'Finish' : 'Terminar') : (en ? 'Next' : 'Siguiente')) + '</button>' +

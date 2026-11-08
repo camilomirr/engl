@@ -159,7 +159,7 @@
         <button type="button" class="ws-btn ws-btn--power" id="ws-power-btn" data-ws="power">⏻ Probar encendido</button>
         <button type="button" class="ws-btn" id="ws-panel-btn" data-ws="panelOpen">Cerrar panel lateral</button>
         <button type="button" class="ws-btn" id="ws-reset-btn" data-ws="reset">Vaciar el banco</button>
-        <button type="button" class="ws-btn" id="ws-sound-btn" data-ws="soundBtn">🔊 Sonido</button>
+        <button type="button" class="ws-btn" id="ws-sound-btn">🔊 Sonido</button>
         <button type="button" class="ws-btn" id="ws-tut-btn" data-ws="tutBtn">🎓 Tutorial</button>
         <label class="ws-quality"><span data-ws="quality">Calidad gráfica</span>
           <select id="ws-quality">
@@ -178,34 +178,34 @@
         <button type="button" class="ws-btn" id="ws-remove-btn" data-ws="remove">Retirar al inventario</button>
       </div>
       <div class="ws-monitor">
-        <h4>🖥️ Monitor del banco</h4>
-        <div class="ws-screen" id="ws-screen"><p class="ws-line ws-line--dim">— Sin señal — Enciende el equipo para ver el POST.</p></div>
+        <h4 data-ws="monitorTitle">🖥️ Monitor del banco</h4>
+        <div class="ws-screen" id="ws-screen"><p class="ws-line ws-line--dim" data-ws="noSignal">— Sin señal — Enciende el equipo para ver el POST.</p></div>
         <div class="ws-monitor-btns">
-          <button type="button" class="ws-btn" id="ws-bios-btn" disabled>⌨️ Entrar a la BIOS</button>
-          <button type="button" class="ws-btn" id="ws-os-btn" disabled>💿 Instalar sistema</button>
-          <button type="button" class="ws-btn" id="ws-stress-btn" disabled>🔥 Prueba de carga</button>
+          <button type="button" class="ws-btn" id="ws-bios-btn" disabled data-ws="biosBtn">⌨️ Entrar a la BIOS</button>
+          <button type="button" class="ws-btn" id="ws-os-btn" disabled data-ws="osBtn">💿 Instalar sistema</button>
+          <button type="button" class="ws-btn" id="ws-stress-btn" disabled data-ws="stressBtn">🔥 Prueba de carga</button>
           <button type="button" class="ws-btn" id="ws-xmp-btn">⚡ XMP/EXPO: OFF</button>
         </div>
       </div>
       <div class="ws-bench">
-        <h4>🏆 Benchmarks y compartir</h4>
+        <h4 data-ws="benchTitle">🏆 Benchmarks y compartir</h4>
         <div id="ws-bench-body"><p class="ws-note">Completa el equipo (8 piezas) para ver puntajes y FPS estimados.</p></div>
         <div class="ws-monitor-btns">
           <button type="button" class="ws-btn" id="ws-rgb-btn">🌈 RGB: OFF</button>
-          <button type="button" class="ws-btn" id="ws-copy-btn">📋 Copiar resumen</button>
-          <button type="button" class="ws-btn" id="ws-code-btn">🔗 Copiar código del equipo</button>
+          <button type="button" class="ws-btn" id="ws-copy-btn" data-ws="copySummary">📋 Copiar resumen</button>
+          <button type="button" class="ws-btn" id="ws-code-btn" data-ws="copyCode">🔗 Copiar código del equipo</button>
         </div>
         <div class="ws-import-row">
-          <input id="ws-code-input" type="text" placeholder="Pega un código NVW1-… para importar un equipo">
-          <button type="button" class="ws-btn" id="ws-import-btn">⬇️ Importar</button>
+          <input id="ws-code-input" type="text" placeholder="Pega un código NVW1-… para importar un equipo" data-ws-ph="importPh">
+          <button type="button" class="ws-btn" id="ws-import-btn" data-ws="importBtn">⬇️ Importar</button>
         </div>
       </div>
       <div class="ws-tasks-panel" id="ws-tasks">
         <h4 id="ws-tasks-part">🔧 Montaje paso a paso</h4>
         <div class="ws-tools" id="ws-tools" role="group" aria-label="Herramientas">
-          <button type="button" class="ws-tool ws-tool--active" data-tool="hand">✋ Mano</button>
-          <button type="button" class="ws-tool" data-tool="screwdriver">🪛 Destornillador</button>
-          <button type="button" class="ws-tool" data-tool="paste">🧴 Pasta térmica</button>
+          <button type="button" class="ws-tool ws-tool--active" data-tool="hand" data-ws="toolHand">✋ Mano</button>
+          <button type="button" class="ws-tool" data-tool="screwdriver" data-ws="toolScrewdriver">🪛 Destornillador</button>
+          <button type="button" class="ws-tool" data-tool="paste" data-ws="toolPaste">🧴 Pasta térmica</button>
         </div>
         <div id="ws-tasks-list"></div>
         <button type="button" class="ws-btn ws-btn--install" id="ws-task-btn" style="display:none">▶ Hacer el siguiente paso</button>
@@ -238,7 +238,7 @@
 
   <section class="container ws-orders-section">
     <div class="ws-panel">
-      <h3>📋 Pedidos de clientes <span class="ws-career-stats" id="ws-career-stats"></span></h3>
+      <h3>📋 <span data-ws="ordersTitle">Pedidos de clientes</span> <span class="ws-career-stats" id="ws-career-stats"></span></h3>
       <div id="ws-active-order"></div>
       <div class="ws-orders-grid" id="ws-orders"></div>
     </div>
@@ -251,21 +251,21 @@
       <p class="ws-hint" data-ws="shopHint">Precios del día (varían ±8% cada día) y stock limitado. Vender devuelve el 70%.</p>
       <div class="ws-shop-filters">
         <select id="ws-shop-cat" aria-label="Categoría">
-          <option value="all">Todas las categorías</option>
-          <option value="cpu">Procesadores</option>
-          <option value="board">Placas base</option>
-          <option value="ram">Memoria RAM</option>
-          <option value="gpu">Tarjetas gráficas</option>
-          <option value="storage">Almacenamiento</option>
-          <option value="psu">Fuentes de poder</option>
-          <option value="case">Gabinetes</option>
-          <option value="cooler">Refrigeración</option>
+          <option value="all" data-ws="shopCatAll">Todas las categorías</option>
+          <option value="cpu" data-ws="shopCatCpu">Procesadores</option>
+          <option value="board" data-ws="shopCatBoard">Placas base</option>
+          <option value="ram" data-ws="shopCatRam">Memoria RAM</option>
+          <option value="gpu" data-ws="shopCatGpu">Tarjetas gráficas</option>
+          <option value="storage" data-ws="shopCatStorage">Almacenamiento</option>
+          <option value="psu" data-ws="shopCatPsu">Fuentes de poder</option>
+          <option value="case" data-ws="shopCatCase">Gabinetes</option>
+          <option value="cooler" data-ws="shopCatCooler">Refrigeración</option>
         </select>
-        <input type="search" id="ws-shop-search" placeholder="🔎 Buscar (ej: RTX 5080, DDR5, 9800X3D)…">
+        <input type="search" id="ws-shop-search" placeholder="🔎 Buscar (ej: RTX 5080, DDR5, 9800X3D)…" data-ws-ph="shopSearchPh">
         <select id="ws-shop-sort" aria-label="Ordenar">
-          <option value="price-asc">Precio: menor a mayor</option>
-          <option value="price-desc">Precio: mayor a menor</option>
-          <option value="perf">Mejor rendimiento</option>
+          <option value="price-asc" data-ws="sortPriceAsc">Precio: menor a mayor</option>
+          <option value="price-desc" data-ws="sortPriceDesc">Precio: mayor a menor</option>
+          <option value="perf" data-ws="sortPerf">Mejor rendimiento</option>
         </select>
       </div>
       <div class="ws-shop-grid" id="ws-shop"></div>
@@ -277,7 +277,7 @@
     <p>© 2026 - <span data-i18n="footer_text">NVISION</span></p>
   </footer>
 
-  <script src="../js/main.js?v=3"></script>
+  <script src="../js/main.js?v=5"></script>
   <script>
 window.__WS_ERRORS = [];
 window.addEventListener('error', function (e) { window.__WS_ERRORS.push(String((e && e.message) || 'error')); }, true);
@@ -292,7 +292,7 @@ setTimeout(function () {
   }
 }, 8000);
 </script>
-<script type="module" src="js/main.js?v=18"></script>
+<script type="module" src="js/main.js?v=19"></script>
   <script src="../js/equipo-widget.js?v=11" defer></script>
 </body>
 </html>
