@@ -11,7 +11,7 @@
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <title data-i18n="page_title_index">NVISION - Hardware y Computadores</title>
   <!-- Hojas de estilo modular -->
-  <link rel="stylesheet" href="css/styles.css?v=25">
+  <link rel="stylesheet" href="css/styles.css?v=26">
 </head>
 <body>
 
@@ -135,6 +135,26 @@
       <div class="hero-buttons">
         <a href="hardware.html#historia" class="btn-primary"><span data-i18n="btn_timeline">Línea de Tiempo</span></a>
         <a href="hardware.html#componentes" class="btn-secondary"><span data-i18n="btn_components">Ver Componentes</span></a>
+      </div>
+
+      <!-- Buscador del sitio: busca en todo NVISION y lleva directo al tema -->
+      <div class="site-search">
+        <p class="site-search-title" data-i18n="search_title">¿Qué quieres aprender hoy?</p>
+        <form class="site-search-box" id="site-search-form" role="search" autocomplete="off">
+          <span class="site-search-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
+          <input type="search" id="site-search-input" class="site-search-input" data-i18n-placeholder="search_placeholder" placeholder="Busca en todo NVISION: RAM, topologías, WiFi, malware…" aria-label="Buscar en NVISION">
+          <button type="button" id="site-search-clear" class="site-search-clear" aria-label="Limpiar búsqueda">×</button>
+          <div class="site-search-results" id="site-search-results"></div>
+        </form>
+        <div class="site-search-popular">
+          <span class="site-search-popular-label" data-i18n="search_popular">Populares:</span>
+          <button type="button" class="site-search-chip" data-q="RAM">RAM</button>
+          <button type="button" class="site-search-chip" data-q="topologías">Topologías</button>
+          <button type="button" class="site-search-chip" data-q="WiFi">WiFi</button>
+          <button type="button" class="site-search-chip" data-q="malware">Malware</button>
+          <button type="button" class="site-search-chip" data-q="visor 3D">Visor 3D</button>
+          <button type="button" class="site-search-chip" data-q="glosario">Glosario</button>
+        </div>
       </div>
     </div>
   </header>
@@ -418,7 +438,8 @@
   </footer>
 
   <!-- Script interactivo bilingüe y menú móvil -->
-  <script src="js/main.js?v=10"></script>
+  <script src="js/main.js?v=11"></script>
+  <script src="js/site-search.js?v=1"></script>
   <script src="js/equipo-widget.js?v=14" defer></script>
 </body>
 </html>
