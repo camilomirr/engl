@@ -207,3 +207,94 @@
     font-size: 0.95rem;
   }
 }
+
+/* =========================================================
+   BUSCADOR DEL ENCABEZADO (botón lupa + barra desplegable)
+   El botón vive en .header-actions, junto al cambio de tema;
+   al tocarlo se despliega una barra bajo el encabezado con
+   el mismo buscador de la página principal.
+   ========================================================= */
+
+.header-search-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  border-radius: 50%;
+  font-size: 1.1rem;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+  backdrop-filter: blur(8px);
+  flex-shrink: 0;
+}
+
+.header-search-btn:hover {
+  border-color: var(--border-hover);
+  background: var(--bg-card-hover);
+  color: var(--accent-cyan);
+  transform: translateY(-1px);
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.25);
+}
+
+.header-search-btn.active {
+  border-color: var(--border-glow);
+  color: var(--accent-cyan);
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.18), var(--shadow-sm);
+}
+
+.header-search-btn .mono-icon {
+  display: flex;
+  width: 20px;
+  height: 20px;
+}
+
+.header-search-btn .mono-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Panel desplegable: cerrado no ocupa espacio; abierto baja con animación */
+.header-search {
+  display: none;
+  border-top: 1px solid var(--border-subtle);
+  padding: 0.85rem 1.5rem 1rem;
+}
+
+.header-search.open {
+  display: block;
+  animation: header-search-in 0.25s ease;
+}
+
+@keyframes header-search-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.header-search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.header-search-popular {
+  margin-top: 0.7rem;
+}
+
+@media (max-width: 600px) {
+  .header-search {
+    padding: 0.75rem 1rem 0.9rem;
+  }
+}

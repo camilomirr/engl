@@ -103,11 +103,12 @@
     return scored.slice(0, MAX_RESULTS).map(function (s) { return s.item; });
   }
 
-  function init() {
-    var input = document.getElementById('site-search-input');
-    var resultsBox = document.getElementById('site-search-results');
-    var clearBtn = document.getElementById('site-search-clear');
-    var form = document.getElementById('site-search-form');
+  // Conecta un bloque de búsqueda (formulario + campo + resultados + limpiar).
+  // Se usa para el buscador del inicio y para el del encabezado: los dos
+  // comparten el mismo índice y los mismos resultados.
+  var wiredInputs = [];
+
+  function wireSearch(form, input, resultsBox, clearBtn) {
     if (!input || !resultsBox || !form) return;
 
     var activeIndex = -1;
@@ -155,7 +156,7 @@
 
     function run() {
       var q = input.value.trim();
-      clearBtn.classList.toggle('visible', q.length > 0);
+      if (clearBtn) clearBtn.classList.toggle('visible', q.length > 0);
       if (q.length < 2) { closeResults(); return; }
       render(search(q), q);
     }
@@ -190,28 +191,90 @@
       if (items.length) window.location.href = items[0].getAttribute('href');
     });
 
-    clearBtn.addEventListener('click', function () {
-      input.value = '';
-      run();
-      input.focus();
-    });
-
-    document.querySelectorAll('.site-search-chip').forEach(function (chip) {
-      chip.addEventListener('click', function () {
-        input.value = chip.getAttribute('data-q') || chip.textContent;
+    if (clearBtn) {
+      clearBtn.addEventListener('click', function () {
+        input.value = '';
         run();
         input.focus();
       });
-    });
+    }
 
     document.addEventListener('click', function (e) {
-      if (!e.target.closest || !e.target.closest('.site-search')) closeResults();
+      if (!e.target.closest || !e.target.closest('.site-search, .header-search')) closeResults();
     });
+
+    wiredInputs.push({ input: input, run: run });
+  }
+
+  function init() {
+    // Buscador del inicio (debajo de los botones del hero)
+    wireSearch(
+      document.getElementById('site-search-form'),
+      document.getElementById('site-search-input'),
+      document.getElementById('site-search-results'),
+      document.getElementById('site-search-clear')
+    );
+    // Buscador desplegable del encabezado (botón lupa)
+    wireSearch(
+      document.getElementById('header-search-form'),
+      document.getElementById('header-search-input'),
+      document.getElementById('header-search-results'),
+      document.getElementById('header-search-clear')
+    );
+
+    // Las sugerencias populares llenan el buscador de su propio bloque.
+    document.querySelectorAll('.site-search-chip').forEach(function (chip) {
+      chip.addEventListener('click', function () {
+        var scope = chip.closest('.site-search') || chip.closest('.header-search') || document;
+        var target = scope.querySelector('input[type="search"]');
+        if (!target) return;
+        target.value = chip.getAttribute('data-q') || chip.textContent;
+        target.dispatchEvent(new Event('input', { bubbles: true }));
+        target.focus();
+      });
+    });
+
+    // Botón lupa del encabezado: despliega / cierra la barra de búsqueda.
+    var toggleBtn = document.getElementById('header-search-toggle');
+    var panel = document.getElementById('header-search-panel');
+    var headerInput = document.getElementById('header-search-input');
+    if (toggleBtn && panel) {
+      function closePanel() {
+        panel.classList.remove('open');
+        toggleBtn.classList.remove('active');
+        toggleBtn.setAttribute('aria-expanded', 'false');
+      }
+      function openPanel() {
+        panel.classList.add('open');
+        toggleBtn.classList.add('active');
+        toggleBtn.setAttribute('aria-expanded', 'true');
+        if (headerInput) headerInput.focus();
+      }
+      toggleBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (panel.classList.contains('open')) closePanel();
+        else openPanel();
+      });
+      document.addEventListener('click', function (e) {
+        if (!panel.classList.contains('open')) return;
+        if (e.target.closest && (e.target.closest('#header-search-panel') || e.target.closest('#header-search-toggle'))) return;
+        closePanel();
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && panel.classList.contains('open')) {
+          closePanel();
+          if (headerInput) headerInput.blur();
+          toggleBtn.focus();
+        }
+      });
+    }
 
     // Si cambia el idioma, se re-renderizan los resultados con ese idioma.
     if (window.MutationObserver) {
       new MutationObserver(function () {
-        if (input.value.trim().length >= 2) run();
+        wiredInputs.forEach(function (w) {
+          if (w.input.value.trim().length >= 2) w.run();
+        });
       }).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
     }
   }
