@@ -1018,6 +1018,13 @@ const translations = {
     idx_card_wifi_title: "WiFi<br>Avanzado",
     idx_explore_desc: "Selecciona un área para conocer la historia del hardware, entender las redes o practicar con recursos interactivos.",
     idx_explore_title: "Explora NVISION",
+    idx_top_desc: "Los mejores puntajes del juego, en vivo. Juega, responde contra el tiempo y entra al TOP.",
+    idx_top_empty: "Todavía nadie está en el TOP. ¡Sé el primero en jugar!",
+    idx_top_error: "No se pudo cargar el TOP, revisa tu internet.",
+    idx_top_loading: "Cargando TOP…",
+    idx_top_play: "Jugar ahora",
+    idx_top_points: "puntos",
+    idx_top_title: "TOP 5 del Reto de Redes",
     lab_status_code: "Código",
     lab_status_live: "En vivo",
     lab_status_optional: "Módulo Opcional",
@@ -2022,6 +2029,13 @@ const translations = {
     idx_card_wifi_title: "Advanced<br>WiFi",
     idx_explore_desc: "Select an area to learn the history of hardware, understand networks, or practice with interactive resources.",
     idx_explore_title: "Explore NVISION",
+    idx_top_desc: "The best game scores, live. Play, answer against the clock, and reach the TOP.",
+    idx_top_empty: "Nobody is on the TOP yet. Be the first to play!",
+    idx_top_error: "Could not load the TOP, check your internet.",
+    idx_top_loading: "Loading TOP…",
+    idx_top_play: "Play now",
+    idx_top_points: "points",
+    idx_top_title: "TOP 5 — Networks Challenge",
     lab_status_code: "Code",
     lab_status_live: "Live",
     lab_status_optional: "Optional module",
@@ -2123,6 +2137,7 @@ function applyLanguage(lang) {
   });
 
   document.documentElement.lang = lang;
+  renderHomeTop();
 }
 
 function closeLangDropdown() {
@@ -3680,6 +3695,56 @@ function setupCursorEffect() {
   document.documentElement.addEventListener('mouseleave', () => effect.classList.remove('is-visible'));
 }
 
+
+/* TOP 5 del Reto de Redes en la página principal: lee los mejores
+   puntajes en vivo de Supabase (tabla leaderboard). Usa la misma clave
+   anónima pública que ya usa redes_challenge/juego.js. */
+const NVISION_SUPABASE_URL = 'https://xiuztrujrwdgcpjrruxu.supabase.co';
+const NVISION_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpdXp0cnVqcndkZ2NwanJydXh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQwNTk2ODcsImV4cCI6MjEwOTYzNTY4N30.CBBQpCqHxuOtCaMcdUfIrKTa4vt0QJRqvivskHnt5g0';
+let homeTopRows = null;
+let homeTopFailed = false;
+
+function renderHomeTop() {
+  const list = document.getElementById('homeTopList');
+  const status = document.getElementById('homeTopStatus');
+  if (!list || !status) return;
+  const t = translations[currentLang] || translations.es;
+  list.innerHTML = '';
+  if (homeTopFailed) { status.textContent = t.idx_top_error; return; }
+  if (!homeTopRows) { status.textContent = t.idx_top_loading; return; }
+  if (!homeTopRows.length) { status.textContent = t.idx_top_empty; return; }
+  status.textContent = '';
+  homeTopRows.forEach((row, i) => {
+    const li = document.createElement('li');
+    if (i < 3) li.classList.add('home-top-' + (i + 1));
+    const rank = document.createElement('span');
+    rank.className = 'home-top-rank';
+    rank.textContent = String(i + 1);
+    const name = document.createElement('span');
+    name.className = 'home-top-name';
+    name.textContent = row.name;
+    const pts = document.createElement('b');
+    pts.textContent = ' ' + row.points + ' ' + t.idx_top_points;
+    li.append(rank, name, pts);
+    list.appendChild(li);
+  });
+}
+
+async function loadHomeTop() {
+  if (!document.getElementById('homeTopList')) return;
+  try {
+    const r = await fetch(NVISION_SUPABASE_URL + '/rest/v1/leaderboard?select=name,points,created_at&order=points.desc,created_at.asc&limit=5', {
+      headers: { apikey: NVISION_SUPABASE_ANON_KEY, Authorization: 'Bearer ' + NVISION_SUPABASE_ANON_KEY }
+    });
+    if (!r.ok) throw new Error('http ' + r.status);
+    homeTopRows = await r.json();
+    homeTopFailed = false;
+  } catch (e) {
+    homeTopFailed = true;
+  }
+  renderHomeTop();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   setupThemeToggle();
   setupLanguageDropdown();
@@ -3695,6 +3760,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupSwitchLab();
   setupLocalAssistant();
   setupCursorEffect();
+  loadHomeTop();
   applyLanguage(currentLang);
 });
 
