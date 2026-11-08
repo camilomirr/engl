@@ -9,6 +9,13 @@
   var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpdXp0cnVqcndkZ2NwanJydXh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQwNTk2ODcsImV4cCI6MjEwOTYzNTY4N30.CBBQpCqHxuOtCaMcdUfIrKTa4vt0QJRqvivskHnt5g0';
   var TEAM = ['Duay', 'Santiago', 'Samuel', 'Yurlei', 'Andres', 'Abraham', 'Juan', 'Deivison', 'Camilo'];
 
+  // Ruta base del sitio, deducida de la URL del propio script: el logo carga
+  // igual desde la raíz (index.html) que desde subcarpetas (workshop/).
+  var EQW_SCRIPT = (document.currentScript && document.currentScript.src) ||
+    (function () { var s = document.querySelectorAll('script[src*="equipo-widget.js"]'); return s.length ? s[s.length - 1].src : ''; })();
+  var SITE_BASE = EQW_SCRIPT ? EQW_SCRIPT.replace(/js\/[^/?]*(\?.*)?$/, '') : '';
+  var LOGO_URL = SITE_BASE + 'assets/muse-logo.webp';
+
   function sbHeaders(extra) {
     return Object.assign({ apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + SUPABASE_ANON_KEY, 'Content-Type': 'application/json' }, extra || {});
   }
@@ -43,13 +50,13 @@
   root.className = 'eqw';
   root.innerHTML =
     '<button type="button" class="eqw-fab" id="eqwFab" aria-label="Chat del equipo con Muse">' +
-      '<img src="assets/muse-logo.webp" alt="Muse">' +
+      '<img src="' + LOGO_URL + '" alt="Muse">' +
       '<span class="eqw-fab-badge" id="eqwFabBadge" hidden></span>' +
     '</button>' +
     '<div class="eqw-panel" id="eqwPanel" hidden>' +
       '<div class="eqw-head">' +
         '<button type="button" class="eqw-head-back" id="eqwHeadBack" aria-label="Volver a los chats" hidden>←</button>' +
-        '<img src="assets/muse-logo.webp" alt="Muse" class="eqw-head-logo" id="eqwHeadLogo">' +
+        '<img src="' + LOGO_URL + '" alt="Muse" class="eqw-head-logo" id="eqwHeadLogo">' +
         '<span class="eqw-head-avatar" id="eqwHeadAvatar" hidden></span>' +
         '<div class="eqw-head-who"><strong id="eqwTitle">Chat del equipo</strong><span id="eqwSub">Elige tu nombre</span></div>' +
         '<button type="button" class="eqw-close" id="eqwClose" aria-label="Cerrar">×</button>' +
@@ -112,7 +119,7 @@
         : 'Sin mensajes todavía.';
       var mine = n === name;
       return '<button type="button" class="eq-chat-row eqw-row' + (mine ? ' eqw-row-current' : '') + '" data-name="' + esc(n) + '">' +
-        '<img src="assets/muse-logo.webp" alt="" class="eqw-row-logo">' +
+        '<img src="' + LOGO_URL + '" alt="" class="eqw-row-logo">' +
         '<span class="eq-row-main"><strong>' + esc(n) + (mine ? ' <span class="eqw-you">· Tu chat</span>' : '') + '</strong>' +
         '<span class="eq-row-preview">' + esc(preview) + '</span></span>' +
         '<span class="eq-row-side">' + (when ? '<span class="eq-row-time">' + esc(when) + '</span>' : '') +
@@ -134,7 +141,7 @@
     form.hidden = false;
     var rows = lastRows.filter(function (t) { return t.name === name; }).slice().reverse();
     if (!rows.length) {
-      body.innerHTML = '<div class="eqw-empty"><img src="assets/muse-logo.webp" alt="Muse" class="eqw-empty-logo">' +
+      body.innerHTML = '<div class="eqw-empty"><img src="' + LOGO_URL + '" alt="Muse" class="eqw-empty-logo">' +
         '<strong>Hola, ' + esc(name) + '</strong>' +
         '<p>Este chat está vacío. Escríbele algo a Muse abajo, por ejemplo pedir un cambio en el sitio.</p>' +
         '<div class="eqw-chips">' +
