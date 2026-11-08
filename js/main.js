@@ -3196,12 +3196,24 @@ function setupLocalAssistant() {
   /* ===== Contexto de conversación: seguir hablando del tema ===== */
   /* Antes el chatbot no tenía memoria: cada pregunta se respondía sola y
      "¿qué más?" no tenía tokens (STOP lo vaciaba) y caía en el fallback.
-     Ahora guarda el último tema respondido y las fichas ya mostradas. */
+     Ahora guarda el último tema respondido y las fichas ya mostradas, y
+     entiende órdenes sobre ese tema ("hazlo", "haz eso", "muéstrame"):
+     las resuelve con la ficha más práctica (pasos) relacionada con él. */
   let lastTopic = null; // { e, key, c }
   let shownKeys = new Set();
   let shownKeyToks = new Set(); // tokens de k[0] ya mostrados: evita repetir casi la misma ficha (ej. dos de dual channel)
   const FOLLOWUPS = new Set(['que mas', 'y que mas', 'dime mas', 'cuentame mas', 'sigue', 'continua', 'y eso', 'y de eso', 'algo mas', 'que mas hay', 'hay mas', 'y luego', 'y despues', 'mas', 'mas detalles', 'detalles', 'dame un ejemplo', 'un ejemplo', 'y un ejemplo', 'explicame mas', 'profundiza', 'what else', 'tell me more', 'more', 'go on', 'continue', 'more details', 'give me an example', 'an example', 'and then', 'tell me more about it', 'what about that']);
   const isPureFollowUp = (q) => FOLLOWUPS.has(norm(q).trim().replace(/\s+/g, ' '));
+  /* Órdenes sobre el último tema: "hazlo" no tiene tokens de ninguna ficha
+     y antes caía en el fallback sin saber de qué se hablaba. Ahora se
+     resuelve con el último tema guardado (ver askDoIt). */
+  const DOITS = new Set(['hazlo', 'haz eso', 'haz esto', 'hazlo tu', 'hazlo por mi', 'hazlo ahora', 'hazlo ya', 'hazlo tu mismo', 'hazmelo', 'hazlo por favor', 'haz eso por mi', 'hazme eso', 'hazlo paso a paso', 'hazlo asi', 'hazlo como dices', 'muestrame', 'muestrame como', 'muestrame como se hace', 'ensename', 'ensename como', 'ensename como se hace', 'dime como se hace', 'dime como hacerlo', 'como se hace', 'como lo hago', 'guiame', 'ayudame con eso', 'ayudame a hacerlo', 'adelante', 'do it', 'do that', 'do it for me', 'do it now', 'just do it', 'show me', 'show me how', 'show me how to do it', 'go ahead', 'do it step by step']);
+  const isDoIt = (q) => DOITS.has(norm(q).trim().replace(/\s+/g, ' '));
+  /* Prefijos de orden con tema nuevo: "hazlo de X", "haz X", "muéstrame X" */
+  const DOIT_PREFIXES = ['hazlo de ', 'hazlo con ', 'haz eso de ', 'haz esto de ', 'hazme ', 'haz ', 'muestrame ', 'ensename ', 'do it with ', 'do that with ', 'show me '];
+  /* Palabras que marcan una ficha práctica (pasos / cómo hacerlo). Se
+     comparan ya con stem, como las deja toks(). */
+  const ACTION_WORDS = new Set(['paso', 'pasos', 'configurar', 'instalar', 'activar', 'reparar', 'usar', 'crear', 'poner', 'quitar', 'cambiar', 'limpiar', 'probar', 'solucion', 'arreglar', 'orden', 'secuencia', 'guia', 'how', 'steps', 'setup', 'fix', 'use', 'clean'].map(stem));
   function relatedEntries(topic) {
     const tk = new Set(toks(topic.key));
     const all = [...learned.map((e) => ({ c: e.c, k: e.k, r: [e.r, e.r], href: null })), ...KB];
@@ -3222,6 +3234,15 @@ function setupLocalAssistant() {
     lastTopic = { e: b.e, key: b.key, c: b.e.c };
     shownKeys.add(b.e.k[0]);
     shownKeyToks.add(toks(b.e.k[0]).join(','));
+  }
+  /* Etiqueta legible del tema para las respuestas ("que es la ram" -> "La ram"):
+     quita la pregunta inicial y pone mayúscula, para que "hazlo" responda
+     "lo de la RAM se hace así" y no "lo de que es la ram se hace así". */
+  function topicLabel(key) {
+    const t = (key || '').replace(/^[¿?¡!\s]+/, '').replace(/[¿?¡!\s]+$/, '');
+    const m = t.match(/^(qué es|que es|qué son|que son|qué significa|que significa|cómo|como|qué|que|what is|what are|what does|what|how does|how do|how to|how)\s+(.+)$/i);
+    const label = m ? m[2] : t;
+    return label.charAt(0).toUpperCase() + label.slice(1);
   }
   function askFollowUp(q) {
     if (!lastTopic) {
@@ -3245,6 +3266,30 @@ function setupLocalAssistant() {
         : '\n\nTambién puedes preguntarme: «' + more.map((x) => x.e.k[0]).join('», «') + '».';
     }
     say((L() === 1 ? 'Sure, about ' + next.k[0] + ' I can also tell you: ' : 'Claro, sobre ' + next.k[0] + ' también te cuento: ') + next.r[L()] + extra, q, null, next.href);
+  }
+
+  /* "hazlo": hacer lo del último tema, paso a paso. Muestra la ficha más
+     práctica relacionada (la de pasos / cómo hacerlo) y nombra el tema para
+     que se vea que entendió a qué se refería la orden. */
+  function askDoIt(q) {
+    if (!lastTopic) {
+      say(L() === 1 ? 'Tell me first what you want me to do — for example, ask me how to clean your PC and then say "do it".' : 'Dime primero qué quieres que haga —por ejemplo, pregúntame cómo limpiar el PC y luego dime «hazlo».', q, null, null);
+      return;
+    }
+    const topicKey = lastTopic.key;
+    const topicName = topicLabel(topicKey);
+    const rel = relatedEntries(lastTopic).filter((x) => !shownKeys.has(x.e.k[0]));
+    const action = rel.find((x) => x.e.k.some((k) => toks(k).some((w) => ACTION_WORDS.has(w))));
+    const next = action || rel[0];
+    if (!next) {
+      say(L() === 1 ? 'I already gave you the main steps for ' + topicName + '. Tell me which part you want me to walk you through step by step.' : 'Ya te conté los pasos principales de ' + topicName + '. Dime qué parte quieres que te guíe paso a paso.', q, null, lastTopic.e.href);
+      return;
+    }
+    const e = next.e;
+    shownKeys.add(e.k[0]);
+    shownKeyToks.add(toks(e.k[0]).join(','));
+    lastTopic = { e, key: e.k[0], c: e.c };
+    say((L() === 1 ? 'Sure — here is how to do it for ' + topicName + ', step by step: ' : 'Claro, lo de ' + topicName + ' se hace así, paso a paso: ') + e.r[L()], q, null, e.href);
   }
 
   /* ===== Construcción del panel ===== */
@@ -3363,6 +3408,12 @@ function setupLocalAssistant() {
         moreBtn.textContent = L() === 1 ? 'What else?' : '¿Qué más?';
         moreBtn.addEventListener('click', () => ask(L() === 1 ? 'What else?' : '¿Qué más?'));
         log.lastChild.appendChild(moreBtn);
+        const doBtn = document.createElement('button');
+        doBtn.type = 'button';
+        doBtn.className = 'la-chip';
+        doBtn.textContent = L() === 1 ? 'Do it' : 'Hazlo';
+        doBtn.addEventListener('click', () => ask(L() === 1 ? 'Do it' : 'Hazlo'));
+        log.lastChild.appendChild(doBtn);
       }
       if (teachQ) {
         const b = document.createElement('button');
@@ -3380,8 +3431,19 @@ function setupLocalAssistant() {
     addMsg('user', text);
     // 1) "¿qué más?" solo: seguir con el último tema
     if (isPureFollowUp(text)) { askFollowUp(text); return; }
-    // 2) "¿qué más de X?": quitar el "qué más" y buscar X; si no calza, seguir con el tema
     const nq = norm(text);
+    // 1b) "hazlo" solo: hacer lo del último tema, paso a paso
+    if (isDoIt(text)) { askDoIt(text); return; }
+    // 1c) "hazlo de X" / "haz X" / "muéstrame X": quitar el imperativo y buscar X
+    for (const p of DOIT_PREFIXES) {
+      if (nq.startsWith(p)) {
+        const rest = nq.slice(p.length).trim();
+        const br = rest ? bestMatch(rest) : { score: 0 };
+        if (br.score >= 0.4) { rememberTopic(br); say((L() === 1 ? 'Sure — here is how to do it, step by step: ' : 'Claro, te lo hago paso a paso: ') + br.e.r[L()], text, null, br.e.href); return; }
+        askDoIt(text); return;
+      }
+    }
+    // 2) "¿qué más de X?": quitar el "qué más" y buscar X; si no calza, seguir con el tema
     if (nq.startsWith('que mas ') || nq.startsWith('what else ')) {
       const rest = text.replace(/^[¿\s]*qu[eé]\s*m[aá]s\s*/i, '').replace(/^what else\s*/i, '');
       const br = rest ? bestMatch(rest) : { score: 0 };
