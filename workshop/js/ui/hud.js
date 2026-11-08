@@ -135,7 +135,7 @@ export function createHud(handlers) {
     const s = t();
     invEl.innerHTML = '';
     components.filter(item => (ownedMap[item.id] || 0) > 0).forEach(item => {
-      const isIn = !!installed[item.category];
+      const isIn = !!installed[item.category] && installed[item.category].id === item.id;
       const card = document.createElement('button');
       card.type = 'button';
       card.className = 'ws-card' + (holding && holding.id === item.id ? ' ws-card--holding' : '') + (isIn ? ' ws-card--in' : '');

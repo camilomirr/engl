@@ -6,21 +6,21 @@
 // las reglas validan -> la pieza vuela a su punto de
 // montaje. El avance se guarda en localStorage.
 // =========================================================
-import { loadComponents } from './data/catalog.js?v=16';
-import { checkPlacement, missingParts, REQUIRED } from './core/rules.js?v=16';
-import { createScene } from './core/scene.js?v=16';
-import { loadState, saveState, buy as ecoBuy, sell as ecoSell, advanceDay } from './core/economy.js?v=16';
-import { createShop } from './ui/shop.js?v=16';
-import { tasksFor, doNextTask, assemblyPending, TOOLS } from './core/assembly.js?v=16';
-import { createTasksPanel } from './ui/tasks.js?v=16';
-import { runPost, biosRows, stressTest, temps } from './core/boot.js?v=16';
-import { createMonitor } from './ui/monitor.js?v=16';
-import { genOrders, evaluate as evalOrder, applyDelivery, levelFor } from './core/career.js?v=16';
-import { createOrders } from './ui/orders.js?v=16';
-import { scores, fpsTable, buildSummary, buildCode, parseCode } from './core/bench.js?v=16';
-import { sfx, setSoundEnabled } from './core/sfx.js?v=16';
-import { createTutorial } from './ui/tutorial.js?v=16';
-import { createHud, t } from './ui/hud.js?v=16';
+import { loadComponents } from './data/catalog.js?v=17';
+import { checkPlacement, missingParts, REQUIRED } from './core/rules.js?v=17';
+import { createScene } from './core/scene.js?v=17';
+import { loadState, saveState, buy as ecoBuy, sell as ecoSell, advanceDay } from './core/economy.js?v=17';
+import { createShop } from './ui/shop.js?v=17';
+import { tasksFor, doNextTask, assemblyPending, TOOLS } from './core/assembly.js?v=17';
+import { createTasksPanel } from './ui/tasks.js?v=17';
+import { runPost, biosRows, stressTest, temps } from './core/boot.js?v=17';
+import { createMonitor } from './ui/monitor.js?v=17';
+import { genOrders, evaluate as evalOrder, applyDelivery, levelFor } from './core/career.js?v=17';
+import { createOrders } from './ui/orders.js?v=17';
+import { scores, fpsTable, buildSummary, buildCode, parseCode } from './core/bench.js?v=17';
+import { sfx, setSoundEnabled } from './core/sfx.js?v=17';
+import { createTutorial } from './ui/tutorial.js?v=17';
+import { createHud, t } from './ui/hud.js?v=17';
 
 const installed = {};   // categoria -> componente
 const game = loadState(); // dinero, dia, inventario propio y armado guardado
