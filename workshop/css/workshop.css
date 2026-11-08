@@ -57,3 +57,20 @@
 .ws-card-state { font-size: 0.78rem; color: var(--text-muted); }
 
 .ws-ghost { position: fixed; z-index: 999; pointer-events: none; background: rgba(2, 6, 23, 0.93); color: #e2e8f0; border: 1px solid var(--accent-cyan); border-radius: 8px; padding: 0.45rem 0.7rem; font-size: 0.82rem; max-width: 280px; box-shadow: var(--shadow-lg); }
+
+.ws-msg--warn { border-color: rgba(245, 158, 11, 0.55); color: var(--accent-amber); }
+.ws-shop-section { padding-top: 0; }
+.ws-shop-section h3 { display: flex; justify-content: space-between; align-items: center; gap: 0.8rem; flex-wrap: wrap; }
+.ws-shop-filters { display: flex; flex-wrap: wrap; gap: 0.55rem; margin-bottom: 0.9rem; }
+.ws-shop-filters select, .ws-shop-filters input { font: inherit; font-size: 0.88rem; background: var(--bg-surface); color: var(--text-primary); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 0.45rem 0.6rem; }
+.ws-shop-filters input { flex: 1; min-width: 200px; }
+.ws-shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 0.7rem; }
+.ws-shop-card { display: grid; gap: 0.3rem; padding: 0.75rem 0.85rem; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); background: var(--bg-surface); }
+.ws-shop-row { display: flex; justify-content: space-between; align-items: baseline; gap: 0.5rem; }
+.ws-shop-btns { display: flex; gap: 0.45rem; margin-top: 0.25rem; }
+.ws-shop-btns .ws-btn { flex: 1; padding: 0.45rem 0.5rem; font-size: 0.82rem; }
+.ws-shop-btns .ws-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+.ws-down { color: var(--accent-emerald); }
+.ws-up { color: #f87171; }
+.ws-hud { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 640px) { .ws-hud { grid-template-columns: repeat(2, 1fr); } }

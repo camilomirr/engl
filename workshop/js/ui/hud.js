@@ -26,7 +26,12 @@ export const STRINGS = {
     openPanelFirst: 'El panel lateral está cerrado: ábrelo antes de montar piezas internas.',
     powerOk: '🎉 ¡El PC enciende! Ventiladores girando y RGB activo. (POST, BIOS y temperaturas llegan en la Fase 4.)',
     powerMissing: 'Todavía no puede encender. Faltan: ',
-    savedNote: 'Tu avance de la Fase 1 se guarda solo en este navegador.',
+    savedNote: 'Tu avance se guarda solo en este navegador.',
+    money: 'Dinero', day: 'Día', buy: 'Comprar', sell: 'Vender', shop: 'Tienda de componentes', shopHint: 'Precios del día (varían ±8% cada día) y stock limitado. Vender devuelve el 70%.', nextDay: '📅 Día siguiente',
+    bought: '🛒 Comprado: ', sold: '💰 Vendido: ',
+    noMoney: '💸 No te alcanza: necesitas ', noStock: '⛔ Agotado por hoy: vuelve mañana (botón Día siguiente en la tienda).',
+    cantSellInstalled: 'Esa pieza está montada en el PC: retírala antes de venderla.',
+    newDay: '📅 Día ', 
     qualityDropped: '⚙️ Calidad reducida automáticamente para mantener los FPS.',
     webglError: '⚠️ Tu navegador no pudo iniciar WebGL: el banco 3D no está disponible, pero el inventario y las reglas sí cargaron.',
     catNames: { case: 'Gabinete', board: 'Placa base', cpu: 'Procesador', ram: 'Memoria RAM', gpu: 'Tarjeta gráfica', storage: 'Almacenamiento', psu: 'Fuente de poder', cooler: 'Refrigeración' },
@@ -52,7 +57,12 @@ export const STRINGS = {
     openPanelFirst: 'The side panel is closed: open it before mounting internal parts.',
     powerOk: '🎉 The PC powers on! Fans spinning and RGB alive. (POST, BIOS and thermals arrive in Phase 4.)',
     powerMissing: 'It cannot power on yet. Missing: ',
-    savedNote: 'Your Phase 1 progress saves automatically in this browser.',
+    savedNote: 'Your progress saves automatically in this browser.',
+    money: 'Money', day: 'Day', buy: 'Buy', sell: 'Sell', shop: 'Component shop', shopHint: 'Daily prices (±8% each day) and limited stock. Selling returns 70%.', nextDay: '📅 Next day',
+    bought: '🛒 Bought: ', sold: '💰 Sold: ',
+    noMoney: '💸 Not enough money: you need ', noStock: '⛔ Sold out today: come back tomorrow (Next day button in the shop).',
+    cantSellInstalled: 'That part is mounted in the PC: remove it before selling.',
+    newDay: '📅 Day ', 
     qualityDropped: '⚙️ Quality lowered automatically to keep the FPS up.',
     webglError: '⚠️ Your browser could not start WebGL: the 3D bench is unavailable, but inventory and rules did load.',
     catNames: { case: 'Case', board: 'Motherboard', cpu: 'Processor', ram: 'Memory (RAM)', gpu: 'Graphics card', storage: 'Storage', psu: 'Power supply', cooler: 'Cooling' },
@@ -70,6 +80,7 @@ export function createHud(handlers) {
   const $ = id => document.getElementById(id);
   const invEl = $('ws-inventory'), msgEl = $('ws-messages');
   let components = [], installed = {}, holding = null, selectedCat = null, lang = currentLang();
+  let ownedMap = {}, game = { money: 0, day: 1 };
 
   function applyStaticTexts() {
     const s = t();
@@ -107,7 +118,7 @@ export function createHud(handlers) {
   function render() {
     const s = t();
     invEl.innerHTML = '';
-    components.forEach(item => {
+    components.filter(item => (ownedMap[item.id] || 0) > 0).forEach(item => {
       const isIn = !!installed[item.category];
       const card = document.createElement('button');
       card.type = 'button';
@@ -118,7 +129,7 @@ export function createHud(handlers) {
         '<span class="ws-card-specs">' + specLine(item) + '</span>' +
         '<span class="ws-card-blurb">' + (item.blurb[s ? currentLang() : 'es'] || item.blurb.es || '') + '</span>' +
         '<span class="ws-card-foot"><span class="ws-card-price">' + money(item.price) + '</span>' +
-        '<span class="ws-card-state">' + (isIn ? '🔩 En el PC' : '📦 En inventario') + '</span></span>';
+        '<span class="ws-card-state">' + (isIn ? '🔩 En el PC' : '📦 ×' + (ownedMap[item.id] || 0)) + '</span></span>';
       card.addEventListener('click', () => handlers.onPick(item));
       card.addEventListener('pointerdown', ev => handlers.onDragStart(item, ev));
       invEl.appendChild(card);
@@ -129,6 +140,8 @@ export function createHud(handlers) {
     let w = 60;
     Object.values(installed).forEach(c => { if (c && c.watts) w += c.watts; });
     $('ws-hud-watts').textContent = Object.keys(installed).length ? w + ' W' : '—';
+    const moneyEl = $('ws-hud-money'); if (moneyEl) moneyEl.textContent = money(game.money);
+    const dayEl = $('ws-hud-day'); if (dayEl) dayEl.textContent = game.day;
     const done = Object.keys(installed).length;
     $('ws-hud-progress').textContent = done + ' / 8';
     $('ws-progress-bar').style.width = (done / 8 * 100) + '%';
@@ -146,7 +159,7 @@ export function createHud(handlers) {
   }, 700);
 
   return {
-    setData(c, i) { components = c; installed = i; render(); },
+    setData(c, i, owned, g) { components = c; installed = i; if (owned) ownedMap = owned; if (g) game = g; render(); },
     refresh() { render(); },
     setHolding(h) { holding = h; render(); },
     setSelected(cat) { selectedCat = cat; render(); },

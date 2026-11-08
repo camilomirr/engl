@@ -12,7 +12,7 @@
   <title>NVISION PC Workshop - Taller virtual de armado de PC</title>
   <!-- Hojas de estilo modular -->
   <link rel="stylesheet" href="../css/styles.css?v=8">
-  <link rel="stylesheet" href="css/workshop.css?v=1">
+  <link rel="stylesheet" href="css/workshop.css?v=2">
   <script type="importmap">
     {
       "imports": {
@@ -145,6 +145,8 @@
       <div class="ws-hud-box"><span data-ws="total">Total</span><b id="ws-hud-total">$0</b></div>
       <div class="ws-hud-box"><span data-ws="watts">Consumo est.</span><b id="ws-hud-watts">—</b></div>
       <div class="ws-hud-box"><span data-ws="progress">Progreso</span><b id="ws-hud-progress">0 / 8</b></div>
+      <div class="ws-hud-box"><span data-ws="money">Dinero</span><b id="ws-hud-money">$0</b></div>
+      <div class="ws-hud-box"><span data-ws="day">Día</span><b id="ws-hud-day">1</b></div>
       <div class="ws-hud-box ws-hud-wide"><span>▰</span><div class="ws-progress-track"><div class="ws-progress-fill" id="ws-progress-bar"></div></div></div>
     </div>
   </section>
@@ -184,6 +186,35 @@
       <p class="ws-note" data-ws="savedNote">Tu avance de la Fase 1 se guarda solo en este navegador.</p>
     </aside>
   </section>
+
+  <section class="container ws-shop-section">
+    <div class="ws-panel">
+      <h3>🛒 <span data-ws="shop">Tienda de componentes</span>
+        <button type="button" class="ws-btn" id="ws-day-btn" data-ws="nextDay">📅 Día siguiente</button>
+      </h3>
+      <p class="ws-hint" data-ws="shopHint">Precios del día (varían ±8% cada día) y stock limitado. Vender devuelve el 70%.</p>
+      <div class="ws-shop-filters">
+        <select id="ws-shop-cat" aria-label="Categoría">
+          <option value="all">Todas las categorías</option>
+          <option value="cpu">Procesadores</option>
+          <option value="board">Placas base</option>
+          <option value="ram">Memoria RAM</option>
+          <option value="gpu">Tarjetas gráficas</option>
+          <option value="storage">Almacenamiento</option>
+          <option value="psu">Fuentes de poder</option>
+          <option value="case">Gabinetes</option>
+          <option value="cooler">Refrigeración</option>
+        </select>
+        <input type="search" id="ws-shop-search" placeholder="🔎 Buscar (ej: RTX 5080, DDR5, 9800X3D)…">
+        <select id="ws-shop-sort" aria-label="Ordenar">
+          <option value="price-asc">Precio: menor a mayor</option>
+          <option value="price-desc">Precio: mayor a menor</option>
+          <option value="perf">Mejor rendimiento</option>
+        </select>
+      </div>
+      <div class="ws-shop-grid" id="ws-shop"></div>
+    </div>
+  </section>
 </main>
 
   <footer class="site-footer">
@@ -191,6 +222,6 @@
   </footer>
 
   <script src="../js/main.js?v=3"></script>
-  <script type="module" src="js/main.js?v=1"></script>
+  <script type="module" src="js/main.js?v=2"></script>
 </body>
 </html>

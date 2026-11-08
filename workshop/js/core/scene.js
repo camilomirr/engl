@@ -157,6 +157,16 @@ export function createScene(wrap, hooks = {}) {
 
   function buildCase(item) {
     const g = new THREE.Group();
+    if (item.id === 'case-bench') {
+      // banco de pruebas abierto: sin paredes ni panel
+      g.add(box(2.4, 0.12, 4.6, M.metal, 0, 0.08, 0));
+      [[-1.05, -2.15], [1.05, -2.15], [-1.05, 2.15], [1.05, 2.15]].forEach(([x, z]) => g.add(box(0.1, 0.5, 0.1, M.metal, x, 0.3, z)));
+      panelGroup = null;
+      register('case', item, g, new THREE.Vector3(0, 0, 0));
+      placed['case'].spawn = 1;
+      placed['case'].group.position.copy(SNAP_POS.case);
+      return;
+    }
     const W = 2.0, H = 4.3, D = 4.4, t = 0.08;
     g.add(box(W, t, D, M.metal, 0, 0.04, 0));
     g.add(box(W, t, D, M.metal, 0, H, 0));
@@ -205,7 +215,8 @@ export function createScene(wrap, hooks = {}) {
           g.add(f); spinners.push(f); rgbMats.push(f.userData.ring.material);
         }
       } else {
-        g.add(box(0.85, 1.0, 1.0, M.chip));
+        const hgt = Math.max(0.45, Math.min(1.2, (item.specs.heightMm || 150) / 140));
+        g.add(box(0.85, hgt, 1.0, M.chip));
         const f = fanMesh(0.42);
         f.rotation.y = -Math.PI / 2; f.position.set(-0.52, 0, 0);
         g.add(f); spinners.push(f);
@@ -223,7 +234,7 @@ export function createScene(wrap, hooks = {}) {
     if (cat === 'gpu') {
       const lenZ = Math.min(3.9, item.specs.lenMm / 100);
       const tier = item.price >= 1500 ? 0xd4a017 : item.price >= 700 ? 0x7c3aed : item.price >= 350 ? 0x2563eb : 0x475569;
-      g.add(box(0.55, 0.95, lenZ, new THREE.MeshStandardMaterial({ color: tier, roughness: 0.4, metalness: 0.55 })));
+      g.add(box(0.34 + (item.specs.slots || 2) * 0.14, 0.95, lenZ, new THREE.MeshStandardMaterial({ color: tier, roughness: 0.4, metalness: 0.55 })));
       for (let i = 0; i < 2; i++) {
         const f = fanMesh(0.34);
         f.rotation.y = -Math.PI / 2;
@@ -237,8 +248,14 @@ export function createScene(wrap, hooks = {}) {
       return;
     }
     if (cat === 'storage') {
-      g.add(box(0.06, 0.3, 1.05, M.dark));
-      g.add(box(0.04, 0.2, 0.5, M.chip, -0.05, 0, -0.2));
+      if (item.specs.mount === 'M.2') {
+        g.add(box(0.06, 0.3, 1.05, M.dark));
+        g.add(box(0.04, 0.2, 0.5, M.chip, -0.05, 0, -0.2));
+      } else {
+        g.add(box(0.7, 0.45, 1.15, item.specs.kind === 'HDD' ? M.chip : M.dark));
+        register(cat, item, g, new THREE.Vector3(0.1, 0.78, 1.35));
+        return;
+      }
     }
     if (cat === 'psu') {
       g.add(box(1.5, 0.72, 1.5, M.dark));
@@ -383,7 +400,7 @@ export function createScene(wrap, hooks = {}) {
     isPlaced(cat) { return !!placed[cat]; },
     showMarkersFor,
     setPanel(open) { panelOpen = open; panelTarget = open ? -1.85 : 0; },
-    isPanelOpen() { return panelOpen; },
+    isPanelOpen() { return panelGroup ? panelOpen : true; },
     setPowered(on) { powered = on; },
     setQuality,
     focus(cat) { const p = placed[cat]; if (p) focusGoal = p.group.position.clone(); }

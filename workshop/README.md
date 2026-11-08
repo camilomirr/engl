@@ -14,7 +14,9 @@ solo como datos descriptivos (nombre y especificaciones), sin logos oficiales.
 - `index.html` — página integrada con la navbar/footer/idioma del sitio.
 - `data/components.json` — catálogo de componentes (editable sin tocar código).
 - `js/data/catalog.js` — carga del JSON con copia de respaldo incrustada.
-- `js/core/rules.js` — motor de compatibilidad (socket, RAM, GPU, fuente, formato, orden de montaje).
+- `js/core/rules.js` — motor de compatibilidad (socket, RAM, GPU, fuente, formato, orden de montaje, conectores, alturas, radiadores, avisos).
+- `js/core/economy.js` — dinero, precios del día, stock, compra/venta y guardado (Fase 2).
+- `js/ui/shop.js` — tienda con filtros, búsqueda y orden (Fase 2).
 - `js/core/scene.js` — escena 3D: banco, gabinete con panel, puntos de montaje, calidad gráfica.
 - `js/ui/hud.js` — inventario, HUD, mensajes y textos ES/EN.
 - `js/main.js` — une todo: tomar/soltar/instalar, guardado en localStorage.
@@ -26,7 +28,7 @@ respaldo incrustada y el 3D puede variar según el navegador.)
 
 ## Fases
 1. ✅ Estructura, integración, escena 3D, banco, cámara, montar/desmontar con snap y reglas básicas.
-2. ⏳ Motor ampliado, catálogo JSON completo, tienda e inventario con dinero.
+2. ✅ Motor de compatibilidad ampliado (altura de disipador, radiador, conectores 12V-2x6/8 pines, M.2, avisos de cuello de botella y PCIe), catálogo de 88 componentes, tienda con precios diarios ±8% y stock, inventario de piezas propias, dinero ($1.500 iniciales) y venta al 70%, guardado v2 con migración desde la Fase 1.
 3. ⏳ Secuencia completa (tornillos, pasta térmica, cables), herramientas y errores de montaje.
 4. ⏳ Encendido real: POST, BIOS, SO, temperaturas, consumo y fallas.
 5. ⏳ Modo carrera: clientes, pedidos, economía, progresión y guardado completo.

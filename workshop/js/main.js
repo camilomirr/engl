@@ -6,13 +6,15 @@
 // las reglas validan -> la pieza vuela a su punto de
 // montaje. El avance se guarda en localStorage.
 // =========================================================
-import { loadComponents } from './data/catalog.js';
-import { checkPlacement, missingParts, REQUIRED } from './core/rules.js';
-import { createScene } from './core/scene.js';
-import { createHud, t } from './ui/hud.js';
+import { loadComponents } from './data/catalog.js?v=2';
+import { checkPlacement, missingParts, REQUIRED } from './core/rules.js?v=2';
+import { createScene } from './core/scene.js?v=2';
+import { loadState, saveState, buy as ecoBuy, sell as ecoSell, advanceDay } from './core/economy.js?v=2';
+import { createShop } from './ui/shop.js?v=2';
+import { createHud, t } from './ui/hud.js?v=2';
 
-const SAVE_KEY = 'nvision_workshop_fase1';
 const installed = {};   // categoria -> componente
+const game = loadState(); // dinero, dia, inventario propio y armado guardado
 let components = [];
 let holding = null;
 let scene = null;
@@ -23,21 +25,40 @@ const hud = createHud({
   onDragStart(item, ev) { startDrag(item, ev); }
 });
 
+const shop = createShop({
+  onBuy(item) {
+    const s = t();
+    const r = ecoBuy(game, item);
+    if (!r.ok) { hud.log(r.reason === 'nostock' ? s.noStock : s.noMoney + '$' + r.price, 'err'); return; }
+    hud.log(s.bought + item.name + ' (-$' + r.price + ')', 'ok');
+    save();
+  },
+  onSell(item) {
+    const s = t();
+    const isIn = installed[item.category] && installed[item.category].id === item.id;
+    const r = ecoSell(game, item, isIn);
+    if (!r.ok) { hud.log(r.reason === 'installed' ? s.cantSellInstalled : s.noStock, 'err'); return; }
+    hud.log(s.sold + item.name + ' (+$' + r.gain + ')', 'ok');
+    save();
+  }
+});
+function syncUI() {
+  hud.setData(components, installed, game.owned, game);
+  shop.setData(components, game);
+}
 function save() {
-  try {
-    const ids = {};
-    Object.keys(installed).forEach(k => { ids[k] = installed[k].id; });
-    localStorage.setItem(SAVE_KEY, JSON.stringify(ids));
-  } catch (e) {}
+  const ids = {};
+  Object.keys(installed).forEach(k => { ids[k] = installed[k].id; });
+  game.installed = ids;
+  saveState(game);
+  syncUI();
 }
 function restore() {
-  try {
-    const ids = JSON.parse(localStorage.getItem(SAVE_KEY) || '{}');
-    REQUIRED.forEach(cat => {
-      const item = components.find(c => c.id === ids[cat]);
-      if (item) { installed[cat] = item; if (scene) scene.place(cat, item); }
-    });
-  } catch (e) {}
+  const ids = game.installed || {};
+  REQUIRED.forEach(cat => {
+    const item = components.find(c => c.id === ids[cat]);
+    if (item) { installed[cat] = item; if (scene) scene.place(cat, item); }
+  });
 }
 
 function pick(item) {
@@ -65,13 +86,13 @@ function attemptPlace(item) {
     chk.reasons.forEach(r => hud.log('⛔ ' + (document.documentElement.lang === 'en' || localStorage.getItem('user_lang') === 'en' ? r.en : r.es), 'err'));
     return;
   }
+  chk.warnings.forEach(r2 => hud.log('⚠️ ' + (localStorage.getItem('user_lang') === 'en' ? r2.en : r2.es), 'warn'));
   if (installed[item.category] && scene) scene.remove(item.category);
   installed[item.category] = item;
   if (scene) { scene.place(item.category, item); scene.setPowered(false); }
   holding = null;
   hud.setHolding(null);
   if (scene) scene.showMarkersFor(null);
-  hud.setData(components, installed);
   hud.log(s.placed + item.name, 'ok');
   save();
 }
@@ -87,7 +108,6 @@ function removePart(cat) {
   delete installed[cat];
   if (scene) { scene.remove(cat); scene.setPowered(false); }
   hud.setSelected(null);
-  hud.setData(components, installed);
   hud.log(s.removed + item.name, 'info');
   save();
 }
@@ -121,7 +141,7 @@ function moveGhost(ev) {
 
 async function init() {
   components = await loadComponents();
-  hud.setData(components, installed);
+  syncUI();
   hud.applyStaticTexts();
 
   const wrap = document.getElementById('ws-canvas-wrap');
@@ -132,7 +152,7 @@ async function init() {
     onQualityDrop() { hud.log(t().qualityDropped, 'info'); const q = document.getElementById('ws-quality'); if (q) q.value = 'low'; }
   });
   restore();
-  hud.setData(components, installed);
+  syncUI();
   hud.log(t().welcome, 'info');
   if (scene && installed.case) scene.setPanel(true);
 
@@ -166,7 +186,12 @@ async function init() {
     holding = null;
     hud.setHolding(null);
     hud.setSelected(null);
-    hud.setData(components, installed);
+    save();
+  });
+  const dayBtn = document.getElementById('ws-day-btn');
+  if (dayBtn) dayBtn.addEventListener('click', () => {
+    advanceDay(game);
+    hud.log(t().newDay + game.day + ' — precios y stock actualizados.', 'info');
     save();
   });
 }
