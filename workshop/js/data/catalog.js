@@ -503,7 +503,7 @@ export const FALLBACK_COMPONENTS = [
   },
   "specs": {
    "formMax": "ATX",
-   "gpuMaxMm": 320,
+   "gpuMaxMm": 345,
    "coolerMaxMm": 175,
    "radiatorMaxMm": 360,
    "glassPanel": false,

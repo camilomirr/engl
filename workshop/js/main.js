@@ -6,21 +6,21 @@
 // las reglas validan -> la pieza vuela a su punto de
 // montaje. El avance se guarda en localStorage.
 // =========================================================
-import { loadComponents } from './data/catalog.js?v=15';
-import { checkPlacement, missingParts, REQUIRED } from './core/rules.js?v=15';
-import { createScene } from './core/scene.js?v=15';
-import { loadState, saveState, buy as ecoBuy, sell as ecoSell, advanceDay } from './core/economy.js?v=15';
-import { createShop } from './ui/shop.js?v=15';
-import { tasksFor, doNextTask, assemblyPending, TOOLS } from './core/assembly.js?v=15';
-import { createTasksPanel } from './ui/tasks.js?v=15';
-import { runPost, biosRows, stressTest, temps } from './core/boot.js?v=15';
-import { createMonitor } from './ui/monitor.js?v=15';
-import { genOrders, evaluate as evalOrder, applyDelivery, levelFor } from './core/career.js?v=15';
-import { createOrders } from './ui/orders.js?v=15';
-import { scores, fpsTable, buildSummary, buildCode, parseCode } from './core/bench.js?v=15';
-import { sfx, setSoundEnabled } from './core/sfx.js?v=15';
-import { createTutorial } from './ui/tutorial.js?v=15';
-import { createHud, t } from './ui/hud.js?v=15';
+import { loadComponents } from './data/catalog.js?v=16';
+import { checkPlacement, missingParts, REQUIRED } from './core/rules.js?v=16';
+import { createScene } from './core/scene.js?v=16';
+import { loadState, saveState, buy as ecoBuy, sell as ecoSell, advanceDay } from './core/economy.js?v=16';
+import { createShop } from './ui/shop.js?v=16';
+import { tasksFor, doNextTask, assemblyPending, TOOLS } from './core/assembly.js?v=16';
+import { createTasksPanel } from './ui/tasks.js?v=16';
+import { runPost, biosRows, stressTest, temps } from './core/boot.js?v=16';
+import { createMonitor } from './ui/monitor.js?v=16';
+import { genOrders, evaluate as evalOrder, applyDelivery, levelFor } from './core/career.js?v=16';
+import { createOrders } from './ui/orders.js?v=16';
+import { scores, fpsTable, buildSummary, buildCode, parseCode } from './core/bench.js?v=16';
+import { sfx, setSoundEnabled } from './core/sfx.js?v=16';
+import { createTutorial } from './ui/tutorial.js?v=16';
+import { createHud, t } from './ui/hud.js?v=16';
 
 const installed = {};   // categoria -> componente
 const game = loadState(); // dinero, dia, inventario propio y armado guardado
@@ -319,8 +319,11 @@ function attemptPlace(item) {
   const s = t();
   if (!item) return;
   if (scene && installed.case && item.category !== 'case' && !scene.isPanelOpen()) {
-    hud.log(s.openPanelFirst, 'err');
-    return;
+    // El panel cerrado ya no bloquea el montaje: se abre solo y se avisa.
+    scene.setPanel(true);
+    const pb = document.getElementById('ws-panel-btn');
+    if (pb) pb.textContent = s.panelOpen;
+    hud.log(lang() === 'en' ? '🔓 You open the side panel to work inside the case.' : '🔓 Abres el panel lateral para trabajar dentro del gabinete.', 'info');
   }
   const chk = checkPlacement(item, installed);
   if (!chk.ok) {

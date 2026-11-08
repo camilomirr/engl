@@ -63,13 +63,13 @@ export function checkPlacement(item, installed) {
 
   if (item.category === 'psu') {
     // La fuente no se cuenta a si misma en el consumo: se mide lo ya montado.
-    const realNeed = Math.round(estimatedWatts(installed) * 1.15);
+    const realNeed = Math.round(estimatedWatts(installed) * 1.10);
     if (item.specs.wattsOut < realNeed)
       bad(`Fuente insuficiente: el equipo ya montado pide ~${realNeed} W con margen y esta entrega ${item.specs.wattsOut} W.`,
           `Not enough power: the current build needs ~${realNeed} W with headroom and this unit delivers ${item.specs.wattsOut} W.`);
   }
   if (installed.psu && item.category !== 'psu' && item.category !== 'case') {
-    const need = Math.round(estimatedWatts(installed, item) * 1.15);
+    const need = Math.round(estimatedWatts(installed, item) * 1.10);
     if (installed.psu.specs.wattsOut < need)
       bad(`Con esa pieza el consumo sube a ~${need} W y la fuente instalada (${installed.psu.specs.wattsOut} W) ya no da abasto.`,
           `With that part the draw rises to ~${need} W and the installed PSU (${installed.psu.specs.wattsOut} W) is no longer enough.`);
