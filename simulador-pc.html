@@ -11,7 +11,15 @@
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>NVISION - PC Builder · Arma tu propio PC</title>
   <!-- Hojas de estilo modular -->
-  <link rel="stylesheet" href="css/styles.css?v=11">
+  <link rel="stylesheet" href="css/styles.css?v=12">
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "./js/vendor/three/three.module.min.js",
+        "three/addons/": "./js/vendor/three/addons/"
+      }
+    }
+  </script>
 </head>
 <body>
 
@@ -131,8 +139,27 @@
   <!-- Hero del simulador -->
   <section class="container pb-hero">
     <h2 class="section-title">🖥️ PC Builder NVISION — Arma tu propio PC</h2>
-    <p class="section-desc">Un simulador de ensamblaje estilo PC Building Simulator, hecho para todos: acepta encargos de clientes o arma libre, elige entre <b>51 componentes reales</b> (procesadores, placas, RAM DDR4/DDR5, gráficas, fuentes, gabinetes y refrigeración), respeta la compatibilidad de verdad — socket, tipo de RAM, watts de la fuente y tamaño de la gráfica — y enciende tu equipo para pasar el benchmark en el monitor del taller.</p>
+    <p class="section-desc">Un simulador de ensamblaje estilo PC Building Simulator, hecho para todos: acepta encargos de clientes o arma libre, elige entre <b>87 componentes reales y actuales</b> (Ryzen 9000, Core Ultra, RTX serie 50, RX 9000, DDR5, NVMe Gen5 y más), mira cómo cada pieza <b>vuela hasta su sitio en el banco 3D</b> — gira la cámara, toca las piezas, desarma y vuelve a ensamblar con la vista explotada — respeta la compatibilidad de verdad (socket, tipo de RAM, watts de la fuente y tamaño de la gráfica) y enciende tu equipo para pasar el benchmark.</p>
     <div id="pb-missions" class="pb-missions"></div>
+  </section>
+
+
+  <section class="container pb-3d-section">
+    <div class="pb-panel pb-3d-panel">
+      <h3>🧊 Banco 3D interactivo <span class="pb-3d-hint">Arrastra para girar · rueda o pellizca para zoom · clic en una pieza para ver su ficha</span></h3>
+      <div id="pb-3d-wrap" class="pb-3d-wrap">
+        <div id="pb-3d-tip"></div>
+        <div id="pb-3d-error">⚠️ Tu navegador no pudo iniciar WebGL, así que el banco 3D no cargó. El resto del simulador (catálogo, compatibilidad y benchmark) sigue funcionando.</div>
+      </div>
+      <div class="pb-3d-toolbar">
+        <label class="pb-3d-slider">Vista explotada <input type="range" id="pb-explode" min="0" max="100" value="0" aria-label="Vista explotada: desarmar y ensamblar"></label>
+        <button type="button" class="pb-btn" id="pb-3d-disassemble">💥 Desarmar todo</button>
+        <button type="button" class="pb-btn" id="pb-3d-assemble">🔩 Ensamblar</button>
+        <button type="button" class="pb-btn" id="pb-3d-remove">🗑️ Quitar pieza seleccionada</button>
+        <label class="pb-3d-check"><input type="checkbox" id="pb-3d-spin"> Giro automático</label>
+      </div>
+      <p id="pb-3d-info" class="pb-3d-info">Toca una pieza del PC para ver su ficha. Cuando instales algo desde el catálogo, míralo volar hasta su sitio aquí.</p>
+    </div>
   </section>
 
   <section class="container pb-layout">
@@ -155,6 +182,7 @@
 
       <div class="pb-panel">
         <h3>Catálogo de componentes
+          <input type="search" id="pb-search" class="pb-search" placeholder="🔎 Buscar en esta categoría (ej: RTX, DDR5, 2 TB)…">
           <select id="pb-sort" class="pb-sort" aria-label="Ordenar catálogo">
             <option value="price-asc">Precio: menor a mayor</option>
             <option value="price-desc">Precio: mayor a menor</option>
@@ -175,23 +203,6 @@
 
     <!-- Columna lateral: gabinete, monitor y resumen -->
     <aside class="pb-side">
-      <div class="pb-panel pb-case-wrap">
-        <h3>Tu PC en el banco de trabajo</h3>
-        <div class="pb-case" id="pb-case">
-          <div class="pb-case-top"><span id="pb-case-name">Mesa de trabajo · elige un gabinete</span><span class="pb-power-led" title="LED de encendido"></span></div>
-          <div class="pb-board">
-            <div class="pb-board-name" id="pb-slot-board">Sin placa base</div>
-            <div class="pb-slot pb-cpu" id="pb-slot-cpu"><div class="pb-empty">Socket vacío</div></div>
-            <div class="pb-slot" id="pb-slot-ram"><small>Sin RAM</small></div>
-            <div class="pb-slot" id="pb-slot-gpu" style="grid-column: 1 / -1;"><div class="pb-empty">Ranura PCIe · sin gráfica</div></div>
-            <div class="pb-slot" id="pb-slot-storage"><div class="pb-empty">Bahía vacía</div></div>
-            <div class="pb-slot" id="pb-slot-psu"><div class="pb-empty">Sin fuente</div></div>
-          </div>
-          <div class="pb-case-fans" id="pb-case-fans"></div>
-        </div>
-        <p class="pb-note">Los ventiladores giran y el RGB se enciende cuando el equipo supera el POST. Cambia cualquier pieza y el PC se apaga: así de frágil es el hardware real.</p>
-      </div>
-
       <div class="pb-panel">
         <h3>Monitor del taller</h3>
         <div class="pb-monitor"><div class="pb-screen" id="pb-screen"></div></div>
@@ -230,7 +241,8 @@
   </footer>
 
   <script src="js/main.js?v=3"></script>
-  <script src="js/pc-builder.js?v=1"></script>
+  <script src="js/pc-builder.js?v=2"></script>
+  <script type="module" src="js/pc-builder-3d.js?v=1"></script>
   <script src="js/equipo-widget.js?v=10" defer></script>
 </body>
 </html>
