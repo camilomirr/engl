@@ -609,7 +609,10 @@
       var w = Math.min(400, Math.max(200, wrap.clientWidth || 320));
       google.accounts.id.renderButton(wrap, { theme: 'outline', size: 'large', text: 'continue_with', shape: 'rectangular', width: w });
       wrap.hidden = false;
-      if (googleBtn) googleBtn.hidden = true;
+      // OJO: .cuenta-google tiene display:flex en el CSS, que vence al
+      // atributo hidden; hay que esconderlo por estilo para que no queden
+      // los dos botones de Google a la vez.
+      if (googleBtn) { googleBtn.hidden = true; googleBtn.style.display = 'none'; }
       return true;
     } catch (e) { return false; }
   }
