@@ -24,3 +24,4 @@
 .account-btn .nv-avatar { width: 30px; height: 30px; font-size: 0.95rem; }
 .account-btn.has-avatar { padding: 0; background: transparent; border-color: transparent; }
 .account-btn.has-avatar:hover { background: transparent; transform: scale(1.06); }
+.nv-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }

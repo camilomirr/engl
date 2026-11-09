@@ -27,6 +27,7 @@
       syncFail: 'No se pudo sincronizar ahora. Tu progreso sigue guardado en este equipo.',
       lastSync: 'Última sincronización',
       avatarSaved: 'Avatar guardado. Se verá en el botón de Mi cuenta en todo el sitio.', avatarErr: 'No se pudo guardar el avatar. Inténtalo otra vez.', avatarInitial: 'Inicial',
+      avatarPhoto: 'Foto', avatarRemove: 'Quitar foto', avatarImgErr: 'Esa imagen no se pudo usar. Prueba con otra.',
     },
     en: {
       loginT: 'Log in', registerT: 'Create account', loginB: 'Log in', registerB: 'Sign up',
@@ -43,6 +44,7 @@
       syncFail: 'Could not sync right now. Your progress is still saved on this device.',
       lastSync: 'Last sync',
       avatarSaved: 'Avatar saved. It will show on the My account button across the site.', avatarErr: 'Could not save the avatar. Try again.', avatarInitial: 'Initial',
+      avatarPhoto: 'Photo', avatarRemove: 'Remove photo', avatarImgErr: 'That image could not be used. Try another one.',
     }
   }[lang];
 
@@ -93,7 +95,8 @@
       exp: Date.now() + (data.expires_in || 3600) * 1000,
       userId: data.user && data.user.id,
       email: (data.user && data.user.email) || email,
-      avatar: (data.user && data.user.user_metadata && data.user.user_metadata.avatar) || null
+      avatar: (data.user && data.user.user_metadata && data.user.user_metadata.avatar) || null,
+      avatarImg: (data.user && data.user.user_metadata && data.user.user_metadata.avatar_image) || null
     };
     setSession(s);
     return s;
@@ -196,7 +199,8 @@
     $('cuenta-auth').hidden = true;
     $('cuenta-panel').hidden = false;
     $('cuenta-user-email').textContent = session.email || '';
-    buildAvatarGrid($('avatar-grid-panel'), session.avatar || 'initial', saveAvatar);
+    buildAvatarGrid($('avatar-grid-panel'), session.avatar || 'initial', saveAvatar, session.avatarImg);
+    refreshRemoveBtn();
     var meta = getMeta();
     $('cuenta-sync-state').textContent = meta.lastSyncAt ? (T.lastSync + ': ' + new Date(meta.lastSyncAt).toLocaleString(lang === 'en' ? 'en-US' : 'es-CO')) : '';
   }
@@ -221,7 +225,7 @@
     clearMsg();
     var done = function () { btn.disabled = false; renderMode(); };
     if (mode === 'register') {
-      api('/auth/v1/signup', { method: 'POST', body: { email: email, password: pass, data: { avatar: regAvatar } } })
+      api('/auth/v1/signup', { method: 'POST', body: { email: email, password: pass, data: { avatar: regAvatar, avatar_image: regAvatar === 'custom' ? regAvatarImg : null } } })
         .then(function (r) {
           done();
           if (r.status === 200 && r.data) {
@@ -260,14 +264,18 @@
 
   // ---------- Avatares ----------
   var regAvatar = 'initial';
+  var regAvatarImg = null;
+  var fileTarget = 'reg';
+  var PHOTO_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="9" cy="9" r="2"></circle><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path></svg>';
   function avatarOptions() { return ['initial'].concat((window.NVISION_AVATARS || []).map(function (a) { return a.id; })); }
   function avatarName(id) {
     if (id === 'initial') return T.avatarInitial;
+    if (id === 'custom') return T.avatarPhoto;
     var list = window.NVISION_AVATARS || [];
     for (var i = 0; i < list.length; i++) if (list[i].id === id) return list[i][lang] || list[i].es;
     return id;
   }
-  function buildAvatarGrid(container, currentId, onPick) {
+  function buildAvatarGrid(container, currentId, onPick, customImg) {
     if (!container || !window.NVISION_avatarChip) return;
     container.innerHTML = '';
     var sess = getSession();
@@ -281,16 +289,34 @@
       b.addEventListener('click', function () { onPick(id); });
       container.appendChild(b);
     });
+    var pb = document.createElement('button');
+    pb.type = 'button';
+    pb.className = 'avatar-opt avatar-opt--photo' + (currentId === 'custom' ? ' sel' : '');
+    pb.setAttribute('aria-label', T.avatarPhoto);
+    pb.innerHTML = (customImg ? window.NVISION_avatarChip('custom', email, customImg) : '<span class="nv-avatar nv-avatar--photo-empty">' + PHOTO_SVG + '</span>') + '<span>' + T.avatarPhoto + '</span>';
+    pb.addEventListener('click', function () { onPick('custom'); });
+    container.appendChild(pb);
   }
-  function pickRegAvatar(id) { regAvatar = id; buildAvatarGrid($('avatar-grid-reg'), regAvatar, pickRegAvatar); }
+  function refreshRemoveBtn() {
+    var btn = $('cuenta-avatar-remove');
+    if (!btn) return;
+    var s = getSession();
+    btn.hidden = !(s && s.avatarImg);
+  }
+  function pickRegAvatar(id) {
+    if (id === 'custom') { openAvatarFile('reg'); return; }
+    regAvatar = id;
+    buildAvatarGrid($('avatar-grid-reg'), regAvatar, pickRegAvatar, regAvatarImg);
+  }
   function saveAvatar(id) {
+    if (id === 'custom') { openAvatarFile('panel'); return; }
     ensureSession().then(function (s) {
       if (!s) return;
       api('/auth/v1/user', { method: 'PUT', token: s.access, body: { data: { avatar: id } } })
         .then(function (r) {
           if (r.status === 200) {
             s.avatar = id; setSession(s);
-            buildAvatarGrid($('avatar-grid-panel'), id, saveAvatar);
+            buildAvatarGrid($('avatar-grid-panel'), id, saveAvatar, s.avatarImg);
             if (window.NVISION_renderAccountChip) window.NVISION_renderAccountChip();
             msg('ok', T.avatarSaved);
           } else msg('err', T.avatarErr);
@@ -298,8 +324,79 @@
         .catch(function () { msg('err', T.avatarErr); });
     });
   }
-  if ($('cuenta-email')) $('cuenta-email').addEventListener('input', function () { if (mode === 'register') buildAvatarGrid($('avatar-grid-reg'), regAvatar, pickRegAvatar); });
-  buildAvatarGrid($('avatar-grid-reg'), regAvatar, pickRegAvatar);
+  function openAvatarFile(target) {
+    fileTarget = target;
+    var inp = $('cuenta-avatar-file');
+    if (inp) { inp.value = ''; inp.click(); }
+  }
+  function processAvatarFile(file, done) {
+    if (!file || !/^image\//.test(file.type)) { msg('err', T.avatarImgErr); return; }
+    // Se lee como data: URL (no blob:) porque la CSP del sitio permite data: en img-src.
+    var reader = new FileReader();
+    reader.onload = function () {
+      var img = new Image();
+      img.onload = function () {
+        try {
+          var size = 256, canvas = document.createElement('canvas');
+          canvas.width = size; canvas.height = size;
+          var side = Math.min(img.width, img.height);
+          canvas.getContext('2d').drawImage(img, (img.width - side) / 2, (img.height - side) / 2, side, side, 0, 0, size, size);
+          var out = canvas.toDataURL('image/jpeg', 0.82);
+          if (out.length > 90000) out = canvas.toDataURL('image/jpeg', 0.55);
+          done(out);
+        } catch (e) { msg('err', T.avatarImgErr); }
+      };
+      img.onerror = function () { msg('err', T.avatarImgErr); };
+      img.src = reader.result;
+    };
+    reader.onerror = function () { msg('err', T.avatarImgErr); };
+    reader.readAsDataURL(file);
+  }
+  function saveAvatarImage(dataUrl) {
+    ensureSession().then(function (s) {
+      if (!s) return;
+      api('/auth/v1/user', { method: 'PUT', token: s.access, body: { data: { avatar: 'custom', avatar_image: dataUrl } } })
+        .then(function (r) {
+          if (r.status === 200) {
+            s.avatar = 'custom'; s.avatarImg = dataUrl; setSession(s);
+            buildAvatarGrid($('avatar-grid-panel'), 'custom', saveAvatar, dataUrl);
+            refreshRemoveBtn();
+            if (window.NVISION_renderAccountChip) window.NVISION_renderAccountChip();
+            msg('ok', T.avatarSaved);
+          } else msg('err', T.avatarErr);
+        })
+        .catch(function () { msg('err', T.avatarErr); });
+    });
+  }
+  function removeAvatarImage() {
+    ensureSession().then(function (s) {
+      if (!s) return;
+      api('/auth/v1/user', { method: 'PUT', token: s.access, body: { data: { avatar: 'initial', avatar_image: null } } })
+        .then(function (r) {
+          if (r.status === 200) {
+            s.avatar = 'initial'; s.avatarImg = null; setSession(s);
+            buildAvatarGrid($('avatar-grid-panel'), 'initial', saveAvatar, null);
+            refreshRemoveBtn();
+            if (window.NVISION_renderAccountChip) window.NVISION_renderAccountChip();
+            msg('ok', T.avatarSaved);
+          } else msg('err', T.avatarErr);
+        })
+        .catch(function () { msg('err', T.avatarErr); });
+    });
+  }
+  if ($('cuenta-email')) $('cuenta-email').addEventListener('input', function () { if (mode === 'register') buildAvatarGrid($('avatar-grid-reg'), regAvatar, pickRegAvatar, regAvatarImg); });
+  if ($('cuenta-avatar-file')) $('cuenta-avatar-file').addEventListener('change', function () {
+    var f = this.files && this.files[0];
+    if (!f) return;
+    processAvatarFile(f, function (dataUrl) {
+      if (fileTarget === 'reg') {
+        regAvatar = 'custom'; regAvatarImg = dataUrl;
+        buildAvatarGrid($('avatar-grid-reg'), 'custom', pickRegAvatar, regAvatarImg);
+      } else saveAvatarImage(dataUrl);
+    });
+  });
+  if ($('cuenta-avatar-remove')) $('cuenta-avatar-remove').addEventListener('click', removeAvatarImage);
+  buildAvatarGrid($('avatar-grid-reg'), regAvatar, pickRegAvatar, null);
 
   renderMode();
   ensureSession().then(function (s) {

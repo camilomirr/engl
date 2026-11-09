@@ -58,7 +58,7 @@
 @import url('modules/examenes.css?v=3');
 
 /* 18. Mi cuenta (Supabase) */
-@import url('modules/cuenta.css?v=2');
+@import url('modules/cuenta.css?v=3');
 
 /* 19. Barra de progreso superior (scroll + carga) */
 @import url('modules/scroll-progress.css?v=1');
@@ -67,5 +67,5 @@
 @import url('modules/pwa.css?v=1');
 
 /* 21. Avatares de cuenta */
-@import url('modules/avatar.css?v=1');
+@import url('modules/avatar.css?v=2');
 

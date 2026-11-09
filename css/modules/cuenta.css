@@ -85,3 +85,5 @@
 .avatar-opt .nv-avatar { width: 44px; height: 44px; font-size: 1.25rem; }
 .avatar-opt:hover { border-color: var(--accent-cyan); color: var(--text-primary); }
 .avatar-opt.sel { border-color: var(--accent-cyan); box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.35); color: var(--text-primary); }
+.nv-avatar--photo-empty { background: var(--bg-surface); border: 1.5px dashed var(--border-subtle); color: var(--text-secondary); }
+.cuenta-avatar-box .cuenta-switch { margin-top: 0.55rem; }

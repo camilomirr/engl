@@ -259,6 +259,7 @@ const translations = {
     cuenta_note: "Sin cuenta, tu progreso se guarda solo en este navegador. Con cuenta, se respalda en la nube de NVISION (Supabase).",
     cuenta_avatar_pick: "Elige tu avatar",
     cuenta_avatar_t: "Tu avatar",
+    cuenta_avatar_remove: "Quitar mi foto",
     wifi_kicker: "Guía práctica · Redes inalámbricas",
     wifi_h1: "WiFi avanzado, explicado paso a paso",
     wifi_hero_p: "De la caja a una red rápida y segura: instala el módem/router, entra a su panel, cambia la clave, suma un repetidor y gana cobertura. Todo en orden y sin vueltas.",
@@ -1333,6 +1334,7 @@ const translations = {
     cuenta_note: "Without an account, your progress is stored only in this browser. With an account, it is backed up in the NVISION cloud (Supabase).",
     cuenta_avatar_pick: "Choose your avatar",
     cuenta_avatar_t: "Your avatar",
+    cuenta_avatar_remove: "Remove my photo",
     wifi_kicker: "Hands-on guide · Wireless networks",
     wifi_h1: "Advanced WiFi, explained step by step",
     wifi_hero_p: "From the box to a fast, secure network: install the modem/router, open its panel, change the password, add a repeater and gain coverage. All in order, no detours.",
@@ -4591,7 +4593,8 @@ function setupNetworkSimulator() {
     { id: 'rocket', es: 'Cohete', en: 'Rocket', svg: svg('<path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path>') },
     { id: 'game', es: 'Juegos', en: 'Games', svg: svg('<line x1="6" y1="11" x2="10" y2="11"></line><line x1="8" y1="9" x2="8" y2="13"></line><line x1="15" y1="12" x2="15.01" y2="12"></line><line x1="18" y1="10" x2="18.01" y2="10"></line><path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59C2.696 9.64 2 14.46 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.54-.696-6.36-.685-7.258A4 4 0 0 0 17.32 5z"></path>') }
   ];
-  function avatarChip(id, email) {
+  function avatarChip(id, email, img) {
+    if (img && id === 'custom') return '<span class="nv-avatar nv-avatar--img"><img src="' + img + '" alt=""></span>';
     if (id && id !== 'initial') {
       for (var i = 0; i < AVATARS.length; i++) {
         if (AVATARS[i].id === id) return '<span class="nv-avatar nv-av--' + id + '">' + AVATARS[i].svg + '</span>';
@@ -4605,8 +4608,8 @@ function setupNetworkSimulator() {
     if (!link) return;
     var s = null;
     try { s = JSON.parse(localStorage.getItem('nvision_session_v1') || 'null'); } catch (e) {}
-    if (s && s.avatar) {
-      link.innerHTML = avatarChip(s.avatar, s.email);
+    if (s && (s.avatar || s.avatarImg)) {
+      link.innerHTML = avatarChip(s.avatar, s.email, s.avatarImg);
       link.classList.add('has-avatar');
     }
   }
