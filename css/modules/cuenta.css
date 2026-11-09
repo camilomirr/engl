@@ -1,47 +1,74 @@
-/* NVISION - Mi cuenta (Supabase Auth + sincronización de progreso) */
-.cuenta-hero { text-align: center; padding: 2.6rem 1rem 0.6rem; }
-.cuenta-kicker { color: var(--accent-cyan); font: 700 0.74rem 'JetBrains Mono', monospace; letter-spacing: 0.14em; }
-.cuenta-hero h1 { font-family: var(--font-heading); font-size: clamp(2.1rem, 6vw, 3.4rem); margin: 0.4rem 0 0.5rem; color: var(--text-primary); }
-.cuenta-hero p { max-width: 62ch; margin: 0 auto; color: var(--text-secondary); line-height: 1.6; }
+/* NVISION - Mi cuenta (Supabase Auth + sincronización de progreso)
+   Diseño a la altura del resto del sitio: hero con brillo radial como las
+   demás páginas, tarjetas con borde superior degradado, panel tipo tablero
+   con estadísticas y avatar más grande. Sin emojis: solo SVG. */
 
-.cuenta-wrap { max-width: 520px; margin: 1.6rem auto 3rem; padding: 0 1rem; }
+/* ---------- Hero ---------- */
+.cuenta-hero {
+  text-align: center;
+  padding: 4.5rem 1.5rem 3rem;
+  position: relative;
+  background: radial-gradient(circle at 50% 18%, rgba(56, 189, 248, 0.10), transparent 62%);
+  border-bottom: 1px solid var(--border-subtle);
+}
+.cuenta-kicker { color: var(--accent-cyan); font: 700 0.74rem 'JetBrains Mono', monospace; letter-spacing: 0.16em; text-transform: uppercase; }
+.cuenta-hero h1 { font-size: clamp(2.2rem, 5vw, 3.4rem); font-weight: 800; line-height: 1.15; letter-spacing: -0.03em; margin: 0.5rem 0 0.75rem; color: var(--text-primary); }
+.cuenta-sub { color: var(--text-secondary); font-size: 1.12rem; line-height: 1.7; max-width: 640px; margin: 0 auto; }
+.cuenta-benefits { display: flex; justify-content: center; gap: 0.6rem; flex-wrap: wrap; margin-top: 1.6rem; }
+.cuenta-benefit { display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.45rem 0.9rem; border: 1px solid var(--border-subtle); border-radius: 999px; background: var(--bg-surface); color: var(--text-secondary); font-size: 0.86rem; font-weight: 600; }
+.cuenta-benefit svg { width: 16px; height: 16px; color: var(--accent-cyan); flex: none; }
+
+/* ---------- Contenedor y tarjetas ---------- */
+.cuenta-wrap { max-width: 600px; margin: 2.2rem auto 3rem; padding: 0 1rem; }
+.cuenta-wrap:has(#cuenta-panel:not([hidden])) { max-width: 720px; }
 
 .cuenta-card {
-  padding: 1.4rem 1.4rem 1.5rem;
+  position: relative;
+  padding: 1.8rem 1.8rem 1.9rem;
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--bg-surface) 84%, transparent);
-  backdrop-filter: blur(16px) saturate(1.4);
-  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
 }
-.cuenta-card h2 { margin: 0 0 1rem; font-family: var(--font-heading); letter-spacing: 0.03em; color: var(--text-primary); }
+.cuenta-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan), var(--accent-indigo)); }
+.cuenta-card h2 { margin: 0 0 1.1rem; font-size: 1.45rem; font-weight: 800; letter-spacing: -0.02em; color: var(--text-primary); }
 
-.cuenta-field { margin-bottom: 0.9rem; }
-.cuenta-field label { display: block; margin-bottom: 0.35rem; font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); }
+/* ---------- Formulario ---------- */
+.cuenta-field { margin-bottom: 1rem; }
+.cuenta-field label { display: block; margin-bottom: 0.4rem; font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); }
 .cuenta-field input {
   width: 100%;
-  padding: 0.6rem 0.75rem;
+  padding: 0.75rem 0.9rem;
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-sm);
   background: var(--bg-deep);
   color: var(--text-primary);
   font: inherit;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
+.cuenta-field input:focus { outline: none; border-color: var(--accent-cyan); box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.22); }
 
+/* ---------- Botones (mismo estilo sobrio que el resto del sitio) ---------- */
 .cuenta-btn {
   width: 100%;
-  padding: 0.7rem 1.1rem;
-  border-radius: 999px;
-  border: 1px solid var(--border-subtle);
-  background: linear-gradient(120deg, var(--accent-cyan), var(--accent-blue));
-  color: #04101e;
+  padding: 0.8rem 1.1rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid #0284c7;
+  background: #0284c7;
+  color: #ffffff;
   font: inherit;
   font-weight: 700;
   cursor: pointer;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.25);
+  transition: var(--transition);
 }
-.cuenta-btn[disabled] { opacity: 0.55; cursor: wait; }
-.cuenta-btn--ghost { background: transparent; color: var(--text-secondary); width: auto; padding: 0.55rem 1.05rem; }
-.cuenta-btn--ghost:hover { border-color: var(--accent-cyan); color: var(--text-primary); }
+.cuenta-btn:hover { background: #0369a1; border-color: #0369a1; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35); }
+[data-theme="light"] .cuenta-btn { background: #0f172a; border-color: #0f172a; box-shadow: 0 2px 6px rgba(15, 23, 42, 0.12); }
+[data-theme="light"] .cuenta-btn:hover { background: #1e293b; border-color: #1e293b; }
+.cuenta-btn[disabled] { opacity: 0.55; cursor: wait; transform: none; }
+.cuenta-btn--ghost { background: transparent; color: var(--text-secondary); width: auto; padding: 0.6rem 1.1rem; border-color: var(--border-subtle); box-shadow: none; }
+.cuenta-btn--ghost:hover { border-color: var(--accent-cyan); color: var(--text-primary); background: transparent; transform: translateY(-1px); box-shadow: none; }
 
 .cuenta-switch {
   margin-top: 1rem;
@@ -57,40 +84,65 @@
   text-underline-offset: 3px;
 }
 
+/* ---------- Mensajes ---------- */
 .cuenta-msg { display: none; margin: 0 0 1rem; padding: 0.7rem 0.9rem; border-radius: var(--radius-sm); font-size: 0.9rem; line-height: 1.5; }
 .cuenta-msg.on { display: block; }
 .cuenta-msg--err { background: rgba(248, 113, 113, 0.12); border: 1px solid rgba(248, 113, 113, 0.5); color: #fca5a5; }
 .cuenta-msg--ok { background: rgba(74, 222, 128, 0.10); border: 1px solid rgba(74, 222, 128, 0.45); color: #86efac; }
 .cuenta-msg--info { background: rgba(56, 189, 248, 0.10); border: 1px solid rgba(56, 189, 248, 0.4); color: #7dd3fc; }
 
+/* ---------- Divisor y botón de Google ---------- */
+.cuenta-divider { display: flex; align-items: center; gap: .8rem; margin: 1.1rem 0 .9rem; color: var(--text-muted); font-size: .85rem; }
+.cuenta-divider::before, .cuenta-divider::after { content: ''; flex: 1; height: 1px; background: var(--border-subtle); }
+.cuenta-google { display: flex; align-items: center; justify-content: center; gap: .6rem; width: 100%; background: #ffffff; color: #1f1f1f; border: 1px solid #dadce0; box-shadow: var(--shadow-sm); }
+.cuenta-google svg { width: 20px; height: 20px; flex: none; }
+.cuenta-google:hover { background: #f8f9fa; border-color: #dadce0; color: #1f1f1f; transform: translateY(-1px); box-shadow: var(--shadow-md); }
+
+/* ---------- Panel: perfil y estadísticas ---------- */
+.cuenta-profile { padding-bottom: 1.2rem; border-bottom: 1px solid var(--border-subtle); }
+.cuenta-profile h2 { margin-bottom: 0.35rem; }
+.cuenta-email-line { margin: 0; }
 .cuenta-email { font-family: ui-monospace, Consolas, monospace; color: var(--accent-cyan); font-weight: 700; overflow-wrap: anywhere; }
-.cuenta-sync-state { margin: 0.8rem 0 0; color: var(--text-secondary); font-size: 0.92rem; line-height: 1.55; }
-.cuenta-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 1.1rem; }
+.cuenta-sync-state { margin: 0.6rem 0 0; color: var(--text-secondary); font-size: 0.92rem; line-height: 1.55; }
+
+.cuenta-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.7rem; margin-top: 1.2rem; }
+.cuenta-stat { text-align: center; padding: 0.9rem 0.5rem 0.8rem; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); background: var(--bg-surface-2, rgba(148, 163, 184, 0.08)); }
+.cuenta-stat b { display: block; font-size: 1.6rem; font-weight: 800; letter-spacing: -0.02em; background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; }
+.cuenta-stat span { font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); }
+
+/* ---------- Panel: avatar, logros y acciones ---------- */
+.cuenta-avatar-box { margin-top: 1.3rem; padding-top: 1.2rem; border-top: 1px solid var(--border-subtle); }
+.cuenta-avatar-h { margin: 0 0 0.7rem; font-size: 1rem; font-weight: 700; color: var(--text-primary); }
+.cuenta-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 1.2rem; }
+.cuenta-actions--sep { padding-top: 1.2rem; border-top: 1px solid var(--border-subtle); }
 .cuenta-actions .cuenta-btn { width: auto; padding: 0.6rem 1.15rem; }
-.cuenta-note { max-width: 520px; margin: 0 auto 3rem; padding: 0 1rem; text-align: center; color: var(--text-muted); font-size: 0.86rem; line-height: 1.6; }
+
+/* ---------- Nota inferior ---------- */
+.cuenta-note { display: flex; align-items: flex-start; gap: 0.6rem; max-width: 600px; margin: 0 auto 3rem; padding: 0.9rem 1.1rem; text-align: left; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6; border: 1px solid var(--border-subtle); border-left: 3px solid var(--accent-cyan); border-radius: var(--radius-md); background: var(--bg-surface); }
+.cuenta-note svg { width: 18px; height: 18px; flex: none; margin-top: 0.15rem; color: var(--accent-cyan); }
 
 .account-btn { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
 
-/* Selector de avatar (registro y panel) */
-.cuenta-avatar-box { margin-top: 1.1rem; }
-.cuenta-avatar-h { margin: 0 0 0.6rem; font-size: 1rem; color: var(--text-primary); }
-.avatar-grid { display: flex; flex-wrap: wrap; gap: 0.55rem; }
+/* ---------- Selector de avatar (registro y panel) ---------- */
+.avatar-grid { display: flex; flex-wrap: wrap; gap: 0.6rem; }
 .avatar-opt {
   display: flex; flex-direction: column; align-items: center; gap: 0.35rem;
-  padding: 0.55rem 0.5rem 0.45rem; min-width: 74px;
+  padding: 0.6rem 0.55rem 0.5rem; min-width: 78px;
   background: var(--bg-surface); border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm); color: var(--text-secondary);
+  border-radius: var(--radius-md); color: var(--text-secondary);
   font: inherit; font-size: 0.78rem; cursor: pointer;
+  transition: var(--transition);
 }
-.avatar-opt .nv-avatar { width: 44px; height: 44px; font-size: 1.25rem; }
-.avatar-opt:hover { border-color: var(--accent-cyan); color: var(--text-primary); }
-.avatar-opt.sel { border-color: var(--accent-cyan); box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.35); color: var(--text-primary); }
+.avatar-opt .nv-avatar { width: 52px; height: 52px; font-size: 1.4rem; }
+.avatar-opt:hover { border-color: var(--accent-cyan); color: var(--text-primary); transform: translateY(-2px); }
+.avatar-opt.sel { border-color: var(--accent-cyan); box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.35), 0 6px 18px rgba(56, 189, 248, 0.22); color: var(--text-primary); }
 .nv-avatar--photo-empty { background: var(--bg-surface); border: 1.5px dashed var(--border-subtle); color: var(--text-secondary); }
 .cuenta-avatar-box .cuenta-switch { margin-top: 0.55rem; }
 
-/* Divisor y botón de Google en la tarjeta de acceso */
-.cuenta-divider { display: flex; align-items: center; gap: .8rem; margin: 1.1rem 0 .9rem; color: var(--text-muted); font-size: .85rem; }
-.cuenta-divider::before, .cuenta-divider::after { content: ''; flex: 1; height: 1px; background: var(--border-subtle); }
-.cuenta-google { display: flex; align-items: center; justify-content: center; gap: .6rem; width: 100%; background: var(--bg-surface); color: var(--text-primary); border: 1px solid var(--border-subtle); }
-.cuenta-google svg { width: 20px; height: 20px; flex: none; }
-.cuenta-google:hover { border-color: var(--accent-cyan); }
+/* ---------- Responsive ---------- */
+@media (max-width: 600px) {
+  .cuenta-hero { padding: 3.2rem 1rem 2.2rem; }
+  .cuenta-card { padding: 1.4rem 1.2rem 1.5rem; }
+  .cuenta-stat b { font-size: 1.35rem; }
+  .cuenta-actions .cuenta-btn { flex: 1 1 45%; text-align: center; }
+}

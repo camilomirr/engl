@@ -36,7 +36,8 @@
       rankOff: 'El ranking aún no está activado por el equipo (falta crear su tabla en Supabase). Tu puntaje ya quedó calculado y podrás publicarlo en cuanto se active.',
       rankErr: 'No se pudo publicar el puntaje ahora. Inténtalo otra vez.',
       nextMissing: 'Te faltan', nextRuta: 'pasos de la ruta', nextExams: 'exámenes por aprobar', nextJoin: 'y',
-      nextDone: 'Ya completaste la ruta y aprobaste todos los exámenes. ¡Nivel máximo!'
+      nextDone: 'Ya completaste la ruta y aprobaste todos los exámenes. ¡Nivel máximo!',
+      statRuta: 'Ruta', statExams: 'Exámenes', statPoints: 'Puntos'
     },
     en: {
       loginT: 'Log in', registerT: 'Create account', loginB: 'Log in', registerB: 'Sign up',
@@ -62,7 +63,8 @@
       rankOff: 'The ranking is not enabled by the team yet (its Supabase table still needs to be created). Your score is already computed and you will be able to publish it as soon as it is on.',
       rankErr: 'Could not publish the score right now. Try again.',
       nextMissing: 'You still need', nextRuta: 'path steps', nextExams: 'exams to pass', nextJoin: 'and',
-      nextDone: 'You completed the path and passed every exam. Max level!'
+      nextDone: 'You completed the path and passed every exam. Max level!',
+      statRuta: 'Path', statExams: 'Exams', statPoints: 'Points'
     }
   }[lang];
 
@@ -223,6 +225,15 @@
     $('cuenta-sync-state').textContent = meta.lastSyncAt ? (T.lastSync + ': ' + new Date(meta.lastSyncAt).toLocaleString(lang === 'en' ? 'en-US' : 'es-CO')) : '';
     var strip = $('cuenta-logros');
     if (strip && window.NVISION_LOGROS) window.NVISION_LOGROS.renderStrip(strip);
+    var statsEl = $('cuenta-stats');
+    if (statsEl && window.NVISION_LOGROS) {
+      var comp = window.NVISION_LOGROS.compute();
+      var cx = comp.ctx;
+      statsEl.innerHTML =
+        '<div class="cuenta-stat"><b>' + cx.rutaDone + '/' + cx.rutaTotal + '</b><span>' + T.statRuta + '</span></div>' +
+        '<div class="cuenta-stat"><b>' + cx.passed + '/' + cx.examsTotal + '</b><span>' + T.statExams + '</span></div>' +
+        '<div class="cuenta-stat"><b>' + comp.points + '</b><span>' + T.statPoints + '</span></div>';
+    }
     var nextEl = $('cuenta-next');
     if (nextEl && window.NVISION_LOGROS) {
       var ctx = window.NVISION_LOGROS.compute().ctx;
