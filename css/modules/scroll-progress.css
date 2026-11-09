@@ -1,0 +1,45 @@
+/* =========================================================
+   BARRA DE PROGRESO SUPERIOR (scroll + carga)
+   Línea azul desvanecida a negro, fija arriba de todo.
+   - Al cargar la página: se mueve de izquierda a derecha.
+   - Al bajar (scroll): avanza de izquierda a derecha
+     según lo leído de la página.
+   - Al pulsar un enlace a otra página: vuelve a cargar.
+   ========================================================= */
+
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  z-index: 300;
+  pointer-events: none;
+}
+
+.scroll-progress-fill {
+  height: 100%;
+  width: 0;
+  /* Degradado fijo a lo ancho de la ventana: a medida que la
+     barra crece se va revelando el azul que se desvanece a negro. */
+  background: linear-gradient(90deg, #38bdf8 0%, #0284c7 45%, #0f172a 100%);
+  background-size: 100vw 100%;
+  background-repeat: no-repeat;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.55);
+  transition: width 0.15s ease-out;
+}
+
+/* Modo carga: la línea avanza sola de izquierda a derecha. */
+.scroll-progress.is-loading .scroll-progress-fill {
+  animation: nvision-progress-load 1.4s ease-out forwards;
+  transition: none;
+}
+
+@keyframes nvision-progress-load {
+  from {
+    width: 0;
+  }
+  to {
+    width: 82%;
+  }
+}

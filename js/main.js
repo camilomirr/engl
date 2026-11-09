@@ -4317,3 +4317,76 @@ function setupNetworkSimulator() {
     }
   });
 }
+/* =========================================================
+   BARRA DE PROGRESO SUPERIOR (scroll + carga)
+   Línea azul desvanecida a negro, fija arriba de todo.
+   - Al cargar la página: avanza de izquierda a derecha.
+   - Al bajar (scroll): avanza según lo leído de la página.
+   - Al pulsar un enlace a otra página: vuelve a cargar.
+   ========================================================= */
+(function initScrollProgress() {
+  if (document.querySelector('.scroll-progress')) return;
+
+  var bar = document.createElement('div');
+  bar.className = 'scroll-progress is-loading';
+  bar.setAttribute('aria-hidden', 'true');
+  var fill = document.createElement('div');
+  fill.className = 'scroll-progress-fill';
+  bar.appendChild(fill);
+  document.body.insertBefore(bar, document.body.firstChild);
+
+  function updateProgress() {
+    if (bar.classList.contains('is-loading')) return;
+    var max = document.documentElement.scrollHeight - window.innerHeight;
+    var p = max > 0
+      ? Math.min(100, Math.max(0, (window.scrollY / max) * 100))
+      : 0;
+    fill.style.width = p + '%';
+  }
+
+  // La carga terminó: la línea completa el 100% y pasa a modo scroll.
+  function finishLoading() {
+    if (!bar.classList.contains('is-loading')) return;
+    bar.classList.remove('is-loading');
+    fill.style.width = '100%';
+    setTimeout(function () {
+      fill.style.width = '';
+      updateProgress();
+    }, 400);
+  }
+
+  window.addEventListener('scroll', updateProgress, { passive: true });
+  window.addEventListener('resize', updateProgress);
+
+  if (document.readyState === 'complete') {
+    setTimeout(finishLoading, 400);
+  } else {
+    window.addEventListener('load', function () {
+      setTimeout(finishLoading, 200);
+    });
+    // Seguridad: si la carga se alarga, no quedarse en modo carga.
+    setTimeout(finishLoading, 4000);
+  }
+  updateProgress();
+
+  // Al pulsar un botón/enlace a otra página del sitio: animar la carga.
+  document.addEventListener('click', function (e) {
+    var link = e.target.closest ? e.target.closest('a[href]') : null;
+    if (!link || link.target === '_blank' || link.hasAttribute('download')) return;
+    var href = link.getAttribute('href');
+    if (!href || href.charAt(0) === '#' ||
+        href.indexOf('javascript:') === 0 ||
+        href.indexOf('mailto:') === 0 ||
+        href.indexOf('tel:') === 0) return;
+    var url;
+    try {
+      url = new URL(href, location.href);
+    } catch (err) {
+      return;
+    }
+    if (url.origin !== location.origin) return;
+    if (url.pathname === location.pathname && url.hash) return; // ancla misma página
+    fill.style.width = '';
+    bar.classList.add('is-loading');
+  });
+})();
