@@ -425,11 +425,17 @@
     ev.preventDefault();
     var email = String($('cuenta-email').value || '').trim();
     var pass = String($('cuenta-pass').value || '');
+    // Capa de validación (js/validation.js): el correo debe tener
+    // formato válido antes de enviarse a Supabase; antes solo se
+    // comprobaba que no estuviera vacío.
+    var V = window.NVISION_validate;
+    if (V && !V.isEmail(email)) { msg('err', T.needFields); return; }
     if (!email || pass.length < 6) { msg('err', T.needFields); return; }
     var first = '', last = '';
     if (mode === 'register') {
       first = String(($('cuenta-firstname') && $('cuenta-firstname').value) || '').trim();
       last = String(($('cuenta-lastname') && $('cuenta-lastname').value) || '').trim();
+      if (V) { first = V.cleanName(first, 60); last = V.cleanName(last, 60); }
       if (!first || !last) { msg('err', T.needName); return; }
       var pass2 = String(($('cuenta-pass2') && $('cuenta-pass2').value) || '');
       if (pass !== pass2) { msg('err', T.passMismatch); return; }

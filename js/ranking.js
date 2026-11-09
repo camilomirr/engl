@@ -46,7 +46,11 @@
         tr.innerHTML =
           '<td class="rank-pos">' + (i + 1) + '</td>' +
           '<td><span class="rank-who">' + chip + '<b></b>' + (uid && row.user_id === uid ? ' <span class="rank-you">' + T.you + '</span>' : '') + '</span></td>' +
-          '<td class="rank-pts">' + row.points + ' <span>' + T.points + '</span></td>';
+          // Capa de validación: el puntaje viene de la base y se pinta
+          // con innerHTML; se fuerza a entero 0..100000 para que un
+          // valor texto/HTML nunca llegue al DOM (el nombre ya se pone
+          // con textContent más abajo).
+          '<td class="rank-pts">' + (window.NVISION_validate ? window.NVISION_validate.safePoints(row.points) : (parseInt(row.points, 10) || 0)) + ' <span>' + T.points + '</span></td>';
         var nameB = tr.querySelector('b');
         nameB.textContent = row.name || '—';
         // El nombre enlaza al perfil público del estudiante.

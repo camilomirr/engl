@@ -5148,7 +5148,7 @@ function setupNetworkSimulator() {
     if (id === 'custom' && validAvatarImg(img)) {
       // data-email: si la foto no carga, el respaldo (ver abajo) vuelve
       // a la inicial de este correo en vez de dejar el icono roto.
-      var emailAttr = String(email || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+      var emailAttr = String(email || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/'/g, '&#39;');
       return '<span class="nv-avatar nv-avatar--img" data-email="' + emailAttr + '"><img src="' + img + '" alt=""></span>';
     }
     if (id && id !== 'initial') {
