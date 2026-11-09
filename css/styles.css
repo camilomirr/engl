@@ -3,7 +3,7 @@
    ========================================================= */
 
 /* 1. Variables, Temas, Tipografías y Reset Base */
-@import url('modules/variables.css?v=6');
+@import url('modules/variables.css?v=7');
 
 /* 2. Cabecera, Navegación, Submenús y Selector de Idioma */
 @import url('modules/header-nav.css?v=3');
@@ -46,7 +46,7 @@
 @import url('modules/equipo.css?v=51');
 
 /* 14. Buscador de la página principal */
-@import url('modules/site-search.css?v=2');
+@import url('modules/site-search.css?v=3');
 
 /* 15. Herramientas de redes (subredes y conversor) */
 @import url('modules/redes-tools.css?v=30');
@@ -73,7 +73,7 @@
 @import url('modules/logros.css?v=1');
 @import url('modules/ranking.css?v=30');
 /* 23. Herramientas y páginas nuevas (2026-11-09) */
-@import url('modules/verificar.css?v=3');
+@import url('modules/verificar.css?v=4');
 @import url('modules/pregunta.css?v=2');
 @import url('modules/terminal.css?v=2');
 @import url('modules/comparador.css?v=2');

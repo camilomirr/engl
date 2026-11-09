@@ -54,7 +54,7 @@
 }
 
 .site-search-input::placeholder {
-  color: var(--text-muted);
+  color: var(--text-placeholder);
 }
 
 .site-search-input:focus {
