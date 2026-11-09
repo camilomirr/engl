@@ -34,9 +34,21 @@
 
   function Q(qEs, qEn, oEs, oEn, a, wEs, wEn) { return { q: { es: qEs, en: qEn }, o: { es: oEs, en: oEn }, a: a, why: { es: wEs, en: wEn } }; }
 
+  // Iconos SVG diseñados a medida para NVISION (sin emojis): mismo lenguaje
+  // de trazo del resto del sitio (viewBox 24, stroke currentColor, ancho 2).
+  // Hardware: monitor con el chip dentro. Redes: tres nodos unidos.
+  // Mantenimiento: llave inglesa. WiFi: ondas de señal.
+  var SVG_ATTRS = 'viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"';
+  var ICONS = {
+    hardware: '<svg ' + SVG_ATTRS + '><rect x="2" y="4" width="20" height="12" rx="2"/><rect x="10" y="8" width="4" height="4" rx="0.5"/><line x1="11" y1="8" x2="11" y2="6.8"/><line x1="13" y1="8" x2="13" y2="6.8"/><line x1="11" y1="12" x2="11" y2="13.2"/><line x1="13" y1="12" x2="13" y2="13.2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="16" x2="12" y2="21"/></svg>',
+    redes: '<svg ' + SVG_ATTRS + '><circle cx="12" cy="5" r="2.4"/><circle cx="5" cy="19" r="2.4"/><circle cx="19" cy="19" r="2.4"/><line x1="10.6" y1="6.9" x2="6.4" y2="17.1"/><line x1="13.4" y1="6.9" x2="17.6" y2="17.1"/><line x1="7.4" y1="19" x2="16.6" y2="19"/></svg>',
+    mantenimiento: '<svg ' + SVG_ATTRS + '><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>',
+    wifi: '<svg ' + SVG_ATTRS + '><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>'
+  };
+
   var EXAMS = [
     {
-      id: 'hardware', icon: '🖥️',
+      id: 'hardware', icon: ICONS.hardware,
       name: { es: 'Hardware', en: 'Hardware' },
       desc: { es: 'Componentes del computador y su función.', en: 'Computer parts and what they do.' },
       questions: [
@@ -83,7 +95,7 @@
       ]
     },
     {
-      id: 'redes', icon: '🌐',
+      id: 'redes', icon: ICONS.redes,
       name: { es: 'Redes', en: 'Networks' },
       desc: { es: 'Tipos de redes, topologías y dispositivos.', en: 'Network types, topologies and devices.' },
       questions: [
@@ -130,7 +142,7 @@
       ]
     },
     {
-      id: 'mantenimiento', icon: '🛠️',
+      id: 'mantenimiento', icon: ICONS.mantenimiento,
       name: { es: 'Mantenimiento por software', en: 'Software maintenance' },
       desc: { es: 'Cuidado y optimización de Windows.', en: 'Windows care and optimization.' },
       questions: [
@@ -177,7 +189,7 @@
       ]
     },
     {
-      id: 'wifi', icon: '📶',
+      id: 'wifi', icon: ICONS.wifi,
       name: { es: 'WiFi avanzado', en: 'Advanced WiFi' },
       desc: { es: 'Bandas, estándares y seguridad inalámbrica.', en: 'Bands, standards and wireless security.' },
       questions: [
@@ -249,7 +261,7 @@
       var card = document.createElement('article');
       card.className = 'exam-card';
       card.innerHTML =
-        '<div class="exam-emoji">' + exam.icon + '</div>' +
+        '<div class="exam-emoji mono-icon">' + exam.icon + '</div>' +
         '<h3>' + exam.name[lang] + '</h3>' +
         '<p>' + exam.desc[lang] + '</p>' +
         (res && res.passed ? '<span class="exam-passed">' + T.passed + '</span>' : '') +
@@ -264,7 +276,7 @@
   function startExam(exam) {
     if (!hasSession()) { showGate(); return; }
     current = exam;
-    document.getElementById('exam-run-title').textContent = exam.icon + ' ' + exam.name[lang];
+    document.getElementById('exam-run-title').innerHTML = '<span class="exam-run-icon mono-icon">' + exam.icon + '</span>' + exam.name[lang];
     form.innerHTML = '';
     exam.questions.forEach(function (q, qi) {
       var block = document.createElement('div');

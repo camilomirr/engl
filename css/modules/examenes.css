@@ -24,7 +24,33 @@
   flex-direction: column;
   gap: 0.45rem;
 }
-.exam-card .exam-emoji { font-size: 1.9rem; }
+/* Icono SVG de cada examen: diseñado a medida, mismo lenguaje de trazo
+   del sitio (caja con borde cian y brillo, como .card-icon). Sin emojis. */
+.exam-card .exam-emoji {
+  width: 2.6rem;
+  height: 2.6rem;
+  padding: 0.45rem;
+  color: var(--accent-cyan);
+  border: 1px solid currentColor;
+  border-radius: 0.7rem;
+  background: rgba(56, 189, 248, 0.08);
+  box-shadow: 0 0 14px rgba(56, 189, 248, 0.14);
+}
+/* Icono del título cuando se presenta un examen */
+.exam-run-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--accent-cyan);
+  margin-right: 0.35rem;
+}
+/* Candado del aviso de cuenta: alineado con el texto */
+.exam-gate-banner__txt { display: inline-flex; align-items: center; gap: 0.5rem; }
+.exam-gate-banner__txt .mono-icon { color: var(--accent-cyan); }
+/* Modo claro: cian oscuro de alto contraste, como el resto de iconos */
+[data-theme="light"] .exam-card .exam-emoji,
+[data-theme="light"] .exam-run-icon,
+[data-theme="light"] .exam-gate-banner__txt .mono-icon { color: #0284c7; }
+[data-theme="light"] .exam-card .exam-emoji { background: rgba(14, 165, 233, 0.08); }
 .exam-card h3 { margin: 0; color: var(--text-primary); }
 .exam-card p { margin: 0; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5; flex: 1; }
 .exam-card .exam-meta { font-size: 0.82rem; color: var(--text-muted); font-family: ui-monospace, Consolas, monospace; }
