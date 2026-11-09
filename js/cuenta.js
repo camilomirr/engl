@@ -25,9 +25,6 @@
       avatarSaved: 'Avatar guardado. Se verá en el botón de Mi cuenta en todo el sitio.', avatarErr: 'No se pudo guardar el avatar. Inténtalo otra vez.', avatarInitial: 'Inicial',
       avatarPhoto: 'Foto', avatarRemove: 'Quitar foto', avatarImgErr: 'Esa imagen no se pudo usar. Prueba con otra.',
       googleOff: 'El ingreso con Google aún no está activado por el equipo. Por ahora entra con tu correo y contraseña.',
-      expOk: 'Archivo de progreso descargado. Guárdalo para restaurarlo en otro equipo.',
-      impOk: 'Progreso importado. La página se recarga para aplicarlo.',
-      impErr: 'Ese archivo no es un respaldo válido de NVISION.',
       rankOk: '¡Puntaje publicado en el ranking con', rankPts: 'puntos!',
       rankOff: 'El ranking aún no está activado por el equipo (falta crear su tabla en Supabase). Tu puntaje ya quedó calculado y podrás publicarlo en cuanto se active.',
       rankErr: 'No se pudo publicar el puntaje ahora. Inténtalo otra vez.',
@@ -50,9 +47,6 @@
       avatarSaved: 'Avatar saved. It will show on the My account button across the site.', avatarErr: 'Could not save the avatar. Try again.', avatarInitial: 'Initial',
       avatarPhoto: 'Photo', avatarRemove: 'Remove photo', avatarImgErr: 'That image could not be used. Try another one.',
       googleOff: 'Google sign-in is not enabled by the team yet. For now, log in with your email and password.',
-      expOk: 'Progress file downloaded. Keep it to restore on another device.',
-      impOk: 'Progress imported. The page will reload to apply it.',
-      impErr: 'That file is not a valid NVISION backup.',
       rankOk: 'Score published to the ranking with', rankPts: 'points!',
       rankOff: 'The ranking is not enabled by the team yet (its Supabase table still needs to be created). Your score is already computed and you will be able to publish it as soon as it is on.',
       rankErr: 'Could not publish the score right now. Try again.',
@@ -497,41 +491,6 @@
         .catch(function () { msg('err', T.avatarErr); });
     });
   }
-  // ---- Exportar / importar el progreso (respaldo en archivo) ----
-  if ($('cuenta-export')) $('cuenta-export').addEventListener('click', function () {
-    var data = {};
-    SYNC_KEYS.forEach(function (k) { var v = localStorage.getItem(k); if (v !== null) { try { data[k] = JSON.parse(v); } catch (e) { data[k] = v; } } });
-    var payload = { app: 'NVISION', version: 1, exportedAt: new Date().toISOString(), data: data };
-    var a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' }));
-    a.download = 'nvision-progreso.json';
-    a.click();
-    setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
-    msg('ok', T.expOk);
-  });
-  if ($('cuenta-import-btn')) $('cuenta-import-btn').addEventListener('click', function () { $('cuenta-import-file').click(); });
-  if ($('cuenta-import-file')) $('cuenta-import-file').addEventListener('change', function () {
-    var f = this.files && this.files[0];
-    if (!f) return;
-    var reader = new FileReader();
-    reader.onload = function () {
-      try {
-        var obj = JSON.parse(String(reader.result || ''));
-        if (!obj || obj.app !== 'NVISION' || !obj.data) throw new Error('formato');
-        var applied = 0;
-        SYNC_KEYS.forEach(function (k) {
-          if (obj.data[k] !== undefined) { localStorage.setItem(k, JSON.stringify(obj.data[k])); applied++; }
-        });
-        if (!applied) throw new Error('vacio');
-        msg('ok', T.impOk);
-        ensureSession().then(function (s) { if (s) syncNow(s); });
-        setTimeout(function () { location.reload(); }, 1200);
-      } catch (e) { msg('err', T.impErr); }
-    };
-    reader.readAsText(f);
-    this.value = '';
-  });
-
   // ---- Publicar el puntaje en el ranking del sitio ----
   if ($('cuenta-rank')) $('cuenta-rank').addEventListener('click', function () {
     var st = $('cuenta-rank-state');
