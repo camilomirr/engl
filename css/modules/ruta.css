@@ -1,0 +1,105 @@
+/* NVISION - Ruta de aprendizaje */
+.ruta-hero { text-align: center; padding: 2.6rem 1rem 0.6rem; }
+.ruta-kicker { color: var(--accent-cyan); font: 700 0.74rem 'JetBrains Mono', monospace; letter-spacing: 0.14em; }
+.ruta-hero h1 { font-family: var(--font-heading); font-size: clamp(2.1rem, 6vw, 3.4rem); margin: 0.4rem 0 0.5rem; color: var(--text-primary); }
+.ruta-hero p { max-width: 62ch; margin: 0 auto; color: var(--text-secondary); line-height: 1.6; }
+
+.ruta-progress-wrap {
+  max-width: 760px;
+  margin: 1.4rem auto 0;
+  padding: 1rem 1.2rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--bg-surface) 82%, transparent);
+  backdrop-filter: blur(14px) saturate(1.35);
+  -webkit-backdrop-filter: blur(14px) saturate(1.35);
+}
+
+.ruta-progress-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
+.ruta-progress-head b { color: var(--text-primary); }
+.ruta-progress-head span { font-family: ui-monospace, Consolas, monospace; font-weight: 700; color: var(--accent-cyan); }
+
+.ruta-bar { height: 12px; margin-top: 0.6rem; border-radius: 999px; background: var(--bg-deep); border: 1px solid var(--border-subtle); overflow: hidden; }
+.ruta-bar-fill { height: 100%; width: 0; border-radius: 999px; background: linear-gradient(90deg, var(--accent-cyan), var(--accent-blue)); transition: width 0.45s ease; }
+
+.ruta-done-msg { display: none; margin: 0.7rem 0 0; color: #4ade80; font-weight: 700; }
+.ruta-done-msg.on { display: block; }
+
+.ruta-reset {
+  margin-top: 0.8rem;
+  padding: 0.45rem 0.95rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-subtle);
+  background: transparent;
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.ruta-reset:hover { border-color: #f87171; color: #f87171; }
+
+.ruta-note { max-width: 760px; margin: 0.9rem auto 0; text-align: center; color: var(--text-muted); font-size: 0.86rem; }
+
+.ruta-steps { max-width: 760px; margin: 1.6rem auto 3rem; display: grid; gap: 0.85rem; padding: 0 1rem; }
+
+.ruta-step {
+  display: flex;
+  gap: 0.95rem;
+  align-items: flex-start;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--bg-surface) 82%, transparent);
+  backdrop-filter: blur(14px) saturate(1.35);
+  -webkit-backdrop-filter: blur(14px) saturate(1.35);
+}
+.ruta-step.is-done { border-color: rgba(74, 222, 128, 0.55); }
+
+.ruta-step-num {
+  flex: none;
+  width: 2.3rem; height: 2.3rem;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-deep);
+  font-family: var(--font-heading);
+  color: var(--accent-cyan);
+}
+.ruta-step.is-done .ruta-step-num { background: rgba(74, 222, 128, 0.16); color: #4ade80; border-color: rgba(74, 222, 128, 0.55); }
+
+.ruta-step-body { flex: 1; min-width: 0; }
+.ruta-step-body h3 { margin: 0.1rem 0 0.3rem; color: var(--text-primary); font-size: 1.02rem; }
+.ruta-step-body p { margin: 0; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.55; }
+
+.ruta-badge {
+  display: inline-block;
+  margin-left: 0.45rem;
+  padding: 0.08rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #04101e;
+  background: var(--accent-cyan);
+  vertical-align: middle;
+}
+
+.ruta-step-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.7rem; }
+
+.ruta-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-subtle);
+  background: rgba(56, 189, 248, 0.10);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 0.87rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+.ruta-btn:hover { border-color: var(--accent-cyan); }
+.ruta-btn--check { background: transparent; color: var(--text-secondary); }
+.ruta-step.is-done .ruta-btn--check { border-color: rgba(74, 222, 128, 0.55); color: #4ade80; }
+.ruta-btn--check[disabled] { opacity: 0.65; cursor: default; }

@@ -48,3 +48,15 @@
 /* 14. Buscador de la página principal */
 @import url('modules/site-search.css?v=2');
 
+/* 15. Herramientas de redes (subredes y conversor) */
+@import url('modules/redes-tools.css?v=1');
+
+/* 16. Ruta de aprendizaje */
+@import url('modules/ruta.css?v=1');
+
+/* 17. Exámenes y certificados */
+@import url('modules/examenes.css?v=1');
+
+/* 18. Mi cuenta (Supabase) */
+@import url('modules/cuenta.css?v=1');
+

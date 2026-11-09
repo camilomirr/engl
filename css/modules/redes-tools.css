@@ -1,0 +1,116 @@
+/* NVISION - Herramientas de redes: calculadora de subredes y conversor de bases */
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr));
+  gap: 1.1rem;
+  margin-top: 1.4rem;
+}
+
+.tool-panel {
+  padding: 1.15rem 1.2rem 1.25rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--bg-surface) 82%, transparent);
+  backdrop-filter: blur(14px) saturate(1.35);
+  -webkit-backdrop-filter: blur(14px) saturate(1.35);
+}
+
+.tool-panel h3 {
+  margin: 0 0 0.9rem;
+  font-family: var(--font-heading);
+  letter-spacing: 0.04em;
+  color: var(--text-primary);
+}
+
+.tool-field { margin-bottom: 0.85rem; }
+
+.tool-field label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.tool-field input[type="text"],
+.tool-field select {
+  width: 100%;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 0.95rem;
+}
+
+.tool-field input[type="range"] { width: 100%; accent-color: var(--accent-cyan); }
+
+.tool-prefix-row {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.tool-prefix-row output {
+  min-width: 3ch;
+  font-family: ui-monospace, Consolas, monospace;
+  font-weight: 700;
+  color: var(--accent-cyan);
+}
+
+.tool-mask-line {
+  margin: 0.2rem 0 0;
+  font-size: 0.86rem;
+  color: var(--text-secondary);
+}
+
+.tool-mask-line b {
+  font-family: ui-monospace, Consolas, monospace;
+  color: var(--text-primary);
+}
+
+.tool-results {
+  margin: 0.9rem 0 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr));
+  gap: 0.55rem;
+}
+
+.tool-results .tr-item {
+  padding: 0.55rem 0.65rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: var(--bg-deep);
+  min-width: 0;
+}
+
+.tool-results dt {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.tool-results dd {
+  margin: 0.15rem 0 0;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--accent-cyan);
+  overflow-wrap: anywhere;
+}
+
+.tool-results .tr-wide { grid-column: 1 / -1; }
+.tool-results .tr-wide dd { font-size: 0.8rem; }
+
+.tool-error {
+  display: none;
+  margin: 0.6rem 0 0;
+  color: #f87171;
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+.tool-error.on { display: block; }

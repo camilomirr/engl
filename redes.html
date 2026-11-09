@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title data-i18n="page_title_redes">NVISION - Redes y Simulación</title>
   <!-- Hojas de estilo modular -->
-  <link rel="stylesheet" href="css/styles.css?v=26">
+  <link rel="stylesheet" href="css/styles.css?v=28">
   <!-- SEO, iconos y vista previa al compartir (Open Graph / Twitter) -->
   <meta name="description" content="Redes en NVISION: clasificación, topologías, simulador de ping, laboratorio de switch, WiFi avanzado y el reto Redes Challenge.">
   <meta name="theme-color" content="#0a0e17">
@@ -67,6 +67,7 @@
               <li><a href="redes.html#simulador-red" data-i18n="nav_simulator">Simulador Ping</a></li>
               <li><a href="redes.html#switch-3d" data-i18n="nav_switch3d">El switch por dentro</a></li>
                           <li><a href="wifi.html" data-i18n="nav_wifi">WiFi Avanzado</a></li>
+                          <li><a href="redes.html#herramientas" data-i18n="nav_tools">Herramientas de redes</a></li>
             </ul>
           </li>
 
@@ -81,6 +82,8 @@
               <li><a href="recursos.html#glosario" data-i18n="nav_glossary">Glosario</a></li>
               <li><a href="recursos.html#laboratorio" data-i18n="nav_lab">Laboratorio de Códigos</a></li>
               <li><a href="mantenimiento-software.html" data-i18n="nav_ms">Mantenimiento por software</a></li>
+              <li><a href="ruta.html" data-i18n="nav_route">Ruta de aprendizaje</a></li>
+              <li><a href="examenes.html" data-i18n="nav_exams">Exámenes y certificados</a></li>
             </ul>
           </li>
           <li class="nav-item-dropdown">
@@ -108,6 +111,9 @@
         <button id="theme-toggle" class="theme-switch-btn" title="Modo Claro / Oscuro" aria-label="Cambiar tema" data-i18n-title="theme_toggle_title">
           <span id="theme-icon" class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span>
         </button>
+        <a id="account-link" class="theme-switch-btn account-btn" href="cuenta.html" title="Mi cuenta" aria-label="Mi cuenta" data-i18n-title="nav_account">
+          <span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span>
+        </a>
         <!-- Selector desplegable bilingüe de Idioma (Español / Inglés) -->
         <div class="lang-dropdown-wrapper" id="lang-dropdown-wrapper">
           <button id="lang-toggle" class="lang-dropdown-btn" type="button" aria-haspopup="true" aria-expanded="false" title="Seleccionar idioma / Select language">
@@ -990,6 +996,67 @@
         </aside>
       </div>
     </section>
+
+  <section id="herramientas" class="container">
+    <h2 class="section-title">
+      <span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4.5 4.5 0 0 0-6 6L3 18l3 3 5.7-5.7a4.5 4.5 0 0 0 6-6L14 13l-3-3 3.7-3.7z"/></svg></span> <span data-i18n="tools_title">Herramientas de Redes</span>
+    </h2>
+    <p class="section-subtitle" data-i18n="tools_sub">Calcula subredes y convierte entre binario, decimal y hexadecimal sin salir de NVISION.</p>
+
+    <div class="tools-grid">
+      <div class="tool-panel">
+        <h3 data-i18n="subnet_title">Calculadora de subredes</h3>
+        <div class="tool-field">
+          <label for="rt-ip" data-i18n="subnet_ip">Dirección IP</label>
+          <input type="text" id="rt-ip" value="192.168.1.10" inputmode="decimal" autocomplete="off" spellcheck="false">
+        </div>
+        <div class="tool-field">
+          <label for="rt-prefix" data-i18n="subnet_prefix">Prefijo CIDR</label>
+          <div class="tool-prefix-row">
+            <input type="range" id="rt-prefix" min="0" max="32" step="1" value="24">
+            <output id="rt-prefix-val">/24</output>
+          </div>
+          <p class="tool-mask-line"><span data-i18n="subnet_mask">Máscara de subred</span>: <b id="rt-mask">255.255.255.0</b></p>
+        </div>
+        <p class="tool-error" id="rt-error" role="alert"></p>
+        <dl class="tool-results">
+          <div class="tr-item"><dt data-i18n="r_net">Dirección de red</dt><dd id="rt-net">—</dd></div>
+          <div class="tr-item"><dt data-i18n="r_bcast">Broadcast</dt><dd id="rt-bcast">—</dd></div>
+          <div class="tr-item"><dt data-i18n="r_first">Primera IP útil</dt><dd id="rt-first">—</dd></div>
+          <div class="tr-item"><dt data-i18n="r_last">Última IP útil</dt><dd id="rt-last">—</dd></div>
+          <div class="tr-item"><dt data-i18n="r_hosts">Hosts utilizables</dt><dd id="rt-hosts">—</dd></div>
+          <div class="tr-item"><dt data-i18n="r_wild">Wildcard</dt><dd id="rt-wild">—</dd></div>
+          <div class="tr-item"><dt data-i18n="r_class">Clase</dt><dd id="rt-class">—</dd></div>
+          <div class="tr-item"><dt data-i18n="r_type">Tipo</dt><dd id="rt-type">—</dd></div>
+          <div class="tr-item tr-wide"><dt data-i18n="r_bin">La IP en binario</dt><dd id="rt-bin">—</dd></div>
+        </dl>
+      </div>
+
+      <div class="tool-panel">
+        <h3 data-i18n="conv_title">Conversor de bases</h3>
+        <div class="tool-field">
+          <label for="rt-conv-value" data-i18n="conv_value">Valor</label>
+          <input type="text" id="rt-conv-value" value="192" autocomplete="off" spellcheck="false">
+        </div>
+        <div class="tool-field">
+          <label for="rt-conv-base" data-i18n="conv_base">Base de entrada</label>
+          <select id="rt-conv-base">
+            <option value="dec" selected data-i18n="conv_dec">Decimal</option>
+            <option value="bin" data-i18n="conv_bin">Binario</option>
+            <option value="hex" data-i18n="conv_hex">Hexadecimal</option>
+            <option value="oct" data-i18n="conv_oct">Octal</option>
+          </select>
+        </div>
+        <p class="tool-error" id="rt-conv-error" role="alert"></p>
+        <dl class="tool-results">
+          <div class="tr-item"><dt data-i18n="conv_dec">Decimal</dt><dd id="rt-c-dec">—</dd></div>
+          <div class="tr-item"><dt data-i18n="conv_hex">Hexadecimal</dt><dd id="rt-c-hex">—</dd></div>
+          <div class="tr-item"><dt data-i18n="conv_oct">Octal</dt><dd id="rt-c-oct">—</dd></div>
+          <div class="tr-item tr-wide"><dt data-i18n="conv_bin">Binario</dt><dd id="rt-c-bin">—</dd></div>
+        </dl>
+      </div>
+    </div>
+  </section>
 </main>
 
   <!-- Footer -->
@@ -998,8 +1065,9 @@
   </footer>
 
   <!-- Script interactivo bilingüe y menú móvil -->
-  <script src="js/main.js?v=6"></script>
-  <script src="js/site-search.js?v=3"></script>
+  <script src="js/redes-tools.js?v=1"></script>
+  <script src="js/main.js?v=14"></script>
+  <script src="js/site-search.js?v=4"></script>
   <script src="js/equipo-widget.js?v=14" defer></script>
 </body>
 </html>
