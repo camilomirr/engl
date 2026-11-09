@@ -37,7 +37,10 @@
       rankErr: 'No se pudo publicar el puntaje ahora. Inténtalo otra vez.',
       nextMissing: 'Te faltan', nextRuta: 'pasos de la ruta', nextExams: 'exámenes por aprobar', nextJoin: 'y',
       nextDone: 'Ya completaste la ruta y aprobaste todos los exámenes. ¡Nivel máximo!',
-      statRuta: 'Ruta', statExams: 'Exámenes', statPoints: 'Puntos'
+      statRuta: 'Ruta', statExams: 'Exámenes', statPoints: 'Puntos',
+      needName: 'Escribe tu nombre y apellido.',
+      profileSaved: 'Datos actualizados.',
+      profileErr: 'No se pudieron guardar los datos. Inténtalo otra vez.'
     },
     en: {
       loginT: 'Log in', registerT: 'Create account', loginB: 'Log in', registerB: 'Sign up',
@@ -64,7 +67,10 @@
       rankErr: 'Could not publish the score right now. Try again.',
       nextMissing: 'You still need', nextRuta: 'path steps', nextExams: 'exams to pass', nextJoin: 'and',
       nextDone: 'You completed the path and passed every exam. Max level!',
-      statRuta: 'Path', statExams: 'Exams', statPoints: 'Points'
+      statRuta: 'Path', statExams: 'Exams', statPoints: 'Points',
+      needName: 'Enter your first and last name.',
+      profileSaved: 'Details updated.',
+      profileErr: 'Could not save your details. Try again.'
     }
   }[lang];
 
@@ -109,17 +115,46 @@
   }
 
   function saveSessionFromAuth(data, email) {
+    var md = (data.user && data.user.user_metadata) || {};
     var s = {
       access: data.access_token,
       refresh: data.refresh_token,
       exp: Date.now() + (data.expires_in || 3600) * 1000,
       userId: data.user && data.user.id,
       email: (data.user && data.user.email) || email,
-      avatar: (data.user && data.user.user_metadata && data.user.user_metadata.avatar) || null,
-      avatarImg: (data.user && data.user.user_metadata && data.user.user_metadata.avatar_image) || null
+      avatar: md.avatar || null,
+      avatarImg: md.avatar_image || null,
+      firstName: md.first_name || null,
+      lastName: md.last_name || null,
+      fullName: md.full_name || null,
+      googleAvatar: md.avatar_url || md.picture || null
     };
     setSession(s);
     return s;
+  }
+
+  // Nombre a mostrar: nombre completo de Google o del registro; si no hay,
+  // nombre + apellido; si tampoco, la parte del correo antes de la @.
+  function displayName(s) {
+    var full = ((s && s.fullName) || '').trim();
+    if (full) return full;
+    var fn = (((s && s.firstName) || '') + ' ' + ((s && s.lastName) || '')).trim();
+    if (fn) return fn;
+    return ((s && s.email) || '').split('@')[0] || '';
+  }
+  // Foto de perfil: la subida por el usuario manda; si no hay, la foto de
+  // Google; si tampoco, el avatar SVG elegido o la inicial del correo.
+  function profilePhotoHtml(s) {
+    if (!s || !window.NVISION_avatarChip) return '';
+    var isSvg = s.avatar && s.avatar !== 'custom' && s.avatar !== 'initial';
+    var img = isSvg ? s.avatarImg : (s.avatarImg || s.googleAvatar);
+    var id = isSvg ? s.avatar : (img ? 'custom' : 'initial');
+    return window.NVISION_avatarChip(id, s.email, img);
+  }
+  function renderProfilePhoto() {
+    var el = $('cuenta-profile-photo');
+    if (!el) return;
+    el.innerHTML = profilePhotoHtml(getSession());
   }
 
   function refreshSession(s) {
@@ -214,11 +249,14 @@
     $('cuenta-switch').textContent = mode === 'login' ? T.switchReg : T.switchLogin;
     $('cuenta-pass').setAttribute('autocomplete', mode === 'login' ? 'current-password' : 'new-password');
     $('cuenta-avatar-field').hidden = mode !== 'register';
+    $('cuenta-name-fields').hidden = mode !== 'register';
   }
   function showPanel(session) {
     $('cuenta-auth').hidden = true;
     $('cuenta-panel').hidden = false;
     $('cuenta-user-email').textContent = session.email || '';
+    $('cuenta-user-name').textContent = displayName(session);
+    renderProfilePhoto();
     buildAvatarGrid($('avatar-grid-panel'), session.avatar || 'initial', saveAvatar, session.avatarImg);
     refreshRemoveBtn();
     var meta = getMeta();
@@ -259,17 +297,60 @@
     renderMode();
   });
 
+  // ---- Actualizar datos (nombre y apellido) ----
+  if ($('cuenta-edit')) $('cuenta-edit').addEventListener('click', function () {
+    var s = getSession();
+    if (!s) return;
+    if ($('cuenta-edit-first')) $('cuenta-edit-first').value = s.firstName || '';
+    if ($('cuenta-edit-last')) $('cuenta-edit-last').value = s.lastName || '';
+    if ($('cuenta-edit-form')) $('cuenta-edit-form').hidden = false;
+    if ($('cuenta-edit')) $('cuenta-edit').hidden = true;
+    clearMsg();
+  });
+  if ($('cuenta-edit-cancel')) $('cuenta-edit-cancel').addEventListener('click', function () {
+    if ($('cuenta-edit-form')) $('cuenta-edit-form').hidden = true;
+    if ($('cuenta-edit')) $('cuenta-edit').hidden = false;
+  });
+  if ($('cuenta-edit-save')) $('cuenta-edit-save').addEventListener('click', function () {
+    var first = String(($('cuenta-edit-first') && $('cuenta-edit-first').value) || '').trim();
+    var last = String(($('cuenta-edit-last') && $('cuenta-edit-last').value) || '').trim();
+    if (!first || !last) { msg('err', T.needName); return; }
+    var btn = $('cuenta-edit-save');
+    btn.disabled = true;
+    ensureSession().then(function (s) {
+      if (!s) { btn.disabled = false; return; }
+      api('/auth/v1/user', { method: 'PUT', token: s.access, body: { data: { first_name: first, last_name: last, full_name: first + ' ' + last } } })
+        .then(function (r) {
+          btn.disabled = false;
+          if (r.status === 200) {
+            s.firstName = first; s.lastName = last; s.fullName = first + ' ' + last; setSession(s);
+            $('cuenta-user-name').textContent = displayName(s);
+            if ($('cuenta-edit-form')) $('cuenta-edit-form').hidden = true;
+            if ($('cuenta-edit')) $('cuenta-edit').hidden = false;
+            msg('ok', T.profileSaved);
+          } else msg('err', T.profileErr);
+        })
+        .catch(function () { btn.disabled = false; msg('err', T.profileErr); });
+    });
+  });
+
   $('cuenta-form').addEventListener('submit', function (ev) {
     ev.preventDefault();
     var email = String($('cuenta-email').value || '').trim();
     var pass = String($('cuenta-pass').value || '');
     if (!email || pass.length < 6) { msg('err', T.needFields); return; }
+    var first = '', last = '';
+    if (mode === 'register') {
+      first = String(($('cuenta-firstname') && $('cuenta-firstname').value) || '').trim();
+      last = String(($('cuenta-lastname') && $('cuenta-lastname').value) || '').trim();
+      if (!first || !last) { msg('err', T.needName); return; }
+    }
     var btn = $('cuenta-submit');
     btn.disabled = true; btn.textContent = T.working;
     clearMsg();
     var done = function () { btn.disabled = false; renderMode(); };
     if (mode === 'register') {
-      api('/auth/v1/signup', { method: 'POST', body: { email: email, password: pass, data: { avatar: regAvatar, avatar_image: regAvatar === 'custom' ? regAvatarImg : null } } })
+      api('/auth/v1/signup', { method: 'POST', body: { email: email, password: pass, data: { first_name: first, last_name: last, full_name: first + ' ' + last, avatar: regAvatar, avatar_image: regAvatar === 'custom' ? regAvatarImg : null } } })
         .then(function (r) {
           done();
           if (r.status === 200 && r.data) {
@@ -361,6 +442,7 @@
           if (r.status === 200) {
             s.avatar = id; setSession(s);
             buildAvatarGrid($('avatar-grid-panel'), id, saveAvatar, s.avatarImg);
+            renderProfilePhoto();
             if (window.NVISION_renderAccountChip) window.NVISION_renderAccountChip();
             msg('ok', T.avatarSaved);
           } else msg('err', T.avatarErr);
@@ -404,6 +486,7 @@
           if (r.status === 200) {
             s.avatar = 'custom'; s.avatarImg = dataUrl; setSession(s);
             buildAvatarGrid($('avatar-grid-panel'), 'custom', saveAvatar, dataUrl);
+            renderProfilePhoto();
             refreshRemoveBtn();
             if (window.NVISION_renderAccountChip) window.NVISION_renderAccountChip();
             msg('ok', T.avatarSaved);
@@ -420,6 +503,7 @@
           if (r.status === 200) {
             s.avatar = 'initial'; s.avatarImg = null; setSession(s);
             buildAvatarGrid($('avatar-grid-panel'), 'initial', saveAvatar, null);
+            renderProfilePhoto();
             refreshRemoveBtn();
             if (window.NVISION_renderAccountChip) window.NVISION_renderAccountChip();
             msg('ok', T.avatarSaved);

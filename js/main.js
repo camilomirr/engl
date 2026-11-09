@@ -288,6 +288,11 @@ const translations = {
     cuenta_avatar_pick: "Elige tu avatar",
     cuenta_avatar_t: "Tu avatar",
     cuenta_avatar_remove: "Quitar mi foto",
+    cuenta_firstname: "Nombre",
+    cuenta_lastname: "Apellido",
+    cuenta_edit_btn: "Actualizar datos",
+    cuenta_edit_save: "Guardar cambios",
+    cuenta_edit_cancel: "Cancelar",
     wifi_kicker: "Guía práctica · Redes inalámbricas",
     wifi_h1: "WiFi avanzado, explicado paso a paso",
     wifi_hero_p: "De la caja a una red rápida y segura: instala el módem/router, entra a su panel, cambia la clave, suma un repetidor y gana cobertura. Todo en orden y sin vueltas.",
@@ -1391,6 +1396,11 @@ const translations = {
     cuenta_avatar_pick: "Choose your avatar",
     cuenta_avatar_t: "Your avatar",
     cuenta_avatar_remove: "Remove my photo",
+    cuenta_firstname: "First name",
+    cuenta_lastname: "Last name",
+    cuenta_edit_btn: "Update details",
+    cuenta_edit_save: "Save changes",
+    cuenta_edit_cancel: "Cancel",
     wifi_kicker: "Hands-on guide · Wireless networks",
     wifi_h1: "Advanced WiFi, explained step by step",
     wifi_hero_p: "From the box to a fast, secure network: install the modem/router, open its panel, change the password, add a repeater and gain coverage. All in order, no detours.",
@@ -4859,8 +4869,12 @@ function setupNetworkSimulator() {
     if (!link) return;
     var s = null;
     try { s = JSON.parse(localStorage.getItem('nvision_session_v1') || 'null'); } catch (e) {}
-    if (s && (s.avatar || s.avatarImg)) {
-      link.innerHTML = avatarChip(s.avatar, s.email, s.avatarImg);
+    if (!s) return;
+    var isSvgAvatar = s.avatar && s.avatar !== 'custom' && s.avatar !== 'initial';
+    var img = isSvgAvatar ? s.avatarImg : (s.avatarImg || s.googleAvatar);
+    var id = isSvgAvatar ? s.avatar : (img ? 'custom' : 'initial');
+    if (s.avatar || img) {
+      link.innerHTML = avatarChip(id, s.email, img);
       link.classList.add('has-avatar');
     }
   }
