@@ -60,3 +60,6 @@
 /* 18. Mi cuenta (Supabase) */
 @import url('modules/cuenta.css?v=1');
 
+/* 19. Barra de progreso superior (scroll + carga) */
+@import url('modules/scroll-progress.css?v=1');
+
