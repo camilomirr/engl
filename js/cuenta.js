@@ -472,21 +472,56 @@
     });
   });
 
-  // ---- Ingreso con Google (el botón funciona en cuanto el equipo active
-  // el proveedor en Supabase; si no está activo, Supabase devuelve un error
-  // en la URL y mostramos el aviso amable en vez de una pantalla rara). ----
-  if ($('cuenta-google')) $('cuenta-google').addEventListener('click', function () {
-    location.href = SUPABASE_URL + '/auth/v1/authorize?provider=google&redirect_to=' + encodeURIComponent(location.origin + location.pathname);
+  // ---- Ingreso con Google ----
+  // Antes de salir de la página comprobamos si el proveedor está activo:
+  // con Google desactivado en Supabase, la URL de autorización devuelve un
+  // 400 y el usuario terminaba en una página en blanco con un JSON de error,
+  // sin explicación y sin forma de volver. Ahora, en ese caso, nos quedamos
+  // en cuenta.html y mostramos el aviso amable. En cuanto el equipo active
+  // Google en Supabase, el botón empieza a funcionar solo, sin tocar el código.
+  var googleBtn = $('cuenta-google');
+  function googleAuthorizeUrl() {
+    return SUPABASE_URL + '/auth/v1/authorize?provider=google&redirect_to=' + encodeURIComponent(location.origin + location.pathname);
+  }
+  if (googleBtn) googleBtn.addEventListener('click', function () {
+    googleBtn.disabled = true;
+    fetch(googleAuthorizeUrl(), { redirect: 'manual' })
+      .then(function (r) {
+        // Proveedor activo: Supabase redirige a Google (respuesta opaca, status 0).
+        if (r.status === 0 || (r.status >= 300 && r.status < 400)) {
+          location.href = googleAuthorizeUrl();
+        } else {
+          // 400 u otro error: el proveedor no está activado.
+          googleBtn.disabled = false;
+          msg('err', T.googleOff);
+        }
+      })
+      .catch(function () {
+        googleBtn.disabled = false;
+        msg('err', T.netErr);
+      });
   });
   (function handleAuthRedirect() {
-    if (!location.hash || location.hash.length < 3) return;
-    var params = new URLSearchParams(location.hash.slice(1));
-    var clean = function () { try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} };
-    if (params.get('error') || params.get('error_description')) { clean(); msg('err', T.googleOff); return; }
-    var at = params.get('access_token');
+    var hashParams = null;
+    if (location.hash && location.hash.length >= 3) hashParams = new URLSearchParams(location.hash.slice(1));
+    var searchParams = new URLSearchParams(location.search);
+    // Supabase puede devolver el error en el fragmento (#) o en la consulta (?).
+    var err = (hashParams && hashParams.get('error')) || searchParams.get('error');
+    var errDesc = (hashParams && hashParams.get('error_description')) || searchParams.get('error_description');
+    var clean = function () {
+      try {
+        var sp = new URLSearchParams(location.search);
+        sp.delete('error'); sp.delete('error_description'); sp.delete('error_code');
+        var qs = sp.toString();
+        history.replaceState(null, '', location.pathname + (qs ? '?' + qs : ''));
+      } catch (e) {}
+    };
+    if (err || errDesc) { clean(); msg('err', T.googleOff); return; }
+    if (!hashParams) return;
+    var at = hashParams.get('access_token');
     if (!at) return;
-    var rt = params.get('refresh_token');
-    var exp = parseInt(params.get('expires_in') || '3600', 10);
+    var rt = hashParams.get('refresh_token');
+    var exp = parseInt(hashParams.get('expires_in') || '3600', 10);
     clean();
     api('/auth/v1/user', { token: at }).then(function (r) {
       if (r.status === 200 && r.data && r.data.id) {
