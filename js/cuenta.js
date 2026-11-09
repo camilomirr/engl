@@ -8,7 +8,7 @@
   var ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpdXp0cnVqcndkZ2NwanJydXh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQwNTk2ODcsImV4cCI6MjEwOTYzNTY4N30.CBBQpCqHxuOtCaMcdUfIrKTa4vt0QJRqvivskHnt5g0';
   var SESSION_KEY = 'nvision_session_v1';
   var META_KEY = 'nvision_sync_meta_v1';
-  var SYNC_KEYS = ['nvision_ruta_v1', 'nvision_examenes_v1', 'nvision_workshop_v2'];
+  var SYNC_KEYS = ['nvision_ruta_v1', 'nvision_examenes_v1', 'nvision_workshop_v2', 'nvision_logros_v1'];
   var lang = (localStorage.getItem('user_lang') || 'es').toLowerCase().indexOf('en') === 0 ? 'en' : 'es';
 
   var T = {
@@ -28,6 +28,15 @@
       lastSync: 'Última sincronización',
       avatarSaved: 'Avatar guardado. Se verá en el botón de Mi cuenta en todo el sitio.', avatarErr: 'No se pudo guardar el avatar. Inténtalo otra vez.', avatarInitial: 'Inicial',
       avatarPhoto: 'Foto', avatarRemove: 'Quitar foto', avatarImgErr: 'Esa imagen no se pudo usar. Prueba con otra.',
+      googleOff: 'El ingreso con Google aún no está activado por el equipo. Por ahora entra con tu correo y contraseña.',
+      expOk: 'Archivo de progreso descargado. Guárdalo para restaurarlo en otro equipo.',
+      impOk: 'Progreso importado. La página se recarga para aplicarlo.',
+      impErr: 'Ese archivo no es un respaldo válido de NVISION.',
+      rankOk: '¡Puntaje publicado en el ranking con', rankPts: 'puntos!',
+      rankOff: 'El ranking aún no está activado por el equipo (falta crear su tabla en Supabase). Tu puntaje ya quedó calculado y podrás publicarlo en cuanto se active.',
+      rankErr: 'No se pudo publicar el puntaje ahora. Inténtalo otra vez.',
+      nextMissing: 'Te faltan', nextRuta: 'pasos de la ruta', nextExams: 'exámenes por aprobar', nextJoin: 'y',
+      nextDone: 'Ya completaste la ruta y aprobaste todos los exámenes. ¡Nivel máximo!'
     },
     en: {
       loginT: 'Log in', registerT: 'Create account', loginB: 'Log in', registerB: 'Sign up',
@@ -45,6 +54,15 @@
       lastSync: 'Last sync',
       avatarSaved: 'Avatar saved. It will show on the My account button across the site.', avatarErr: 'Could not save the avatar. Try again.', avatarInitial: 'Initial',
       avatarPhoto: 'Photo', avatarRemove: 'Remove photo', avatarImgErr: 'That image could not be used. Try another one.',
+      googleOff: 'Google sign-in is not enabled by the team yet. For now, log in with your email and password.',
+      expOk: 'Progress file downloaded. Keep it to restore on another device.',
+      impOk: 'Progress imported. The page will reload to apply it.',
+      impErr: 'That file is not a valid NVISION backup.',
+      rankOk: 'Score published to the ranking with', rankPts: 'points!',
+      rankOff: 'The ranking is not enabled by the team yet (its Supabase table still needs to be created). Your score is already computed and you will be able to publish it as soon as it is on.',
+      rankErr: 'Could not publish the score right now. Try again.',
+      nextMissing: 'You still need', nextRuta: 'path steps', nextExams: 'exams to pass', nextJoin: 'and',
+      nextDone: 'You completed the path and passed every exam. Max level!'
     }
   }[lang];
 
@@ -203,6 +221,21 @@
     refreshRemoveBtn();
     var meta = getMeta();
     $('cuenta-sync-state').textContent = meta.lastSyncAt ? (T.lastSync + ': ' + new Date(meta.lastSyncAt).toLocaleString(lang === 'en' ? 'en-US' : 'es-CO')) : '';
+    var strip = $('cuenta-logros');
+    if (strip && window.NVISION_LOGROS) window.NVISION_LOGROS.renderStrip(strip);
+    var nextEl = $('cuenta-next');
+    if (nextEl && window.NVISION_LOGROS) {
+      var ctx = window.NVISION_LOGROS.compute().ctx;
+      var missingRuta = ctx.rutaTotal - ctx.rutaDone;
+      var missingExams = ctx.examsTotal - ctx.passed;
+      if (!missingRuta && !missingExams) nextEl.innerHTML = '<b>' + T.nextDone + '</b>';
+      else {
+        var parts = [];
+        if (missingRuta) parts.push('<b>' + missingRuta + '</b> ' + T.nextRuta);
+        if (missingExams) parts.push('<b>' + missingExams + '</b> ' + T.nextExams);
+        nextEl.innerHTML = T.nextMissing + ' ' + parts.join(' ' + T.nextJoin + ' ') + '.';
+      }
+    }
   }
   function showAuth() {
     $('cuenta-panel').hidden = true;
@@ -384,6 +417,87 @@
         .catch(function () { msg('err', T.avatarErr); });
     });
   }
+  // ---- Exportar / importar el progreso (respaldo en archivo) ----
+  if ($('cuenta-export')) $('cuenta-export').addEventListener('click', function () {
+    var data = {};
+    SYNC_KEYS.forEach(function (k) { var v = localStorage.getItem(k); if (v !== null) { try { data[k] = JSON.parse(v); } catch (e) { data[k] = v; } } });
+    var payload = { app: 'NVISION', version: 1, exportedAt: new Date().toISOString(), data: data };
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' }));
+    a.download = 'nvision-progreso.json';
+    a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
+    msg('ok', T.expOk);
+  });
+  if ($('cuenta-import-btn')) $('cuenta-import-btn').addEventListener('click', function () { $('cuenta-import-file').click(); });
+  if ($('cuenta-import-file')) $('cuenta-import-file').addEventListener('change', function () {
+    var f = this.files && this.files[0];
+    if (!f) return;
+    var reader = new FileReader();
+    reader.onload = function () {
+      try {
+        var obj = JSON.parse(String(reader.result || ''));
+        if (!obj || obj.app !== 'NVISION' || !obj.data) throw new Error('formato');
+        var applied = 0;
+        SYNC_KEYS.forEach(function (k) {
+          if (obj.data[k] !== undefined) { localStorage.setItem(k, JSON.stringify(obj.data[k])); applied++; }
+        });
+        if (!applied) throw new Error('vacio');
+        msg('ok', T.impOk);
+        ensureSession().then(function (s) { if (s) syncNow(s, true); });
+        setTimeout(function () { location.reload(); }, 1200);
+      } catch (e) { msg('err', T.impErr); }
+    };
+    reader.readAsText(f);
+    this.value = '';
+  });
+
+  // ---- Publicar el puntaje en el ranking del sitio ----
+  if ($('cuenta-rank')) $('cuenta-rank').addEventListener('click', function () {
+    var st = $('cuenta-rank-state');
+    ensureSession().then(function (s) {
+      if (!s) { showAuth(); return; }
+      if (!window.NVISION_LOGROS) return;
+      var r = window.NVISION_LOGROS.compute();
+      var name = String(s.email || 'NVISION').split('@')[0];
+      api('/rest/v1/site_ranking?on_conflict=user_id', {
+        method: 'POST', token: s.access,
+        headers: { 'Prefer': 'resolution=merge-duplicates' },
+        body: { user_id: s.userId, name: name, avatar: s.avatar || null, avatar_image: s.avatarImg || null, points: r.points, updated_at: new Date().toISOString() }
+      }).then(function (res) {
+        if (res.status === 200 || res.status === 201 || res.status === 204) st.textContent = T.rankOk + ' ' + r.points + ' ' + T.rankPts;
+        else if (res.status === 404 || (res.data && (res.data.code === 'PGRST205' || res.data.code === '42P01'))) st.textContent = T.rankOff;
+        else st.textContent = T.rankErr;
+      }).catch(function () { st.textContent = T.rankErr; });
+    });
+  });
+
+  // ---- Ingreso con Google (el botón funciona en cuanto el equipo active
+  // el proveedor en Supabase; si no está activo, Supabase devuelve un error
+  // en la URL y mostramos el aviso amable en vez de una pantalla rara). ----
+  if ($('cuenta-google')) $('cuenta-google').addEventListener('click', function () {
+    location.href = SUPABASE_URL + '/auth/v1/authorize?provider=google&redirect_to=' + encodeURIComponent(location.origin + location.pathname);
+  });
+  (function handleAuthRedirect() {
+    if (!location.hash || location.hash.length < 3) return;
+    var params = new URLSearchParams(location.hash.slice(1));
+    var clean = function () { try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} };
+    if (params.get('error') || params.get('error_description')) { clean(); msg('err', T.googleOff); return; }
+    var at = params.get('access_token');
+    if (!at) return;
+    var rt = params.get('refresh_token');
+    var exp = parseInt(params.get('expires_in') || '3600', 10);
+    clean();
+    api('/auth/v1/user', { token: at }).then(function (r) {
+      if (r.status === 200 && r.data && r.data.id) {
+        var s = saveSessionFromAuth({ access_token: at, refresh_token: rt, expires_in: exp, user: r.data }, r.data.email);
+        msg('ok', T.welcomeBack);
+        showPanel(s);
+        if (!goNext()) syncNow(s, true);
+      } else msg('err', T.googleOff);
+    }).catch(function () { msg('err', T.netErr); });
+  })();
+
   if ($('cuenta-email')) $('cuenta-email').addEventListener('input', function () { if (mode === 'register') buildAvatarGrid($('avatar-grid-reg'), regAvatar, pickRegAvatar, regAvatarImg); });
   if ($('cuenta-avatar-file')) $('cuenta-avatar-file').addEventListener('change', function () {
     var f = this.files && this.files[0];

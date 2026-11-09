@@ -18,6 +18,8 @@ var SHELL = [
   '/wifi.html',
   '/ruta.html',
   '/examenes.html',
+  '/logros.html',
+  '/ranking.html',
   '/cuenta.html',
   '/workshop/',
   '/workshop/index.html',

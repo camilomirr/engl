@@ -54,4 +54,12 @@
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
+  <url>
+    <loc>https://nvision.social/logros.html</loc>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://nvision.social/ranking.html</loc>
+    <priority>0.6</priority>
+  </url>
 </urlset>

@@ -87,3 +87,10 @@
 .avatar-opt.sel { border-color: var(--accent-cyan); box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.35); color: var(--text-primary); }
 .nv-avatar--photo-empty { background: var(--bg-surface); border: 1.5px dashed var(--border-subtle); color: var(--text-secondary); }
 .cuenta-avatar-box .cuenta-switch { margin-top: 0.55rem; }
+
+/* Divisor y botón de Google en la tarjeta de acceso */
+.cuenta-divider { display: flex; align-items: center; gap: .8rem; margin: 1.1rem 0 .9rem; color: var(--text-muted); font-size: .85rem; }
+.cuenta-divider::before, .cuenta-divider::after { content: ''; flex: 1; height: 1px; background: var(--border-subtle); }
+.cuenta-google { display: flex; align-items: center; justify-content: center; gap: .6rem; width: 100%; background: var(--bg-surface); color: var(--text-primary); border: 1px solid var(--border-subtle); }
+.cuenta-google svg { width: 20px; height: 20px; flex: none; }
+.cuenta-google:hover { border-color: var(--accent-cyan); }

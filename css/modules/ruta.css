@@ -103,3 +103,8 @@
 .ruta-btn--check { background: transparent; color: var(--text-secondary); }
 .ruta-step.is-done .ruta-btn--check { border-color: rgba(74, 222, 128, 0.55); color: #4ade80; }
 .ruta-btn--check[disabled] { opacity: 0.65; cursor: default; }
+
+/* Siguiente paso (recordatorio dentro de la app) */
+.ruta-next { max-width: 860px; margin: 1rem auto 0; padding: .9rem 1.1rem; border: 1px solid var(--accent-cyan); border-radius: var(--radius-md); background: var(--bg-surface); display: flex; align-items: center; gap: .7rem; flex-wrap: wrap; }
+.ruta-next[hidden] { display: none; }
+.ruta-next-label { color: var(--accent-cyan); font-weight: 700; }

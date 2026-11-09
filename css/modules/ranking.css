@@ -1,0 +1,18 @@
+/* NVISION · Ranking del sitio */
+.rank-hero { text-align: center; padding: 3.2rem 1.25rem 1.4rem; }
+.rank-hero h1 { font-family: var(--font-heading); font-size: clamp(2.4rem, 6vw, 3.6rem); letter-spacing: .04em; margin: .35rem 0 .5rem; }
+.rank-sub { color: var(--text-secondary); max-width: 620px; margin: 0 auto; }
+.rank-wrap { max-width: 720px; margin: 0 auto; padding: 1.4rem 1.25rem 3rem; }
+.rank-state { border: 1px dashed var(--border-subtle); border-radius: var(--radius-md); padding: 1.2rem 1.3rem; color: var(--text-secondary); text-align: center; background: var(--bg-surface); }
+.rank-table { width: 100%; border-collapse: collapse; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); overflow: hidden; }
+.rank-table td { padding: .8rem 1rem; border-top: 1px solid var(--border-subtle); vertical-align: middle; }
+.rank-table tr:first-child td { border-top: none; }
+.rank-pos { font-family: var(--font-heading); font-size: 1.35rem; color: var(--accent-cyan); width: 52px; text-align: center; }
+.rank-who { display: inline-flex; align-items: center; gap: .6rem; }
+.rank-who .avatar-chip { width: 34px; height: 34px; font-size: .95rem; }
+.rank-pts { text-align: right; font-weight: 800; font-size: 1.05rem; white-space: nowrap; }
+.rank-pts span { color: var(--text-muted); font-weight: 600; font-size: .82rem; }
+.rank-you { background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan)); color: #fff; font-size: .7rem; font-weight: 800; letter-spacing: .05em; padding: .16rem .5rem; border-radius: 999px; text-transform: uppercase; }
+.rank-me td { background: rgba(56, 189, 248, .08); }
+.rank-formula { color: var(--text-muted); text-align: center; font-size: .9rem; margin-top: 1.1rem; }
+.rank-cta { text-align: center; margin-top: 1.4rem; }

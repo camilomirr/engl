@@ -7,8 +7,8 @@
   var lang = (localStorage.getItem('user_lang') || 'es').toLowerCase().indexOf('en') === 0 ? 'en' : 'es';
 
   var T = {
-    es: { step: 'Paso', go: 'Ir a la actividad', done: '✓ Completado', mark: 'Marcar completado', auto: 'AUTO', autoPending: 'Se marca solo al completarlo', of: 'de', resetQ: '¿Reiniciar toda la ruta? Se borran las marcas de este equipo.' },
-    en: { step: 'Step', go: 'Go to the activity', done: '✓ Completed', mark: 'Mark as done', auto: 'AUTO', autoPending: 'It checks itself when you complete it', of: 'of', resetQ: 'Reset the whole path? The checkmarks on this device will be cleared.' }
+    es: { step: 'Paso', go: 'Ir a la actividad', done: '✓ Completado', mark: 'Marcar completado', auto: 'AUTO', autoPending: 'Se marca solo al completarlo', of: 'de', nextLabel: 'Tu siguiente paso', resetQ: '¿Reiniciar toda la ruta? Se borran las marcas de este equipo.' },
+    en: { step: 'Step', go: 'Go to the activity', done: '✓ Completed', mark: 'Mark as done', auto: 'AUTO', autoPending: 'It checks itself when you complete it', of: 'of', nextLabel: 'Your next step', resetQ: 'Reset the whole path? The checkmarks on this device will be cleared.' }
   }[lang];
 
   var STEPS = [
@@ -114,6 +114,16 @@
     document.getElementById('ruta-count').textContent = doneCount + ' ' + T.of + ' ' + STEPS.length + ' · ' + pct + '%';
     document.getElementById('ruta-fill').style.width = pct + '%';
     document.getElementById('ruta-done-msg').classList.toggle('on', doneCount === STEPS.length);
+    var nextBox = document.getElementById('ruta-next');
+    if (nextBox) {
+      var nextStep = null;
+      for (var ni = 0; ni < STEPS.length; ni++) { if (!isDone(STEPS[ni])) { nextStep = STEPS[ni]; break; } }
+      if (nextStep) {
+        nextBox.hidden = false;
+        nextBox.innerHTML = '<span class="ruta-next-label">' + T.nextLabel + ':</span> <b></b> <a class="ruta-btn" href="' + nextStep.href + '">' + T.go + '</a>';
+        nextBox.querySelector('b').textContent = nextStep.t[lang];
+      } else nextBox.hidden = true;
+    }
   }
 
   document.getElementById('ruta-reset').addEventListener('click', function () {

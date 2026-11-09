@@ -11,7 +11,7 @@
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <title data-i18n="page_title_cuenta">NVISION - Mi cuenta</title>
   <!-- Hojas de estilo modular -->
-  <link rel="stylesheet" href="css/styles.css?v=35">
+  <link rel="stylesheet" href="css/styles.css?v=36">
   <!-- SEO, iconos y vista previa al compartir (Open Graph / Twitter) -->
   <meta name="description" content="Mi cuenta NVISION: crea tu cuenta para guardar tu progreso de aprendizaje en la nube y recuperarlo en cualquier equipo.">
   <meta name="theme-color" content="#0a0e17">
@@ -95,6 +95,8 @@
               <li><a href="mantenimiento-software.html" data-i18n="nav_ms">Mantenimiento por software</a></li>
               <li><a href="ruta.html" data-i18n="nav_route">Ruta de aprendizaje</a></li>
               <li><a href="examenes.html" data-i18n="nav_exams">Exámenes y certificados</a></li>
+              <li><a href="logros.html" data-i18n="nav_logros">Logros</a></li>
+              <li><a href="ranking.html" data-i18n="nav_ranking">Ranking</a></li>
             </ul>
           </li>
           <li class="nav-item-dropdown">
@@ -213,6 +215,8 @@
         <button class="cuenta-btn" id="cuenta-submit" type="submit" data-i18n="cuenta_login_btn">Entrar</button>
       </form>
       <button class="cuenta-switch" id="cuenta-switch" type="button" data-i18n="cuenta_switch_reg">¿No tienes cuenta? Regístrate</button>
+      <div class="cuenta-divider"><span data-i18n="cuenta_or">o</span></div>
+      <button class="cuenta-btn cuenta-google" id="cuenta-google" type="button"><svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 8 3l5.7-5.7C34.3 6.1 29.3 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.3-.1-2.6-.4-3.9z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 8 3l5.7-5.7C34.3 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C36.9 39.2 44 34 44 24c0-1.3-.1-2.6-.4-3.9z"/></svg><span data-i18n="cuenta_google">Continuar con Google</span></button>
     </section>
 
     <section class="cuenta-card" id="cuenta-panel" hidden>
@@ -224,6 +228,17 @@
         <div class="avatar-grid" id="avatar-grid-panel"></div>
         <button class="cuenta-switch" id="cuenta-avatar-remove" type="button" hidden data-i18n="cuenta_avatar_remove">Quitar mi foto</button>
       </div>
+      <p class="cuenta-next" id="cuenta-next"></p>
+      <div class="cuenta-logros" id="cuenta-logros"></div>
+      <div class="cuenta-actions">
+        <button class="cuenta-btn cuenta-btn--ghost" id="cuenta-export" type="button" data-i18n="cuenta_export">Exportar mi progreso</button>
+        <button class="cuenta-btn cuenta-btn--ghost" id="cuenta-import-btn" type="button" data-i18n="cuenta_import">Importar progreso</button>
+        <input type="file" id="cuenta-import-file" accept="application/json,.json" hidden>
+      </div>
+      <div class="cuenta-actions">
+        <button class="cuenta-btn cuenta-btn--ghost" id="cuenta-rank" type="button" data-i18n="cuenta_rank_btn">Publicar mi puntaje en el ranking</button>
+      </div>
+      <p class="cuenta-sync-state" id="cuenta-rank-state"></p>
       <div class="cuenta-actions">
         <button class="cuenta-btn" id="cuenta-sync" type="button" data-i18n="cuenta_sync_btn">Sincronizar ahora</button>
         <button class="cuenta-btn cuenta-btn--ghost" id="cuenta-logout" type="button" data-i18n="cuenta_logout">Cerrar sesión</button>
@@ -241,8 +256,9 @@
 
   <!-- Script interactivo bilingüe y menú móvil -->
   <script src="js/main.js?v=20"></script>
-  <script src="js/site-search.js?v=4"></script>
+  <script src="js/site-search.js?v=6"></script>
   <script src="js/equipo-widget.js?v=15" defer></script>
-  <script src="js/cuenta.js?v=5"></script>
+  <script src="js/logros.js?v=1"></script>
+  <script src="js/cuenta.js?v=6"></script>
 </body>
 </html>
