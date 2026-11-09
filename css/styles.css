@@ -69,3 +69,6 @@
 /* 21. Avatares de cuenta */
 @import url('modules/avatar.css?v=2');
 
+/* 22. Pulido móvil (al final a propósito) */
+@import url('modules/mobile.css?v=2');
+
