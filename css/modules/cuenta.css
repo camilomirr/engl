@@ -97,6 +97,10 @@
 .cuenta-google { display: flex; align-items: center; justify-content: center; gap: .6rem; width: 100%; background: #ffffff; color: #1f1f1f; border: 1px solid #dadce0; box-shadow: var(--shadow-sm); }
 .cuenta-google svg { width: 20px; height: 20px; flex: none; }
 .cuenta-google:hover { background: #f8f9fa; border-color: #dadce0; color: #1f1f1f; transform: translateY(-1px); box-shadow: var(--shadow-md); }
+/* En modo claro el botón principal es azul oscuro, así que el de Google
+   también queda oscuro y sus letras van en blanco para que se lean. */
+[data-theme="light"] .cuenta-google { background: #0f172a; color: #ffffff; border-color: #0f172a; }
+[data-theme="light"] .cuenta-google:hover { background: #1e293b; border-color: #1e293b; color: #ffffff; }
 
 /* ---------- Panel: perfil y estadísticas ---------- */
 .cuenta-profile { padding-bottom: 1.2rem; border-bottom: 1px solid var(--border-subtle); }
