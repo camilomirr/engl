@@ -139,20 +139,35 @@
 .account-btn { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
 
 /* ---------- Selector de avatar (registro y panel) ---------- */
-.avatar-grid { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+.cuenta-avatar-box { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.1rem 1.15rem; }
+.cuenta-avatar-h { margin: 0 0 0.85rem; font-size: 1.02rem; font-weight: 700; color: var(--text-primary); }
+.avatar-preview { display: flex; align-items: center; gap: 1rem; padding: 0.85rem 1rem; margin-bottom: 0.95rem; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); }
+.avatar-preview-chip { flex: none; display: flex; }
+.avatar-preview .nv-avatar { width: 88px; height: 88px; font-size: 2.3rem; box-shadow: 0 8px 22px rgba(0, 0, 0, 0.35), inset 0 2px 4px rgba(255, 255, 255, 0.35), inset 0 -4px 8px rgba(0, 0, 0, 0.18); }
+.avatar-preview-text { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; }
+.avatar-preview-name { font-size: 1.08rem; font-weight: 800; letter-spacing: -0.01em; color: var(--text-primary); }
+.avatar-preview-sub { font-size: 0.83rem; color: var(--text-secondary); }
+.avatar-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 0.7rem; }
 .avatar-opt {
-  display: flex; flex-direction: column; align-items: center; gap: 0.35rem;
-  padding: 0.6rem 0.55rem 0.5rem; min-width: 78px;
-  background: var(--bg-surface); border: 1px solid var(--border-subtle);
+  position: relative; display: flex; flex-direction: column; align-items: center; gap: 0.45rem;
+  padding: 0.85rem 0.4rem 0.7rem;
+  background: var(--bg-surface); border: 1.5px solid var(--border-subtle);
   border-radius: var(--radius-md); color: var(--text-secondary);
-  font: inherit; font-size: 0.78rem; cursor: pointer;
-  transition: var(--transition);
+  font: inherit; font-size: 0.82rem; font-weight: 600; cursor: pointer;
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, color 0.18s ease;
 }
-.avatar-opt .nv-avatar { width: 52px; height: 52px; font-size: 1.4rem; }
-.avatar-opt:hover { border-color: var(--accent-cyan); color: var(--text-primary); transform: translateY(-2px); }
-.avatar-opt.sel { border-color: var(--accent-cyan); box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.35), 0 6px 18px rgba(56, 189, 248, 0.22); color: var(--text-primary); }
+.avatar-opt .nv-avatar { width: 64px; height: 64px; font-size: 1.7rem; }
+.avatar-opt:hover { border-color: var(--accent-cyan); color: var(--text-primary); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(2, 132, 199, 0.18); }
+.avatar-opt.sel { border-color: var(--accent-cyan); background: rgba(56, 189, 248, 0.10); box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.35), 0 8px 20px rgba(56, 189, 248, 0.20); color: var(--text-primary); }
+.avatar-opt.sel::after { content: "✓"; position: absolute; top: -8px; right: -8px; width: 23px; height: 23px; border-radius: 50%; background: linear-gradient(135deg, #0284c7, #38bdf8); color: #fff; font-size: 0.78rem; font-weight: 800; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(2, 132, 199, 0.5); }
 .nv-avatar--photo-empty { background: var(--bg-surface); border: 1.5px dashed var(--border-subtle); color: var(--text-secondary); }
-.cuenta-avatar-box .cuenta-switch { margin-top: 0.55rem; }
+.nv-avatar--photo-empty svg { width: 26px; height: 26px; }
+.cuenta-avatar-box .cuenta-switch { margin-top: 0.7rem; }
+@media (max-width: 480px) {
+  .avatar-grid { grid-template-columns: repeat(3, 1fr); gap: 0.55rem; }
+  .avatar-opt .nv-avatar { width: 58px; height: 58px; }
+  .avatar-preview .nv-avatar { width: 76px; height: 76px; font-size: 2rem; }
+}
 
 /* ---------- Nombre y apellido (registro) ---------- */
 #cuenta-name-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; }

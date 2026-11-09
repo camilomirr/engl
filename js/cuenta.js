@@ -527,6 +527,20 @@
     pb.innerHTML = (customImg ? window.NVISION_avatarChip('custom', email, customImg) : '<span class="nv-avatar nv-avatar--photo-empty">' + PHOTO_SVG + '</span>') + '<span>' + T.avatarPhoto + '</span>';
     pb.addEventListener('click', function () { onPick('custom'); });
     container.appendChild(pb);
+    updateAvatarPreview(container, currentId, customImg);
+  }
+  function updateAvatarPreview(container, currentId, customImg) {
+    if (!container || !container.closest) return;
+    var box = container.closest('.cuenta-field, .cuenta-avatar-box');
+    if (!box) return;
+    var pv = box.querySelector('.avatar-preview');
+    if (!pv || !window.NVISION_avatarChip) return;
+    var chip = pv.querySelector('.avatar-preview-chip');
+    var nm = pv.querySelector('.avatar-preview-name');
+    var sess = getSession();
+    var email = (sess && sess.email) || ($('cuenta-email') ? $('cuenta-email').value : '') || '';
+    if (chip) chip.innerHTML = window.NVISION_avatarChip(currentId, email, customImg);
+    if (nm) nm.textContent = avatarName(currentId);
   }
   function refreshRemoveBtn() {
     var btn = $('cuenta-avatar-remove');
