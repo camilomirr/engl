@@ -59,6 +59,16 @@
   function setSession(s) { try { localStorage.setItem(SESSION_KEY, JSON.stringify(s)); } catch (e) {} }
   function clearSession() { try { localStorage.removeItem(SESSION_KEY); } catch (e) {} }
 
+  // Regreso opcional tras iniciar sesión: cuenta.html?next=examenes.html
+  // (solo destinos internos de la lista, nada externo).
+  function nextTarget() {
+    try {
+      var n = new URLSearchParams(location.search).get('next');
+      return ['examenes.html', 'ruta.html', 'index.html'].indexOf(n) >= 0 ? n : null;
+    } catch (e) { return null; }
+  }
+  function goNext() { var n = nextTarget(); if (n) { location.href = n; return true; } return false; }
+
   function api(path, opts) {
     opts = opts || {};
     var headers = { 'apikey': ANON_KEY, 'Content-Type': 'application/json' };
@@ -212,7 +222,7 @@
           if (r.status === 200 && r.data) {
             if (r.data.access_token) {
               var s = saveSessionFromAuth(r.data, email);
-              showPanel(s); syncNow(s, true);
+              showPanel(s); if (!goNext()) syncNow(s, true);
             } else { msg('ok', T.confirmEmail); mode = 'login'; renderMode(); }
           } else if (r.data && /already|registered/i.test(r.data.msg || r.data.error_description || '')) msg('err', T.userExists);
           else msg('err', T.netErr);
@@ -226,7 +236,7 @@
             var s = saveSessionFromAuth(r.data, email);
             msg('ok', T.welcomeBack);
             showPanel(s);
-            syncNow(s, true);
+            if (!goNext()) syncNow(s, true);
           } else msg('err', T.badLogin);
         })
         .catch(function () { done(); msg('err', T.netErr); });
@@ -245,7 +255,7 @@
 
   renderMode();
   ensureSession().then(function (s) {
-    if (s) { showPanel(s); syncNow(s, true); }
+    if (s) { showPanel(s); if (!goNext()) syncNow(s, true); }
     else showAuth();
   });
 })();

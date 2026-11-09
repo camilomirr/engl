@@ -4,6 +4,26 @@
   'use strict';
 
   var KEY = 'nvision_examenes_v1';
+
+  // Regla del sitio: para presentar un examen y descargar el certificado
+  // hay que tener una cuenta con la sesión iniciada (la sesión la guarda
+  // Mi cuenta en nvision_session_v1 al registrarse o iniciar sesión).
+  var SESSION_KEY = 'nvision_session_v1';
+  function hasSession() {
+    try {
+      var s = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null');
+      return !!(s && ((s.access && s.exp > Date.now()) || s.refresh));
+    } catch (e) { return false; }
+  }
+  function showGate() {
+    var b = document.getElementById('exam-gate-banner');
+    if (!b) return;
+    b.hidden = false;
+    b.classList.remove('pulse');
+    void b.offsetWidth;
+    b.classList.add('pulse');
+    b.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
   var PASS = 70;
   var lang = (localStorage.getItem('user_lang') || 'es').toLowerCase().indexOf('en') === 0 ? 'en' : 'es';
 
@@ -242,6 +262,7 @@
   }
 
   function startExam(exam) {
+    if (!hasSession()) { showGate(); return; }
     current = exam;
     document.getElementById('exam-run-title').textContent = exam.icon + ' ' + exam.name[lang];
     form.innerHTML = '';
@@ -382,9 +403,11 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
   document.getElementById('exam-cert-btn').addEventListener('click', function () {
+    if (!hasSession()) { showGate(); return; }
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawCertificate);
     else drawCertificate();
   });
 
+  if (!hasSession()) { var gb = document.getElementById('exam-gate-banner'); if (gb) gb.hidden = false; }
   renderCards();
 })();
