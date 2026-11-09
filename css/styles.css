@@ -63,3 +63,6 @@
 /* 19. Barra de progreso superior (scroll + carga) */
 @import url('modules/scroll-progress.css?v=1');
 
+/* 20. PWA (botón de instalar) */
+@import url('modules/pwa.css?v=1');
+

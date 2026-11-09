@@ -1,0 +1,4 @@
+/* NVISION - PWA: botón de instalar en el encabezado */
+.pwa-install-btn { align-items: center; justify-content: center; }
+.pwa-install-btn:not([hidden]) { display: inline-flex; }
+.pwa-install-btn[hidden] { display: none !important; }

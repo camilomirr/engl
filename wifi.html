@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title data-i18n="page_title_wifi">NVISION - WiFi Avanzado</title>
   <!-- Hojas de estilo modular -->
-  <link rel="stylesheet" href="css/styles.css?v=28">
+  <link rel="stylesheet" href="css/styles.css?v=29">
   <!-- SEO, iconos y vista previa al compartir (Open Graph / Twitter) -->
   <meta name="description" content="WiFi avanzado en NVISION: estándares, bandas, canales, seguridad y cómo mejorar la señal de tu red inalámbrica.">
   <meta name="theme-color" content="#0a0e17">
@@ -13,6 +13,11 @@
   <link rel="icon" href="/favicon.ico" sizes="any">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="NVISION">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="NVISION">
   <meta property="og:locale" content="es_CO">
@@ -114,6 +119,9 @@
         <a id="account-link" class="theme-switch-btn account-btn" href="cuenta.html" title="Mi cuenta" aria-label="Mi cuenta" data-i18n-title="nav_account">
           <span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span>
         </a>
+        <button id="pwa-install-btn" class="theme-switch-btn pwa-install-btn" type="button" title="Instalar app" aria-label="Instalar app" data-i18n-title="nav_install" hidden>
+          <span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></span>
+        </button>
         <!-- Selector desplegable bilingüe de Idioma (Español / Inglés) -->
         <div class="lang-dropdown-wrapper" id="lang-dropdown-wrapper">
           <button id="lang-toggle" class="lang-dropdown-btn" type="button" aria-haspopup="true" aria-expanded="false" title="Seleccionar idioma / Select language">
@@ -300,7 +308,7 @@
   </footer>
 
   <!-- Script interactivo bilingüe y menú móvil -->
-  <script src="js/main.js?v=14"></script>
+  <script src="js/main.js?v=15"></script>
   <script src="js/site-search.js?v=4"></script>
   <script src="js/equipo-widget.js?v=14" defer></script>
 </body>

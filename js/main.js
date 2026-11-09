@@ -189,6 +189,7 @@ const translations = {
     topol_title: "Topologías de Redes",
     nav_switch3d: "El switch por dentro",
     nav_wifi: "WiFi Avanzado",
+    nav_install: "Instalar app",
     nav_tools: "Herramientas de redes",
     nav_route: "Ruta de aprendizaje",
     nav_exams: "Exámenes y certificados",
@@ -1258,6 +1259,7 @@ const translations = {
     topol_title: "Network Topologies",
     nav_switch3d: "Inside a switch",
     nav_wifi: "Advanced WiFi",
+    nav_install: "Install app",
     nav_tools: "Network tools",
     nav_route: "Learning path",
     nav_exams: "Exams & certificates",
@@ -4518,5 +4520,45 @@ function setupNetworkSimulator() {
     if (url.pathname === location.pathname && url.hash) return; // ancla misma página
     fill.style.width = '';
     bar.classList.add('is-loading');
+  });
+})();
+
+/* =========================================================
+   NVISION PWA — registro del service worker y botón de instalar.
+   El botón (#pwa-install-btn) solo aparece cuando el navegador
+   ofrece la instalación (beforeinstallprompt, Chrome/Android).
+   En iOS se instala desde Compartir > Añadir a pantalla de inicio.
+   ========================================================= */
+(function () {
+  'use strict';
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('/sw.js').catch(function () { /* el sitio funciona igual sin PWA */ });
+    });
+  }
+  var deferred = null;
+  function refreshBtn() {
+    var btn = document.getElementById('pwa-install-btn');
+    if (btn) btn.hidden = !deferred;
+  }
+  window.addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault();
+    deferred = e;
+    refreshBtn();
+  });
+  window.addEventListener('appinstalled', function () {
+    deferred = null;
+    refreshBtn();
+  });
+  document.addEventListener('DOMContentLoaded', function () {
+    var btn = document.getElementById('pwa-install-btn');
+    if (!btn) return;
+    btn.hidden = true;
+    btn.addEventListener('click', function () {
+      if (!deferred) return;
+      deferred.prompt();
+      deferred.userChoice.then(function () { deferred = null; refreshBtn(); });
+    });
+    refreshBtn();
   });
 })();
