@@ -168,7 +168,8 @@ const translations = {
   es: {
     badge_hero: "Estructura de Redes",
     hero_title: "Arquitectura y Evolución de los Computadores",
-    hero_desc: "Una base interactiva diseñada para explorar la historia, componentes y funcionamiento del hardware computacional y su impacto en las redes.",
+    hero_cta_start: "Empieza tu ruta gratis",
+    hero_desc: "Aprende hardware, redes y mantenimiento de PC desde cero, gratis y en español: simuladores interactivos, un taller 3D, exámenes y certificado al aprobar.",
     btn_timeline: "Línea de Tiempo",
     btn_components: "Ver Componentes",
     btn_see_full_history: "Ver historia completa y pioneros",
@@ -343,6 +344,14 @@ const translations = {
     page_title_ruta: "NVISION - Ruta de aprendizaje",
     page_title_examenes: "NVISION - Exámenes y certificados",
     page_title_cuenta: "NVISION - Mi cuenta",
+    page_title_apuntes: "NVISION - Mis apuntes",
+    page_title_comparador: "NVISION - Comparador de componentes",
+    page_title_ingles: "NVISION - Inglés técnico",
+    page_title_logros: "NVISION - Logros y medallas",
+    page_title_perfil: "NVISION - Perfil público",
+    page_title_ranking: "NVISION - Ranking",
+    page_title_terminal: "NVISION - Terminal de redes",
+    page_title_verificar: "NVISION - Verificar certificado",
     tools_title: "Herramientas de Redes",
     tools_sub: "Calcula subredes y convierte entre binario, decimal y hexadecimal sin salir de NVISION.",
     subnet_title: "Calculadora de subredes",
@@ -856,6 +865,9 @@ const translations = {
     pc3d_parttypes_psu: "ATX · SFX · Bronze · Silver · Gold · Platinum · Titanium",
     pc3d_parttypes_optical: "CD · DVD · Blu-ray · SATA",
     page_title_index: "NVISION - Hardware y Computadores",
+    page_h1_hardware: "Hardware y Evolución",
+    page_h1_redes: "Redes y Simulación",
+    page_h1_recursos: "Recursos de Aprendizaje",
     page_title_hardware: "NVISION - Hardware y Evolución",
     page_title_redes: "NVISION - Redes y Simulación",
     page_title_recursos: "NVISION - Recursos de Aprendizaje",
@@ -1298,7 +1310,8 @@ const translations = {
   en: {
     badge_hero: "Network Structure",
     hero_title: "Computer Architecture and Evolution",
-    hero_desc: "An interactive baseline designed to explore the history, hardware components, and networking foundation of computers.",
+    hero_cta_start: "Start your free learning path",
+    hero_desc: "Learn PC hardware, networks and maintenance from scratch, free and in Spanish: interactive simulators, a 3D workshop, exams and a certificate when you pass.",
     btn_timeline: "Timeline",
     btn_components: "View Components",
     btn_see_full_history: "View full history and pioneers",
@@ -1465,6 +1478,14 @@ const translations = {
     page_title_ruta: "NVISION - Learning path",
     page_title_examenes: "NVISION - Exams & certificates",
     page_title_cuenta: "NVISION - My account",
+    page_title_apuntes: "NVISION - My notes",
+    page_title_comparador: "NVISION - Component comparator",
+    page_title_ingles: "NVISION - Technical English",
+    page_title_logros: "NVISION - Achievements and badges",
+    page_title_perfil: "NVISION - Public profile",
+    page_title_ranking: "NVISION - Ranking",
+    page_title_terminal: "NVISION - Network terminal",
+    page_title_verificar: "NVISION - Verify certificate",
     tools_title: "Network Tools",
     tools_sub: "Calculate subnets and convert between binary, decimal and hexadecimal without leaving NVISION.",
     subnet_title: "Subnet calculator",
@@ -1986,6 +2007,9 @@ const translations = {
     btn_view_component_img: "View image and info",
     btn_hide_component_img: "Hide image",
     page_title_index: "NVISION - Hardware and Computers",
+    page_h1_hardware: "Hardware and Evolution",
+    page_h1_redes: "Networks and Simulation",
+    page_h1_recursos: "Learning Resources",
     page_title_hardware: "NVISION - Hardware and Evolution",
     page_title_redes: "NVISION - Networks and Simulation",
     page_title_recursos: "NVISION - Learning Resources",
@@ -5175,3 +5199,10 @@ function setupNetworkSimulator() {
   window.NVISION_renderAccountChip = renderAccountChip;
 })();
 
+
+/* PWA: registro del service worker para que NVISION funcione sin conexión */
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function () {
+    navigator.serviceWorker.register("/sw.js").catch(function () {});
+  });
+}

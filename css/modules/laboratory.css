@@ -238,6 +238,11 @@
 }
 
 /* Footer */
+.footer-nav { display: flex; flex-wrap: wrap; gap: 0.4rem 1.1rem; justify-content: center; margin-bottom: 0.5rem; }
+.footer-nav a { color: var(--text-secondary); text-decoration: none; font-weight: 600; }
+.footer-nav a:hover { color: var(--accent-blue); text-decoration: underline; }
+.footer-contact { margin: 0.2rem 0 0.5rem; }
+.footer-contact a { color: var(--accent-blue); }
 .site-footer {
   border-top: 1px solid var(--border-subtle);
   background: var(--footer-bg);

@@ -601,6 +601,8 @@
     var shareRow = document.getElementById('exam-share');
     var wa = document.getElementById('cert-wa');
     if (wa) wa.href = 'https://wa.me/?text=' + encodeURIComponent(text + ' https://nvision.social/examenes.html');
+    var li = document.getElementById('cert-li');
+    if (li) li.href = 'https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent('https://nvision.social/verificar.html');
     var nat = document.getElementById('cert-share-native');
     if (nat) nat.onclick = function () {
       var url = 'https://nvision.social/examenes.html';

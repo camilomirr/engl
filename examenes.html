@@ -37,6 +37,9 @@
   <meta name="twitter:title" content="NVISION - Exámenes y certificados">
   <meta name="twitter:description" content="Exámenes de NVISION: pon a prueba lo que sabes de hardware, redes, mantenimiento y WiFi, y descarga tu certificado con tu nombre al aprobar.">
   <meta name="twitter:image" content="https://nvision.social/assets/og-image.jpg">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"Course","name":"Exámenes y certificados NVISION","description":"Exámenes en línea de hardware, redes y mantenimiento de PC con certificado verificable al aprobar.","provider":{"@type":"Organization","name":"NVISION","url":"https://nvision.social/"},"inLanguage":"es","isAccessibleForFree":true,"url":"https://nvision.social/examenes.html"}
+  </script>
 </head>
 <body>
 
@@ -227,6 +230,7 @@
         <div class="exam-share" id="exam-share" hidden>
           <button type="button" class="exam-share-btn native" id="cert-share-native">Compartir certificado</button>
           <a class="exam-share-btn wa" id="cert-wa" href="#" target="_blank" rel="noopener">WhatsApp</a>
+          <a class="exam-share-btn li" id="cert-li" href="#" target="_blank" rel="noopener">LinkedIn</a>
         </div>
         <canvas id="cert-canvas" width="1400" height="990" hidden></canvas>
       </div>
@@ -241,12 +245,22 @@
 </main>
 
   <footer class="site-footer">
+    <nav class="footer-nav" aria-label="Enlaces del sitio">
+      <a href="index.html">Inicio</a>
+      <a href="ruta.html">Ruta de aprendizaje</a>
+      <a href="examenes.html">Exámenes y certificados</a>
+      <a href="ranking.html">Ranking</a>
+      <a href="verificar.html">Verificar certificado</a>
+      <a href="privacidad.html">Privacidad</a>
+    </nav>
+    <p class="footer-contact">¿Dudas o sugerencias? Conoce el proyecto en su <a href="https://github.com/camilomirr/engl" target="_blank" rel="noopener">repositorio de GitHub</a> o gestiona tu cuenta en <a href="cuenta.html">Mi cuenta</a>.</p>
     <p>© 2026 - <span data-i18n="footer_text">NVISION</span></p>
   </footer>
 
   <!-- Script interactivo bilingüe y menú móvil -->
-  <script src="js/main.js?v=80"></script>
+  <script src="js/main.js?v=81"></script>
   <script src="js/site-search.js?v=80"></script>
+  <script src="js/analytics.js?v=1" defer></script>
   <script src="js/equipo-widget.js?v=17" defer></script>
   <script src="js/examenes.js?v=80"></script>
 </body>
