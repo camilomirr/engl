@@ -4761,6 +4761,68 @@ function setupNetworkSimulator() {
       '<circle cx="36" cy="36" r="3" fill="#a21caf"/>' +
       '<circle cx="30" cy="42" r="1.5" fill="#a21caf" fill-opacity="0.5"/>' +
       '<circle cx="35" cy="42" r="1.5" fill="#a21caf" fill-opacity="0.5"/>'
+    ) },
+    { id: 'monitor', es: 'Monitor', en: 'Monitor', svg: svg(
+      '<rect x="10" y="12" width="44" height="30" rx="4" fill="#0f172a"/>' +
+      '<rect x="10" y="12" width="44" height="30" rx="4" fill="none" stroke="#ffffff" stroke-opacity="0.3" stroke-width="1.5"/>' +
+      '<rect x="18" y="30" width="5" height="8" rx="1" fill="#22d3ee"/>' +
+      '<rect x="26" y="26" width="5" height="12" rx="1" fill="#22d3ee"/>' +
+      '<rect x="34" y="22" width="5" height="16" rx="1" fill="#22d3ee"/>' +
+      '<rect x="42" y="28" width="5" height="10" rx="1" fill="#ffffff" fill-opacity="0.85"/>' +
+      '<path d="M29 42h6l2 6H27z" fill="#ffffff"/>' +
+      '<rect x="22" y="48" width="20" height="4" rx="2" fill="#ffffff"/>'
+    ) },
+    { id: 'server', es: 'Servidor', en: 'Server', svg: svg(
+      '<rect x="16" y="10" width="32" height="44" rx="5" fill="#0f172a"/>' +
+      '<rect x="16" y="10" width="32" height="44" rx="5" fill="none" stroke="#ffffff" stroke-opacity="0.3" stroke-width="1.5"/>' +
+      '<circle cx="23" cy="19" r="2.2" fill="#34d399"/>' +
+      '<rect x="29" y="18" width="13" height="2.5" rx="1.25" fill="#ffffff" fill-opacity="0.6"/>' +
+      '<circle cx="23" cy="31" r="2.2" fill="#22d3ee"/>' +
+      '<rect x="29" y="30" width="13" height="2.5" rx="1.25" fill="#ffffff" fill-opacity="0.6"/>' +
+      '<circle cx="23" cy="43" r="2.2" fill="#fbbf24"/>' +
+      '<rect x="29" y="42" width="13" height="2.5" rx="1.25" fill="#ffffff" fill-opacity="0.6"/>' +
+      '<circle cx="24" cy="50" r="1.3" fill="#ffffff" fill-opacity="0.5"/>' +
+      '<circle cx="29" cy="50" r="1.3" fill="#ffffff" fill-opacity="0.5"/>' +
+      '<circle cx="34" cy="50" r="1.3" fill="#ffffff" fill-opacity="0.5"/>'
+    ) },
+    { id: 'globe', es: 'Mundo', en: 'Globe', svg: svg(
+      '<circle cx="32" cy="32" r="22" fill="#ffffff"/>' +
+      '<ellipse cx="32" cy="32" rx="10" ry="22" fill="none" stroke="#65a30d" stroke-width="2"/>' +
+      '<ellipse cx="32" cy="32" rx="22" ry="9" fill="none" stroke="#65a30d" stroke-width="2"/>' +
+      '<path d="M10 32h44" stroke="#65a30d" stroke-width="2"/>' +
+      '<ellipse cx="32" cy="32" rx="28" ry="10" fill="none" stroke="#ffffff" stroke-opacity="0.8" stroke-width="2" transform="rotate(-20 32 32)"/>' +
+      '<circle cx="55" cy="22" r="2.5" fill="#ffffff"/>'
+    ) },
+    { id: 'trophy', es: 'Trofeo', en: 'Trophy', svg: svg(
+      '<path d="M20 14c-6 0-8 3-7 7 1 3 4 4 7 4M44 14c6 0 8 3 7 7-1 3-4 4-7 4" stroke="#ffffff" stroke-width="4" stroke-linecap="round" fill="none"/>' +
+      '<path d="M20 10h24v10c0 8-5 13-12 13s-12-5-12-13V10z" fill="#ffffff"/>' +
+      '<path d="M32 15l1.5 3.5L37 20l-3.5 1.5L32 25l-1.5-3.5L27 20l3.5-1.5z" fill="#ca8a04"/>' +
+      '<rect x="29" y="33" width="6" height="8" fill="#ffffff"/>' +
+      '<rect x="22" y="41" width="20" height="5" rx="2" fill="#ffffff"/>' +
+      '<rect x="18" y="46" width="28" height="5" rx="2" fill="#ffffff" fill-opacity="0.9"/>'
+    ) },
+    { id: 'book', es: 'Libro', en: 'Book', svg: svg(
+      '<path d="M32 18C26 13 18 12 12 14v32c6-2 14-1 20 4V18z" fill="#ffffff"/>' +
+      '<path d="M32 18c6-5 14-6 20-4v32c-6-2-14-1-20 4V18z" fill="#ffffff" fill-opacity="0.85"/>' +
+      '<path d="M32 18v32" stroke="#dc2626" stroke-width="2"/>' +
+      '<path d="M16 24h10M16 30h10M16 36h10" stroke="#fca5a5" stroke-width="2" stroke-linecap="round"/>' +
+      '<path d="M38 24h10M38 30h10M38 36h10" stroke="#fca5a5" stroke-width="2" stroke-linecap="round"/>'
+    ) },
+    { id: 'music', es: 'Música', en: 'Music', svg: svg(
+      '<ellipse cx="24" cy="46" rx="6" ry="4.5" fill="#ffffff" transform="rotate(-20 24 46)"/>' +
+      '<rect x="29" y="14" width="3.5" height="32" fill="#ffffff"/>' +
+      '<path d="M32.5 14c8 2 10 8 8 14-2-6-5-9-8-10v-4z" fill="#ffffff"/>' +
+      '<ellipse cx="47" cy="40" rx="5" ry="4" fill="#ffffff" transform="rotate(-20 47 40)"/>' +
+      '<rect x="51" y="12" width="3" height="28" fill="#ffffff"/>' +
+      '<path d="M54 12c6 1.5 7.5 6 6 10.5-1.5-4.5-4-7-6-8v-2.5z" fill="#ffffff" fill-opacity="0.9"/>'
+    ) },
+    { id: 'headphones', es: 'Audífonos', en: 'Headphones', svg: svg(
+      '<path d="M14 38a18 18 0 0 1 36 0" stroke="#ffffff" stroke-width="5" stroke-linecap="round" fill="none"/>' +
+      '<rect x="10" y="34" width="10" height="17" rx="4" fill="#ffffff"/>' +
+      '<rect x="44" y="34" width="10" height="17" rx="4" fill="#ffffff"/>' +
+      '<rect x="13.5" y="38" width="3.5" height="9" rx="1.75" fill="#1d4ed8"/>' +
+      '<rect x="47" y="38" width="3.5" height="9" rx="1.75" fill="#1d4ed8"/>' +
+      '<path d="M49 51v2a5 5 0 0 1-5 5h-2" stroke="#ffffff" stroke-width="3" stroke-linecap="round" fill="none"/>'
     ) }
   ];
   function avatarChip(id, email, img) {
