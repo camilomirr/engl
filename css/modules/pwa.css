@@ -2,7 +2,9 @@
 
 /* Botón de instalar: píldora visible con icono + texto, no un icono
    más del encabezado. Así la descarga de la app se encuentra a
-   primera vista en cualquier página. */
+   primera vista en cualquier página. Lleva el mismo color sólido del
+   botón ENVIAR (.btn-primary) para coincidir con el diseño de la
+   página: #0284c7 en oscuro, #0f172a en claro. */
 .pwa-install-btn {
   align-items: center;
   justify-content: center;
@@ -11,8 +13,9 @@
   height: 38px;
   padding: 0 .95rem;
   border-radius: 999px;
-  border: 1px solid transparent;
-  background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+  border: 1px solid #0284c7;
+  background: #0284c7;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, .25);
   color: #fff;
   font-size: .9rem;
   font-weight: 600;
@@ -22,11 +25,20 @@
 .pwa-install-btn[hidden] { display: none !important; }
 .pwa-install-btn:hover {
   color: #fff;
-  background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
-  border-color: transparent;
+  background: #0369a1;
+  border-color: #0369a1;
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(2, 132, 199, .45);
-  filter: brightness(1.08);
+  box-shadow: 0 4px 14px rgba(2, 132, 199, .35);
+}
+[data-theme="light"] .pwa-install-btn {
+  background: #0f172a;
+  border-color: #0f172a;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, .12);
+}
+[data-theme="light"] .pwa-install-btn:hover {
+  background: #1e293b;
+  border-color: #1e293b;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, .18);
 }
 .pwa-install-btn .mono-icon svg { width: 18px; height: 18px; }
 .pwa-install-label { line-height: 1; }
@@ -71,16 +83,26 @@
   width: 100%;
   padding: .7rem 1rem;
   margin-bottom: 1rem;
-  border: 0;
+  border: 1px solid #0284c7;
   border-radius: 12px;
-  background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+  background: #0284c7;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, .25);
   color: #fff;
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
 }
 .pwa-modal-install[hidden] { display: none !important; }
-.pwa-modal-install:hover { filter: brightness(1.08); }
+.pwa-modal-install:hover { background: #0369a1; border-color: #0369a1; }
+[data-theme="light"] .pwa-modal-install {
+  background: #0f172a;
+  border-color: #0f172a;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, .12);
+}
+[data-theme="light"] .pwa-modal-install:hover {
+  background: #1e293b;
+  border-color: #1e293b;
+}
 .pwa-modal-steps details {
   border: 1px solid var(--border-subtle);
   border-radius: 12px;
