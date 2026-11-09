@@ -701,13 +701,11 @@
       // un correo con la parte local más larga hacía fallar el envío.
       var V2 = window.NVISION_validate;
       var name = V2 ? V2.cleanName(String(s.email || 'NVISION').split('@')[0], 60) : String(s.email || 'NVISION').split('@')[0].slice(0, 60);
-      // La foto que se publica en el ranking: la guardada en la cuenta
-      // (foto subida o foto de Google ya descargada) y, si no hay, la
-      // URL de la foto de Google. Solo vale si pasa la misma validación
-      // de la base (data: o lh3, 130000 caracteres como máximo); si el
-      // usuario eligió un personaje SVG, no se publica foto (ese manda).
-      // El avatar se publica como 'custom' cuando hay foto: sin eso el
-      // ranking muestra solo la inicial aunque la foto esté guardada.
+      // La foto se publica con rankingPhoto (la misma que usa el
+      // auto-sincronizado): foto guardada o URL de Google validada;
+      // con SVG elegido o foto quitada, no hay foto que publicar.
+      // El avatar se publica como 'custom' cuando hay foto, igual
+      // que en la sincronización, para que la fila quede coherente.
       var photo = rankingPhoto(s);
       window.NVISION_sbAuth('/rest/v1/site_ranking?on_conflict=user_id', {
         method: 'POST', token: s.access,
