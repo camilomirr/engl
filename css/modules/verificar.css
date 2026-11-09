@@ -2,7 +2,9 @@
 .verify-wrap { max-width: 640px; margin: 0 auto; padding: 0 1rem 3rem; }
 .verify-form { display: grid; gap: 0.9rem; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.2rem; }
 .verify-form label { display: grid; gap: 0.35rem; font-size: 0.85rem; color: var(--text-secondary); }
-.verify-form input, .verify-form select { padding: 0.6rem 0.7rem; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); background: var(--bg-main, #0a0e17); color: var(--text-primary); font: inherit; }
+.verify-form input, .verify-form select { padding: 0.6rem 0.7rem; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); background: var(--bg-deep); color: var(--text-primary); font: inherit; color-scheme: dark; }
+.verify-form input::placeholder { color: var(--text-muted); opacity: 1; }
+[data-theme="light"] .verify-form input, [data-theme="light"] .verify-form select { color-scheme: light; }
 .verify-result { margin-top: 1rem; border-radius: var(--radius-md); padding: 1rem 1.2rem; border: 1px solid var(--border-subtle); background: var(--bg-surface); }
 .verify-result.ok { border-color: #22c55e; }
 .verify-result.bad { border-color: #ef4444; }
