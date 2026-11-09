@@ -190,6 +190,16 @@ const translations = {
     nav_switch3d: "El switch por dentro",
     nav_wifi: "WiFi Avanzado",
     nav_install: "Instalar app",
+    pwa_modal_title: "Instala NVISION en tu dispositivo",
+    pwa_modal_sub: "Llévala como app: abre rápido, funciona sin conexión y casi no ocupa espacio.",
+    pwa_install_now: "Instalar ahora",
+    pwa_android_title: "Android (Chrome)",
+    pwa_android_steps: "<li>Toca el menú <b>⋮</b> de Chrome.</li><li>Elige <b>Instalar app</b> o <b>Añadir a pantalla de inicio</b>.</li><li>Confirma con <b>Instalar</b> y busca el icono de NVISION.</li>",
+    pwa_ios_title: "iPhone o iPad (Safari)",
+    pwa_ios_steps: "<li>Toca el botón <b>Compartir</b> (el cuadro con la flecha hacia arriba).</li><li>Elige <b>Añadir a pantalla de inicio</b>.</li><li>Toca <b>Añadir</b> y abre NVISION desde su icono.</li>",
+    pwa_desktop_title: "Computador (Chrome o Edge)",
+    pwa_desktop_steps: "<li>Abre el menú <b>⋮</b> del navegador.</li><li>Elige <b>Instalar NVISION</b> o <b>Guardar y compartir &gt; Instalar</b>.</li><li>Confirma con <b>Instalar</b>: se abre como app en su propia ventana.</li>",
+    pwa_close: "Cerrar",
     nav_tools: "Herramientas de redes",
     nav_route: "Ruta de aprendizaje",
     nav_exams: "Exámenes y certificados",
@@ -1265,6 +1275,16 @@ const translations = {
     nav_switch3d: "Inside a switch",
     nav_wifi: "Advanced WiFi",
     nav_install: "Install app",
+    pwa_modal_title: "Install NVISION on your device",
+    pwa_modal_sub: "Keep it as an app: it opens fast, works offline and barely takes any space.",
+    pwa_install_now: "Install now",
+    pwa_android_title: "Android (Chrome)",
+    pwa_android_steps: "<li>Tap Chrome's <b>⋮</b> menu.</li><li>Choose <b>Install app</b> or <b>Add to Home screen</b>.</li><li>Confirm with <b>Install</b> and look for the NVISION icon.</li>",
+    pwa_ios_title: "iPhone or iPad (Safari)",
+    pwa_ios_steps: "<li>Tap the <b>Share</b> button (the square with the arrow pointing up).</li><li>Choose <b>Add to Home Screen</b>.</li><li>Tap <b>Add</b> and open NVISION from its icon.</li>",
+    pwa_desktop_title: "Computer (Chrome or Edge)",
+    pwa_desktop_steps: "<li>Open the browser's <b>⋮</b> menu.</li><li>Choose <b>Install NVISION</b> or <b>Save and share &gt; Install</b>.</li><li>Confirm with <b>Install</b>: it opens as an app in its own window.</li>",
+    pwa_close: "Close",
     nav_tools: "Network tools",
     nav_route: "Learning path",
     nav_exams: "Exams & certificates",
@@ -4535,9 +4555,13 @@ function setupNetworkSimulator() {
 
 /* =========================================================
    NVISION PWA — registro del service worker y botón de instalar.
-   El botón (#pwa-install-btn) solo aparece cuando el navegador
-   ofrece la instalación (beforeinstallprompt, Chrome/Android).
-   En iOS se instala desde Compartir > Añadir a pantalla de inicio.
+   El botón (#pwa-install-btn) siempre está visible (salvo que la
+   app ya esté instalada) para que la descarga se encuentre en
+   cualquier navegador. Si el navegador ofrece la instalación
+   (beforeinstallprompt, Chrome/Android), el botón lanza el diálogo
+   nativo; si no, abre una hoja con los pasos para instalar según
+   el dispositivo (iOS: Compartir > Añadir a pantalla de inicio;
+   Android/escritorio: menú del navegador).
    ========================================================= */
 (function () {
   'use strict';
@@ -4547,9 +4571,75 @@ function setupNetworkSimulator() {
     });
   }
   var deferred = null;
+  function isInstalled() {
+    return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
+      window.navigator.standalone === true;
+  }
   function refreshBtn() {
     var btn = document.getElementById('pwa-install-btn');
-    if (btn) btn.hidden = !deferred;
+    if (!btn) return;
+    btn.hidden = isInstalled();
+    var installNow = document.getElementById('pwa-modal-install');
+    if (installNow) installNow.hidden = !deferred;
+  }
+  function detectPlatform() {
+    var ua = navigator.userAgent || '';
+    if (/iphone|ipad|ipod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) return 'ios';
+    if (/android/i.test(ua)) return 'android';
+    return 'desktop';
+  }
+  function openInstallSheet() {
+    var modal = document.getElementById('pwa-modal');
+    if (!modal) return;
+    var current = detectPlatform();
+    var blocks = modal.querySelectorAll('.pwa-modal-steps details');
+    for (var i = 0; i < blocks.length; i++) {
+      blocks[i].open = blocks[i].getAttribute('data-platform') === current;
+    }
+    refreshBtn();
+    modal.hidden = false;
+    document.body.style.overflow = 'hidden';
+    var closeBtn = document.getElementById('pwa-modal-close');
+    if (closeBtn) closeBtn.focus();
+  }
+  function closeInstallSheet() {
+    var modal = document.getElementById('pwa-modal');
+    if (!modal) return;
+    modal.hidden = true;
+    document.body.style.overflow = '';
+  }
+  function buildInstallSheet() {
+    if (document.getElementById('pwa-modal')) return;
+    var wrap = document.createElement('div');
+    wrap.innerHTML =
+      '<div class="pwa-modal" id="pwa-modal" hidden>' +
+        '<div class="pwa-modal-card" role="dialog" aria-modal="true" aria-labelledby="pwa-modal-title">' +
+          '<h3 id="pwa-modal-title" data-i18n="pwa_modal_title"></h3>' +
+          '<p class="pwa-modal-sub" data-i18n="pwa_modal_sub"></p>' +
+          '<button type="button" class="pwa-modal-install" id="pwa-modal-install" hidden><span data-i18n="pwa_install_now"></span></button>' +
+          '<div class="pwa-modal-steps">' +
+            '<details data-platform="android"><summary data-i18n="pwa_android_title"></summary><ol data-i18n-html="pwa_android_steps"></ol></details>' +
+            '<details data-platform="ios"><summary data-i18n="pwa_ios_title"></summary><ol data-i18n-html="pwa_ios_steps"></ol></details>' +
+            '<details data-platform="desktop"><summary data-i18n="pwa_desktop_title"></summary><ol data-i18n-html="pwa_desktop_steps"></ol></details>' +
+          '</div>' +
+          '<button type="button" class="pwa-modal-close" id="pwa-modal-close" data-i18n="pwa_close"></button>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(wrap.firstChild);
+    var modal = document.getElementById('pwa-modal');
+    modal.addEventListener('click', function (e) {
+      if (e.target === modal) closeInstallSheet();
+    });
+    document.getElementById('pwa-modal-close').addEventListener('click', closeInstallSheet);
+    document.getElementById('pwa-modal-install').addEventListener('click', function () {
+      if (!deferred) return;
+      closeInstallSheet();
+      deferred.prompt();
+      deferred.userChoice.then(function () { deferred = null; refreshBtn(); });
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && modal && !modal.hidden) closeInstallSheet();
+    });
   }
   window.addEventListener('beforeinstallprompt', function (e) {
     e.preventDefault();
@@ -4558,16 +4648,28 @@ function setupNetworkSimulator() {
   });
   window.addEventListener('appinstalled', function () {
     deferred = null;
+    var btn = document.getElementById('pwa-install-btn');
+    if (btn) btn.hidden = true;
     refreshBtn();
   });
   document.addEventListener('DOMContentLoaded', function () {
     var btn = document.getElementById('pwa-install-btn');
     if (!btn) return;
-    btn.hidden = true;
+    if (!btn.querySelector('.pwa-install-label')) {
+      var label = document.createElement('span');
+      label.className = 'pwa-install-label';
+      label.setAttribute('data-i18n', 'nav_install');
+      btn.appendChild(label);
+    }
+    buildInstallSheet();
+    applyLanguage(currentLang);
     btn.addEventListener('click', function () {
-      if (!deferred) return;
-      deferred.prompt();
-      deferred.userChoice.then(function () { deferred = null; refreshBtn(); });
+      if (deferred) {
+        deferred.prompt();
+        deferred.userChoice.then(function () { deferred = null; refreshBtn(); });
+      } else {
+        openInstallSheet();
+      }
     });
     refreshBtn();
   });
