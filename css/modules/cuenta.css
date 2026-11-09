@@ -49,6 +49,13 @@
 }
 .cuenta-field input:focus { outline: none; border-color: var(--accent-cyan); box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.22); }
 
+/* ---------- Mostrar / ocultar contraseña ---------- */
+.cuenta-pass-wrap { position: relative; }
+.cuenta-pass-wrap input { padding-right: 2.7rem; }
+.cuenta-pass-toggle { position: absolute; right: 0.45rem; top: 50%; transform: translateY(-50%); display: flex; align-items: center; justify-content: center; padding: 0.35rem; border: 0; background: none; color: var(--text-muted); cursor: pointer; border-radius: var(--radius-sm); }
+.cuenta-pass-toggle:hover { color: var(--text-primary); }
+.cuenta-pass-toggle svg { width: 20px; height: 20px; }
+
 /* ---------- Botones (mismo degradado del logo que el resto del sitio) ---------- */
 .cuenta-btn {
   width: 100%;

@@ -25,6 +25,16 @@
       avatarSaved: 'Avatar guardado. Se verá en el botón de Mi cuenta en todo el sitio.', avatarErr: 'No se pudo guardar el avatar. Inténtalo otra vez.', avatarInitial: 'Inicial',
       avatarPhoto: 'Foto', avatarRemove: 'Quitar foto', avatarImgErr: 'Esa imagen no se pudo usar. Prueba con otra.',
       googleOff: 'El ingreso con Google aún no está activado por el equipo. Por ahora entra con tu correo y contraseña.',
+      forgotNeedEmail: 'Escribe tu correo arriba para enviarte el enlace.',
+      forgotSent: 'Te enviamos un correo con el enlace para crear una nueva contraseña. Revisa también el correo no deseado.',
+      forgotErr: 'No se pudo enviar el correo. Inténtalo otra vez.',
+      passMismatch: 'Las contraseñas no coinciden.',
+      resetOk: 'Contraseña actualizada. Ya puedes entrar.',
+      resetErr: 'No se pudo cambiar la contraseña. Pide otro enlace.',
+      resetShort: 'Escribe una contraseña nueva de al menos 6 caracteres.',
+      syncing: 'Sincronizando…',
+      showPass: 'Mostrar contraseña',
+      hidePass: 'Ocultar contraseña',
       rankOk: '¡Puntaje publicado en el ranking con', rankPts: 'puntos!',
       rankOff: 'El ranking aún no está activado por el equipo (falta crear su tabla en Supabase). Tu puntaje ya quedó calculado y podrás publicarlo en cuanto se active.',
       rankErr: 'No se pudo publicar el puntaje ahora. Inténtalo otra vez.',
@@ -47,6 +57,16 @@
       avatarSaved: 'Avatar saved. It will show on the My account button across the site.', avatarErr: 'Could not save the avatar. Try again.', avatarInitial: 'Initial',
       avatarPhoto: 'Photo', avatarRemove: 'Remove photo', avatarImgErr: 'That image could not be used. Try another one.',
       googleOff: 'Google sign-in is not enabled by the team yet. For now, log in with your email and password.',
+      forgotNeedEmail: 'Type your email above so we can send you the link.',
+      forgotSent: 'We sent you an email with the link to create a new password. Check your spam folder too.',
+      forgotErr: 'Could not send the email. Try again.',
+      passMismatch: 'The passwords do not match.',
+      resetOk: 'Password updated. You can log in now.',
+      resetErr: 'Could not change the password. Request another link.',
+      resetShort: 'Enter a new password of at least 6 characters.',
+      syncing: 'Syncing…',
+      showPass: 'Show password',
+      hidePass: 'Hide password',
       rankOk: 'Score published to the ranking with', rankPts: 'points!',
       rankOff: 'The ranking is not enabled by the team yet (its Supabase table still needs to be created). Your score is already computed and you will be able to publish it as soon as it is on.',
       rankErr: 'Could not publish the score right now. Try again.',
@@ -232,6 +252,8 @@
     $('cuenta-pass').setAttribute('autocomplete', mode === 'login' ? 'current-password' : 'new-password');
     $('cuenta-avatar-field').hidden = mode !== 'register';
     $('cuenta-name-fields').hidden = mode !== 'register';
+    if ($('cuenta-forgot')) $('cuenta-forgot').hidden = mode !== 'login';
+    if ($('cuenta-pass2-field')) $('cuenta-pass2-field').hidden = mode !== 'register';
   }
   function showPanel(session) {
     $('cuenta-auth').hidden = true;
@@ -270,11 +292,50 @@
     $('cuenta-panel').hidden = true;
     $('cuenta-auth').hidden = false;
   }
+  // ---- Restablecer contraseña: muestra el formulario de clave nueva
+  // y esconde el de inicio (o lo devuelve). gisRendered recuerda si el
+  // botón propio de Google llegó a dibujarse, para no revivir el botón
+  // viejo al volver.
+  var gisRendered = false;
+  function showReset(on) {
+    if ($('cuenta-reset')) $('cuenta-reset').hidden = !on;
+    if ($('cuenta-form')) $('cuenta-form').hidden = on;
+    if ($('cuenta-switch')) $('cuenta-switch').hidden = on;
+    var div = document.querySelector('.cuenta-divider');
+    if (div) div.hidden = on;
+    var g = $('cuenta-google');
+    if (g) g.style.display = on ? 'none' : (gisRendered ? 'none' : '');
+    var gis = $('cuenta-google-gis');
+    if (gis) gis.hidden = on ? true : !gisRendered;
+  }
 
   $('cuenta-switch').addEventListener('click', function () {
     mode = mode === 'login' ? 'register' : 'login';
     clearMsg();
     renderMode();
+  });
+
+  // ---- ¿Olvidaste tu contraseña? Envía el enlace de restablecimiento ----
+  if ($('cuenta-forgot')) $('cuenta-forgot').addEventListener('click', function () {
+    var email = String(($('cuenta-email') && $('cuenta-email').value) || '').trim();
+    if (!email) { msg('err', T.forgotNeedEmail); return; }
+    var btn = $('cuenta-forgot');
+    btn.disabled = true;
+    api('/auth/v1/recover', { method: 'POST', body: { email: email, redirect_to: location.origin + '/cuenta.html' } })
+      .then(function (r) { btn.disabled = false; msg(r.status === 200 ? 'ok' : 'err', r.status === 200 ? T.forgotSent : T.forgotErr); })
+      .catch(function () { btn.disabled = false; msg('err', T.forgotErr); });
+  });
+
+  // ---- Ver / ocultar la contraseña ----
+  if ($('cuenta-pass-toggle')) $('cuenta-pass-toggle').addEventListener('click', function () {
+    var inp = $('cuenta-pass');
+    var isPass = inp.type === 'password';
+    inp.type = isPass ? 'text' : 'password';
+    var open = this.querySelector('.cuenta-eye-open');
+    var off = this.querySelector('.cuenta-eye-off');
+    if (open) open.hidden = isPass;
+    if (off) off.hidden = !isPass;
+    this.setAttribute('aria-label', isPass ? T.hidePass : T.showPass);
   });
 
   // ---- Actualizar datos (nombre y apellido) ----
@@ -324,6 +385,8 @@
       first = String(($('cuenta-firstname') && $('cuenta-firstname').value) || '').trim();
       last = String(($('cuenta-lastname') && $('cuenta-lastname').value) || '').trim();
       if (!first || !last) { msg('err', T.needName); return; }
+      var pass2 = String(($('cuenta-pass2') && $('cuenta-pass2').value) || '');
+      if (pass !== pass2) { msg('err', T.passMismatch); return; }
     }
     var btn = $('cuenta-submit');
     btn.disabled = true; btn.textContent = T.working;
@@ -357,7 +420,16 @@
   });
 
   $('cuenta-sync').addEventListener('click', function () {
-    ensureSession().then(function (s) { if (s) syncNow(s); else showAuth(); });
+    var btn = $('cuenta-sync');
+    if (btn.disabled) return;
+    btn.disabled = true;
+    var old = btn.textContent;
+    btn.textContent = T.syncing;
+    var doneBtn = function () { btn.disabled = false; btn.textContent = old; };
+    ensureSession().then(function (s) {
+      if (!s) { showAuth(); return null; }
+      return syncNow(s);
+    }).then(doneBtn, doneBtn);
   });
   $('cuenta-logout').addEventListener('click', function () {
     var s = getSession();
@@ -511,6 +583,43 @@
     });
   });
 
+  // ---- Guardar la nueva contraseña (tras el enlace del correo) ----
+  var recoveryTokens = null;
+  if ($('cuenta-reset-save')) $('cuenta-reset-save').addEventListener('click', function () {
+    var p1 = String(($('cuenta-reset-pass') && $('cuenta-reset-pass').value) || '');
+    var p2 = String(($('cuenta-reset-pass2') && $('cuenta-reset-pass2').value) || '');
+    if (p1.length < 6) { msg('err', T.resetShort); return; }
+    if (p1 !== p2) { msg('err', T.passMismatch); return; }
+    if (!recoveryTokens || !recoveryTokens.at) { msg('err', T.resetErr); return; }
+    var btn = $('cuenta-reset-save');
+    btn.disabled = true;
+    var tk = recoveryTokens;
+    api('/auth/v1/user', { method: 'PUT', token: tk.at, body: { password: p1 } })
+      .then(function (r) {
+        btn.disabled = false;
+        if (r.status !== 200) { msg('err', T.resetErr); return; }
+        // La clave ya cambió: entrar con la sesión del enlace.
+        api('/auth/v1/user', { token: tk.at }).then(function (ru) {
+          if (ru.status === 200 && ru.data && ru.data.id) {
+            var s = saveSessionFromAuth({ access_token: tk.at, refresh_token: tk.rt, expires_in: tk.exp, user: ru.data }, ru.data.email);
+            showReset(false);
+            showPanel(s);
+            msg('ok', T.resetOk);
+            if (!goNext()) syncNow(s);
+          } else {
+            showReset(false);
+            msg('ok', T.resetOk);
+          }
+        }).catch(function () { showReset(false); msg('ok', T.resetOk); });
+      })
+      .catch(function () { btn.disabled = false; msg('err', T.resetErr); });
+  });
+  if ($('cuenta-reset-cancel')) $('cuenta-reset-cancel').addEventListener('click', function () {
+    recoveryTokens = null;
+    showReset(false);
+    clearMsg();
+  });
+
   // ---- Ingreso con Google ----
   // Antes de salir de la página comprobamos si el proveedor está activo:
   // con Google desactivado en Supabase, la URL de autorización devuelve un
@@ -575,6 +684,7 @@
       // atributo hidden; hay que esconderlo por estilo para que no queden
       // los dos botones de Google a la vez.
       if (googleBtn) { googleBtn.hidden = true; googleBtn.style.display = 'none'; }
+      gisRendered = true;
       return true;
     } catch (e) { return false; }
   }
@@ -607,6 +717,12 @@
     var rt = hashParams.get('refresh_token');
     var exp = parseInt(hashParams.get('expires_in') || '3600', 10);
     clean();
+    // Enlace de restablecer contraseña: no entrar directo, pedir la clave nueva.
+    if (hashParams.get('type') === 'recovery') {
+      recoveryTokens = { at: at, rt: rt, exp: exp };
+      showReset(true);
+      return;
+    }
     api('/auth/v1/user', { token: at }).then(function (r) {
       if (r.status === 200 && r.data && r.data.id) {
         var s = saveSessionFromAuth({ access_token: at, refresh_token: rt, expires_in: exp, user: r.data }, r.data.email);
