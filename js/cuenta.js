@@ -4,9 +4,11 @@
 (function () {
   'use strict';
 
-  var SUPABASE_URL = 'https://xiuztrujrwdgcpjrruxu.supabase.co';
+  // URL de Supabase: vive en js/main.js (NVISION_SUPABASE_URL). Se usa
+  // aquí para la URL de autorización de Google; el cliente de auth es
+  // window.NVISION_sbAuth, compartido con examenes.js (ver main.js).
+  var SUPABASE_URL = window.NVISION_SUPABASE_URL;
   var GOOGLE_CLIENT_ID = '855201454498-es9vkd7vqq2eli18g1rtprtvguqimn71.apps.googleusercontent.com';
-  var ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpdXp0cnVqcndkZ2NwanJydXh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQwNTk2ODcsImV4cCI6MjEwOTYzNTY4N30.CBBQpCqHxuOtCaMcdUfIrKTa4vt0QJRqvivskHnt5g0';
   var SESSION_KEY = 'nvision_session_v1';
   var META_KEY = 'nvision_sync_meta_v1';
   var SYNC_KEYS = ['nvision_ruta_v1', 'nvision_examenes_v1', 'nvision_workshop_v2', 'nvision_logros_v1'];
@@ -104,21 +106,6 @@
   }
   function goNext() { var n = nextTarget(); if (n) { location.href = n; return true; } return false; }
 
-  function api(path, opts) {
-    opts = opts || {};
-    var headers = { 'apikey': ANON_KEY, 'Content-Type': 'application/json' };
-    if (opts.token) headers['Authorization'] = 'Bearer ' + opts.token;
-    if (opts.headers) Object.keys(opts.headers).forEach(function (k) { headers[k] = opts.headers[k]; });
-    return fetch(SUPABASE_URL + path, { method: opts.method || 'GET', headers: headers, body: opts.body ? JSON.stringify(opts.body) : undefined })
-      .then(function (r) {
-        return r.text().then(function (txt) {
-          var data = null;
-          try { data = txt ? JSON.parse(txt) : null; } catch (e) {}
-          return { status: r.status, data: data };
-        });
-      });
-  }
-
   function saveSessionFromAuth(data, email) {
     var md = (data.user && data.user.user_metadata) || {};
     var s = {
@@ -175,7 +162,7 @@
   }
 
   function refreshSession(s) {
-    return api('/auth/v1/token?grant_type=refresh_token', { method: 'POST', body: { refresh_token: s.refresh } })
+    return window.NVISION_sbAuth('/auth/v1/token?grant_type=refresh_token', { method: 'POST', body: { refresh_token: s.refresh } })
       .then(function (r) {
         if (r.status === 200 && r.data && r.data.access_token) return saveSessionFromAuth(r.data, s.email);
         throw new Error('refresh');
@@ -210,7 +197,7 @@
   // La sincronización es silenciosa: corre sola al entrar y al pulsar
   // "Sincronizar ahora", sin anunciar nada en la página.
   function syncNow(session) {
-    return api('/rest/v1/user_progress?select=data,updated_at&user_id=eq.' + session.userId, { token: session.access })
+    return window.NVISION_sbAuth('/rest/v1/user_progress?select=data,updated_at&user_id=eq.' + session.userId, { token: session.access })
       .then(function (r) {
         if (r.status === 404 || (r.data && (r.data.code === 'PGRST205' || r.data.code === '42P01'))) {
           return 'pending';
@@ -241,7 +228,7 @@
           return resultWord;
         };
         if (!changedCloud) return finish(changedLocal ? 'down' : 'same');
-        return api('/rest/v1/user_progress', {
+        return window.NVISION_sbAuth('/rest/v1/user_progress', {
           method: 'POST', token: session.access,
           headers: { 'Prefer': 'resolution=merge-duplicates' },
           body: { user_id: session.userId, data: { items: merged }, updated_at: new Date().toISOString() }
@@ -333,7 +320,7 @@
     if (!email) { msg('err', T.forgotNeedEmail); return; }
     var btn = $('cuenta-forgot');
     btn.disabled = true;
-    api('/auth/v1/recover', { method: 'POST', body: { email: email, redirect_to: location.origin + '/cuenta.html' } })
+    window.NVISION_sbAuth('/auth/v1/recover', { method: 'POST', body: { email: email, redirect_to: location.origin + '/cuenta.html' } })
       .then(function (r) { btn.disabled = false; msg(r.status === 200 ? 'ok' : 'err', r.status === 200 ? T.forgotSent : T.forgotErr); })
       .catch(function () { btn.disabled = false; msg('err', T.forgotErr); });
   });
@@ -372,7 +359,7 @@
     btn.disabled = true;
     ensureSession().then(function (s) {
       if (!s) { btn.disabled = false; return; }
-      api('/auth/v1/user', { method: 'PUT', token: s.access, body: { data: { first_name: first, last_name: last, full_name: first + ' ' + last } } })
+      window.NVISION_sbAuth('/auth/v1/user', { method: 'PUT', token: s.access, body: { data: { first_name: first, last_name: last, full_name: first + ' ' + last } } })
         .then(function (r) {
           btn.disabled = false;
           if (r.status === 200) {
@@ -405,7 +392,7 @@
     clearMsg();
     var done = function () { btn.disabled = false; renderMode(); };
     if (mode === 'register') {
-      api('/auth/v1/signup', { method: 'POST', body: { email: email, password: pass, data: { first_name: first, last_name: last, full_name: first + ' ' + last, avatar: regAvatar, avatar_image: regAvatar === 'custom' ? regAvatarImg : null } } })
+      window.NVISION_sbAuth('/auth/v1/signup', { method: 'POST', body: { email: email, password: pass, data: { first_name: first, last_name: last, full_name: first + ' ' + last, avatar: regAvatar, avatar_image: regAvatar === 'custom' ? regAvatarImg : null } } })
         .then(function (r) {
           done();
           if (r.status === 200 && r.data) {
@@ -418,7 +405,7 @@
         })
         .catch(function () { done(); msg('err', T.netErr); });
     } else {
-      api('/auth/v1/token?grant_type=password', { method: 'POST', body: { email: email, password: pass } })
+      window.NVISION_sbAuth('/auth/v1/token?grant_type=password', { method: 'POST', body: { email: email, password: pass } })
         .then(function (r) {
           done();
           if (r.status === 200 && r.data && r.data.access_token) {
@@ -446,7 +433,7 @@
   $('cuenta-logout').addEventListener('click', function () {
     var s = getSession();
     var bye = function () { clearSession(); clearMsg(); showAuth(); };
-    if (s && s.access) api('/auth/v1/logout', { method: 'POST', token: s.access }).then(bye).catch(bye);
+    if (s && s.access) window.NVISION_sbAuth('/auth/v1/logout', { method: 'POST', token: s.access }).then(bye).catch(bye);
     else bye();
   });
 
@@ -500,7 +487,7 @@
     if (id === 'custom') { openAvatarFile('panel'); return; }
     ensureSession().then(function (s) {
       if (!s) return;
-      api('/auth/v1/user', { method: 'PUT', token: s.access, body: { data: { avatar: id } } })
+      window.NVISION_sbAuth('/auth/v1/user', { method: 'PUT', token: s.access, body: { data: { avatar: id } } })
         .then(function (r) {
           if (r.status === 200) {
             s.avatar = id; setSession(s);
@@ -546,7 +533,7 @@
     if (window.NVISION_validAvatarImg && !window.NVISION_validAvatarImg(dataUrl)) { msg('err', T.avatarImgErr); return; }
     ensureSession().then(function (s) {
       if (!s) return;
-      api('/auth/v1/user', { method: 'PUT', token: s.access, body: { data: { avatar: 'custom', avatar_image: dataUrl } } })
+      window.NVISION_sbAuth('/auth/v1/user', { method: 'PUT', token: s.access, body: { data: { avatar: 'custom', avatar_image: dataUrl } } })
         .then(function (r) {
           if (r.status === 200) {
             s.avatar = 'custom'; s.avatarImg = dataUrl; setSession(s);
@@ -563,7 +550,7 @@
   function removeAvatarImage() {
     ensureSession().then(function (s) {
       if (!s) return;
-      api('/auth/v1/user', { method: 'PUT', token: s.access, body: { data: { avatar: 'initial', avatar_image: null } } })
+      window.NVISION_sbAuth('/auth/v1/user', { method: 'PUT', token: s.access, body: { data: { avatar: 'initial', avatar_image: null } } })
         .then(function (r) {
           if (r.status === 200) {
             s.avatar = 'initial'; s.avatarImg = null; setSession(s);
@@ -585,7 +572,7 @@
       if (!window.NVISION_LOGROS) return;
       var r = window.NVISION_LOGROS.compute();
       var name = String(s.email || 'NVISION').split('@')[0];
-      api('/rest/v1/site_ranking?on_conflict=user_id', {
+      window.NVISION_sbAuth('/rest/v1/site_ranking?on_conflict=user_id', {
         method: 'POST', token: s.access,
         headers: { 'Prefer': 'resolution=merge-duplicates' },
         body: { user_id: s.userId, name: name, avatar: s.avatar || null, avatar_image: s.avatarImg || null, points: r.points, updated_at: new Date().toISOString() }
@@ -608,12 +595,12 @@
     var btn = $('cuenta-reset-save');
     btn.disabled = true;
     var tk = recoveryTokens;
-    api('/auth/v1/user', { method: 'PUT', token: tk.at, body: { password: p1 } })
+    window.NVISION_sbAuth('/auth/v1/user', { method: 'PUT', token: tk.at, body: { password: p1 } })
       .then(function (r) {
         btn.disabled = false;
         if (r.status !== 200) { msg('err', T.resetErr); return; }
         // La clave ya cambió: entrar con la sesión del enlace.
-        api('/auth/v1/user', { token: tk.at }).then(function (ru) {
+        window.NVISION_sbAuth('/auth/v1/user', { token: tk.at }).then(function (ru) {
           if (ru.status === 200 && ru.data && ru.data.id) {
             var s = saveSessionFromAuth({ access_token: tk.at, refresh_token: tk.rt, expires_in: tk.exp, user: ru.data }, ru.data.email);
             showReset(false);
@@ -676,7 +663,7 @@
     // OJO: Supabase exige el campo "id_token" (no "token"): con "token"
     // solo devolvía 400 "invalid request: id_token required". Se mandan
     // los dos nombres con el mismo valor por compatibilidad.
-    api('/auth/v1/token?grant_type=id_token', { method: 'POST', body: { provider: 'google', id_token: idToken, token: idToken } })
+    window.NVISION_sbAuth('/auth/v1/token?grant_type=id_token', { method: 'POST', body: { provider: 'google', id_token: idToken, token: idToken } })
       .then(function (r) {
         if (r.status === 200 && r.data && r.data.access_token) {
           var s = saveSessionFromAuth(r.data, (r.data.user && r.data.user.email) || '');
@@ -737,7 +724,7 @@
       showReset(true);
       return;
     }
-    api('/auth/v1/user', { token: at }).then(function (r) {
+    window.NVISION_sbAuth('/auth/v1/user', { token: at }).then(function (r) {
       if (r.status === 200 && r.data && r.data.id) {
         var s = saveSessionFromAuth({ access_token: at, refresh_token: rt, expires_in: exp, user: r.data }, r.data.email);
         showPanel(s);

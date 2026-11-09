@@ -10,10 +10,10 @@
   // guardada: antes de abrir el examen y antes de entregar el certificado
   // se le pregunta a Supabase si el token de la sesión es de verdad
   // (una sesión inventada a mano la rechaza el servidor).
+  // URL y llave anon de Supabase y cliente de auth: viven en js/main.js
+  // (NVISION_SUPABASE_* y NVISION_sbAuth); aquí solo se usan.
   var SESSION_KEY = 'nvision_session_v1';
   var VERIFIED_KEY = 'nvision_verified_v1';
-  var SUPABASE_URL = 'https://xiuztrujrwdgcpjrruxu.supabase.co';
-  var ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpdXp0cnVqcndkZ2NwanJydXh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQwNTk2ODcsImV4cCI6MjEwOTYzNTY4N30.CBBQpCqHxuOtCaMcdUfIrKTa4vt0QJRqvivskHnt5g0';
 
   function readSession() {
     try { return JSON.parse(localStorage.getItem(SESSION_KEY) || 'null'); } catch (e) { return null; }
@@ -28,13 +28,6 @@
   }
   function markVerified(uid, access) {
     try { sessionStorage.setItem(VERIFIED_KEY, JSON.stringify({ uid: uid, tok: String(access || '').slice(36, 60), at: Date.now() })); } catch (e) {}
-  }
-  function sbAuth(path, opts) {
-    opts = opts || {};
-    var headers = { 'apikey': ANON_KEY, 'Content-Type': 'application/json' };
-    if (opts.token) headers['Authorization'] = 'Bearer ' + opts.token;
-    return fetch(SUPABASE_URL + path, { method: opts.method || 'GET', headers: headers, body: opts.body ? JSON.stringify(opts.body) : undefined })
-      .then(function (r) { return r.text().then(function (t) { var d = null; try { d = t ? JSON.parse(t) : null; } catch (e) {} return { status: r.status, data: d }; }); });
   }
   function saveSessionFromAuth(data, email) {
     var s = {
@@ -58,7 +51,7 @@
     }
     var tryRefresh = function () {
       if (!s.refresh) return Promise.resolve(false);
-      return sbAuth('/auth/v1/token?grant_type=refresh_token', { method: 'POST', body: { refresh_token: s.refresh } })
+      return window.NVISION_sbAuth('/auth/v1/token?grant_type=refresh_token', { method: 'POST', body: { refresh_token: s.refresh } })
         .then(function (r) {
           if (r.status === 200 && r.data && r.data.access_token && r.data.user) {
             saveSessionFromAuth(r.data, s.email);
@@ -71,7 +64,7 @@
         .catch(function () { return false; });
     };
     if (!s.access) return tryRefresh();
-    return sbAuth('/auth/v1/user', { token: s.access })
+    return window.NVISION_sbAuth('/auth/v1/user', { token: s.access })
       .then(function (r) {
         if (r.status === 200 && r.data && r.data.id) { markVerified(r.data.id, s.access); return true; }
         if (r.status === 401) return tryRefresh();

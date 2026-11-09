@@ -5,8 +5,8 @@
 (function () {
   'use strict';
 
-  var SUPABASE_URL = 'https://xiuztrujrwdgcpjrruxu.supabase.co';
-  var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpdXp0cnVqcndkZ2NwanJydXh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQwNTk2ODcsImV4cCI6MjEwOTYzNTY4N30.CBBQpCqHxuOtCaMcdUfIrKTa4vt0QJRqvivskHnt5g0';
+  // Supabase: URL, llave y cliente REST viven en js/main.js
+  // (NVISION_SUPABASE_* y NVISION_sb); aquí solo se usan.
   var TEAM = ['Duay', 'Santiago', 'Samuel', 'Yurlei', 'Andres', 'Abraham', 'Juan', 'Deivison', 'Camilo'];
 
   // Ruta base del sitio, deducida de la URL del propio script: el logo carga
@@ -16,19 +16,6 @@
   var SITE_BASE = EQW_SCRIPT ? EQW_SCRIPT.replace(/js\/[^/?]*(\?.*)?$/, '') : '';
   var LOGO_URL = SITE_BASE + 'assets/muse-logo.webp';
 
-  function sbHeaders(extra) {
-    return Object.assign({ apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + SUPABASE_ANON_KEY, 'Content-Type': 'application/json' }, extra || {});
-  }
-  async function sbGet(path) {
-    var r = await fetch(SUPABASE_URL + path, { headers: sbHeaders() });
-    if (!r.ok) throw new Error('http ' + r.status);
-    return r.json();
-  }
-  async function sbPost(path, body, prefer) {
-    var r = await fetch(SUPABASE_URL + path, { method: 'POST', headers: sbHeaders(prefer ? { Prefer: prefer } : {}), body: JSON.stringify(body) });
-    if (!r.ok) throw new Error('http ' + r.status);
-    try { return await r.json(); } catch (e) { return null; }
-  }
   function esc(s) {
     return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
@@ -288,7 +275,7 @@
     if (eqMode === 'ask') sendTask = '[PREGUNTA] ' + task.slice(0, 1990);
     else if (eqMode === 'edit') sendTask = '[EDITAR] ' + task.slice(0, 1990);
     try {
-      await sbPost('/rest/v1/team_tasks', { name: name, page: 'Chat', task: sendTask }, 'return=representation');
+      await window.NVISION_sb.post('/rest/v1/team_tasks', { name: name, page: 'Chat', task: sendTask }, 'return=representation');
       input.value = '';
       autogrow();
       eqMode = 'edit';
@@ -314,7 +301,7 @@
 
   async function loadTasks() {
     try {
-      lastRows = (await sbGet('/rest/v1/team_tasks?select=*&order=created_at.desc&limit=100')) || [];
+      lastRows = (await window.NVISION_sb.get('/rest/v1/team_tasks?select=*&order=created_at.desc&limit=100')) || [];
       var sig = rowsSig(lastRows);
       // Si el panel está abierto, los mensajes se están viendo: en el chat se
       // ve el hilo completo y en la lista se ve la vista previa con la

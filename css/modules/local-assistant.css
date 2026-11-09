@@ -46,6 +46,9 @@
   display: flex;
   flex-direction: column;
   width: min(22.5rem, calc(100vw - 2.5rem));
+  /* La línea con vh es el respaldo para navegadores sin dvh: si no se
+     entiende la de dvh, se queda esta y el panel nunca pierde su tope. */
+  max-height: min(32rem, calc(100vh - 7.5rem));
   max-height: min(32rem, calc(100dvh - 7.5rem));
   overflow: hidden;
   border: 1px solid var(--border-subtle);
@@ -161,8 +164,28 @@
   }
   .local-assistant-panel {
     bottom: 3.9rem;
-    max-height: min(80dvh, calc(100dvh - 5.75rem));
+    /* El tope deja libre el encabezado fijo (~60px) incluso en celulares
+       bajitos (568px de alto): con 5.75rem el borde superior del panel se
+       metía unos 10px por encima del encabezado; con 8.5rem queda a
+       ~74px del borde superior y nunca lo tapa ni lo roza. */
+    max-height: min(80vh, calc(100vh - 8.5rem));
+    max-height: min(80dvh, calc(100dvh - 8.5rem));
   }
+  /* En celular la caja de texto y los campos de Entrenar van a 16px: con
+     menos, Safari en iPhone hace zoom automático al tocarlos y el panel
+     se mueve y se sale de la pantalla. En escritorio se quedan como están. */
+  .local-assistant-input,
+  .la-card textarea,
+  .la-card input[type="text"],
+  .la-card select { font-size: 1rem; }
+  /* En celular los tres botones redondos (enviar, ?, lápiz) se achican un
+     poco y la fila se aprieta: a 360px la caja de texto ganaba solo ~158px
+     y costaba escribir; ahora le quedan ~182px y los botones siguen
+     cómodos de tocar (35px). */
+  .local-assistant-form { gap: 0.35rem; padding: 0.6rem; }
+  .local-assistant-submit,
+  .local-assistant-ask,
+  .local-assistant-edit { width: 2.2rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {

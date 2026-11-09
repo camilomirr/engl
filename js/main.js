@@ -3,6 +3,71 @@
  * menú adaptativo para dispositivos móviles y utilidades interactivas.
  */
 
+// Configuración de Supabase, en UN solo lugar (antes la URL y la llave anon
+// estaban copiadas, idénticas, en js/cuenta.js, js/examenes.js,
+// js/equipo-widget.js y redes_challenge/juego.js: al rotar la llave había
+// que cambiarla en 4 archivos). Los demás scripts leen estas dos globales;
+// main.js carga antes que todos ellos en cada página (síncrono, mientras
+// que los que las usan son síncronos después de él o con defer).
+// La llave anon es pública por diseño; la protección real es RLS.
+// js/ranking.js NO usa esta llave: lee con la llave publicable nueva
+// (sb_publishable_...), así que se queda como está.
+window.NVISION_SUPABASE_URL = 'https://xiuztrujrwdgcpjrruxu.supabase.co';
+window.NVISION_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpdXp0cnVqcndkZ2NwanJydXh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQwNTk2ODcsImV4cCI6MjEwOTYzNTY4N30.CBBQpCqHxuOtCaMcdUfIrKTa4vt0QJRqvivskHnt5g0';
+
+// Cliente REST de Supabase compartido por todo el sitio. Antes cada página
+// tenía su copia casi idéntica: js/equipo-widget.js y
+// redes_challenge/juego.js repetían sbHeaders/sbGet/sbPost (y juego.js
+// además sbPatch/sbDelete) con la misma lógica, y js/cuenta.js y
+// js/examenes.js repetían el cliente de auth (api()/sbAuth()). Ahora hay
+// un solo lugar: si cambia la forma de llamar a Supabase, se cambia aquí.
+// El chat del equipo y el Redes Challenge siguen siendo lógicas separadas:
+// solo comparten el transporte, no se mezclan entre sí ni con el Asistente
+// NVISION (que no usa Supabase: sus 750 respuestas viven en este archivo).
+window.NVISION_sb = {
+  headers: function (extra) {
+    return Object.assign({ apikey: window.NVISION_SUPABASE_ANON_KEY, Authorization: 'Bearer ' + window.NVISION_SUPABASE_ANON_KEY, 'Content-Type': 'application/json' }, extra || {});
+  },
+  get: async function (path) {
+    var r = await fetch(window.NVISION_SUPABASE_URL + path, { headers: window.NVISION_sb.headers() });
+    if (!r.ok) throw new Error('http ' + r.status);
+    return r.json();
+  },
+  post: async function (path, body, prefer) {
+    var r = await fetch(window.NVISION_SUPABASE_URL + path, { method: 'POST', headers: window.NVISION_sb.headers(prefer ? { Prefer: prefer } : {}), body: JSON.stringify(body) });
+    if (!r.ok) throw new Error('http ' + r.status);
+    try { return await r.json(); } catch (e) { return null; }
+  },
+  patch: async function (path, body) {
+    var r = await fetch(window.NVISION_SUPABASE_URL + path, { method: 'PATCH', headers: window.NVISION_sb.headers(), body: JSON.stringify(body) });
+    if (!r.ok) throw new Error('http ' + r.status);
+    return null;
+  },
+  del: async function (path) {
+    var r = await fetch(window.NVISION_SUPABASE_URL + path, { method: 'DELETE', headers: window.NVISION_sb.headers() });
+    if (!r.ok && r.status !== 204) throw new Error('http ' + r.status);
+    return null;
+  }
+};
+// Cliente de la API de auth de Supabase (antes api() en cuenta.js y
+// sbAuth() en examenes.js, idénticos salvo que api() aceptaba headers
+// extra). Devuelve { status, data } sin lanzar: quien llama decide qué
+// hacer con cada estado.
+window.NVISION_sbAuth = function (path, opts) {
+  opts = opts || {};
+  var headers = { 'apikey': window.NVISION_SUPABASE_ANON_KEY, 'Content-Type': 'application/json' };
+  if (opts.token) headers['Authorization'] = 'Bearer ' + opts.token;
+  if (opts.headers) Object.keys(opts.headers).forEach(function (k) { headers[k] = opts.headers[k]; });
+  return fetch(window.NVISION_SUPABASE_URL + path, { method: opts.method || 'GET', headers: headers, body: opts.body ? JSON.stringify(opts.body) : undefined })
+    .then(function (r) {
+      return r.text().then(function (txt) {
+        var data = null;
+        try { data = txt ? JSON.parse(txt) : null; } catch (e) {}
+        return { status: r.status, data: data };
+      });
+    });
+};
+
 // Diccionario de textos bilingüe
 // Iconos mono (SVG inline, estilo .mono-icon). Las cadenas de traducciones y del
 // chatbot usan marcadores [[icono]]: fmt() escapa el HTML con esc() y cap() /
