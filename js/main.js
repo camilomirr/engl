@@ -10,8 +10,9 @@
 // main.js carga antes que todos ellos en cada página (síncrono, mientras
 // que los que las usan son síncronos después de él o con defer).
 // La llave anon es pública por diseño; la protección real es RLS.
-// js/ranking.js NO usa esta llave: lee con la llave publicable nueva
-// (sb_publishable_...), así que se queda como está.
+// js/ranking.js también usa el cliente compartido desde aquí (antes leía
+// con una llave publicable sb_publishable_... que el servidor rechazaba
+// con 401 y el ranking nunca cargaba).
 window.NVISION_SUPABASE_URL = 'https://xiuztrujrwdgcpjrruxu.supabase.co';
 window.NVISION_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpdXp0cnVqcndkZ2NwanJydXh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQwNTk2ODcsImV4cCI6MjEwOTYzNTY4N30.CBBQpCqHxuOtCaMcdUfIrKTa4vt0QJRqvivskHnt5g0';
 
@@ -67,6 +68,52 @@ window.NVISION_sbAuth = function (path, opts) {
       });
     });
 };
+
+// Sesión de la cuenta, en UN solo lugar. Antes js/cuenta.js y js/examenes.js
+// tenían cada uno su copia (getSession/setSession/clearSession/
+// saveSessionFromAuth): la de exámenes era más pobre (sin googleAvatar ni
+// nombre) y al refrescar el token desde exámenes BORRABA la foto y el nombre
+// de la sesión guardada. Ahora la forma rica vive aquí y las dos páginas la
+// usan. La foto de Google se guarda en la cuenta desde js/cuenta.js
+// (persistGoogleAvatar), no aquí: eso es propio de la página de la cuenta.
+window.NVISION_session = (function () {
+  var KEY = 'nvision_session_v1';
+  function get() {
+    try { var s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s && s.access && s.exp > Date.now()) return s; if (s && s.refresh) return s; } catch (e) {}
+    return null;
+  }
+  function set(s) { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {} }
+  function clear() { try { localStorage.removeItem(KEY); } catch (e) {} }
+  function has() { var s = get(); return !!(s && ((s.access && s.exp > Date.now()) || s.refresh)); }
+  function saveFromAuth(data, email, fallbackPicture) {
+    var md = (data.user && data.user.user_metadata) || {};
+    var s = {
+      access: data.access_token,
+      refresh: data.refresh_token,
+      exp: Date.now() + (data.expires_in || 3600) * 1000,
+      userId: data.user && data.user.id,
+      email: (data.user && data.user.email) || email,
+      avatar: md.avatar || null,
+      // La foto guardada se valida al leerla: si alguien escribió otra
+      // cosa en sus metadatos por API, no llega a pintarse (anti-XSS).
+      avatarImg: (md.avatar_image && (!window.NVISION_validAvatarImg || window.NVISION_validAvatarImg(md.avatar_image))) ? md.avatar_image : null,
+      firstName: md.first_name || null,
+      lastName: md.last_name || null,
+      fullName: md.full_name || null,
+      // La foto de Google se guarda ya en 192px para que se vea nítida
+      // y quede guardada en la sesión; en cada inicio se vuelve a leer
+      // de Google por si la cambió. Si Supabase no trae la foto en los
+      // metadatos, se usa la del token de Google (fallbackPicture).
+      googleAvatar: window.NVISION_googleAvatarHi ? window.NVISION_googleAvatarHi(md.avatar_url || md.picture || fallbackPicture || null) : (md.avatar_url || md.picture || fallbackPicture || null)
+    };
+    set(s);
+    // Guardar la foto de Google en el aparato para que no dependa de
+    // la URL remota (ver NVISION_cacheGoogleAvatar más abajo).
+    if (s.googleAvatar && window.NVISION_cacheGoogleAvatar) window.NVISION_cacheGoogleAvatar(s.googleAvatar);
+    return s;
+  }
+  return { KEY: KEY, get: get, set: set, clear: clear, has: has, saveFromAuth: saveFromAuth };
+})();
 
 // Diccionario de textos bilingüe
 // Iconos mono (SVG inline, estilo .mono-icon). Las cadenas de traducciones y del
@@ -3952,22 +3999,29 @@ function setupLocalAssistant() {
   window.addEventListener('nvision-chat-open', (e) => {
     if (e.detail && e.detail.which === 'equipo' && !panel.hidden) {
       panel.hidden = true;
+      assistant.classList.remove('is-open');
       toggle.setAttribute('aria-expanded', 'false');
     }
   });
   toggle.addEventListener('click', () => {
     const isOpen = !panel.hidden;
     panel.hidden = isOpen;
+    // is-open sube el panel por encima del botón flotante del equipo
+    // (z-index 210): sin esto, ese botón tapa el Enviar del asistente.
+    assistant.classList.toggle('is-open', !isOpen);
     toggle.setAttribute('aria-expanded', String(!isOpen));
     if (!isOpen) {
       window.dispatchEvent(new CustomEvent('nvision-chat-open', { detail: { which: 'assistant' } }));
       renderChips();
       if (!greeted) { greeted = true; say(KB[0].r[L()], null, null, null); }
-      input.focus();
+      // En celular no se enfoca solo al abrir: el teclado taparía medio
+      // panel antes de que el usuario siquiera lea el saludo.
+      if (!window.matchMedia('(pointer: coarse)').matches) input.focus();
     }
   });
   closeBtn.addEventListener('click', () => {
     panel.hidden = true;
+    assistant.classList.remove('is-open');
     toggle.setAttribute('aria-expanded', 'false');
   });
   form.addEventListener('submit', (event) => {
@@ -4992,7 +5046,12 @@ function setupNetworkSimulator() {
   }
   window.NVISION_googleAvatarHi = googleAvatarHi;
   function avatarChip(id, email, img) {
-    if (id === 'custom' && validAvatarImg(img)) return '<span class="nv-avatar nv-avatar--img"><img src="' + img + '" alt=""></span>';
+    if (id === 'custom' && validAvatarImg(img)) {
+      // data-email: si la foto no carga, el respaldo (ver abajo) vuelve
+      // a la inicial de este correo en vez de dejar el icono roto.
+      var emailAttr = String(email || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+      return '<span class="nv-avatar nv-avatar--img" data-email="' + emailAttr + '"><img src="' + img + '" alt=""></span>';
+    }
     if (id && id !== 'initial') {
       for (var i = 0; i < AVATARS.length; i++) {
         if (AVATARS[i].id === id) return '<span class="nv-avatar nv-av--' + id + '">' + AVATARS[i].svg + '</span>';
@@ -5002,6 +5061,24 @@ function setupNetworkSimulator() {
     if (!/[A-Z0-9]/.test(letter)) letter = 'N';
     return '<span class="nv-avatar nv-avatar--initial">' + letter + '</span>';
   }
+  // Si la foto no carga (URL de Google caducada, sin red, CSP...), el
+  // chip no se queda con el icono de imagen rota: vuelve a la inicial
+  // del correo. El error de <img> no burbujea, por eso se escucha en
+  // fase de captura. Cubre el encabezado, el panel de la cuenta y el
+  // ranking, que todos pintan el chip con avatarChip.
+  document.addEventListener('error', function (e) {
+    var t = e.target;
+    if (!t || t.tagName !== 'IMG') return;
+    var chip = t.parentNode;
+    if (!chip || !chip.classList || !chip.classList.contains('nv-avatar--img')) return;
+    var email = chip.getAttribute('data-email') || '';
+    var letter = (email || 'N').trim().charAt(0).toUpperCase() || 'N';
+    if (!/[A-Z0-9]/.test(letter)) letter = 'N';
+    var span = document.createElement('span');
+    span.className = 'nv-avatar nv-avatar--initial';
+    span.textContent = letter;
+    if (chip.parentNode) chip.parentNode.replaceChild(span, chip);
+  }, true);
   function renderAccountChip() {
     var link = document.getElementById('account-link');
     if (!link) return;

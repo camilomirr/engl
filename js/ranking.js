@@ -5,8 +5,9 @@
    página muestra un aviso de "muy pronto" en vez de romperse. */
 (function () {
   'use strict';
-  var SUPABASE_URL = 'https://xiuztrujrwdgcpjrruxu.supabase.co';
-  var ANON_KEY = 'sb_publishable_vrA' + 'XhY6y9' + 'W2h8pQ7kLmN4zR6tY1uI3oP5aS7dF9gH2jK4lM6';
+  // Cliente de Supabase: vive en js/main.js (window.NVISION_sb). Antes esta
+  // página usaba una llave publicable sb_publishable_... que el servidor
+  // rechazaba con 401: el ranking nunca cargaba datos reales.
   var lang = (localStorage.getItem('user_lang') || 'es').toLowerCase().indexOf('en') === 0 ? 'en' : 'es';
 
   var T = {
@@ -27,17 +28,8 @@
   function showState(msg) { state.hidden = false; state.textContent = msg; body.innerHTML = ''; }
 
   showState(T.loading);
-  fetch(SUPABASE_URL + '/rest/v1/site_ranking?select=user_id,name,avatar,avatar_image,points&order=points.desc,updated_at.asc&limit=20', {
-    headers: { 'apikey': ANON_KEY, 'Authorization': 'Bearer ' + ANON_KEY }
-  }).then(function (r) {
-    return r.text().then(function (t) {
-      var data = null;
-      try { data = t ? JSON.parse(t) : null; } catch (e) {}
-      if (!r.ok) {
-        // 404 / tabla inexistente: queda pendiente de activación por el equipo.
-        if (r.status === 404 || (data && (data.code === 'PGRST205' || data.code === '42P01'))) { showState(T.pending); return; }
-        showState(T.error); return;
-      }
+  window.NVISION_sb.get('/rest/v1/site_ranking?select=user_id,name,avatar,avatar_image,points&order=points.desc,updated_at.asc&limit=20')
+    .then(function (data) {
       if (!Array.isArray(data) || !data.length) { showState(T.empty); return; }
       state.hidden = true;
       var uid = myId();
@@ -58,6 +50,9 @@
         tr.querySelector('b').textContent = row.name || '—';
         body.appendChild(tr);
       });
+    }).catch(function (e) {
+      // 404 / tabla inexistente: queda pendiente de activación por el equipo.
+      if (e && e.message === 'http 404') { showState(T.pending); return; }
+      showState(T.error);
     });
-  }).catch(function () { showState(T.error); });
 })();

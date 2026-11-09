@@ -13,6 +13,12 @@
   font-family: 'JetBrains Mono', monospace;
 }
 
+/* Con el panel abierto, la raíz sube por encima del botón flotante del
+   chat del equipo (z-index 210): sin esto, ese botón queda encima del
+   panel y tapa el botón Enviar del asistente, sobre todo en celular.
+   Al cerrar, vuelve a 200 y el botón del equipo queda visible otra vez. */
+.local-assistant.is-open { z-index: 220; }
+
 /* Botón flotante: círculo de cristal con el icono en cian */
 .local-assistant-toggle {
   width: 3.5rem;

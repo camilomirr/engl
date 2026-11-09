@@ -11,37 +11,21 @@
   // se le pregunta a Supabase si el token de la sesión es de verdad
   // (una sesión inventada a mano la rechaza el servidor).
   // URL y llave anon de Supabase y cliente de auth: viven en js/main.js
-  // (NVISION_SUPABASE_* y NVISION_sbAuth); aquí solo se usan.
-  var SESSION_KEY = 'nvision_session_v1';
+  // Sesión: vive en js/main.js (window.NVISION_session); aquí solo se usa.
+  // Antes había una copia propia de la sesión, más pobre (sin foto de Google
+  // ni nombre): al refrescar el token desde aquí se BORRABAN de la sesión.
   var VERIFIED_KEY = 'nvision_verified_v1';
 
-  function readSession() {
-    try { return JSON.parse(localStorage.getItem(SESSION_KEY) || 'null'); } catch (e) { return null; }
-  }
-  function hasSession() {
-    var s = readSession();
-    return !!(s && ((s.access && s.exp > Date.now()) || s.refresh));
-  }
-  function clearSession() { try { localStorage.removeItem(SESSION_KEY); } catch (e) {} }
+  function readSession() { return window.NVISION_session.get(); }
+  function hasSession() { return window.NVISION_session.has(); }
+  function clearSession() { window.NVISION_session.clear(); }
   function readVerified() {
     try { return JSON.parse(sessionStorage.getItem(VERIFIED_KEY) || 'null'); } catch (e) { return null; }
   }
   function markVerified(uid, access) {
     try { sessionStorage.setItem(VERIFIED_KEY, JSON.stringify({ uid: uid, tok: String(access || '').slice(36, 60), at: Date.now() })); } catch (e) {}
   }
-  function saveSessionFromAuth(data, email) {
-    var s = {
-      access: data.access_token,
-      refresh: data.refresh_token,
-      exp: Date.now() + (data.expires_in || 3600) * 1000,
-      userId: data.user && data.user.id,
-      email: (data.user && data.user.email) || email,
-      avatar: (data.user && data.user.user_metadata && data.user.user_metadata.avatar) || null,
-      avatarImg: (data.user && data.user.user_metadata && data.user.user_metadata.avatar_image) || null
-    };
-    try { localStorage.setItem(SESSION_KEY, JSON.stringify(s)); } catch (e) {}
-    return s;
-  }
+  function saveSessionFromAuth(data, email) { return window.NVISION_session.saveFromAuth(data, email); }
   function verifySession() {
     var s = readSession();
     if (!s) return Promise.resolve(false);

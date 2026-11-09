@@ -9,7 +9,6 @@
   // window.NVISION_sbAuth, compartido con examenes.js (ver main.js).
   var SUPABASE_URL = window.NVISION_SUPABASE_URL;
   var GOOGLE_CLIENT_ID = '855201454498-es9vkd7vqq2eli18g1rtprtvguqimn71.apps.googleusercontent.com';
-  var SESSION_KEY = 'nvision_session_v1';
   var META_KEY = 'nvision_sync_meta_v1';
   var SYNC_KEYS = ['nvision_ruta_v1', 'nvision_examenes_v1', 'nvision_workshop_v2', 'nvision_logros_v1'];
   var lang = (localStorage.getItem('user_lang') || 'es').toLowerCase().indexOf('en') === 0 ? 'en' : 'es';
@@ -89,12 +88,11 @@
   }
   function clearMsg() { $('cuenta-msg').className = 'cuenta-msg'; }
 
-  function getSession() {
-    try { var s = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null'); if (s && s.access && s.exp > Date.now()) return s; if (s && s.refresh) return s; } catch (e) {}
-    return null;
-  }
-  function setSession(s) { try { localStorage.setItem(SESSION_KEY, JSON.stringify(s)); } catch (e) {} }
-  function clearSession() { try { localStorage.removeItem(SESSION_KEY); } catch (e) {} }
+  // Sesión: vive en js/main.js (window.NVISION_session, compartida con
+  // examenes.js); aquí solo se usan sus funciones.
+  function getSession() { return window.NVISION_session.get(); }
+  function setSession(s) { window.NVISION_session.set(s); }
+  function clearSession() { window.NVISION_session.clear(); }
 
   // Regreso opcional tras iniciar sesión: cuenta.html?next=examenes.html
   // (solo destinos internos de la lista, nada externo).
@@ -106,31 +104,76 @@
   }
   function goNext() { var n = nextTarget(); if (n) { location.href = n; return true; } return false; }
 
-  function saveSessionFromAuth(data, email) {
-    var md = (data.user && data.user.user_metadata) || {};
-    var s = {
-      access: data.access_token,
-      refresh: data.refresh_token,
-      exp: Date.now() + (data.expires_in || 3600) * 1000,
-      userId: data.user && data.user.id,
-      email: (data.user && data.user.email) || email,
-      avatar: md.avatar || null,
-      // La foto guardada se valida al leerla: si alguien escribió otra
-      // cosa en sus metadatos por API, no llega a pintarse (anti-XSS).
-      avatarImg: (md.avatar_image && (!window.NVISION_validAvatarImg || window.NVISION_validAvatarImg(md.avatar_image))) ? md.avatar_image : null,
-      firstName: md.first_name || null,
-      lastName: md.last_name || null,
-      fullName: md.full_name || null,
-      // La foto de Google se guarda ya en 192px para que se vea nítida
-      // y quede guardada en la sesión; en cada inicio se vuelve a leer
-      // de Google por si la cambió.
-      googleAvatar: window.NVISION_googleAvatarHi ? window.NVISION_googleAvatarHi(md.avatar_url || md.picture || null) : (md.avatar_url || md.picture || null)
-    };
-    setSession(s);
-    // Guardar la foto de Google en el aparato para que no dependa de
-    // la URL remota (ver js/main.js: NVISION_cacheGoogleAvatar).
-    if (s.googleAvatar && window.NVISION_cacheGoogleAvatar) window.NVISION_cacheGoogleAvatar(s.googleAvatar);
+  function saveSessionFromAuth(data, email, fallbackPicture) {
+    var s = window.NVISION_session.saveFromAuth(data, email, fallbackPicture);
+    // Guardar la foto en la cuenta (ver persistGoogleAvatar): así queda
+    // guardada de verdad y no solo en este aparato.
+    persistGoogleAvatar(s);
     return s;
+  }
+
+  // Foto de Google desde el token de identidad: Google la entrega en el
+  // propio token (campo picture), así que si Supabase no la trae en los
+  // metadatos, se lee de aquí sin depender de nada más.
+  function pictureFromIdToken(token) {
+    try {
+      var parts = (token || '').split('.');
+      if (parts.length < 2) return null;
+      var json = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
+      return (json && json.picture) || null;
+    } catch (e) { return null; }
+  }
+  // Foto de Google guardada en la cuenta: se descarga la foto, se recorta
+  // a cuadrada 256px (igual que la foto subida) y se guarda como
+  // avatar_image en Supabase, para que quede guardada en la cuenta y se
+  // vea en cualquier aparato sin depender de la URL remota. Solo si el
+  // usuario no eligió otra foto o avatar, y solo una vez por URL (si
+  // cambia su foto de Google, la URL cambia y se vuelve a guardar).
+  // Si la descarga falla, no pasa nada: queda la URL remota de respaldo
+  // y el chip ya no muestra el icono roto (ver js/main.js).
+  var GOOGLE_AVATAR_SAVED_KEY = 'nvision_google_avatar_saved_v1';
+  var googleAvatarPersisting = null;
+  function persistGoogleAvatar(s) {
+    if (!s || !s.googleAvatar || !s.access) return;
+    if ((s.avatar && s.avatar !== 'initial') || s.avatarImg) return;
+    try { if (localStorage.getItem(GOOGLE_AVATAR_SAVED_KEY) === s.googleAvatar) return; } catch (e) {}
+    if (googleAvatarPersisting === s.googleAvatar) return;
+    googleAvatarPersisting = s.googleAvatar;
+    var done = function () { googleAvatarPersisting = null; };
+    fetch(s.googleAvatar, { mode: 'cors' }).then(function (r) {
+      if (!r.ok) throw new Error('no-photo');
+      return r.blob();
+    }).then(function (blob) {
+      if (!blob || blob.size > 500000 || blob.type.indexOf('image/') !== 0) throw new Error('no-photo');
+      return new Promise(function (resolve, reject) {
+        var url = URL.createObjectURL(blob);
+        var img = new Image();
+        img.onload = function () {
+          try {
+            var size = 256, canvas = document.createElement('canvas');
+            canvas.width = size; canvas.height = size;
+            var side = Math.min(img.width, img.height);
+            canvas.getContext('2d').drawImage(img, (img.width - side) / 2, (img.height - side) / 2, side, side, 0, 0, size, size);
+            var out = canvas.toDataURL('image/jpeg', 0.82);
+            if (out.length > 90000) out = canvas.toDataURL('image/jpeg', 0.55);
+            URL.revokeObjectURL(url);
+            resolve(out);
+          } catch (e) { URL.revokeObjectURL(url); reject(e); }
+        };
+        img.onerror = function () { URL.revokeObjectURL(url); reject(new Error('no-photo')); };
+        img.src = url;
+      });
+    }).then(function (out) {
+      if (!window.NVISION_validAvatarImg || !window.NVISION_validAvatarImg(out)) throw new Error('bad-img');
+      return window.NVISION_sbAuth('/auth/v1/user', { method: 'PUT', token: s.access, body: { data: { avatar_image: out } } })
+        .then(function (r) { if (r.status !== 200) throw new Error('no-save'); return out; });
+    }).then(function (out) {
+      try { localStorage.setItem(GOOGLE_AVATAR_SAVED_KEY, s.googleAvatar); } catch (e) {}
+      s.avatarImg = out; setSession(s);
+      renderProfilePhoto();
+      if (window.NVISION_renderAccountChip) window.NVISION_renderAccountChip();
+      done();
+    }).catch(function () { done(); });
   }
 
   // Nombre a mostrar: nombre completo de Google o del registro; si no hay,
@@ -158,6 +201,10 @@
     if (!el) return;
     var s = getSession();
     if (s && s.googleAvatar && window.NVISION_cacheGoogleAvatar) window.NVISION_cacheGoogleAvatar(s.googleAvatar);
+    // Si ya hay sesión iniciada (sin pasar por el inicio), también se
+    // intenta guardar la foto en la cuenta; el candado de persistencia
+    // evita repetirlo.
+    if (s) persistGoogleAvatar(s);
     el.innerHTML = profilePhotoHtml(s);
   }
 
@@ -666,7 +713,7 @@
     window.NVISION_sbAuth('/auth/v1/token?grant_type=id_token', { method: 'POST', body: { provider: 'google', id_token: idToken, token: idToken } })
       .then(function (r) {
         if (r.status === 200 && r.data && r.data.access_token) {
-          var s = saveSessionFromAuth(r.data, (r.data.user && r.data.user.email) || '');
+          var s = saveSessionFromAuth(r.data, (r.data.user && r.data.user.email) || '', pictureFromIdToken(idToken));
           showPanel(s);
           if (!goNext()) syncNow(s);
         } else msg('err', T.googleOff);
