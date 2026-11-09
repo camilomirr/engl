@@ -4876,6 +4876,56 @@ function setupNetworkSimulator() {
     return AVATAR_IMG_RE.test(img) || AVATAR_GOOGLE_RE.test(img);
   }
   window.NVISION_validAvatarImg = validAvatarImg;
+  // Foto de Google guardada: al iniciar sesión (o al ver el encabezado
+  // con la sesión ya iniciada) se descarga la foto de Google y se
+  // guarda como data: en localStorage, para que no dependa de la URL
+  // remota ni del CSP de cada página. La URL remota queda de respaldo.
+  // Solo se guarda la foto si viene de lh3.googleusercontent.com.
+  var GOOGLE_AVATAR_KEY = 'nvision_google_avatar_v1';
+  function cachedGoogleAvatar(url) {
+    try {
+      var raw = localStorage.getItem(GOOGLE_AVATAR_KEY);
+      if (!raw) return null;
+      var o = JSON.parse(raw);
+      if (!o || o.u !== url || typeof o.d !== 'string') return null;
+      if (o.d.indexOf('data:image/') !== 0 || o.d.length > 130000) return null;
+      return o.d;
+    } catch (e) { return null; }
+  }
+  function cacheGoogleAvatar(url) {
+    if (!url || !AVATAR_GOOGLE_RE.test(url)) return;
+    if (cachedGoogleAvatar(url)) return;
+    if (typeof fetch !== 'function' || typeof FileReader === 'undefined') return;
+    fetch(url, { mode: 'cors' }).then(function (r) {
+      if (!r.ok) return null;
+      return r.blob();
+    }).then(function (blob) {
+      if (!blob || blob.size > 200000 || blob.type.indexOf('image/') !== 0) return;
+      var fr = new FileReader();
+      fr.onload = function () {
+        try {
+          var d = fr.result;
+          if (typeof d === 'string' && d.indexOf('data:image/') === 0 && d.length <= 130000) {
+            localStorage.setItem(GOOGLE_AVATAR_KEY, JSON.stringify({ u: url, d: d }));
+          }
+        } catch (e) {}
+      };
+      fr.readAsDataURL(blob);
+    }).catch(function () {});
+  }
+  window.NVISION_cachedGoogleAvatar = cachedGoogleAvatar;
+  window.NVISION_cacheGoogleAvatar = cacheGoogleAvatar;
+  // Foto de Google en alta resolución: la URL que da Google suele
+  // venir en 96px (=s96-c); se sube a 192px para que se vea nítida
+  // en el panel de la cuenta. Si no trae tamaño, se le pone.
+  function googleAvatarHi(url) {
+    if (!url || typeof url !== 'string') return url;
+    if (url.indexOf('https://lh3.googleusercontent.com/') !== 0) return url;
+    if (/=s\d+-c/.test(url)) return url.replace(/=s\d+-c/, '=s192-c');
+    if (/=s\d+/.test(url)) return url.replace(/=s\d+/, '=s192');
+    return url + '=s192-c';
+  }
+  window.NVISION_googleAvatarHi = googleAvatarHi;
   function avatarChip(id, email, img) {
     if (id === 'custom' && validAvatarImg(img)) return '<span class="nv-avatar nv-avatar--img"><img src="' + img + '" alt=""></span>';
     if (id && id !== 'initial') {
@@ -4894,7 +4944,8 @@ function setupNetworkSimulator() {
     try { s = JSON.parse(localStorage.getItem('nvision_session_v1') || 'null'); } catch (e) {}
     if (!s) return;
     var isSvgAvatar = s.avatar && s.avatar !== 'custom' && s.avatar !== 'initial';
-    var img = isSvgAvatar ? s.avatarImg : (s.avatarImg || s.googleAvatar);
+    var img = isSvgAvatar ? s.avatarImg : (s.avatarImg || cachedGoogleAvatar(s.googleAvatar) || s.googleAvatar);
+    if (!isSvgAvatar && s.googleAvatar) cacheGoogleAvatar(s.googleAvatar);
     var id = isSvgAvatar ? s.avatar : (img ? 'custom' : 'initial');
     if (s.avatar || img) {
       link.innerHTML = avatarChip(id, s.email, img);

@@ -134,9 +134,15 @@
       firstName: md.first_name || null,
       lastName: md.last_name || null,
       fullName: md.full_name || null,
-      googleAvatar: md.avatar_url || md.picture || null
+      // La foto de Google se guarda ya en 192px para que se vea nítida
+      // y quede guardada en la sesión; en cada inicio se vuelve a leer
+      // de Google por si la cambió.
+      googleAvatar: window.NVISION_googleAvatarHi ? window.NVISION_googleAvatarHi(md.avatar_url || md.picture || null) : (md.avatar_url || md.picture || null)
     };
     setSession(s);
+    // Guardar la foto de Google en el aparato para que no dependa de
+    // la URL remota (ver js/main.js: NVISION_cacheGoogleAvatar).
+    if (s.googleAvatar && window.NVISION_cacheGoogleAvatar) window.NVISION_cacheGoogleAvatar(s.googleAvatar);
     return s;
   }
 
@@ -154,14 +160,18 @@
   function profilePhotoHtml(s) {
     if (!s || !window.NVISION_avatarChip) return '';
     var isSvg = s.avatar && s.avatar !== 'custom' && s.avatar !== 'initial';
-    var img = isSvg ? s.avatarImg : (s.avatarImg || s.googleAvatar);
+    // Foto guardada en el aparato manda sobre la URL remota de Google.
+    var cached = (!isSvg && s.googleAvatar && window.NVISION_cachedGoogleAvatar) ? window.NVISION_cachedGoogleAvatar(s.googleAvatar) : null;
+    var img = isSvg ? s.avatarImg : (s.avatarImg || cached || s.googleAvatar);
     var id = isSvg ? s.avatar : (img ? 'custom' : 'initial');
     return window.NVISION_avatarChip(id, s.email, img);
   }
   function renderProfilePhoto() {
     var el = $('cuenta-profile-photo');
     if (!el) return;
-    el.innerHTML = profilePhotoHtml(getSession());
+    var s = getSession();
+    if (s && s.googleAvatar && window.NVISION_cacheGoogleAvatar) window.NVISION_cacheGoogleAvatar(s.googleAvatar);
+    el.innerHTML = profilePhotoHtml(s);
   }
 
   function refreshSession(s) {
