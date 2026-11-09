@@ -17,15 +17,10 @@
       switchReg: '¿No tienes cuenta? Regístrate', switchLogin: '¿Ya tienes cuenta? Inicia sesión',
       working: 'Un momento…', needFields: 'Escribe tu correo y una contraseña de al menos 6 caracteres.',
       confirmEmail: 'Cuenta creada. Revisa tu correo y confirma el enlace que te enviamos; después inicia sesión aquí.',
-      welcomeBack: 'Sesión iniciada. Tu progreso se sincronizó con tu cuenta.',
       badLogin: 'Correo o contraseña incorrectos, o la cuenta aún no está confirmada por correo.',
       userExists: 'Ese correo ya tiene una cuenta. Inicia sesión.',
       netErr: 'Sin conexión con el servidor. Revisa tu internet e inténtalo otra vez.',
-      loggedAs: 'Sesión iniciada como', syncing: 'Sincronizando tu progreso…',
-      syncOkUp: 'Progreso guardado en la nube.', syncOkDown: 'Progreso actualizado desde la nube.', syncOkSame: 'Tu progreso ya estaba al día.',
-      syncPending: 'Tu cuenta funciona, pero la sincronización en la nube aún no está activada por el equipo (falta crear la tabla de progreso en Supabase). Tu progreso sigue guardado en este equipo.',
-      syncFail: 'No se pudo sincronizar ahora. Tu progreso sigue guardado en este equipo.',
-      lastSync: 'Última sincronización',
+      loggedAs: 'Sesión iniciada como',
       avatarSaved: 'Avatar guardado. Se verá en el botón de Mi cuenta en todo el sitio.', avatarErr: 'No se pudo guardar el avatar. Inténtalo otra vez.', avatarInitial: 'Inicial',
       avatarPhoto: 'Foto', avatarRemove: 'Quitar foto', avatarImgErr: 'Esa imagen no se pudo usar. Prueba con otra.',
       googleOff: 'El ingreso con Google aún no está activado por el equipo. Por ahora entra con tu correo y contraseña.',
@@ -47,15 +42,10 @@
       switchReg: "Don't have an account? Sign up", switchLogin: 'Already have an account? Log in',
       working: 'One moment…', needFields: 'Enter your email and a password of at least 6 characters.',
       confirmEmail: 'Account created. Check your email and confirm the link we sent you; then log in here.',
-      welcomeBack: 'Logged in. Your progress has been synced with your account.',
       badLogin: 'Wrong email or password, or the account is not email-confirmed yet.',
       userExists: 'That email already has an account. Log in instead.',
       netErr: 'No connection to the server. Check your internet and try again.',
-      loggedAs: 'Logged in as', syncing: 'Syncing your progress…',
-      syncOkUp: 'Progress saved to the cloud.', syncOkDown: 'Progress updated from the cloud.', syncOkSame: 'Your progress was already up to date.',
-      syncPending: 'Your account works, but cloud sync is not enabled by the team yet (the progress table still needs to be created in Supabase). Your progress is still saved on this device.',
-      syncFail: 'Could not sync right now. Your progress is still saved on this device.',
-      lastSync: 'Last sync',
+      loggedAs: 'Logged in as',
       avatarSaved: 'Avatar saved. It will show on the My account button across the site.', avatarErr: 'Could not save the avatar. Try again.', avatarInitial: 'Initial',
       avatarPhoto: 'Photo', avatarRemove: 'Remove photo', avatarImgErr: 'That image could not be used. Try another one.',
       googleOff: 'Google sign-in is not enabled by the team yet. For now, log in with your email and password.',
@@ -190,13 +180,12 @@
     try { var p = JSON.parse(raw || 'null'); return p && p.updatedAt ? Date.parse(p.updatedAt) || 0 : 0; } catch (e) { return 0; }
   }
 
-  function syncNow(session, quiet) {
-    var stateEl = $('cuenta-sync-state');
-    if (!quiet) stateEl.textContent = T.syncing;
+  // La sincronización es silenciosa: corre sola al entrar y al pulsar
+  // "Sincronizar ahora", sin anunciar nada en la página.
+  function syncNow(session) {
     return api('/rest/v1/user_progress?select=data,updated_at&user_id=eq.' + session.userId, { token: session.access })
       .then(function (r) {
         if (r.status === 404 || (r.data && (r.data.code === 'PGRST205' || r.data.code === '42P01'))) {
-          stateEl.textContent = T.syncPending;
           return 'pending';
         }
         if (r.status !== 200) throw new Error('rest ' + r.status);
@@ -222,21 +211,19 @@
         var finish = function (resultWord) {
           meta.hashAtSync = hashItems(localItems());
           setMeta(meta);
-          stateEl.textContent = resultWord + ' · ' + T.lastSync + ': ' + new Date(meta.lastSyncAt).toLocaleString(lang === 'en' ? 'en-US' : 'es-CO');
           return resultWord;
         };
-        if (!changedCloud) return finish(changedLocal ? T.syncOkDown : T.syncOkSame);
+        if (!changedCloud) return finish(changedLocal ? 'down' : 'same');
         return api('/rest/v1/user_progress', {
           method: 'POST', token: session.access,
           headers: { 'Prefer': 'resolution=merge-duplicates' },
           body: { user_id: session.userId, data: { items: merged }, updated_at: new Date().toISOString() }
         }).then(function (r2) {
           if (r2.status !== 200 && r2.status !== 201) throw new Error('upsert ' + r2.status);
-          return finish(changedLocal ? T.syncOkDown : T.syncOkUp);
+          return finish(changedLocal ? 'down' : 'up');
         });
       })
       .catch(function () {
-        stateEl.textContent = T.syncFail;
         return 'fail';
       });
   }
@@ -259,8 +246,6 @@
     renderProfilePhoto();
     buildAvatarGrid($('avatar-grid-panel'), session.avatar || 'initial', saveAvatar, session.avatarImg);
     refreshRemoveBtn();
-    var meta = getMeta();
-    $('cuenta-sync-state').textContent = meta.lastSyncAt ? (T.lastSync + ': ' + new Date(meta.lastSyncAt).toLocaleString(lang === 'en' ? 'en-US' : 'es-CO')) : '';
     var strip = $('cuenta-logros');
     if (strip && window.NVISION_LOGROS) window.NVISION_LOGROS.renderStrip(strip);
     var statsEl = $('cuenta-stats');
@@ -356,7 +341,7 @@
           if (r.status === 200 && r.data) {
             if (r.data.access_token) {
               var s = saveSessionFromAuth(r.data, email);
-              showPanel(s); if (!goNext()) syncNow(s, true);
+              showPanel(s); if (!goNext()) syncNow(s);
             } else { msg('ok', T.confirmEmail); mode = 'login'; renderMode(); }
           } else if (r.data && /already|registered/i.test(r.data.msg || r.data.error_description || '')) msg('err', T.userExists);
           else msg('err', T.netErr);
@@ -368,9 +353,8 @@
           done();
           if (r.status === 200 && r.data && r.data.access_token) {
             var s = saveSessionFromAuth(r.data, email);
-            msg('ok', T.welcomeBack);
             showPanel(s);
-            if (!goNext()) syncNow(s, true);
+            if (!goNext()) syncNow(s);
           } else msg('err', T.badLogin);
         })
         .catch(function () { done(); msg('err', T.netErr); });
@@ -378,7 +362,7 @@
   });
 
   $('cuenta-sync').addEventListener('click', function () {
-    ensureSession().then(function (s) { if (s) syncNow(s, false); else showAuth(); });
+    ensureSession().then(function (s) { if (s) syncNow(s); else showAuth(); });
   });
   $('cuenta-logout').addEventListener('click', function () {
     var s = getSession();
@@ -539,7 +523,7 @@
         });
         if (!applied) throw new Error('vacio');
         msg('ok', T.impOk);
-        ensureSession().then(function (s) { if (s) syncNow(s, true); });
+        ensureSession().then(function (s) { if (s) syncNow(s); });
         setTimeout(function () { location.reload(); }, 1200);
       } catch (e) { msg('err', T.impErr); }
     };
@@ -621,9 +605,8 @@
     api('/auth/v1/user', { token: at }).then(function (r) {
       if (r.status === 200 && r.data && r.data.id) {
         var s = saveSessionFromAuth({ access_token: at, refresh_token: rt, expires_in: exp, user: r.data }, r.data.email);
-        msg('ok', T.welcomeBack);
         showPanel(s);
-        if (!goNext()) syncNow(s, true);
+        if (!goNext()) syncNow(s);
       } else msg('err', T.googleOff);
     }).catch(function () { msg('err', T.netErr); });
   })();
@@ -644,7 +627,7 @@
 
   renderMode();
   ensureSession().then(function (s) {
-    if (s) { showPanel(s); if (!goNext()) syncNow(s, true); }
+    if (s) { showPanel(s); if (!goNext()) syncNow(s); }
     else showAuth();
   });
 })();
