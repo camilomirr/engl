@@ -5015,6 +5015,26 @@ function setupNetworkSimulator() {
     // círculo y el busto se sale por abajo (el chip lo recorta).
     return svgP('<g transform="translate(-16 -18) scale(1.5)">' + s + '</g>');
   }
+  function hackerSvg() {
+    var s =
+      '<ellipse cx="32" cy="26" rx="17.5" ry="18.5" fill="#3b2d5c"/>' +
+      '<path d="M14.5 28a17.5 18.5 0 0 1 35 0l2.2 16.5H12.3z" fill="#3b2d5c"/>' +
+      '<path d="M14 64v-6c0-7 8-11 18-11s18 4 18 11v6z" fill="#2e2148"/>' +
+      '<ellipse cx="32" cy="28" rx="11.8" ry="13" fill="#f7f9fc"/>' +
+      '<ellipse cx="32" cy="37.5" rx="8.5" ry="4" fill="#dbe2ee" opacity="0.55"/>' +
+      '<path d="M24.2 25.6q2.6-1.2 5-.3M34.8 25.3q2.4-.9 5 .3" stroke="#9aa5b5" stroke-width="1.1" stroke-linecap="round" fill="none"/>' +
+      '<path d="M23.4 29.6Q27 31.8 30.6 30M33.4 30Q37 31.8 40.6 29.6" stroke="#232733" stroke-width="1.9" stroke-linecap="round" fill="none"/>' +
+      '<path d="M32 31.2q1.1 2.3-.2 3.1" stroke="#b6c0d0" stroke-width="1" stroke-linecap="round" fill="none"/>' +
+      '<path d="M32 35.6Q29.2 37.4 26.9 36.7M32 35.6Q34.8 37.4 37.1 36.7" stroke="#232733" stroke-width="1.1" stroke-linecap="round" fill="none" opacity="0.75"/>' +
+      '<path d="M26.6 37.2Q32 40.8 37.8 36.6" stroke="#232733" stroke-width="1.8" stroke-linecap="round" fill="none"/>' +
+      '<path d="M32 41.6v2.4" stroke="#232733" stroke-width="1.3" stroke-linecap="round" opacity="0.8"/>' +
+      '<rect x="13" y="48.5" width="38" height="13.5" rx="2.5" fill="#9fb2c8" stroke="#5b6b82" stroke-width="1.2"/>' +
+      '<circle cx="32" cy="54.6" r="3.7" fill="#ffffff" stroke="#5b6b82" stroke-width="0.8"/>' +
+      '<circle cx="30.5" cy="54.8" r="0.9" fill="#232733"/><circle cx="33.5" cy="54.8" r="0.9" fill="#232733"/>' +
+      '<rect x="30.1" y="57.2" width="3.8" height="1.9" rx="0.8" fill="#ffffff" stroke="#5b6b82" stroke-width="0.7"/>' +
+      '<rect x="11" y="62" width="42" height="2.2" rx="1.1" fill="#7d90a8"/>';
+    return svg('<g transform="translate(-16 -18) scale(1.5)">' + s + '</g>');
+  }
   var AVATARS = [
     { id: 'chip', es: 'Programador', en: 'Developer', svg: person({ skin: '#f1c27d', shade: '#d9a55f', hairColor: '#2f2a26', hairTop: hairShort, shirt: '#1d4ed8', collar: '#bfdbfe', extra: ACC_CODE }) },
     { id: 'wifi', es: 'Redes', en: 'Networks', svg: person({ skin: '#8d5524', shade: '#74431c', hairColor: '#2b6cb0', hairTop: hairBun, shirt: '#ea580c', collar: '#ffedd5' }) },
@@ -5026,7 +5046,7 @@ function setupNetworkSimulator() {
     { id: 'monitor', es: 'Diseño', en: 'Design', svg: person({ skin: '#c68642', shade: '#a96f33', hairColor: '#5b3a1e', behind: hairLong, hairTop: hairShort, shirt: '#0e7490', collar: '#a5f3fc' }) },
     { id: 'server', es: 'Sistemas', en: 'SysAdmin', svg: person({ skin: '#6b4423', shade: '#57371c', hairColor: '#17120d', hairTop: hairShort, beard: true, shirt: '#334155', collar: '#94a3b8' }) },
     { id: 'trophy', es: 'Líder', en: 'Leader', svg: person({ skin: '#e0ac69', shade: '#c68e4e', hairColor: '#6b4a2b', hairTop: hairSwept, suit: true, shirt: '#26303b' }) },
-    { id: 'book', es: 'Hacker', en: 'Hacker', svg: person({ skin: '#e0ac69', shade: '#c68e4e', hairColor: '#241a12', behind: hairHood, shirt: '#111827', collar: '#1f2937', extra: ACC_SHADES }) },
+    { id: 'book', es: 'Hacker', en: 'Hacker', svg: hackerSvg() },
     { id: 'music', es: 'Creador', en: 'Creator', svg: person({ skin: '#8d5524', shade: '#74431c', hairColor: '#7c3aed', behind: hairLong, hairTop: hairShort, shirt: '#db2777', collar: '#fbcfe8' }) },
     { id: 'headphones', es: 'Soporte', en: 'Support', svg: person({ skin: '#e0ac69', shade: '#c68e4e', hairColor: '#241a12', hairTop: hairCurly, shirt: '#2563eb', collar: '#bfdbfe', extra: ACC_HEADSET }) }
   ];
