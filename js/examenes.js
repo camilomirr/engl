@@ -504,7 +504,12 @@
   }
 
   function drawCertificate() {
-    var name = String(document.getElementById('cert-name').value || '').trim();
+    // Capa de validación: el nombre del certificado se sanea igual que
+    // en verificar.js (sin marcado, máx. 60, como el CHECK de la base);
+    // si cada lado limpiara distinto, el código no coincidiría.
+    var V = window.NVISION_validate;
+    var rawName = String(document.getElementById('cert-name').value || '').trim();
+    var name = V ? V.cleanName(rawName, 60) : rawName.slice(0, 60);
     if (!name) { window.alert(T.certBtnAlert); return; }
     var res = state.results[current.id];
     var pct = res ? res.last : 0;
@@ -585,7 +590,7 @@
         fetch('https://xiuztrujrwdgcpjrruxu.supabase.co/rest/v1/certificados', {
           method: 'POST',
           headers: { apikey: window.NVISION_SUPABASE_ANON_KEY, Authorization: 'Bearer ' + sess.access, 'Content-Type': 'application/json', Prefer: 'resolution=ignore-duplicates' },
-          body: JSON.stringify({ code: code, name: name, exam: current.id, score: pct, issued: resDate })
+          body: JSON.stringify({ code: code, name: name, exam: current.id, score: pct, issued: resDate, user_id: sess.userId || null })
         }).catch(function () {});
       } catch (e) {}
     }

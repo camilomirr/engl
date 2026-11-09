@@ -9,7 +9,7 @@
        envios de formularios a sitios ajenos. 'unsafe-inline' es
        necesario por el script de diagnostico de arranque y el
        importmap, ambos en linea en esta pagina. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' https://fonts.googleapis.com; img-src 'self' data: https://images.unsplash.com https://encrypted-tbn0.gstatic.com https://acf.geeknetic.es https://jensa.vtexassets.com https://www.esmero.com.co https://pisces.bbystatic.com https://placaschinas.com https://th.bing.com https://www.cyberpuerta.mx https://www.legionmac.com https://www.ntcompatible.com https://*.googleusercontent.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://xiuztrujrwdgcpjrruxu.supabase.co https://*.googleusercontent.com; media-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-4boCb5c/3TldgOOhpqa/tzJqmX9nICGU8Av+CDau29A='; style-src 'self' https://fonts.googleapis.com; img-src 'self' data: https://images.unsplash.com https://encrypted-tbn0.gstatic.com https://acf.geeknetic.es https://jensa.vtexassets.com https://www.esmero.com.co https://pisces.bbystatic.com https://placaschinas.com https://th.bing.com https://www.cyberpuerta.mx https://www.legionmac.com https://www.ntcompatible.com https://*.googleusercontent.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://xiuztrujrwdgcpjrruxu.supabase.co https://*.googleusercontent.com; media-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>NVISION PC Workshop - Taller virtual de armado de PC</title>
   <!-- Hojas de estilo modular -->
@@ -340,20 +340,7 @@
 
   <script src="../js/main.js?v=32"></script>
   <script src="../js/site-search.js?v=6"></script>
-  <script>
-window.__WS_ERRORS = [];
-window.addEventListener('error', function (e) { window.__WS_ERRORS.push(String((e && e.message) || 'error')); }, true);
-window.addEventListener('unhandledrejection', function (e) { window.__WS_ERRORS.push('promise: ' + String((e.reason && e.reason.message) || e.reason)); });
-setTimeout(function () {
-  if (!window.__WS_BOOTED) {
-    var d = document.createElement('div');
-    d.id = 'ws-diag';
-    d.style.cssText = 'position:relative;z-index:99;background:#7f1d1d;color:#fff;padding:.7rem 1rem;font:600 .92rem system-ui,sans-serif;';
-    d.textContent = 'DIAGNOSTICO: el taller no termino de cargar. Etapa: ' + (window.__WS_STAGE || 'sin iniciar') + '. Error: ' + (window.__WS_ERROR || '(ninguno)') + '. Errores capturados: ' + (window.__WS_ERRORS.join(' | ') || '(ninguno)');
-    document.body.prepend(d);
-  }
-}, 8000);
-</script>
+  <script src="js/error-trap.js"></script>
 <script type="module" src="js/main.js?v=30"></script>
   <script src="../js/equipo-widget.js?v=17" defer></script>
 </body>

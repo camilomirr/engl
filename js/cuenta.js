@@ -401,6 +401,9 @@
   if ($('cuenta-edit-save')) $('cuenta-edit-save').addEventListener('click', function () {
     var first = String(($('cuenta-edit-first') && $('cuenta-edit-first').value) || '').trim();
     var last = String(($('cuenta-edit-last') && $('cuenta-edit-last').value) || '').trim();
+    // Capa de validación: mismo saneado que en el registro.
+    var V = window.NVISION_validate;
+    if (V) { first = V.cleanName(first, 60); last = V.cleanName(last, 60); }
     if (!first || !last) { msg('err', T.needName); return; }
     var btn = $('cuenta-edit-save');
     btn.disabled = true;
@@ -560,6 +563,9 @@
   }
   function processAvatarFile(file, done) {
     if (!file || !/^image\//.test(file.type)) { msg('err', T.avatarImgErr); return; }
+    // Capa de validación: sin límite, un archivo gigante se leía entero
+    // como data: y podía colgar el navegador; 8 MB sobra para una foto.
+    if (file.size > 8 * 1024 * 1024) { msg('err', T.avatarImgErr); return; }
     // Se lee como data: URL (no blob:) porque la CSP del sitio permite data: en img-src.
     var reader = new FileReader();
     reader.onload = function () {
@@ -624,7 +630,10 @@
       if (!s) { showAuth(); return; }
       if (!window.NVISION_LOGROS) return;
       var r = window.NVISION_LOGROS.compute();
-      var name = String(s.email || 'NVISION').split('@')[0];
+      // El nombre publicado respeta el CHECK de la base (máx. 60):
+      // un correo con la parte local más larga hacía fallar el envío.
+      var V2 = window.NVISION_validate;
+      var name = V2 ? V2.cleanName(String(s.email || 'NVISION').split('@')[0], 60) : String(s.email || 'NVISION').split('@')[0].slice(0, 60);
       window.NVISION_sbAuth('/rest/v1/site_ranking?on_conflict=user_id', {
         method: 'POST', token: s.access,
         headers: { 'Prefer': 'resolution=merge-duplicates' },
