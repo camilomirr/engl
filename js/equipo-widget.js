@@ -32,12 +32,16 @@
   function esc(s) {
     return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
+  // Hora en la zona horaria del aparato que abre la página (la del PC
+  // o el celular): sin timeZone fijo, toLocaleString usa la zona local
+  // del navegador. Así en Colombia se ve hora de Colombia y fuera del
+  // país se ve la hora local de quien mira.
   function fmtHora(iso) {
-    try { return new Date(iso).toLocaleString('es-CO', { timeZone: 'America/Bogota', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }); }
+    try { return new Date(iso).toLocaleString('es-CO', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }); }
     catch (e) { return iso || ''; }
   }
   function fmtHoraCorta(iso) {
-    try { return new Date(iso).toLocaleString('es-CO', { timeZone: 'America/Bogota', hour: '2-digit', minute: '2-digit' }); }
+    try { return new Date(iso).toLocaleString('es-CO', { hour: '2-digit', minute: '2-digit' }); }
     catch (e) { return ''; }
   }
 
