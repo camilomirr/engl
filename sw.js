@@ -5,7 +5,7 @@
    fuentes, imágenes externas) NO se toca. */
 'use strict';
 
-var CACHE = 'nvision-pwa-v3';
+var CACHE = 'nvision-pwa-v4';
 
 var SHELL = [
   '/',

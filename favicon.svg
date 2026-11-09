@@ -10,7 +10,7 @@
   </defs>
   <rect x="1" y="1" width="98" height="98" rx="22" fill="#ffffff"/>
   <rect x="1" y="1" width="98" height="98" rx="22" fill="none" stroke="#e2e8f0" stroke-width="1.5"/>
-  <text x="53" y="52" text-anchor="middle" dominant-baseline="central"
+  <text x="51" y="52" text-anchor="middle" dominant-baseline="central"
         font-family="'JetBrains Mono', monospace" font-weight="800"
-        font-size="48" letter-spacing="5.76" fill="url(#g)">NV</text>
+        font-size="48" letter-spacing="1.5" fill="url(#g)">NV</text>
 </svg>
