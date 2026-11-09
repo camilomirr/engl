@@ -4682,18 +4682,86 @@ function setupNetworkSimulator() {
    ========================================================= */
 (function () {
   'use strict';
+  /* Cada avatar es una ilustración SVG propia (vista 64x64), dibujada
+     para leerse hasta en 30px: siluetas gruesas, rellenos sólidos y
+     un acento de luz. El círculo con degradado lo pone avatar.css. */
   function svg(inner) {
-    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + inner + '</svg>';
+    return '<svg viewBox="0 0 64 64" fill="none" aria-hidden="true">' + inner + '</svg>';
   }
   var AVATARS = [
-    { id: 'chip', es: 'Chip', en: 'Chip', svg: svg('<rect x="4" y="4" width="16" height="16" rx="2"></rect><rect x="9" y="9" width="6" height="6"></rect><path d="M9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2"></path>') },
-    { id: 'wifi', es: 'WiFi', en: 'WiFi', svg: svg('<path d="M1.42 9a16 16 0 0 1 21.16 0"></path><path d="M5 12.55a11 11 0 0 1 14.08 0"></path><path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path><circle cx="12" cy="20" r="1" fill="currentColor"></circle>') },
-    { id: 'bolt', es: 'Rayo', en: 'Bolt', svg: svg('<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>') },
-    { id: 'gear', es: 'Engranaje', en: 'Gear', svg: svg('<circle cx="12" cy="12" r="3.2"></circle><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5 5l2.1 2.1M16.9 16.9L19 19M19 5l-2.1 2.1M7.1 16.9L5 19"></path>') },
-    { id: 'code', es: 'Código', en: 'Code', svg: svg('<polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline>') },
-    { id: 'shield', es: 'Escudo', en: 'Shield', svg: svg('<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1 1 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path>') },
-    { id: 'rocket', es: 'Cohete', en: 'Rocket', svg: svg('<path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path>') },
-    { id: 'game', es: 'Juegos', en: 'Games', svg: svg('<line x1="6" y1="11" x2="10" y2="11"></line><line x1="8" y1="9" x2="8" y2="13"></line><line x1="15" y1="12" x2="15.01" y2="12"></line><line x1="18" y1="10" x2="18.01" y2="10"></line><path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59C2.696 9.64 2 14.46 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.54-.696-6.36-.685-7.258A4 4 0 0 0 17.32 5z"></path>') }
+    { id: 'chip', es: 'Chip', en: 'Chip', svg: svg(
+      '<path d="M24 15V9M32 15V9M40 15V9M24 55v-6M32 55v-6M40 55v-6M15 24H9M15 32H9M15 40H9M55 24H49M55 32H49M55 40H49" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>' +
+      '<rect x="15" y="15" width="34" height="34" rx="6" fill="#0f172a"/>' +
+      '<rect x="15" y="15" width="34" height="34" rx="6" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5"/>' +
+      '<rect x="24" y="24" width="16" height="16" rx="2" fill="#38bdf8"/>' +
+      '<circle cx="32" cy="32" r="3.5" fill="#ffffff"/>' +
+      '<circle cx="20" cy="20" r="1.6" fill="#ffffff" fill-opacity="0.8"/>' +
+      '<circle cx="44" cy="44" r="1.6" fill="#ffffff" fill-opacity="0.8"/>'
+    ) },
+    { id: 'wifi', es: 'WiFi', en: 'WiFi', svg: svg(
+      '<circle cx="32" cy="47" r="11" fill="#ffffff" fill-opacity="0.16"/>' +
+      '<path d="M15 26a24 24 0 0 1 34 0" stroke="#ffffff" stroke-opacity="0.55" stroke-width="5" stroke-linecap="round"/>' +
+      '<path d="M21 33a16 16 0 0 1 22 0" stroke="#ffffff" stroke-opacity="0.75" stroke-width="5" stroke-linecap="round"/>' +
+      '<path d="M27 40a8 8 0 0 1 10 0" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>' +
+      '<circle cx="32" cy="47" r="4.5" fill="#ffffff"/>'
+    ) },
+    { id: 'bolt', es: 'Rayo', en: 'Bolt', svg: svg(
+      '<path d="M38 6 15 37h11l-4 21 23-31H34l4-21z" fill="#ffffff" fill-opacity="0.35" transform="translate(3 2)"/>' +
+      '<path d="M36 4 13 35h11l-4 21 23-31H32l4-21z" fill="#ffffff"/>' +
+      '<path d="M52 12l1.5 3.5 3.5 1.5-3.5 1.5L52 22l-1.5-3.5L47 17l3.5-1.5z" fill="#ffffff" fill-opacity="0.9"/>' +
+      '<path d="M12 44l1 3 3 1-3 1-1 3-1-3-3-1 3-1z" fill="#ffffff" fill-opacity="0.9"/>'
+    ) },
+    { id: 'gear', es: 'Engranaje', en: 'Gear', svg: svg(
+      '<g fill="#ffffff">' +
+      '<rect x="29" y="5" width="6" height="11" rx="1.5"/>' +
+      '<rect x="29" y="5" width="6" height="11" rx="1.5" transform="rotate(45 32 32)"/>' +
+      '<rect x="29" y="5" width="6" height="11" rx="1.5" transform="rotate(90 32 32)"/>' +
+      '<rect x="29" y="5" width="6" height="11" rx="1.5" transform="rotate(135 32 32)"/>' +
+      '<rect x="29" y="5" width="6" height="11" rx="1.5" transform="rotate(180 32 32)"/>' +
+      '<rect x="29" y="5" width="6" height="11" rx="1.5" transform="rotate(225 32 32)"/>' +
+      '<rect x="29" y="5" width="6" height="11" rx="1.5" transform="rotate(270 32 32)"/>' +
+      '<rect x="29" y="5" width="6" height="11" rx="1.5" transform="rotate(315 32 32)"/>' +
+      '</g>' +
+      '<path d="M32 15a17 17 0 1 0 0 34 17 17 0 0 0 0-34zm0 11a6 6 0 1 1 0 12 6 6 0 0 1 0-12z" fill="#ffffff" fill-rule="evenodd"/>' +
+      '<circle cx="32" cy="32" r="4" fill="#0d9488"/>'
+    ) },
+    { id: 'code', es: 'Código', en: 'Code', svg: svg(
+      '<rect x="8" y="12" width="48" height="40" rx="7" fill="#0f172a"/>' +
+      '<rect x="8" y="12" width="48" height="40" rx="7" fill="none" stroke="#ffffff" stroke-opacity="0.3" stroke-width="1.5"/>' +
+      '<circle cx="16" cy="20" r="2.2" fill="#fb7185"/>' +
+      '<circle cx="24" cy="20" r="2.2" fill="#fbbf24"/>' +
+      '<circle cx="32" cy="20" r="2.2" fill="#34d399"/>' +
+      '<path d="M25 30l-7 6 7 6M39 30l7 6-7 6" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>' +
+      '<path d="M35 27l-6 18" stroke="#22d3ee" stroke-width="4" stroke-linecap="round"/>'
+    ) },
+    { id: 'shield', es: 'Escudo', en: 'Shield', svg: svg(
+      '<path d="M32 5l20 7v18c0 14-9 22-20 26C21 52 12 44 12 30V12l20-7z" fill="#ffffff"/>' +
+      '<path d="M32 12l13.5 4.8V30c0 9.5-6 15.5-13.5 18.5C24.5 45.5 18.5 39.5 18.5 30V16.8L32 12z" fill="#059669"/>' +
+      '<path d="M25 31l5 5 10-11" stroke="#ffffff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>' +
+      '<ellipse cx="24" cy="14" rx="7" ry="3.5" fill="#ffffff" fill-opacity="0.5" transform="rotate(-18 24 14)"/>'
+    ) },
+    { id: 'rocket', es: 'Cohete', en: 'Rocket', svg: svg(
+      '<path d="M27 41c0 6 2 10 5 12 3-2 5-6 5-12v-2H27v2z" fill="#fbbf24"/>' +
+      '<path d="M29.5 41c0 4 1 7 2.5 8.5 1.5-1.5 2.5-4.5 2.5-8.5v-1h-5v1z" fill="#f97316"/>' +
+      '<path d="M22 34l-9 12 9-2v-10z" fill="#fda4af"/>' +
+      '<path d="M42 34l9 12-9-2v-10z" fill="#fda4af"/>' +
+      '<path d="M32 6c7 6 10 14 10 24v10H22V30c0-10 3-18 10-24z" fill="#ffffff"/>' +
+      '<circle cx="32" cy="27" r="6.5" fill="#38bdf8"/>' +
+      '<circle cx="32" cy="27" r="6.5" fill="none" stroke="#0f172a" stroke-opacity="0.15" stroke-width="1.5"/>' +
+      '<circle cx="30" cy="25" r="2" fill="#ffffff" fill-opacity="0.9"/>' +
+      '<path d="M52 10l1 2.6 2.6 1-2.6 1-1 2.6-1-2.6-2.6-1 2.6-1z" fill="#ffffff" fill-opacity="0.95"/>' +
+      '<path d="M12 14l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z" fill="#ffffff" fill-opacity="0.9"/>'
+    ) },
+    { id: 'game', es: 'Juegos', en: 'Games', svg: svg(
+      '<rect x="7" y="20" width="50" height="27" rx="13" fill="#ffffff"/>' +
+      '<path d="M20 29h8M24 25v8" stroke="#a21caf" stroke-width="3.5" stroke-linecap="round"/>' +
+      '<circle cx="42" cy="30" r="3" fill="#e879f9"/>' +
+      '<circle cx="48" cy="36" r="3" fill="#a21caf"/>' +
+      '<circle cx="42" cy="41" r="3" fill="#e879f9"/>' +
+      '<circle cx="36" cy="36" r="3" fill="#a21caf"/>' +
+      '<circle cx="30" cy="42" r="1.5" fill="#a21caf" fill-opacity="0.5"/>' +
+      '<circle cx="35" cy="42" r="1.5" fill="#a21caf" fill-opacity="0.5"/>'
+    ) }
   ];
   function avatarChip(id, email, img) {
     if (img && id === 'custom') return '<span class="nv-avatar nv-avatar--img"><img src="' + img + '" alt=""></span>';
@@ -4720,3 +4788,4 @@ function setupNetworkSimulator() {
   window.NVISION_avatarChip = avatarChip;
   window.NVISION_renderAccountChip = renderAccountChip;
 })();
+
