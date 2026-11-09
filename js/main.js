@@ -5027,7 +5027,7 @@ function setupNetworkSimulator() {
     { id: 'monitor', es: 'Diseño', en: 'Design', svg: person({ skin: '#c68642', shade: '#a96f33', hairColor: '#5b3a1e', behind: hairLong, hairTop: hairShort, shirt: '#0e7490', collar: '#a5f3fc' }) },
     { id: 'server', es: 'Sistemas', en: 'SysAdmin', svg: person({ skin: '#6b4423', shade: '#57371c', hairColor: '#17120d', hairTop: hairShort, beard: true, shirt: '#334155', collar: '#94a3b8' }) },
     { id: 'trophy', es: 'Líder', en: 'Leader', svg: person({ skin: '#e0ac69', shade: '#c68e4e', hairColor: '#6b4a2b', hairTop: hairSwept, suit: true, shirt: '#26303b' }) },
-    { id: 'book', es: 'Hacker', en: 'Hacker', svg: person({ skin: '#e0ac69', shade: '#c68e4e', hairColor: '#241a12', behind: hairHood, shirt: '#111827', collar: '#1f2937', extra: ACC_SHADES + ACC_HOOD_FRONT }) },
+    { id: 'book', es: 'Hacker', en: 'Hacker', svg: person({ skin: '#e0ac69', shade: '#c68e4e', hairColor: '#241a12', behind: hairHood, hairTop: hairShort, shirt: '#111827', collar: '#1f2937', extra: ACC_SHADES + ACC_HOOD_FRONT }) },
     { id: 'music', es: 'Creador', en: 'Creator', svg: person({ skin: '#8d5524', shade: '#74431c', hairColor: '#7c3aed', behind: hairLong, hairTop: hairShort, shirt: '#db2777', collar: '#fbcfe8' }) },
     { id: 'headphones', es: 'Soporte', en: 'Support', svg: person({ skin: '#e0ac69', shade: '#c68e4e', hairColor: '#241a12', hairTop: hairCurly, shirt: '#2563eb', collar: '#bfdbfe', extra: ACC_HEADSET }) }
   ];
