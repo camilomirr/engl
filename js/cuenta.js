@@ -5,6 +5,7 @@
   'use strict';
 
   var SUPABASE_URL = 'https://xiuztrujrwdgcpjrruxu.supabase.co';
+  var GOOGLE_CLIENT_ID = '855201454498-es9vkd7vqq2eli18g1rtprtvguqimn71.apps.googleusercontent.com';
   var ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpdXp0cnVqcndkZ2NwanJydXh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQwNTk2ODcsImV4cCI6MjEwOTYzNTY4N30.CBBQpCqHxuOtCaMcdUfIrKTa4vt0QJRqvivskHnt5g0';
   var SESSION_KEY = 'nvision_session_v1';
   var META_KEY = 'nvision_sync_meta_v1';
@@ -580,6 +581,45 @@
         msg('err', T.netErr);
       });
   });
+
+  // Botón propio de Google (GIS): el inicio ocurre en la página, sin pasar
+  // por la dirección de Supabase, así que Google muestra NVISION y
+  // nvision.social en vez de xiuztrujrwdgcpjrruxu.supabase.co. Google
+  // entrega un token de identidad y se lo pasamos a Supabase, que crea la
+  // sesión igual que con el inicio por correo. Si la librería de Google no
+  // carga o no deja dibujar el botón, queda el botón anterior como respaldo.
+  function handleGoogleCredential(resp) {
+    var idToken = resp && resp.credential;
+    if (!idToken) { msg('err', T.googleOff); return; }
+    api('/auth/v1/token?grant_type=id_token', { method: 'POST', body: { provider: 'google', token: idToken } })
+      .then(function (r) {
+        if (r.status === 200 && r.data && r.data.access_token) {
+          var s = saveSessionFromAuth(r.data, (r.data.user && r.data.user.email) || '');
+          showPanel(s);
+          if (!goNext()) syncNow(s);
+        } else msg('err', T.googleOff);
+      })
+      .catch(function () { msg('err', T.netErr); });
+  }
+  function initGoogleGIS() {
+    var wrap = $('cuenta-google-gis');
+    if (!wrap || !window.google || !google.accounts || !google.accounts.id) return false;
+    try {
+      google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: handleGoogleCredential });
+      var w = Math.min(400, Math.max(200, wrap.clientWidth || 320));
+      google.accounts.id.renderButton(wrap, { theme: 'outline', size: 'large', text: 'continue_with', shape: 'rectangular', width: w });
+      wrap.hidden = false;
+      if (googleBtn) googleBtn.hidden = true;
+      return true;
+    } catch (e) { return false; }
+  }
+  if (!initGoogleGIS()) {
+    var gisTries = 0;
+    var gisTimer = setInterval(function () {
+      gisTries++;
+      if (initGoogleGIS() || gisTries >= 10) clearInterval(gisTimer);
+    }, 500);
+  }
   (function handleAuthRedirect() {
     var hashParams = null;
     if (location.hash && location.hash.length >= 3) hashParams = new URLSearchParams(location.hash.slice(1));
