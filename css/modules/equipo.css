@@ -95,7 +95,11 @@
   position: fixed;
   right: max(1.25rem, env(safe-area-inset-right));
   bottom: calc(5.4rem + env(safe-area-inset-bottom));
-  z-index: 60;
+  /* 210: por encima de la raíz del asistente del sitio (z-index 200), para
+     que el botón siempre se pueda tocar aunque el chatbot esté abierto;
+     al abrirse este chat, el asistente se oculta solo (evento
+     nvision-chat-open). Antes con 60 el panel del asistente lo tapaba. */
+  z-index: 210;
   width: 3.4rem; height: 3.4rem; padding: 0.42rem; border-radius: 50%;
   border: 1px solid var(--border-subtle);
   background: var(--bg-card);
