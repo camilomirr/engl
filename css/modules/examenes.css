@@ -174,3 +174,11 @@
   50% { box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.45); }
 }
 .exam-gate-banner__btn { text-decoration: none; }
+
+/* Compartir el certificado */
+.exam-share { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: .85rem; }
+.exam-share[hidden] { display: none; }
+.exam-share-btn { display: inline-flex; align-items: center; justify-content: center; padding: .6rem 1.1rem; border-radius: 999px; border: 1px solid var(--border-subtle); background: var(--bg-surface-2, var(--bg-surface)); color: var(--text-primary); font-weight: 600; font-size: .92rem; cursor: pointer; text-decoration: none; min-height: 44px; }
+.exam-share-btn.native { border-color: var(--accent-cyan); color: var(--accent-cyan); }
+.exam-share-btn.wa { border-color: #25d366; color: #1da851; }
+.exam-share-btn:hover { filter: brightness(1.15); }

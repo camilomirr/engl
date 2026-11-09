@@ -215,6 +215,10 @@
         <input type="text" id="cert-name" autocomplete="name" maxlength="60">
         <br>
         <button type="button" class="exam-btn" id="exam-cert-btn" data-i18n="exam_cert_btn">Descargar certificado</button>
+        <div class="exam-share" id="exam-share" hidden>
+          <button type="button" class="exam-share-btn native" id="cert-share-native">Compartir certificado</button>
+          <a class="exam-share-btn wa" id="cert-wa" href="#" target="_blank" rel="noopener">WhatsApp</a>
+        </div>
         <canvas id="cert-canvas" width="1400" height="990" hidden></canvas>
       </div>
     </div>
@@ -232,9 +236,9 @@
   </footer>
 
   <!-- Script interactivo bilingüe y menú móvil -->
-  <script src="js/main.js?v=19"></script>
+  <script src="js/main.js?v=20"></script>
   <script src="js/site-search.js?v=4"></script>
   <script src="js/equipo-widget.js?v=14" defer></script>
-  <script src="js/examenes.js?v=4"></script>
+  <script src="js/examenes.js?v=5"></script>
 </body>
 </html>

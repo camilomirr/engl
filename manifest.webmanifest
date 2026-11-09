@@ -1,1 +1,60 @@
-{"background_color":"#0a0e17","categories":["education"],"description":"Aprende hardware, redes y mantenimiento de PC con simuladores interactivos, un taller 3D, glosario, exámenes y certificados.","dir":"ltr","display":"standalone","icons":[{"purpose":"any","sizes":"192x192","src":"/assets/icons/icon-192.png","type":"image/png"},{"purpose":"any","sizes":"512x512","src":"/assets/icons/icon-512.png","type":"image/png"},{"purpose":"maskable","sizes":"512x512","src":"/assets/icons/maskable-512.png","type":"image/png"}],"id":"/","lang":"es","name":"NVISION — Hardware, Redes y Mantenimiento","orientation":"any","scope":"/","short_name":"NVISION","start_url":"/","theme_color":"#0a0e17"}
+{
+  "background_color": "#0a0e17",
+  "categories": [
+    "education"
+  ],
+  "description": "Aprende hardware, redes y mantenimiento de PC con simuladores interactivos, un taller 3D, glosario, exámenes y certificados.",
+  "dir": "ltr",
+  "display": "standalone",
+  "icons": [
+    {
+      "purpose": "any",
+      "sizes": "192x192",
+      "src": "/assets/icons/icon-192.png",
+      "type": "image/png"
+    },
+    {
+      "purpose": "any",
+      "sizes": "512x512",
+      "src": "/assets/icons/icon-512.png",
+      "type": "image/png"
+    },
+    {
+      "purpose": "maskable",
+      "sizes": "512x512",
+      "src": "/assets/icons/maskable-512.png",
+      "type": "image/png"
+    }
+  ],
+  "id": "/",
+  "lang": "es",
+  "name": "NVISION — Hardware, Redes y Mantenimiento",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "NVISION",
+  "start_url": "/",
+  "theme_color": "#0a0e17",
+  "screenshots": [
+    {
+      "src": "assets/pwa/shot-home-wide.jpg",
+      "sizes": "1280x720",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "NVISION - Inicio (computador)"
+    },
+    {
+      "src": "assets/pwa/shot-home.jpg",
+      "sizes": "780x1688",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "NVISION - Inicio"
+    },
+    {
+      "src": "assets/pwa/shot-examenes.jpg",
+      "sizes": "780x1688",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "NVISION - Examenes y certificados"
+    }
+  ]
+}

@@ -105,8 +105,8 @@
   var lang = (localStorage.getItem('user_lang') || 'es').toLowerCase().indexOf('en') === 0 ? 'en' : 'es';
 
   var T = {
-    es: { questions: 'preguntas', best: 'Mejor nota', none: 'Sin intentos aún', start: 'Empezar examen', passed: 'APROBADO', q: 'Pregunta', scoreMsg: 'Tu nota', passMsg: '¡Felicidades! Aprobaste el examen.', failMsg: 'Aún no llegas al 70%. Repasa el tema e inténtalo otra vez.', why: 'Explicación:', certFor: 'Por aprobar el examen de', certTitle: 'CERTIFICADO', certGiven: 'Se otorga a', certScore: 'con una nota de', team: 'Equipo NVISION', certBtnAlert: 'Escribe tu nombre completo para generar el certificado.', verifying: 'Verificando tu cuenta…' },
-    en: { questions: 'questions', best: 'Best score', none: 'No attempts yet', start: 'Start exam', passed: 'PASSED', q: 'Question', scoreMsg: 'Your score', passMsg: 'Congratulations! You passed the exam.', failMsg: 'Not at 70% yet. Review the topic and try again.', why: 'Explanation:', certFor: 'For passing the', certTitle: 'CERTIFICATE', certGiven: 'Awarded to', certScore: 'with a score of', team: 'NVISION Team', certBtnAlert: 'Type your full name to generate the certificate.', verifying: 'Verifying your account…' }
+    es: { questions: 'preguntas', best: 'Mejor nota', none: 'Sin intentos aún', start: 'Empezar examen', passed: 'APROBADO', q: 'Pregunta', scoreMsg: 'Tu nota', passMsg: '¡Felicidades! Aprobaste el examen.', failMsg: 'Aún no llegas al 70%. Repasa el tema e inténtalo otra vez.', why: 'Explicación:', certFor: 'Por aprobar el examen de', certTitle: 'CERTIFICADO', certGiven: 'Se otorga a', certScore: 'con una nota de', team: 'Equipo NVISION', certBtnAlert: 'Escribe tu nombre completo para generar el certificado.', verifying: 'Verificando tu cuenta…', shareBtn: 'Compartir certificado', shareText: '¡Aprobé el examen de {exam} en NVISION con {pct}% y obtuve mi certificado!' },
+    en: { questions: 'questions', best: 'Best score', none: 'No attempts yet', start: 'Start exam', passed: 'PASSED', q: 'Question', scoreMsg: 'Your score', passMsg: 'Congratulations! You passed the exam.', failMsg: 'Not at 70% yet. Review the topic and try again.', why: 'Explanation:', certFor: 'For passing the', certTitle: 'CERTIFICATE', certGiven: 'Awarded to', certScore: 'with a score of', team: 'NVISION Team', certBtnAlert: 'Type your full name to generate the certificate.', verifying: 'Verifying your account…', shareBtn: 'Share certificate', shareText: 'I passed the {exam} exam on NVISION with {pct}% and earned my certificate!' }
   }[lang];
 
   function Q(qEs, qEn, oEs, oEn, a, wEs, wEn) { return { q: { es: qEs, en: qEn }, o: { es: oEs, en: oEn }, a: a, why: { es: wEs, en: wEn } }; }
@@ -121,6 +121,8 @@
     redes: '<svg ' + SVG_ATTRS + '><circle cx="12" cy="5" r="2.4"/><circle cx="5" cy="19" r="2.4"/><circle cx="19" cy="19" r="2.4"/><line x1="10.6" y1="6.9" x2="6.4" y2="17.1"/><line x1="13.4" y1="6.9" x2="17.6" y2="17.1"/><line x1="7.4" y1="19" x2="16.6" y2="19"/></svg>',
     mantenimiento: '<svg ' + SVG_ATTRS + '><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>',
     wifi: '<svg ' + SVG_ATTRS + '><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>'
+    ,
+    seguridad: '<svg ' + SVG_ATTRS + '><path d="M12 3l7 2.6v5.4c0 4.5-2.9 7.6-7 9.1-4.1-1.5-7-4.6-7-9.1V5.6z"/><polyline points="8.8 11.8 11.1 14.1 15.2 9.9"/></svg>'
   };
 
   var EXAMS = [
@@ -312,6 +314,54 @@
           'El SSID es el nombre que ves en la lista de redes disponibles.', 'The SSID is the name you see in the list of available networks.')
       ]
     }
+    ,
+    {
+      id: 'seguridad', icon: ICONS.seguridad,
+      name: { es: 'Seguridad digital', en: 'Digital security' },
+      desc: { es: 'Contraseñas, phishing, malware y cómo protegerte en línea.', en: 'Passwords, phishing, malware and how to stay safe online.' },
+      questions: [
+        Q('¿Cuál de estas contraseñas es la más segura?',
+          'Which of these passwords is the strongest?',
+          ['duay123', 'MiClave#Segura!2026$', '12345678', 'qwerty'], ['duay123', 'MyStr0ng#Pass!2026$', '12345678', 'qwerty'], 1,
+          'Una contraseña fuerte es larga y mezcla mayúsculas, minúsculas, números y símbolos.', 'A strong password is long and mixes upper and lower case letters, numbers and symbols.'),
+        Q('¿Qué es el phishing?',
+          'What is phishing?',
+          ['Un antivirus gratuito', 'Mensajes falsos que se hacen pasar por empresas para robar tus datos', 'Una copia de seguridad automática', 'Un tipo de cable de red'], ['A free antivirus', 'Fake messages pretending to be real companies to steal your data', 'An automatic backup', 'A type of network cable'], 1,
+          'El phishing llega por correo, SMS o WhatsApp y busca que entregues contraseñas o datos bancarios.', 'Phishing arrives by email, SMS or WhatsApp and tries to make you hand over passwords or bank data.'),
+        Q('Te llega un correo "del banco" con un enlace para verificar tu cuenta. ¿Qué es lo más seguro?',
+          'You get an email "from your bank" with a link to verify your account. What is safest?',
+          ['Hacer clic e iniciar sesión rápido', 'No usar el enlace: entrar a la app o página oficial del banco por tu cuenta', 'Reenviarlo a tus contactos', 'Responder pidiendo más información'], ['Click and log in quickly', 'Skip the link: open the official bank app or site yourself', 'Forward it to your contacts', 'Reply asking for more information'], 1,
+          'Los bancos no piden claves por enlaces. Escribe tú mismo la dirección oficial.', 'Banks do not ask for passwords through links. Type the official address yourself.'),
+        Q('¿Qué añade la verificación en dos pasos (2FA)?',
+          'What does two-factor authentication (2FA) add?',
+          ['Una segunda contraseña igual a la primera', 'Una prueba extra, como un código en tu celular, además de la contraseña', 'Más velocidad al Wi-Fi', 'Copias de seguridad'], ['A second password just like the first', 'An extra proof, like a code on your phone, on top of the password', 'Faster Wi-Fi', 'Backups'], 1,
+          'Aunque roben tu contraseña, sin el segundo factor no pueden entrar a tu cuenta.', 'Even if your password is stolen, without the second factor they cannot get into your account.'),
+        Q('¿Por qué importan las actualizaciones de seguridad?',
+          'Why do security updates matter?',
+          ['Solo cambian los colores del sistema', 'Corrigen fallas que los atacantes ya están aprovechando', 'Ocupan espacio sin motivo', 'Hacen el equipo más lento siempre'], ['They only change system colors', 'They fix flaws that attackers are already exploiting', 'They waste space for no reason', 'They always slow the computer down'], 1,
+          'Muchos ataques usan errores conocidos de versiones viejas sin actualizar.', 'Many attacks abuse known bugs in old, unpatched versions.'),
+        Q('Estás en un Wi-Fi público de un café. ¿Qué deberías evitar?',
+          'You are on a cafe public Wi-Fi. What should you avoid?',
+          ['Leer noticias', 'Entrar al banco o comprar con tu tarjeta', 'Escuchar música', 'Mirar el clima'], ['Reading the news', 'Banking or shopping with your card', 'Listening to music', 'Checking the weather'], 1,
+          'En redes públicas otros pueden espiar el tráfico; para datos sensibles usa tus datos móviles o una VPN.', 'On public networks others may spy on traffic; use mobile data or a VPN for sensitive data.'),
+        Q('¿Cómo te proteges de perder tus archivos por un ataque o una falla?',
+          'How do you protect yourself from losing files to an attack or a failure?',
+          ['Guardando todo en una sola carpeta', 'Con copias de seguridad en otro lugar (nube o disco externo)', 'Apagando el equipo cada noche', 'No usando internet'], ['Keeping everything in one folder', 'With backups somewhere else (cloud or external drive)', 'Turning the PC off every night', 'Never using the internet'], 1,
+          'Si la única copia está en el equipo, un ransomware o una falla la borra. La copia externa te salva.', 'If the only copy is on the machine, ransomware or a failure wipes it. An off-device copy saves you.'),
+        Q('Un programa cifra todos tus archivos y pide dinero para devolverlos. Es un…',
+          'A program encrypts all your files and demands money to give them back. It is…',
+          ['Antivirus', 'Firewall', 'Ransomware', 'Driver'], ['Antivirus', 'Firewall', 'Ransomware', 'Driver'], 2,
+          'El ransomware "secuestra" los archivos cifrándolos; la mejor defensa es la prevención y las copias.', 'Ransomware "kidnaps" files by encrypting them; prevention and backups are the best defense.'),
+        Q('Una app de linterna te pide acceso a tus contactos, ubicación y micrófono. ¿Qué haces?',
+          'A flashlight app asks for your contacts, location and microphone. What do you do?',
+          ['Aceptar todo para que funcione', 'Desconfiar: una linterna no necesita esos permisos; mejor no instalarla', 'Aceptar solo la ubicación', 'Instalarla dos veces'], ['Allow everything so it works', 'Be suspicious: a flashlight does not need those permissions; better not install it', 'Allow only location', 'Install it twice'], 1,
+          'Cada app debe pedir solo los permisos que su función necesita; el exceso suele ser recolección de datos.', 'Apps should only request the permissions their function needs; excess usually means data harvesting.'),
+        Q('¿Qué es la ingeniería social en seguridad?',
+          'What is social engineering in security?',
+          ['Arreglar computadores en grupo', 'Manipular a las personas para que entreguen información o acceso', 'Un tipo de red social', 'Programar con amigos'], ['Fixing computers in a group', 'Manipulating people into giving up information or access', 'A type of social network', 'Coding with friends'], 1,
+          'El eslabón débil suele ser la persona: llamadas o mensajes que crean urgencia para que actúes sin pensar.', 'The weak link is usually the person: calls or messages creating urgency so you act without thinking.')
+      ]
+    }
   ];
 
   function loadState() {
@@ -482,6 +532,25 @@
     a.download = 'certificado-nvision-' + current.id + '.png';
     a.href = canvas.toDataURL('image/png');
     a.click();
+
+    state.certs = (state.certs || 0) + 1;
+    saveState();
+    var text = T.shareText.replace('{exam}', current.name[lang]).replace('{pct}', pct);
+    var shareRow = document.getElementById('exam-share');
+    var wa = document.getElementById('cert-wa');
+    if (wa) wa.href = 'https://wa.me/?text=' + encodeURIComponent(text + ' https://nvision.social/examenes.html');
+    var nat = document.getElementById('cert-share-native');
+    if (nat) nat.onclick = function () {
+      var url = 'https://nvision.social/examenes.html';
+      try {
+        fetch(a.href).then(function (r) { return r.blob(); }).then(function (blob) {
+          var file = new File([blob], a.download, { type: 'image/png' });
+          if (navigator.canShare && navigator.canShare({ files: [file] })) navigator.share({ files: [file], text: text }).catch(function () {});
+          else if (navigator.share) navigator.share({ text: text, url: url }).catch(function () {});
+        }).catch(function () { if (navigator.share) navigator.share({ text: text, url: url }).catch(function () {}); });
+      } catch (e) { if (navigator.share) navigator.share({ text: text, url: url }).catch(function () {}); }
+    };
+    if (shareRow) shareRow.hidden = false;
   }
 
   document.getElementById('exam-submit').addEventListener('click', grade);
@@ -497,6 +566,9 @@
       else drawCertificate();
     });
   });
+
+  var natBtn = document.getElementById('cert-share-native');
+  if (natBtn) { natBtn.textContent = T.shareBtn; if (!navigator.share) natBtn.style.display = 'none'; }
 
   if (!hasSession()) { var gb = document.getElementById('exam-gate-banner'); if (gb) gb.hidden = false; }
   else verifySession().then(function (ok) { if (!ok) { var gb2 = document.getElementById('exam-gate-banner'); if (gb2) gb2.hidden = false; } });
