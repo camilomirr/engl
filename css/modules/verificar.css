@@ -8,3 +8,8 @@
 .verify-result.bad { border-color: #ef4444; }
 .verify-result strong { font-size: 1.05rem; }
 .verify-result p { margin: 0.4rem 0 0; color: var(--text-secondary); }
+
+/* Hero acorde al resto del sitio (patrón logros/ruta) */
+.verify-hero { text-align: center; padding: 3.2rem 1.25rem 1.6rem; }
+.verify-hero h1 { font-family: var(--font-heading); font-size: clamp(2.4rem, 6vw, 3.6rem); letter-spacing: .04em; margin: .35rem 0 .5rem; }
+.verify-sub { color: var(--text-secondary); max-width: 620px; margin: 0 auto; line-height: 1.6; }

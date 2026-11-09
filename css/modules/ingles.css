@@ -17,3 +17,8 @@
 .eng-flash-hint { text-align: center; color: var(--text-muted); font-size: 0.82rem; }
 .eng-q { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 0.7rem; display: grid; gap: 0.45rem; }
 .eng-q h4 { margin: 0 0 0.3rem; }
+
+/* Hero acorde al resto del sitio (patrón logros/ruta) */
+.eng-hero { text-align: center; padding: 3.2rem 1.25rem 1.6rem; }
+.eng-hero h1 { font-family: var(--font-heading); font-size: clamp(2.4rem, 6vw, 3.6rem); letter-spacing: .04em; margin: .35rem 0 .5rem; }
+.eng-sub { color: var(--text-secondary); max-width: 620px; margin: 0 auto; line-height: 1.6; }

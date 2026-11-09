@@ -18,3 +18,8 @@
 .term-prompt { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; color: #7dd3fc; white-space: nowrap; }
 .term-in input { flex: 1; background: transparent; border: 0; outline: 0; color: #f8fafc; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; }
 @media (max-width: 700px) { .term-missions { grid-template-columns: 1fr; } .term-out { height: 300px; } }
+
+/* Hero acorde al resto del sitio (patrón logros/ruta) */
+.term-hero { text-align: center; padding: 3.2rem 1.25rem 1.6rem; }
+.term-hero h1 { font-family: var(--font-heading); font-size: clamp(2.4rem, 6vw, 3.6rem); letter-spacing: .04em; margin: .35rem 0 .5rem; }
+.term-sub { color: var(--text-secondary); max-width: 620px; margin: 0 auto; line-height: 1.6; }

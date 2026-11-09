@@ -8,3 +8,8 @@
 .notes-state { color: #4ade80; font-size: 0.83rem; }
 .notes-count { color: var(--text-muted); font-size: 0.83rem; margin-right: auto; }
 .cuentas-linklike, .cuenta-linklike { color: var(--accent-cyan); font-size: 0.88rem; margin-left: 0.8rem; }
+
+/* Hero acorde al resto del sitio (patrón logros/ruta) */
+.notes-hero { text-align: center; padding: 3.2rem 1.25rem 1.6rem; }
+.notes-hero h1 { font-family: var(--font-heading); font-size: clamp(2.4rem, 6vw, 3.6rem); letter-spacing: .04em; margin: .35rem 0 .5rem; }
+.notes-sub { color: var(--text-secondary); max-width: 620px; margin: 0 auto; line-height: 1.6; }
