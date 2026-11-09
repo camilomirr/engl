@@ -4961,8 +4961,10 @@ function setupNetworkSimulator() {
 (function () {
   'use strict';
   /* Cada avatar es una ilustración SVG propia (vista 64x64), dibujada
-     para leerse hasta en 30px: siluetas gruesas, rellenos sólidos y
-     un acento de luz. El círculo con degradado lo pone avatar.css. */
+     para leerse hasta en 30px. SVG avanzado: cada uno trae en <defs>
+     sus degradados (piel radial, pelo y camisa lineales), un halo con
+     el color de su rol y filtros de sombra suave (desenfoque y sombra
+     proyectada). El círculo con degradado lo pone avatar.css. */
   function svg(inner) {
     return '<svg viewBox="0 0 64 64" fill="none" aria-hidden="true">' + inner + '</svg>';
   }
@@ -4985,10 +4987,10 @@ function setupNetworkSimulator() {
   function hairSpiky(c) { return '<path d="M20 28.5L22.2 15.5L25.6 22.5L29 13L32.4 20.5L36 13.5L39.4 22L42.4 16L44.2 28.5C42.5 22.5 38 20.5 32 20.5C26 20.5 21.5 22.5 20 28.5Z" fill="' + c + '"/>'; }
   function hairLong(c) { return '<path d="M19 64V26C19 13 24 6.5 32 6.5C40 6.5 45 13 45 26V64Z" fill="' + c + '"/>'; }
   function hairLocks(c) { return '<path d="M19.6 26C18.6 34 19 44 20.6 54C21.4 56.8 24.2 56.4 24.6 53.6C25.2 45 24.6 34.5 23.6 28.5Z" fill="' + c + '"/>' + '<path d="M44.4 26C45.4 34 45 44 43.4 54C42.6 56.8 39.8 56.4 39.4 53.6C38.8 45 39.4 34.5 40.4 28.5Z" fill="' + c + '"/>'; }
-  function hairHood() { return '<ellipse cx="32" cy="26.5" rx="16.8" ry="17.8" fill="#273549"/><path d="M15.2 29a16.8 17.8 0 0 1 33.6 0l3.4 27.5H11.8z" fill="#273549"/>'; }
+  function hairHood(c) { c = c || '#273549'; return '<ellipse cx="32" cy="26.5" rx="16.8" ry="17.8" fill="' + c + '"/><path d="M15.2 29a16.8 17.8 0 0 1 33.6 0l3.4 27.5H11.8z" fill="' + c + '"/>'; }
   function hairPonytail(c) { return '<path d="M42 17.5C48.5 21.5 50.5 32 48.8 44C48.2 48.5 45.3 49.3 43.9 46.3C42.3 41.5 42 31.5 41 24Z" fill="' + c + '"/><circle cx="42.4" cy="18.6" r="2.2" fill="#f59e0b"/>'; }
   function hairCap(c) { return '<path d="M19.8 27.5C19.5 17 24.5 10 32 10C39.5 10 44.5 17 44.2 27.5C40 24.5 36 23.5 32 23.5C28 23.5 24 24.5 19.8 27.5Z" fill="' + c + '"/><ellipse cx="32" cy="23.6" rx="13.4" ry="2.2" fill="' + c + '"/>' + '<path d="M25 14.5C28 12.5 31 12 33.5 12.6" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.3"/>'; }
-  var ACC_HOOD_FRONT = '<path d="M13.8 52.2Q20 46.8 27.2 46l-.7 5.6Q19.2 52.2 15.2 57.6z" fill="#273549"/><path d="M50.2 52.2Q44 46.8 36.8 46l.7 5.6Q44.8 52.2 48.8 57.6z" fill="#273549"/>';
+  function hoodFront(c) { c = c || '#273549'; return '<path d="M13.8 52.2Q20 46.8 27.2 46l-.7 5.6Q19.2 52.2 15.2 57.6z" fill="' + c + '"/><path d="M50.2 52.2Q44 46.8 36.8 46l.7 5.6Q44.8 52.2 48.8 57.6z" fill="' + c + '"/>'; }
   var ACC_SHADES = '<g fill="#111827"><rect x="22.4" y="26.6" width="8.8" height="6.4" rx="2.4"/><rect x="32.8" y="26.6" width="8.8" height="6.4" rx="2.4"/></g><path d="M31.2 28.8h1.6" stroke="#111827" stroke-width="1.6"/><path d="M28.6 48.2l1.4 4.8M35.4 48.2l-1.4 4.8" stroke="#9ca3af" stroke-width="1.6" stroke-linecap="round"/>';
   var ACC_GLASSES = '<g stroke="#26303b" stroke-width="1.4" fill="#ffffff" fill-opacity="0.12"><rect x="22" y="25.6" width="9.2" height="7.6" rx="2.8"/><rect x="32.8" y="25.6" width="9.2" height="7.6" rx="2.8"/></g><path d="M31.2 29.2h1.6M22 28.8l-2.4-.9M42 28.8l2.4-.9" stroke="#26303b" stroke-width="1.4" fill="none" stroke-linecap="round"/>';
   var ACC_HEADPHONES = '<path d="M19.5 27.5a12.5 12.5 0 0 1 25 0" stroke="#1f2937" stroke-width="3.4" fill="none" stroke-linecap="round"/><rect x="17" y="26.5" width="5.4" height="10" rx="2.7" fill="#1f2937"/><rect x="41.6" y="26.5" width="5.4" height="10" rx="2.7" fill="#1f2937"/><circle cx="19.7" cy="31.5" r="1.2" fill="#e879f9"/><circle cx="44.3" cy="31.5" r="1.2" fill="#e879f9"/>';
@@ -5003,29 +5005,77 @@ function setupNetworkSimulator() {
   var ACC_SERVER = '<g fill="none" stroke="#ffffff" stroke-width="1.4"><rect x="26" y="51" width="12" height="3.4" rx="1"/><rect x="26" y="56" width="12" height="3.4" rx="1"/></g><circle cx="28.6" cy="52.7" r="1" fill="#34d399"/><circle cx="28.6" cy="57.7" r="1" fill="#34d399"/>';
   var ACC_NOTE = '<path d="M28.5 61V53.5l7-1.5V59" stroke="#ffffff" stroke-width="1.6" fill="none" stroke-linecap="round"/><circle cx="27" cy="61" r="1.8" fill="#ffffff"/><circle cx="34" cy="59.5" r="1.8" fill="#ffffff"/>';
   function person(o) {
-    var s = '';
-    // Luz suave arriba: profundidad dentro del círculo.
+    var u = o.uid || 'x';
+    var skinG = 'url(#nv-sk-' + u + ')';
+    var hairG = 'url(#nv-hr-' + u + ')';
+    var shirtG = 'url(#nv-sh-' + u + ')';
+    // SVG avanzado: cada avatar trae sus propios degradados, un halo
+    // con el color de su rol y filtros de sombra suave. Los id de los
+    // degradados llevan el uid del avatar para no chocar entre sí.
+    var s = '<defs>'
+      + '<radialGradient id="nv-sk-' + u + '" cx="38%" cy="28%" r="80%">'
+      + '<stop offset="0%" stop-color="#ffffff" stop-opacity="0.38"/>'
+      + '<stop offset="42%" stop-color="' + o.skin + '"/>'
+      + '<stop offset="100%" stop-color="' + o.shade + '"/>'
+      + '</radialGradient>'
+      + '<linearGradient id="nv-hr-' + u + '" x1="0" y1="0" x2="0.3" y2="1">'
+      + '<stop offset="0%" stop-color="#ffffff" stop-opacity="0.28"/>'
+      + '<stop offset="32%" stop-color="' + o.hairColor + '"/>'
+      + '<stop offset="100%" stop-color="' + o.hairColor + '"/>'
+      + '</linearGradient>'
+      + (o.capColor ? '<linearGradient id="nv-hc-' + u + '" x1="0" y1="0" x2="0.3" y2="1">'
+      + '<stop offset="0%" stop-color="#ffffff" stop-opacity="0.28"/>'
+      + '<stop offset="32%" stop-color="' + o.capColor + '"/>'
+      + '<stop offset="100%" stop-color="' + o.capColor + '"/>'
+      + '</linearGradient>' : '')
+      + '<linearGradient id="nv-sh-' + u + '" x1="0" y1="0" x2="0" y2="1">'
+      + '<stop offset="0%" stop-color="#ffffff" stop-opacity="0.22"/>'
+      + '<stop offset="45%" stop-color="' + o.shirt + '"/>'
+      + '<stop offset="100%" stop-color="' + o.shirt + '"/>'
+      + '</linearGradient>'
+      + '<radialGradient id="nv-ha-' + u + '" cx="50%" cy="42%" r="55%">'
+      + '<stop offset="0%" stop-color="' + o.shirt + '" stop-opacity="0.34"/>'
+      + '<stop offset="60%" stop-color="' + o.shirt + '" stop-opacity="0.12"/>'
+      + '<stop offset="100%" stop-color="' + o.shirt + '" stop-opacity="0"/>'
+      + '</radialGradient>'
+      + '<filter id="nv-bl-' + u + '" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="1.1"/></filter>'
+      + '<filter id="nv-ds-' + u + '" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="1" stdDeviation="1" flood-color="#000000" flood-opacity="0.28"/></filter>'
+      + '</defs>';
+    // Halo con el color del rol: profundidad detrás del busto.
+    s += '<circle cx="32" cy="30" r="27" fill="url(#nv-ha-' + u + ')"/>';
+    // Luz suave arriba.
     s += '<ellipse cx="32" cy="10" rx="26" ry="11" fill="#ffffff" opacity="0.12"/>';
-    if (o.behind) s += o.behind(o.hairColor);
+    // Busto completo con sombra proyectada suave.
+    s += '<g filter="url(#nv-ds-' + u + ')">';
+    if (o.behind) s += o.behind(hairG);
     if (o.suit) {
-      s += '<path d="M12 64v-5c0-8 8-12 20-12s20 4 20 12v5z" fill="' + o.shirt + '"/>' +
+      s += '<path d="M12 64v-5c0-8 8-12 20-12s20 4 20 12v5z" fill="' + shirtG + '"/>' +
         '<path d="M28 48.5 32 56l4-7.5-1.8-.6h-4.4z" fill="#f8fafc"/>' +
-        '<path d="M32 52.5l-1.6 1.8 1.6 6 1.6-6z" fill="#dc2626"/>';
+        '<path d="M32 52.5l-1.6 1.8 1.6 6 1.6-6z" fill="#dc2626"/>' +
+        '<path d="M32 54.2l-.7.8.7 2.6.7-2.6z" fill="#ef4444" opacity="0.8"/>';
     } else {
-      s += '<path d="M12 64v-5c0-8 8-12 20-12s20 4 20 12v5z" fill="' + o.shirt + '"/>' +
-        '<path d="M25.5 47.5a8 6 0 0 0 13 0l.2 3.5a8 6 0 0 1-13.4 0z" fill="' + o.collar + '"/>';
+      s += '<path d="M12 64v-5c0-8 8-12 20-12s20 4 20 12v5z" fill="' + shirtG + '"/>' +
+        '<path d="M25.5 47.5a8 6 0 0 0 13 0l.2 3.5a8 6 0 0 1-13.4 0z" fill="' + o.collar + '"/>' +
+        '<path d="M25.5 47.5a8 6 0 0 0 13 0" stroke="#ffffff" stroke-width="0.9" fill="none" opacity="0.35"/>';
     }
+    // Pliegues suaves de la camisa.
+    s += '<path d="M20 54q2 4 1 8M44 54q-2 4-1 8" stroke="#000000" stroke-width="1.4" stroke-linecap="round" fill="none" opacity="0.10" filter="url(#nv-bl-' + u + ')"/>';
     // Sombra suave al pie de la camisa.
-    s += '<ellipse cx="32" cy="62" rx="19" ry="3.5" fill="#000000" opacity="0.10"/>';
+    s += '<ellipse cx="32" cy="62" rx="19" ry="3.5" fill="#000000" opacity="0.10" filter="url(#nv-bl-' + u + ')"/>';
     // Cuello + sombra bajo la barbilla.
-    s += '<rect x="28.4" y="36" width="7.2" height="11" rx="2.8" fill="' + o.shade + '"/>';
+    s += '<rect x="28.4" y="36" width="7.2" height="11" rx="2.8" fill="' + skinG + '"/>';
     s += '<ellipse cx="32" cy="39.5" rx="6" ry="2.2" fill="' + o.shade + '" opacity="0.55"/>';
-    // Orejas y cabeza.
-    s += '<circle cx="19.6" cy="29" r="2.7" fill="' + o.skin + '"/><circle cx="44.4" cy="29" r="2.7" fill="' + o.skin + '"/>';
-    s += '<ellipse cx="32" cy="27" rx="12.5" ry="13" fill="' + o.skin + '"/>';
-    if (o.hairTop) s += (typeof o.hairTop === 'function' ? o.hairTop(o.hairColor) : o.hairTop);
-    if (o.locks) s += o.locks(o.hairColor);
-    if (o.beard) s += '<path d="M22.4 32.5Q32 47 41.6 32.5l-.7 5Q32 49.5 23.1 37.5z" fill="' + o.hairColor + '"/>';
+    // Orejas y cabeza con degradado de piel.
+    s += '<circle cx="19.6" cy="29" r="2.7" fill="' + skinG + '"/><circle cx="44.4" cy="29" r="2.7" fill="' + skinG + '"/>';
+    s += '<ellipse cx="32" cy="27" rx="12.5" ry="13" fill="' + skinG + '"/>';
+    if (o.hairTop) s += (typeof o.hairTop === 'function' ? o.hairTop(o.capColor ? 'url(#nv-hc-' + u + ')' : hairG) : o.hairTop);
+    if (o.locks) s += o.locks(hairG);
+    if (o.beard) s += '<path d="M22.4 32.5Q32 47 41.6 32.5l-.7 5Q32 49.5 23.1 37.5z" fill="' + hairG + '"/>';
+    // Sombra suave del pelo sobre la frente, luz de borde en la cara
+    // y brillo del pelo: el volumen que antes daban los rellenos planos.
+    s += '<ellipse cx="32" cy="20.5" rx="10.5" ry="2.8" fill="#000000" opacity="0.08" filter="url(#nv-bl-' + u + ')"/>';
+    s += '<path d="M43.4 18.5Q45.6 27 43 36" stroke="#ffffff" stroke-width="1.6" stroke-linecap="round" fill="none" opacity="0.30"/>';
+    s += '<ellipse cx="27" cy="13.5" rx="7" ry="2.6" fill="#ffffff" opacity="0.20" transform="rotate(-18 27 13.5)"/>';
     // Mejillas, cejas, ojos con brillo, nariz y sonrisa.
     s += '<ellipse cx="23.8" cy="34" rx="2.7" ry="1.6" fill="#f49bab" opacity="0.5"/>' +
       '<ellipse cx="40.2" cy="34" rx="2.7" ry="1.6" fill="#f49bab" opacity="0.5"/>' +
@@ -5035,26 +5085,27 @@ function setupNetworkSimulator() {
       '<circle cx="27.8" cy="28.2" r="0.55" fill="#ffffff"/><circle cx="37.4" cy="28.2" r="0.55" fill="#ffffff"/>' +
       '<path d="M32 31q1.2 2.4-.2 3.2" stroke="' + o.shade + '" stroke-width="1" stroke-linecap="round" fill="none"/>' +
       '<path d="M27.6 36.4Q32 40 36.4 36.4" stroke="#8a4b2a" stroke-width="1.8" stroke-linecap="round" fill="none"/>';
-    if (o.extra) s += o.extra;
+    if (o.extra) s += (typeof o.extra === 'function' ? o.extra(hairG) : o.extra);
+    s += '</g>';
     // Dibujo directo en el cuadro 64×64, sin recorte: antes el
     // translate+scale cortaba el moño y escondía los emblemas
     // de la camisa (código, rayo), por eso se veían raros.
     return svgP(s);
   }
   var AVATARS = [
-    { id: 'chip', es: 'Programador', en: 'Developer', svg: person({ skin: '#f1c27d', shade: '#d9a55f', hairColor: '#2f2a26', hairTop: hairShort, shirt: '#1d4ed8', collar: '#bfdbfe', extra: ACC_CODE }) },
-    { id: 'wifi', es: 'Redes', en: 'Networks', svg: person({ skin: '#8d5524', shade: '#74431c', hairColor: '#2b6cb0', hairTop: hairBun, shirt: '#ea580c', collar: '#ffedd5', extra: ACC_WIFI }) },
-    { id: 'bolt', es: 'Electricista', en: 'Electrician', svg: person({ skin: '#ffdfc4', shade: '#eec39a', hairColor: '#e8b04b', hairTop: hairSpiky, shirt: '#374151', collar: '#9ca3af', extra: ACC_BOLT }) },
-    { id: 'gear', es: 'Mantenimiento', en: 'Maintenance', svg: person({ skin: '#c68642', shade: '#a96f33', hairColor: '#3a2a1a', hairTop: function () { return hairCap('#0d9488'); }, shirt: '#115e59', collar: '#99f6e4', extra: ACC_GEAR }) },
-    { id: 'shield', es: 'Seguridad', en: 'Security', svg: person({ skin: '#e0ac69', shade: '#c68e4e', hairColor: '#3b2a20', behind: hairLong, hairTop: hairShort, locks: hairLocks, shirt: '#1f2937', collar: '#f1f5f9', extra: ACC_GLASSES + ACC_SHIELD }) },
-    { id: 'rocket', es: 'Innovación', en: 'Innovation', svg: person({ skin: '#ffdfc4', shade: '#eec39a', hairColor: '#402a1c', hairTop: hairCurly, shirt: '#e11d48', collar: '#fecdd3', extra: ACC_ROCKET }) },
-    { id: 'game', es: 'Gamer', en: 'Gamer', svg: person({ skin: '#f1c27d', shade: '#d9a55f', hairColor: '#8b5cf6', hairTop: hairSpiky, shirt: '#6d28d9', collar: '#ddd6fe', extra: ACC_HEADPHONES }) },
-    { id: 'monitor', es: 'Diseño', en: 'Design', svg: person({ skin: '#c68642', shade: '#a96f33', hairColor: '#5b3a1e', behind: hairLong, hairTop: hairShort, locks: hairLocks, shirt: '#0e7490', collar: '#a5f3fc', extra: ACC_PEN }) },
-    { id: 'server', es: 'Sistemas', en: 'SysAdmin', svg: person({ skin: '#6b4423', shade: '#57371c', hairColor: '#17120d', hairTop: hairShort, beard: true, shirt: '#334155', collar: '#94a3b8' }) },
-    { id: 'trophy', es: 'Líder', en: 'Leader', svg: person({ skin: '#e0ac69', shade: '#c68e4e', hairColor: '#6b4a2b', hairTop: hairSwept, suit: true, shirt: '#26303b' }) },
-    { id: 'book', es: 'Hacker', en: 'Hacker', svg: person({ skin: '#e0ac69', shade: '#c68e4e', hairColor: '#241a12', behind: hairHood, hairTop: hairShort, shirt: '#111827', collar: '#1f2937', extra: ACC_SHADES + ACC_HOOD_FRONT }) },
-    { id: 'music', es: 'Creador', en: 'Creator', svg: person({ skin: '#8d5524', shade: '#74431c', hairColor: '#7c3aed', behind: hairLong, hairTop: hairShort, locks: hairLocks, shirt: '#db2777', collar: '#fbcfe8', extra: ACC_NOTE }) },
-    { id: 'headphones', es: 'Soporte', en: 'Support', svg: person({ skin: '#e0ac69', shade: '#c68e4e', hairColor: '#241a12', hairTop: hairCurly, shirt: '#2563eb', collar: '#bfdbfe', extra: ACC_HEADSET }) }
+    { id: 'chip', es: 'Programador', en: 'Developer', svg: person({ uid: 'chip', skin: '#f1c27d', shade: '#d9a55f', hairColor: '#2f2a26', hairTop: hairShort, shirt: '#1d4ed8', collar: '#bfdbfe', extra: ACC_CODE }) },
+    { id: 'wifi', es: 'Redes', en: 'Networks', svg: person({ uid: 'wifi', skin: '#8d5524', shade: '#74431c', hairColor: '#2b6cb0', hairTop: hairBun, shirt: '#ea580c', collar: '#ffedd5', extra: ACC_WIFI }) },
+    { id: 'bolt', es: 'Electricista', en: 'Electrician', svg: person({ uid: 'bolt', skin: '#ffdfc4', shade: '#eec39a', hairColor: '#e8b04b', hairTop: hairSpiky, shirt: '#374151', collar: '#9ca3af', extra: ACC_BOLT }) },
+    { id: 'gear', es: 'Mantenimiento', en: 'Maintenance', svg: person({ uid: 'gear', skin: '#c68642', shade: '#a96f33', hairColor: '#3a2a1a', hairTop: hairCap, capColor: '#0d9488', shirt: '#115e59', collar: '#99f6e4', extra: ACC_GEAR }) },
+    { id: 'shield', es: 'Seguridad', en: 'Security', svg: person({ uid: 'shield', skin: '#e0ac69', shade: '#c68e4e', hairColor: '#3b2a20', behind: hairLong, hairTop: hairShort, locks: hairLocks, shirt: '#1f2937', collar: '#f1f5f9', extra: ACC_GLASSES + ACC_SHIELD }) },
+    { id: 'rocket', es: 'Innovación', en: 'Innovation', svg: person({ uid: 'rocket', skin: '#ffdfc4', shade: '#eec39a', hairColor: '#402a1c', hairTop: hairCurly, shirt: '#e11d48', collar: '#fecdd3', extra: ACC_ROCKET }) },
+    { id: 'game', es: 'Gamer', en: 'Gamer', svg: person({ uid: 'game', skin: '#f1c27d', shade: '#d9a55f', hairColor: '#8b5cf6', hairTop: hairSpiky, shirt: '#6d28d9', collar: '#ddd6fe', extra: ACC_HEADPHONES }) },
+    { id: 'monitor', es: 'Diseño', en: 'Design', svg: person({ uid: 'monitor', skin: '#c68642', shade: '#a96f33', hairColor: '#5b3a1e', behind: hairLong, hairTop: hairShort, locks: hairLocks, shirt: '#0e7490', collar: '#a5f3fc', extra: ACC_PEN }) },
+    { id: 'server', es: 'Sistemas', en: 'SysAdmin', svg: person({ uid: 'server', skin: '#6b4423', shade: '#57371c', hairColor: '#17120d', hairTop: hairShort, beard: true, shirt: '#334155', collar: '#94a3b8' }) },
+    { id: 'trophy', es: 'Líder', en: 'Leader', svg: person({ uid: 'trophy', skin: '#e0ac69', shade: '#c68e4e', hairColor: '#6b4a2b', hairTop: hairSwept, suit: true, shirt: '#26303b' }) },
+    { id: 'book', es: 'Hacker', en: 'Hacker', svg: person({ uid: 'book', skin: '#e0ac69', shade: '#c68e4e', hairColor: '#241a12', behind: hairHood, hairTop: hairShort, shirt: '#111827', collar: '#1f2937', extra: function (g) { return ACC_SHADES + hoodFront(g); } }) },
+    { id: 'music', es: 'Creador', en: 'Creator', svg: person({ uid: 'music', skin: '#8d5524', shade: '#74431c', hairColor: '#7c3aed', behind: hairLong, hairTop: hairShort, locks: hairLocks, shirt: '#db2777', collar: '#fbcfe8', extra: ACC_NOTE }) },
+    { id: 'headphones', es: 'Soporte', en: 'Support', svg: person({ uid: 'headphones', skin: '#e0ac69', shade: '#c68e4e', hairColor: '#241a12', hairTop: hairCurly, shirt: '#2563eb', collar: '#bfdbfe', extra: ACC_HEADSET }) }
   ];
   var AVATAR_IMG_RE = /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/;
   var AVATAR_GOOGLE_RE = /^https:\/\/lh3\.googleusercontent\.com\/[A-Za-z0-9\-_=/]+$/;
