@@ -11,7 +11,18 @@ create table if not exists public.site_ranking (
   avatar text,
   avatar_image text,
   points integer not null default 0,
-  updated_at timestamptz not null default now()
+  updated_at timestamptz not null default now(),
+  -- Validación en la base (auditoría 2026-11-09): el avatar_image se
+  -- pinta en el navegador de otros visitantes, así que solo puede ser
+  -- una imagen data: en base64, la foto oficial de Google o nada.
+  constraint ranking_name_len check (char_length(name) <= 60),
+  constraint ranking_points_rng check (points >= 0 and points <= 100000),
+  constraint ranking_avatar_img check (
+    avatar_image is null
+    or avatar_image ~ '^data:image/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$'
+    or avatar_image ~ '^https://lh3\.googleusercontent\.com/[A-Za-z0-9\-_=/]+$'
+  ),
+  constraint ranking_avatar_img_len check (avatar_image is null or char_length(avatar_image) <= 130000)
 );
 
 alter table public.site_ranking enable row level security;

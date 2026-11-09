@@ -128,7 +128,9 @@
       userId: data.user && data.user.id,
       email: (data.user && data.user.email) || email,
       avatar: md.avatar || null,
-      avatarImg: md.avatar_image || null,
+      // La foto guardada se valida al leerla: si alguien escribió otra
+      // cosa en sus metadatos por API, no llega a pintarse (anti-XSS).
+      avatarImg: (md.avatar_image && (!window.NVISION_validAvatarImg || window.NVISION_validAvatarImg(md.avatar_image))) ? md.avatar_image : null,
       firstName: md.first_name || null,
       lastName: md.last_name || null,
       fullName: md.full_name || null,
@@ -530,6 +532,8 @@
     reader.readAsDataURL(file);
   }
   function saveAvatarImage(dataUrl) {
+    // Capa extra: solo se guarda una imagen data: válida (ver main.js).
+    if (window.NVISION_validAvatarImg && !window.NVISION_validAvatarImg(dataUrl)) { msg('err', T.avatarImgErr); return; }
     ensureSession().then(function (s) {
       if (!s) return;
       api('/auth/v1/user', { method: 'PUT', token: s.access, body: { data: { avatar: 'custom', avatar_image: dataUrl } } })

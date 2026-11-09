@@ -4864,14 +4864,27 @@ function setupNetworkSimulator() {
       '<path d="M49 51v2a5 5 0 0 1-5 5h-2" stroke="#ffffff" stroke-width="3" stroke-linecap="round" fill="none"/>'
     ) }
   ];
+  // Validación estricta de la foto personalizada: el valor vive en
+  // user_metadata y se puede escribir por API con cualquier texto, así
+  // que SOLO se acepta una imagen data: en base64 (jpeg/png/webp) de
+  // tamaño razonable. Cualquier otra cosa se descarta (anti-XSS: el
+  // chip se pinta con innerHTML en el encabezado y en el ranking).
+  var AVATAR_IMG_RE = /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/;
+  var AVATAR_GOOGLE_RE = /^https:\/\/lh3\.googleusercontent\.com\/[A-Za-z0-9\-_=/]+$/;
+  function validAvatarImg(img) {
+    if (typeof img !== 'string' || img.length > 130000) return false;
+    return AVATAR_IMG_RE.test(img) || AVATAR_GOOGLE_RE.test(img);
+  }
+  window.NVISION_validAvatarImg = validAvatarImg;
   function avatarChip(id, email, img) {
-    if (img && id === 'custom') return '<span class="nv-avatar nv-avatar--img"><img src="' + img + '" alt=""></span>';
+    if (id === 'custom' && validAvatarImg(img)) return '<span class="nv-avatar nv-avatar--img"><img src="' + img + '" alt=""></span>';
     if (id && id !== 'initial') {
       for (var i = 0; i < AVATARS.length; i++) {
         if (AVATARS[i].id === id) return '<span class="nv-avatar nv-av--' + id + '">' + AVATARS[i].svg + '</span>';
       }
     }
     var letter = (email || 'N').trim().charAt(0).toUpperCase() || 'N';
+    if (!/[A-Z0-9]/.test(letter)) letter = 'N';
     return '<span class="nv-avatar nv-avatar--initial">' + letter + '</span>';
   }
   function renderAccountChip() {
