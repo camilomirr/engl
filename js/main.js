@@ -4978,7 +4978,8 @@ function setupNetworkSimulator() {
   }
   function hairSpiky(c) { return '<path d="M20.8 26 22.6 15.2l3.4 5.2L29.4 12.2l3.2 6.2 3.8-5.2 2.6 5.8 3.8-3.4.6 10.4Q32 30.6 20.8 26z" fill="' + c + '"/>'; }
   function hairLong(c) { return '<rect x="17.4" y="12.5" width="29.2" height="41" rx="14.5" fill="' + c + '"/>'; }
-  function hairHood() { return '<ellipse cx="32" cy="26.5" rx="16.8" ry="17.8" fill="#273549"/><path d="M15.2 29a16.8 17.8 0 0 1 33.6 0l2 15.5H13.2z" fill="#273549"/>'; }
+  function hairHood() { return '<ellipse cx="32" cy="26.5" rx="16.8" ry="17.8" fill="#273549"/><path d="M15.2 29a16.8 17.8 0 0 1 33.6 0l3.4 27.5H11.8z" fill="#273549"/>'; }
+  var ACC_HOOD_FRONT = '<path d="M13.8 52.2Q20 46.8 27.2 46l-.7 5.6Q19.2 52.2 15.2 57.6z" fill="#273549"/><path d="M50.2 52.2Q44 46.8 36.8 46l.7 5.6Q44.8 52.2 48.8 57.6z" fill="#273549"/>';
   var ACC_SHADES = '<g fill="#111827"><rect x="22.4" y="26.6" width="8.8" height="6.4" rx="2.4"/><rect x="32.8" y="26.6" width="8.8" height="6.4" rx="2.4"/></g><path d="M31.2 28.8h1.6" stroke="#111827" stroke-width="1.6"/><path d="M28.6 48.2l1.4 4.8M35.4 48.2l-1.4 4.8" stroke="#9ca3af" stroke-width="1.6" stroke-linecap="round"/>';
   function hairPonytail(c) { return '<path d="M41.8 19.5c4.6 5.8 5.8 15.4 4.1 26.8l-6.4-1.3c1.5-9.6 1.1-17.8-.9-24.2z" fill="' + c + '"/><circle cx="41.6" cy="18.6" r="2.1" fill="#f59e0b"/>'; }
   var ACC_GLASSES = '<g stroke="#26303b" stroke-width="1.5" fill="#ffffff" fill-opacity="0.10"><rect x="22.6" y="26.4" width="8.6" height="7.2" rx="2.8"/><rect x="32.8" y="26.4" width="8.6" height="7.2" rx="2.8"/></g><path d="M31.2 29.4h1.6M22.6 29l-2.1-.8M41.4 29l2.1-.8" stroke="#26303b" stroke-width="1.5" fill="none"/>';
@@ -5026,7 +5027,7 @@ function setupNetworkSimulator() {
     { id: 'monitor', es: 'Diseño', en: 'Design', svg: person({ skin: '#c68642', shade: '#a96f33', hairColor: '#5b3a1e', behind: hairLong, hairTop: hairShort, shirt: '#0e7490', collar: '#a5f3fc' }) },
     { id: 'server', es: 'Sistemas', en: 'SysAdmin', svg: person({ skin: '#6b4423', shade: '#57371c', hairColor: '#17120d', hairTop: hairShort, beard: true, shirt: '#334155', collar: '#94a3b8' }) },
     { id: 'trophy', es: 'Líder', en: 'Leader', svg: person({ skin: '#e0ac69', shade: '#c68e4e', hairColor: '#6b4a2b', hairTop: hairSwept, suit: true, shirt: '#26303b' }) },
-    { id: 'book', es: 'Hacker', en: 'Hacker', svg: person({ skin: '#e0ac69', shade: '#c68e4e', hairColor: '#241a12', behind: hairHood, shirt: '#111827', collar: '#1f2937', extra: ACC_SHADES }) },
+    { id: 'book', es: 'Hacker', en: 'Hacker', svg: person({ skin: '#e0ac69', shade: '#c68e4e', hairColor: '#241a12', behind: hairHood, shirt: '#111827', collar: '#1f2937', extra: ACC_SHADES + ACC_HOOD_FRONT }) },
     { id: 'music', es: 'Creador', en: 'Creator', svg: person({ skin: '#8d5524', shade: '#74431c', hairColor: '#7c3aed', behind: hairLong, hairTop: hairShort, shirt: '#db2777', collar: '#fbcfe8' }) },
     { id: 'headphones', es: 'Soporte', en: 'Support', svg: person({ skin: '#e0ac69', shade: '#c68e4e', hairColor: '#241a12', hairTop: hairCurly, shirt: '#2563eb', collar: '#bfdbfe', extra: ACC_HEADSET }) }
   ];
