@@ -4759,15 +4759,6 @@ function setupNetworkSimulator() {
       '<path d="M32 15a17 17 0 1 0 0 34 17 17 0 0 0 0-34zm0 11a6 6 0 1 1 0 12 6 6 0 0 1 0-12z" fill="#ffffff" fill-rule="evenodd"/>' +
       '<circle cx="32" cy="32" r="4" fill="#0d9488"/>'
     ) },
-    { id: 'code', es: 'Código', en: 'Code', svg: svg(
-      '<rect x="8" y="12" width="48" height="40" rx="7" fill="#0f172a"/>' +
-      '<rect x="8" y="12" width="48" height="40" rx="7" fill="none" stroke="#ffffff" stroke-opacity="0.3" stroke-width="1.5"/>' +
-      '<circle cx="16" cy="20" r="2.2" fill="#fb7185"/>' +
-      '<circle cx="24" cy="20" r="2.2" fill="#fbbf24"/>' +
-      '<circle cx="32" cy="20" r="2.2" fill="#34d399"/>' +
-      '<path d="M25 30l-7 6 7 6M39 30l7 6-7 6" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>' +
-      '<path d="M35 27l-6 18" stroke="#22d3ee" stroke-width="4" stroke-linecap="round"/>'
-    ) },
     { id: 'shield', es: 'Escudo', en: 'Shield', svg: svg(
       '<path d="M32 5l20 7v18c0 14-9 22-20 26C21 52 12 44 12 30V12l20-7z" fill="#ffffff"/>' +
       '<path d="M32 12l13.5 4.8V30c0 9.5-6 15.5-13.5 18.5C24.5 45.5 18.5 39.5 18.5 30V16.8L32 12z" fill="#059669"/>' +
