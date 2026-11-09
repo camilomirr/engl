@@ -182,3 +182,8 @@
 .exam-share-btn.native { border-color: var(--accent-cyan); color: var(--accent-cyan); }
 .exam-share-btn.wa { border-color: #25d366; color: #1da851; }
 .exam-share-btn:hover { filter: brightness(1.15); }
+
+/* Modo práctica + código de verificación (2026-11-09) */
+.exam-btn-practice { background: transparent; border: 1px solid var(--accent-cyan); color: var(--accent-cyan); margin-top: 0.5rem; }
+.exam-timer { display: inline-block; margin-left: 0.8rem; font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; color: var(--accent-cyan); vertical-align: middle; }
+.cert-code-line { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--text-secondary); margin: 0.6rem 0 0; word-break: break-all; }

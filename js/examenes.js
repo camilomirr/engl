@@ -57,7 +57,7 @@
       .catch(function () { return tryRefresh(); });
   }
   var verifying = false;
-  function requestStart(exam, btn) {
+  function requestStart(exam, btn, mode) {
     if (verifying) return;
     verifying = true;
     var oldText = btn ? btn.textContent : '';
@@ -65,10 +65,22 @@
     verifySession().then(function (ok) {
       verifying = false;
       renderCards();
-      if (ok) openExam(exam);
+      if (ok) openExam(exam, mode);
       else showGate();
     });
   }
+
+  // Código de verificación del certificado: se calcula igual en
+  // verificar.js — FNV-1a sobre nombre|examen|nota|fecha.
+  function certCodeFor(name, examId, pct, dateKey) {
+    var s = String(name || '').toUpperCase().trim() + '|' + examId + '|' + pct + '|' + dateKey;
+    var h = 0x811c9dc5;
+    for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = (h * 0x01000193) >>> 0; }
+    var b = h.toString(36).toUpperCase();
+    while (b.length < 10) b = '0' + b;
+    return 'NV-' + b.slice(0, 5) + '-' + b.slice(5, 10);
+  }
+  window.NVISION_certCodeFor = certCodeFor;
   function showGate() {
     var b = document.getElementById('exam-gate-banner');
     if (!b) return;
@@ -82,8 +94,8 @@
   var lang = (localStorage.getItem('user_lang') || 'es').toLowerCase().indexOf('en') === 0 ? 'en' : 'es';
 
   var T = {
-    es: { questions: 'preguntas', best: 'Mejor nota', none: 'Sin intentos aún', start: 'Empezar examen', passed: 'APROBADO', q: 'Pregunta', scoreMsg: 'Tu nota', passMsg: '¡Felicidades! Aprobaste el examen.', failMsg: 'Aún no llegas al 70%. Repasa el tema e inténtalo otra vez.', why: 'Explicación:', certFor: 'Por aprobar el examen de', certTitle: 'CERTIFICADO', certGiven: 'Se otorga a', certScore: 'con una nota de', team: 'Equipo NVISION', certBtnAlert: 'Escribe tu nombre completo para generar el certificado.', verifying: 'Verificando tu cuenta…', shareBtn: 'Compartir certificado', shareText: '¡Aprobé el examen de {exam} en NVISION con {pct}% y obtuve mi certificado!' },
-    en: { questions: 'questions', best: 'Best score', none: 'No attempts yet', start: 'Start exam', passed: 'PASSED', q: 'Question', scoreMsg: 'Your score', passMsg: 'Congratulations! You passed the exam.', failMsg: 'Not at 70% yet. Review the topic and try again.', why: 'Explanation:', certFor: 'For passing the', certTitle: 'CERTIFICATE', certGiven: 'Awarded to', certScore: 'with a score of', team: 'NVISION Team', certBtnAlert: 'Type your full name to generate the certificate.', verifying: 'Verifying your account…', shareBtn: 'Share certificate', shareText: 'I passed the {exam} exam on NVISION with {pct}% and earned my certificate!' }
+    es: { questions: 'preguntas', best: 'Mejor nota', none: 'Sin intentos aún', start: 'Empezar examen', passed: 'APROBADO', q: 'Pregunta', scoreMsg: 'Tu nota', passMsg: '¡Felicidades! Aprobaste el examen.', failMsg: 'Aún no llegas al 70%. Repasa el tema e inténtalo otra vez.', why: 'Explicación:', certFor: 'Por aprobar el examen de', certTitle: 'CERTIFICADO', certGiven: 'Se otorga a', certScore: 'con una nota de', team: 'Equipo NVISION', certBtnAlert: 'Escribe tu nombre completo para generar el certificado.', verifying: 'Verificando tu cuenta…', shareBtn: 'Compartir certificado', shareText: '¡Aprobé el examen de {exam} en NVISION con {pct}% y obtuve mi certificado!', practice: 'Practicar', practiceMsg: 'Modo práctica: preguntas mezcladas, sin certificado y la nota no se guarda.', certCode: 'Código de verificación', verifyAt: 'Verifícalo en nvision.social/verificar.html', timeUp: 'Tiempo cumplido' },
+    en: { questions: 'questions', best: 'Best score', none: 'No attempts yet', start: 'Start exam', passed: 'PASSED', q: 'Question', scoreMsg: 'Your score', passMsg: 'Congratulations! You passed the exam.', failMsg: 'Not at 70% yet. Review the topic and try again.', why: 'Explanation:', certFor: 'For passing the', certTitle: 'CERTIFICATE', certGiven: 'Awarded to', certScore: 'with a score of', team: 'NVISION Team', certBtnAlert: 'Type your full name to generate the certificate.', verifying: 'Verifying your account…', shareBtn: 'Share certificate', shareText: 'I passed the {exam} exam on NVISION with {pct}% and earned my certificate!', practice: 'Practice', practiceMsg: 'Practice mode: shuffled questions, no certificate and the score is not saved.', certCode: 'Verification code', verifyAt: 'Verify it at nvision.social/verificar.html', timeUp: 'Time is up' }
   }[lang];
 
   function Q(qEs, qEn, oEs, oEn, a, wEs, wEn) { return { q: { es: qEs, en: qEn }, o: { es: oEs, en: oEn }, a: a, why: { es: wEs, en: wEn } }; }
@@ -371,17 +383,57 @@
         (res && res.passed ? '<span class="exam-passed">' + T.passed + '</span>' : '') +
         '<div class="exam-meta">' + exam.questions.length + ' ' + T.questions + '</div>' +
         '<div class="exam-best">' + T.best + ': <b>' + (res ? res.best + '%' : T.none) + '</b></div>' +
-        '<button type="button" class="exam-btn">' + T.start + '</button>';
-      card.querySelector('button').addEventListener('click', function (ev) { requestStart(exam, ev.currentTarget); });
+        '<button type="button" class="exam-btn">' + T.start + '</button>' +
+        '<button type="button" class="exam-btn exam-btn-practice">' + T.practice + '</button>';
+      card.querySelector('.exam-btn').addEventListener('click', function (ev) { requestStart(exam, ev.currentTarget, 'official'); });
+      card.querySelector('.exam-btn-practice').addEventListener('click', function (ev) { requestStart(exam, ev.currentTarget, 'practice'); });
       grid.appendChild(card);
     });
   }
 
-  function openExam(exam) {
+  var currentMode = 'official';
+  var runQs = [];
+  var timerInt = null;
+  function stopTimer() { if (timerInt) { clearInterval(timerInt); timerInt = null; } }
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; }
+    return a;
+  }
+
+  function openExam(exam, mode) {
     current = exam;
-    document.getElementById('exam-run-title').innerHTML = '<span class="exam-run-icon mono-icon">' + exam.icon + '</span>' + exam.name[lang];
+    currentMode = mode || 'official';
+    stopTimer();
+    runQs = exam.questions.map(function (q) { return { q: q.q, o: q.o, a: q.a, why: q.why }; });
+    if (currentMode === 'practice') {
+      runQs = shuffle(runQs).map(function (q) {
+        var order = shuffle(q.o.es.map(function (_, i) { return i; }));
+        return {
+          q: q.q,
+          o: { es: order.map(function (i) { return q.o.es[i]; }), en: order.map(function (i) { return q.o.en[i]; }) },
+          a: order.indexOf(q.a),
+          why: q.why
+        };
+      });
+    }
+    document.getElementById('exam-run-title').innerHTML = '<span class="exam-run-icon mono-icon">' + exam.icon + '</span>' + exam.name[lang] +
+      (currentMode === 'practice' ? ' · ' + T.practice : '');
+    var timerEl = document.getElementById('exam-timer');
+    if (timerEl) {
+      if (currentMode === 'practice') {
+        var left = 600;
+        timerEl.hidden = false;
+        var paint = function () {
+          var m = Math.floor(left / 60), ss = left % 60;
+          timerEl.textContent = '⏱ ' + m + ':' + (ss < 10 ? '0' : '') + ss;
+        };
+        paint();
+        timerInt = setInterval(function () { left--; if (left <= 0) { left = 0; stopTimer(); timerEl.textContent = '⏱ ' + T.timeUp; } paint(); }, 1000);
+      } else timerEl.hidden = true;
+    }
     form.innerHTML = '';
-    exam.questions.forEach(function (q, qi) {
+    runQs.forEach(function (q, qi) {
       var block = document.createElement('div');
       block.className = 'exam-q';
       var opts = '';
@@ -403,8 +455,9 @@
 
   function grade() {
     if (!current) return;
+    stopTimer();
     var correct = 0;
-    current.questions.forEach(function (q, qi) {
+    runQs.forEach(function (q, qi) {
       var chosen = form.querySelector('input[name="q' + qi + '"]:checked');
       var val = chosen ? parseInt(chosen.value, 10) : -1;
       if (val === q.a) correct++;
@@ -417,8 +470,19 @@
       });
       document.getElementById('why' + qi).classList.add('on');
     });
-    var pct = Math.round((correct / current.questions.length) * 100);
+    var pct = Math.round((correct / runQs.length) * 100);
     var passed = pct >= PASS;
+    if (currentMode === 'practice') {
+      document.getElementById('exam-score-num').textContent = pct + '%';
+      document.getElementById('exam-result-msg').textContent = T.scoreMsg + ': ' + correct + '/' + runQs.length + ' — ' + T.practiceMsg;
+      resultBox.className = 'exam-result on' + (passed ? ' pass' : '');
+      resultBox.style.display = '';
+      document.getElementById('exam-cert').className = 'exam-cert';
+      document.getElementById('exam-submit').style.display = 'none';
+      document.getElementById('exam-retry').style.display = '';
+      resultBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
     var prev = state.results[current.id];
     state.results[current.id] = {
       best: Math.max(pct, prev ? prev.best : 0),
@@ -430,7 +494,7 @@
     renderCards();
 
     document.getElementById('exam-score-num').textContent = pct + '%';
-    document.getElementById('exam-result-msg').textContent = T.scoreMsg + ': ' + correct + '/' + current.questions.length + ' — ' + (passed ? T.passMsg : T.failMsg);
+    document.getElementById('exam-result-msg').textContent = T.scoreMsg + ': ' + correct + '/' + runQs.length + ' — ' + (passed ? T.passMsg : T.failMsg);
     resultBox.className = 'exam-result on' + (passed ? ' pass' : '');
     resultBox.style.display = '';
     document.getElementById('exam-cert').className = 'exam-cert' + (passed ? ' on' : '');
@@ -505,6 +569,27 @@
     ctx.strokeStyle = 'rgba(148,163,184,0.6)'; ctx.lineWidth = 1.4;
     ctx.beginPath(); ctx.moveTo(84, H - 112); ctx.lineTo(330, H - 112); ctx.stroke();
 
+    var resDate = (res && res.date) ? res.date.slice(0, 10) : new Date().toISOString().slice(0, 10);
+    var code = certCodeFor(name, current.id, pct, resDate);
+    ctx.fillStyle = '#7dd3fc';
+    ctx.font = '400 22px "JetBrains Mono", monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(T.certCode + ': ' + code + ' · ' + T.verifyAt, W / 2, H - 44);
+    var codeLine = document.getElementById('cert-code-line');
+    if (codeLine) codeLine.textContent = T.certCode + ': ' + code + ' · ' + T.verifyAt;
+    // Registro oficial (si el dueño ya creó la tabla certificados):
+    // se intenta guardar con la sesión; si la tabla no existe, se ignora.
+    var sess = readSession();
+    if (sess && sess.access && window.NVISION_SUPABASE_ANON_KEY) {
+      try {
+        fetch('https://xiuztrujrwdgcpjrruxu.supabase.co/rest/v1/certificados', {
+          method: 'POST',
+          headers: { apikey: window.NVISION_SUPABASE_ANON_KEY, Authorization: 'Bearer ' + sess.access, 'Content-Type': 'application/json', Prefer: 'resolution=ignore-duplicates' },
+          body: JSON.stringify({ code: code, name: name, exam: current.id, score: pct, issued: resDate })
+        }).catch(function () {});
+      } catch (e) {}
+    }
+
     var a = document.createElement('a');
     a.download = 'certificado-nvision-' + current.id + '.png';
     a.href = canvas.toDataURL('image/png');
@@ -531,8 +616,9 @@
   }
 
   document.getElementById('exam-submit').addEventListener('click', grade);
-  document.getElementById('exam-retry').addEventListener('click', function () { if (current) requestStart(current, this); });
+  document.getElementById('exam-retry').addEventListener('click', function () { if (current) requestStart(current, this, currentMode); });
   document.getElementById('exam-back').addEventListener('click', function () {
+    stopTimer();
     run.className = 'exam-run';
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });

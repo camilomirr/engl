@@ -5,7 +5,7 @@
    fuentes, imágenes externas) NO se toca. */
 'use strict';
 
-var CACHE = 'nvision-pwa-v5';
+var CACHE = 'nvision-pwa-v6';
 
 var SHELL = [
   '/',
@@ -20,6 +20,12 @@ var SHELL = [
   '/examenes.html',
   '/logros.html',
   '/ranking.html',
+  '/verificar.html',
+  '/terminal.html',
+  '/comparador.html',
+  '/ingles.html',
+  '/apuntes.html',
+  '/perfil.html',
   '/cuenta.html',
   '/workshop/',
   '/workshop/index.html',

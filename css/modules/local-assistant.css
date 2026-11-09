@@ -286,3 +286,13 @@
   font: 700 0.58rem 'JetBrains Mono', monospace; text-transform: uppercase;
 }
 .la-view[hidden] { display: none; }
+
+/* Voz del asistente (2026-11-09) */
+.local-assistant-mic, .local-assistant-voice {
+  flex: 0 0 auto; width: 2.3rem; height: 2.3rem; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: transparent; border: 1px solid var(--border-subtle); color: var(--text-secondary); cursor: pointer;
+}
+.local-assistant-mic svg, .local-assistant-voice svg { width: 1rem; height: 1rem; }
+.local-assistant-mic.is-on, .local-assistant-voice.is-on { color: var(--accent-cyan); border-color: var(--accent-cyan); }
+.local-assistant-mic[hidden], .local-assistant-voice[hidden] { display: none; }

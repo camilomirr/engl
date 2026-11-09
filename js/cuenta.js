@@ -10,7 +10,7 @@
   var SUPABASE_URL = window.NVISION_SUPABASE_URL;
   var GOOGLE_CLIENT_ID = '855201454498-es9vkd7vqq2eli18g1rtprtvguqimn71.apps.googleusercontent.com';
   var META_KEY = 'nvision_sync_meta_v1';
-  var SYNC_KEYS = ['nvision_ruta_v1', 'nvision_examenes_v1', 'nvision_workshop_v2', 'nvision_logros_v1'];
+  var SYNC_KEYS = ['nvision_ruta_v1', 'nvision_examenes_v1', 'nvision_workshop_v2', 'nvision_logros_v1', 'nvision_racha_v1', 'nvision_apuntes_v1'];
   var lang = (localStorage.getItem('user_lang') || 'es').toLowerCase().indexOf('en') === 0 ? 'en' : 'es';
 
   var T = {
@@ -628,6 +628,14 @@
         else if (res.status === 404 || (res.data && (res.data.code === 'PGRST205' || res.data.code === '42P01'))) st.textContent = T.rankOff;
         else st.textContent = T.rankErr;
       }).catch(function () { st.textContent = T.rankErr; });
+    });
+  });
+
+  // ---- Enlace al perfil público propio ----
+  if ($('cuenta-profile-link')) $('cuenta-profile-link').addEventListener('click', function (ev) {
+    ev.preventDefault();
+    ensureSession().then(function (s) {
+      if (s && s.userId) location.href = 'perfil.html?u=' + encodeURIComponent(s.userId);
     });
   });
 

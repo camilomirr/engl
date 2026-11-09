@@ -317,6 +317,15 @@ const translations = {
     nav_exams: "Exámenes y certificados",
     nav_logros: "Logros",
     nav_ranking: "Ranking",
+    nav_terminal: "Terminal de redes", nav_comparador: "Comparador", nav_ingles: "Inglés técnico", nav_apuntes: "Mis apuntes", nav_verificar: "Verificar certificado",
+    pd_kicker: "Cada día, una pregunta",
+    verify_kicker: "Autenticidad", verify_title: "Verificar certificado", verify_lead: "Escribe los datos tal como aparecen en el certificado y su código de verificación. Si todo coincide, el certificado es auténtico.", verify_name: "Nombre completo", verify_exam: "Examen", verify_score: "Nota (%)", verify_date: "Fecha del examen aprobado", verify_code: "Código de verificación", verify_btn: "Verificar",
+    term_kicker: "Laboratorio", term_title: "Terminal de redes", term_lead: "Una consola simulada para practicar los comandos de diagnóstico de red sin miedo a romper nada. Escribe «ayuda» para empezar.",
+    cmp_kicker: "Workshop", cmp_title: "Comparador de componentes", cmp_lead: "Elige una categoría y dos componentes del mismo catálogo del Workshop para verlos frente a frente.", cmp_category: "Categoría", cmp_a: "Componente A", cmp_b: "Componente B",
+    eng_kicker: "Idiomas", eng_title: "Inglés técnico", eng_lead: "El vocabulario de informática que más vas a leer y escuchar: con traducción, pronunciación escrita para hispanohablantes y audio real.", eng_mode_list: "Vocabulario", eng_mode_cards: "Tarjetas", eng_mode_quiz: "Mini-quiz", eng_listen: "Escuchar", eng_tap: "Toca la tarjeta para ver la traducción.",
+    notes_kicker: "Estudio", notes_title: "Mis apuntes", notes_lead: "Tu bloc de notas por tema. Se guarda solo en este dispositivo y se sincroniza con tu cuenta NVISION.", notes_download: "Descargar (.txt)", notes_ph: "Escribe aquí tus apuntes del tema…",
+    profile_kicker: "Estudiante NVISION", profile_title: "Perfil público", profile_back: "Ver el ranking completo",
+    cable_title: "Juego de cableado: ordena los hilos", cable_hint: "Toca un hilo de la bandeja para colocarlo en el siguiente pin del conector RJ45. Arma el cable según la norma elegida.", cable_norm: "Norma", cable_check: "Comprobar", cable_reset: "Mezclar de nuevo",
     logros_kicker: "TU VITRINA",
     logros_title: "Logros y medallas",
     logros_sub: "Medallas por aprender, aprobar y construir en NVISION.",
@@ -1430,6 +1439,15 @@ const translations = {
     nav_exams: "Exams & certificates",
     nav_logros: "Achievements",
     nav_ranking: "Ranking",
+    nav_terminal: "Network terminal", nav_comparador: "Comparator", nav_ingles: "Technical English", nav_apuntes: "My notes", nav_verificar: "Verify certificate",
+    pd_kicker: "One question every day",
+    verify_kicker: "Authenticity", verify_title: "Verify certificate", verify_lead: "Type the details exactly as they appear on the certificate plus its verification code. If everything matches, the certificate is authentic.", verify_name: "Full name", verify_exam: "Exam", verify_score: "Score (%)", verify_date: "Passing date", verify_code: "Verification code", verify_btn: "Verify",
+    term_kicker: "Lab", term_title: "Network terminal", term_lead: "A simulated console to practice network diagnostic commands with nothing to break. Type \"help\" to start.",
+    cmp_kicker: "Workshop", cmp_title: "Component comparator", cmp_lead: "Pick a category and two components from the same Workshop catalog to see them side by side.", cmp_category: "Category", cmp_a: "Component A", cmp_b: "Component B",
+    eng_kicker: "Languages", eng_title: "Technical English", eng_lead: "The computing vocabulary you will read and hear the most: with translation, written pronunciation for Spanish speakers and real audio.", eng_mode_list: "Vocabulary", eng_mode_cards: "Flashcards", eng_mode_quiz: "Mini quiz", eng_listen: "Listen", eng_tap: "Tap the card to see the translation.",
+    notes_kicker: "Study", notes_title: "My notes", notes_lead: "Your per-topic notebook. It saves automatically on this device and syncs with your NVISION account.", notes_download: "Download (.txt)", notes_ph: "Write your notes for this topic here…",
+    profile_kicker: "NVISION student", profile_title: "Public profile", profile_back: "See the full ranking",
+    cable_title: "Wiring game: put the wires in order", cable_hint: "Tap a wire in the tray to place it on the next pin of the RJ45 connector. Build the cable for the chosen standard.", cable_norm: "Standard", cable_check: "Check", cable_reset: "Shuffle again",
     logros_kicker: "YOUR SHOWCASE",
     logros_title: "Achievements & badges",
     logros_sub: "Badges for learning, passing and building on NVISION.",
@@ -3717,6 +3735,12 @@ function setupLocalAssistant() {
         <button class="local-assistant-edit" type="button" data-i18n-title="assistant_edit_last" title="Editar último mensaje" aria-label="Editar último mensaje" disabled>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path></svg>
         </button>
+        <button class="local-assistant-mic" type="button" title="Preguntar por voz" aria-label="Preguntar por voz" hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10a7 7 0 0 0 14 0"></path><path d="M12 19v3"></path></svg>
+        </button>
+        <button class="local-assistant-voice" type="button" title="Escuchar las respuestas" aria-label="Escuchar las respuestas" aria-pressed="false" hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"></path><path d="M15.5 8.5a5 5 0 0 1 0 7"></path></svg>
+        </button>
         <button class="local-assistant-submit" type="submit" data-i18n-title="assistant_search" title="Enviar" aria-label="Enviar">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"></path><path d="M22 2 11 13"></path></svg>
         </button>
@@ -3737,6 +3761,56 @@ function setupLocalAssistant() {
   const chipsBox = $('.la-chips');
   const askBtn = $('.local-assistant-ask');
   const editBtn = $('.local-assistant-edit');
+
+  /* ===== Voz: micrófono (SpeechRecognition) y lectura (speechSynthesis) ===== */
+  const micBtn = $('.local-assistant-mic');
+  const voiceBtn = $('.local-assistant-voice');
+  let voiceOn = false;
+  try { voiceOn = localStorage.getItem('nvision_voice_tts') === '1'; } catch (e) {}
+  function cleanForSpeech(t) {
+    return String(t || '').replace(/\[\[[^\]]+\]\]/g, '').replace(/\*\*/g, '').replace(/\s+/g, ' ').trim().slice(0, 420);
+  }
+  function speakNow(t) {
+    if (!voiceOn || !('speechSynthesis' in window)) return;
+    try {
+      const u = new SpeechSynthesisUtterance(cleanForSpeech(t));
+      u.lang = currentLang === 'en' ? 'en-US' : 'es-ES';
+      u.rate = 1.0;
+      speechSynthesis.cancel();
+      speechSynthesis.speak(u);
+    } catch (e) {}
+  }
+  if ('speechSynthesis' in window && voiceBtn) {
+    voiceBtn.hidden = false;
+    voiceBtn.setAttribute('aria-pressed', voiceOn ? 'true' : 'false');
+    voiceBtn.classList.toggle('is-on', voiceOn);
+    voiceBtn.addEventListener('click', () => {
+      voiceOn = !voiceOn;
+      try { localStorage.setItem('nvision_voice_tts', voiceOn ? '1' : '0'); } catch (e) {}
+      voiceBtn.setAttribute('aria-pressed', voiceOn ? 'true' : 'false');
+      voiceBtn.classList.toggle('is-on', voiceOn);
+      if (!voiceOn) { try { speechSynthesis.cancel(); } catch (e) {} }
+    });
+  }
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (SR && micBtn) {
+    micBtn.hidden = false;
+    micBtn.addEventListener('click', () => {
+      try {
+        const rec = new SR();
+        rec.lang = currentLang === 'en' ? 'en-US' : 'es-ES';
+        rec.interimResults = false;
+        micBtn.classList.add('is-on');
+        rec.addEventListener('result', (ev) => {
+          const txt = ev.results && ev.results[0] && ev.results[0][0] ? ev.results[0][0].transcript : '';
+          if (txt) { input.value = txt; if (form.requestSubmit) form.requestSubmit(); }
+        });
+        rec.addEventListener('end', () => micBtn.classList.remove('is-on'));
+        rec.addEventListener('error', () => micBtn.classList.remove('is-on'));
+        rec.start();
+      } catch (e) { micBtn.classList.remove('is-on'); }
+    });
+  }
   /* Modo "Solo preguntar": activado con el botón "?", el asistente solo
      responde la pregunta y nunca da pasos ni hace nada por su cuenta. */
   let askOnly = false;
@@ -3773,6 +3847,7 @@ function setupLocalAssistant() {
       d.appendChild(f);
     }
     log.appendChild(d);
+    if (role === 'bot') speakNow(text);
     if (role === 'user') lastUserEl = d;
     log.scrollTop = log.scrollHeight;
     return d;

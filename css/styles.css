@@ -31,7 +31,7 @@
 @import url('modules/icons.css');
 
 /* 9. Asistente de búsqueda local */
-@import url('modules/local-assistant.css?v=9');
+@import url('modules/local-assistant.css?v=30');
 
 /* 10. Efecto de seguimiento del cursor */
 @import url('modules/cursor-effect.css');
@@ -49,13 +49,13 @@
 @import url('modules/site-search.css?v=2');
 
 /* 15. Herramientas de redes (subredes y conversor) */
-@import url('modules/redes-tools.css?v=1');
+@import url('modules/redes-tools.css?v=30');
 
 /* 16. Ruta de aprendizaje */
 @import url('modules/ruta.css?v=2');
 
 /* 17. Exámenes y certificados */
-@import url('modules/examenes.css?v=4');
+@import url('modules/examenes.css?v=30');
 
 /* 18. Mi cuenta (Supabase) */
 @import url('modules/cuenta.css?v=9');
@@ -71,6 +71,14 @@
 
 /* 22. Pulido móvil (al final a propósito) */
 @import url('modules/logros.css?v=1');
-@import url('modules/ranking.css?v=1');
+@import url('modules/ranking.css?v=30');
+/* 23. Herramientas y páginas nuevas (2026-11-09) */
+@import url('modules/verificar.css?v=1');
+@import url('modules/pregunta.css?v=1');
+@import url('modules/terminal.css?v=1');
+@import url('modules/comparador.css?v=1');
+@import url('modules/ingles.css?v=1');
+@import url('modules/apuntes.css?v=1');
+@import url('modules/perfil.css?v=1');
 @import url('modules/mobile.css?v=2');
 

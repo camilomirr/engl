@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content">
   <title data-i18n="page_title_redes">NVISION - Redes y Simulación</title>
   <!-- Hojas de estilo modular -->
-  <link rel="stylesheet" href="css/styles.css?v=56">
+  <link rel="stylesheet" href="css/styles.css?v=80">
   <!-- SEO, iconos y vista previa al compartir (Open Graph / Twitter) -->
   <meta name="description" content="Redes en NVISION: clasificación, topologías, simulador de ping, laboratorio de switch, WiFi avanzado y el reto Redes Challenge.">
   <meta name="theme-color" content="#0a0e17">
@@ -91,6 +91,11 @@
               <li><a href="examenes.html" data-i18n="nav_exams">Exámenes y certificados</a></li>
               <li><a href="logros.html" data-i18n="nav_logros">Logros</a></li>
               <li><a href="ranking.html" data-i18n="nav_ranking">Ranking</a></li>
+              <li><a href="terminal.html" data-i18n="nav_terminal">Terminal de redes</a></li>
+              <li><a href="comparador.html" data-i18n="nav_comparador">Comparador</a></li>
+              <li><a href="ingles.html" data-i18n="nav_ingles">Inglés técnico</a></li>
+              <li><a href="apuntes.html" data-i18n="nav_apuntes">Mis apuntes</a></li>
+              <li><a href="verificar.html" data-i18n="nav_verificar">Verificar certificado</a></li>
             </ul>
           </li>
           <li class="nav-item-dropdown">
@@ -1065,6 +1070,20 @@
           <div class="tr-item tr-wide"><dt data-i18n="conv_bin">Binario</dt><dd id="rt-c-bin">—</dd></div>
         </dl>
       </div>
+      <div class="tool-panel tool-panel-wide" id="cable-panel">
+        <h3 data-i18n="cable_title">Juego de cableado: ordena los hilos</h3>
+        <p class="tool-hint" data-i18n="cable_hint">Toca un hilo de la bandeja para colocarlo en el siguiente pin del conector RJ45. Arma el cable según la norma elegida.</p>
+        <div class="cable-controls">
+          <label><span data-i18n="cable_norm">Norma</span>
+            <select id="cb-norm"><option value="B">T568B</option><option value="A">T568A</option></select></label>
+          <button type="button" class="tool-btn" id="cb-check" data-i18n="cable_check">Comprobar</button>
+          <button type="button" class="tool-btn tool-btn-ghost" id="cb-reset" data-i18n="cable_reset">Mezclar de nuevo</button>
+          <span class="cable-tries" id="cb-tries"></span>
+        </div>
+        <div class="cable-slots" id="cb-slots" aria-label="Pines del conector"></div>
+        <div class="cable-tray" id="cb-tray" aria-label="Hilos"></div>
+        <p class="cable-msg" id="cb-msg" role="status"></p>
+      </div>
     </div>
   </section>
 </main>
@@ -1075,9 +1094,10 @@
   </footer>
 
   <!-- Script interactivo bilingüe y menú móvil -->
-  <script src="js/redes-tools.js?v=1"></script>
-  <script src="js/main.js?v=63"></script>
-  <script src="js/site-search.js?v=6"></script>
+  <script src="js/redes-tools.js?v=80"></script>
+  <script src="js/main.js?v=80"></script>
+  <script src="js/site-search.js?v=80"></script>
   <script src="js/equipo-widget.js?v=17" defer></script>
+  <script src="js/cableado.js?v=1"></script>
 </body>
 </html>

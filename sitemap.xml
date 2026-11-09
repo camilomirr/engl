@@ -62,4 +62,9 @@
     <loc>https://nvision.social/ranking.html</loc>
     <priority>0.6</priority>
   </url>
+  <url><loc>https://nvision.social/verificar.html</loc></url>
+  <url><loc>https://nvision.social/terminal.html</loc></url>
+  <url><loc>https://nvision.social/comparador.html</loc></url>
+  <url><loc>https://nvision.social/ingles.html</loc></url>
+  <url><loc>https://nvision.social/apuntes.html</loc></url>
 </urlset>

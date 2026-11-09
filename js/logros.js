@@ -38,7 +38,8 @@
     { id: 'ruta-completa', icon: IC.corona, n: { es: 'Ruta completa', en: 'Path completed' }, d: { es: 'Termina los 11 pasos de la ruta de aprendizaje.', en: 'Finish all 11 steps of the learning path.' }, ok: function (c) { return c.rutaDone >= c.rutaTotal; } },
     { id: 'taller', icon: IC.llave, n: { es: 'Manos a la obra', en: 'Hands on' }, d: { es: 'Abre el Taller PC y guarda tu primera partida.', en: 'Open the PC Workshop and save your first game.' }, ok: function (c) { return c.wsStarted; } },
     { id: 'entrega', icon: IC.paquete, n: { es: 'Primera entrega', en: 'First delivery' }, d: { es: 'Entrega el primer equipo a un cliente del taller.', en: 'Deliver your first build to a workshop client.' }, ok: function (c) { return c.delivered >= 1; } },
-    { id: 'tecnico', icon: IC.nivel, n: { es: 'Técnico en ascenso', en: 'Rising technician' }, d: { es: 'Llega al nivel 3 en el modo carrera del taller.', en: 'Reach level 3 in workshop career mode.' }, ok: function (c) { return c.wsLevel >= 3; } }
+    { id: 'tecnico', icon: IC.nivel, n: { es: 'Técnico en ascenso', en: 'Rising technician' }, d: { es: 'Llega al nivel 3 en el modo carrera del taller.', en: 'Reach level 3 in workshop career mode.' }, ok: function (c) { return c.wsLevel >= 3; } },
+    { id: 'racha7', icon: IC.estrella, n: { es: 'Racha de 7 días', en: '7-day streak' }, d: { es: 'Responde la pregunta del día 7 días seguidos.', en: 'Answer the question of the day 7 days in a row.' }, ok: function (c) { return (c.streak || 0) >= 7; } }
   ];
 
   function read(key) { try { return JSON.parse(localStorage.getItem(key) || 'null'); } catch (e) { return null; } }
@@ -48,6 +49,14 @@
     var ex = read('nvision_examenes_v1');
     var ws = read('nvision_workshop_v2');
     var ses = read('nvision_session_v1');
+    var rachaDoc = read('nvision_racha_v1');
+    var streak = 0;
+    if (rachaDoc && rachaDoc.days) {
+      var d = new Date();
+      var key = function (x) { return x.toISOString().slice(0, 10); };
+      if (!rachaDoc.days[key(d)]) d.setDate(d.getDate() - 1);
+      while (rachaDoc.days[key(d)]) { streak++; d.setDate(d.getDate() - 1); }
+    }
     var results = (ex && ex.results) || {};
     var bestSum = 0;
     EXAM_IDS.forEach(function (id) { if (results[id]) bestSum += results[id].best || 0; });
@@ -59,7 +68,7 @@
     if (ws && !(ruta && ruta.done && ruta.done.workshop)) done++;
     if (anyPassed && !(ruta && ruta.done && ruta.done.examen)) done++;
     return {
-      hasAccount: !!ses,
+      hasAccount: !!ses, streak: streak,
       rutaDone: done, rutaTotal: 11,
       attempted: EXAM_IDS.filter(function (id) { return !!results[id]; }).length,
       passed: EXAM_IDS.filter(function (id) { return results[id] && results[id].passed; }).length,

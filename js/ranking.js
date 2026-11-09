@@ -47,7 +47,14 @@
           '<td class="rank-pos">' + (i + 1) + '</td>' +
           '<td><span class="rank-who">' + chip + '<b></b>' + (uid && row.user_id === uid ? ' <span class="rank-you">' + T.you + '</span>' : '') + '</span></td>' +
           '<td class="rank-pts">' + row.points + ' <span>' + T.points + '</span></td>';
-        tr.querySelector('b').textContent = row.name || '—';
+        var nameB = tr.querySelector('b');
+        nameB.textContent = row.name || '—';
+        // El nombre enlaza al perfil público del estudiante.
+        var link = document.createElement('a');
+        link.href = 'perfil.html?u=' + encodeURIComponent(row.user_id);
+        link.className = 'rank-profile-link';
+        nameB.parentNode.insertBefore(link, nameB);
+        link.appendChild(nameB);
         body.appendChild(tr);
       });
     }).catch(function (e) {
