@@ -8,6 +8,8 @@
   flex: none;
   overflow: hidden;
   line-height: 1;
+  /* Profundidad: luz arriba, sombra abajo, para que la ilustración flote */
+  box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.35), inset 0 -4px 8px rgba(0, 0, 0, 0.18);
 }
 .nv-avatar svg { width: 62%; height: 62%; }
 .nv-avatar--initial { font-weight: 700; background: linear-gradient(135deg, #64748b, #334155); }
@@ -19,6 +21,13 @@
 .nv-av--shield { background: linear-gradient(135deg, #34d399, #059669); }
 .nv-av--rocket { background: linear-gradient(135deg, #fb7185, #e11d48); }
 .nv-av--game { background: linear-gradient(135deg, #e879f9, #a21caf); }
+.nv-av--monitor { background: linear-gradient(135deg, #06b6d4, #0e7490); }
+.nv-av--server { background: linear-gradient(135deg, #475569, #1e293b); }
+.nv-av--globe { background: linear-gradient(135deg, #84cc16, #4d7c0f); }
+.nv-av--trophy { background: linear-gradient(135deg, #eab308, #a16207); }
+.nv-av--book { background: linear-gradient(135deg, #ef4444, #b91c1c); }
+.nv-av--music { background: linear-gradient(135deg, #ec4899, #be185d); }
+.nv-av--headphones { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
 
 /* El botón de Mi cuenta del encabezado se vuelve la foto/avatar */
 .account-btn .nv-avatar { width: 30px; height: 30px; font-size: 0.95rem; }
