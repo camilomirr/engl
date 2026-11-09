@@ -1,0 +1,31 @@
+name: CI NVISION
+
+# Pruebas automáticas en cada push y en cada pull request a main.
+# No despliega nada: GitHub Pages publica el sitio como siempre;
+# este flujo solo comprueba que el proyecto no se haya roto.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  pruebas:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar el repositorio
+        uses: actions/checkout@v4
+
+      - name: Preparar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Preparar Node.js (para revisar la sintaxis JS)
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Ejecutar las pruebas
+        run: python3 tests/run_tests.py

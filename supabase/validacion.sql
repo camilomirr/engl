@@ -68,8 +68,8 @@ alter table public.team_tasks
   add constraint team_tasks_task_len   check (char_length(task) between 1 and 2000),
   add constraint team_tasks_result_len check (char_length(result) <= 4000);
 
--- site_ranking: el máximo legítimo hoy es 805 puntos
--- (5 exámenes × 100 + 11 pasos de ruta × 10 + 13 logros × 15);
+-- site_ranking: el máximo legítimo hoy es 895 puntos
+-- (5 exámenes × 100 + 11 pasos de ruta × 10 + 19 logros × 15);
 -- se deja 1000 de margen para contenido nuevo. El tope de 100000
 -- permitía publicar un puntaje imposible y reinar en el ranking.
 alter table public.site_ranking drop constraint if exists ranking_points_rng;

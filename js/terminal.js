@@ -7,7 +7,10 @@
   var ES = lang === 'es';
   var L = function (es, en) { return ES ? es : en; };
 
-  var state = { mission: 0, step: 0, done: [false, false, false] };
+  var TKEY = 'nvision_terminal_v1';
+  function loadDone() { try { var p = JSON.parse(localStorage.getItem(TKEY) || 'null'); if (p && p.done && p.done.length === 3) return p.done.map(function (d) { return !!d; }); } catch (e) {} return [false, false, false]; }
+  function saveDone() { try { localStorage.setItem(TKEY, JSON.stringify({ done: state.done, updatedAt: new Date().toISOString() })); } catch (e) {} }
+  var state = { mission: 0, step: 0, done: loadDone() };
 
   function print(text, cls) {
     var div = document.createElement('div');
@@ -127,6 +130,7 @@
       state.step++;
       if (state.step >= m.steps.length) {
         state.done[state.mission] = true;
+        saveDone();
         print(L('★ Misión completada: ', '★ Mission complete: ') + m.title, 'term-ok');
         var next = state.done.indexOf(false);
         if (next !== -1) state.mission = next; state.step = 0;

@@ -23,7 +23,9 @@
     corona: '<svg ' + A + '><path d="M4 17.5 3 8l5.5 4L12 5.5 15.5 12 21 8l-1 9.5z"/><line x1="4" y1="20.5" x2="20" y2="20.5"/></svg>',
     llave: '<svg ' + A + '><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>',
     paquete: '<svg ' + A + '><path d="M12 3 4 7v10l8 4 8-4V7z"/><path d="M4 7l8 4 8-4"/><path d="M12 11v10"/></svg>',
-    nivel: '<svg ' + A + '><path d="M4 19.5h16"/><polyline points="5 15 10 9.5 13 12.5 19 5.5"/><polyline points="14.5 5.5 19 5.5 19 10"/></svg>'
+    nivel: '<svg ' + A + '><path d="M4 19.5h16"/><polyline points="5 15 10 9.5 13 12.5 19 5.5"/><polyline points="14.5 5.5 19 5.5 19 10"/></svg>',
+    libro: '<svg ' + A + '><path d="M12 6c-2-1.5-4.5-2-8-2v14c3.5 0 6 .5 8 2 2-1.5 4.5-2 8-2V4c-3.5 0-6 .5-8 2z"/><line x1="12" y1="6" x2="12" y2="20"/></svg>',
+    terminal: '<svg ' + A + '><rect x="2" y="3" width="20" height="18" rx="2"/><polyline points="6 9 10 12 6 15"/><line x1="12.5" y1="17" x2="17.5" y2="17"/></svg>'
   };
 
   var DEFS = [
@@ -39,7 +41,13 @@
     { id: 'taller', icon: IC.llave, n: { es: 'Manos a la obra', en: 'Hands on' }, d: { es: 'Abre el Taller PC y guarda tu primera partida.', en: 'Open the PC Workshop and save your first game.' }, ok: function (c) { return c.wsStarted; } },
     { id: 'entrega', icon: IC.paquete, n: { es: 'Primera entrega', en: 'First delivery' }, d: { es: 'Entrega el primer equipo a un cliente del taller.', en: 'Deliver your first build to a workshop client.' }, ok: function (c) { return c.delivered >= 1; } },
     { id: 'tecnico', icon: IC.nivel, n: { es: 'Técnico en ascenso', en: 'Rising technician' }, d: { es: 'Llega al nivel 3 en el modo carrera del taller.', en: 'Reach level 3 in workshop career mode.' }, ok: function (c) { return c.wsLevel >= 3; } },
-    { id: 'racha7', icon: IC.estrella, n: { es: 'Racha de 7 días', en: '7-day streak' }, d: { es: 'Responde la pregunta del día 7 días seguidos.', en: 'Answer the question of the day 7 days in a row.' }, ok: function (c) { return (c.streak || 0) >= 7; } }
+    { id: 'racha7', icon: IC.estrella, n: { es: 'Racha de 7 días', en: '7-day streak' }, d: { es: 'Responde la pregunta del día 7 días seguidos.', en: 'Answer the question of the day 7 days in a row.' }, ok: function (c) { return (c.streak || 0) >= 7; } },
+    { id: 'racha3', icon: IC.estrella, n: { es: 'Racha de 3 días', en: '3-day streak' }, d: { es: 'Responde la pregunta del día 3 días seguidos.', en: 'Answer the question of the day 3 days in a row.' }, ok: function (c) { return (c.streak || 0) >= 3; } },
+    { id: 'respondedor', icon: IC.examen, n: { es: 'Respondedor', en: 'Answerer' }, d: { es: 'Responde 10 preguntas del día en total.', en: 'Answer 10 questions of the day in total.' }, ok: function (c) { return (c.rachaTotal || 0) >= 10; } },
+    { id: 'primer-apunte', icon: IC.libro, n: { es: 'Primer apunte', en: 'First note' }, d: { es: 'Escribe tu primer apunte en Mis apuntes.', en: 'Write your first note in My notes.' }, ok: function (c) { return (c.notesTopics || 0) >= 1; } },
+    { id: 'diario', icon: IC.libro, n: { es: 'Diario de estudio', en: 'Study journal' }, d: { es: 'Ten apuntes guardados en 3 temas distintos.', en: 'Keep saved notes in 3 different topics.' }, ok: function (c) { return (c.notesTopics || 0) >= 3; } },
+    { id: 'consola', icon: IC.terminal, n: { es: 'Operador de consola', en: 'Console operator' }, d: { es: 'Completa las 3 misiones de la terminal simulada.', en: 'Complete all 3 missions of the simulated terminal.' }, ok: function (c) { return (c.termMissions || 0) >= 3; } },
+    { id: 'polivalente', icon: IC.nivel, n: { es: 'Polivalente', en: 'Versatile' }, d: { es: 'Presenta exámenes de 3 temas distintos.', en: 'Take exams on 3 different topics.' }, ok: function (c) { return c.attempted >= 3; } }
   ];
 
   function read(key) { try { return JSON.parse(localStorage.getItem(key) || 'null'); } catch (e) { return null; } }
@@ -57,6 +65,12 @@
       if (!rachaDoc.days[key(d)]) d.setDate(d.getDate() - 1);
       while (rachaDoc.days[key(d)]) { streak++; d.setDate(d.getDate() - 1); }
     }
+    var notes = read('nvision_apuntes_v1');
+    var notesTopics = 0;
+    if (notes && notes.topics) Object.keys(notes.topics).forEach(function (k) { if (String(notes.topics[k] || '').trim()) notesTopics++; });
+    var term = read('nvision_terminal_v1');
+    var termMissions = 0;
+    if (term && term.done) term.done.forEach(function (d) { if (d) termMissions++; });
     var results = (ex && ex.results) || {};
     var bestSum = 0;
     EXAM_IDS.forEach(function (id) { if (results[id]) bestSum += results[id].best || 0; });
@@ -68,7 +82,7 @@
     if (ws && !(ruta && ruta.done && ruta.done.workshop)) done++;
     if (anyPassed && !(ruta && ruta.done && ruta.done.examen)) done++;
     return {
-      hasAccount: !!ses, streak: streak,
+      hasAccount: !!ses, streak: streak, rachaTotal: (rachaDoc && rachaDoc.total) || 0, notesTopics: notesTopics, termMissions: termMissions,
       rutaDone: done, rutaTotal: 11,
       attempted: EXAM_IDS.filter(function (id) { return !!results[id]; }).length,
       passed: EXAM_IDS.filter(function (id) { return results[id] && results[id].passed; }).length,
