@@ -6,14 +6,91 @@
   var KEY = 'nvision_examenes_v1';
 
   // Regla del sitio: para presentar un examen y descargar el certificado
-  // hay que tener una cuenta con la sesión iniciada (la sesión la guarda
-  // Mi cuenta en nvision_session_v1 al registrarse o iniciar sesión).
+  // hay que tener una cuenta REAL. No basta con que exista una sesión
+  // guardada: antes de abrir el examen y antes de entregar el certificado
+  // se le pregunta a Supabase si el token de la sesión es de verdad
+  // (una sesión inventada a mano la rechaza el servidor).
   var SESSION_KEY = 'nvision_session_v1';
+  var VERIFIED_KEY = 'nvision_verified_v1';
+  var SUPABASE_URL = 'https://xiuztrujrwdgcpjrruxu.supabase.co';
+  var ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpdXp0cnVqcndkZ2NwanJydXh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQwNTk2ODcsImV4cCI6MjEwOTYzNTY4N30.CBBQpCqHxuOtCaMcdUfIrKTa4vt0QJRqvivskHnt5g0';
+
+  function readSession() {
+    try { return JSON.parse(localStorage.getItem(SESSION_KEY) || 'null'); } catch (e) { return null; }
+  }
   function hasSession() {
-    try {
-      var s = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null');
-      return !!(s && ((s.access && s.exp > Date.now()) || s.refresh));
-    } catch (e) { return false; }
+    var s = readSession();
+    return !!(s && ((s.access && s.exp > Date.now()) || s.refresh));
+  }
+  function clearSession() { try { localStorage.removeItem(SESSION_KEY); } catch (e) {} }
+  function readVerified() {
+    try { return JSON.parse(sessionStorage.getItem(VERIFIED_KEY) || 'null'); } catch (e) { return null; }
+  }
+  function markVerified(uid, access) {
+    try { sessionStorage.setItem(VERIFIED_KEY, JSON.stringify({ uid: uid, tok: String(access || '').slice(36, 60), at: Date.now() })); } catch (e) {}
+  }
+  function sbAuth(path, opts) {
+    opts = opts || {};
+    var headers = { 'apikey': ANON_KEY, 'Content-Type': 'application/json' };
+    if (opts.token) headers['Authorization'] = 'Bearer ' + opts.token;
+    return fetch(SUPABASE_URL + path, { method: opts.method || 'GET', headers: headers, body: opts.body ? JSON.stringify(opts.body) : undefined })
+      .then(function (r) { return r.text().then(function (t) { var d = null; try { d = t ? JSON.parse(t) : null; } catch (e) {} return { status: r.status, data: d }; }); });
+  }
+  function saveSessionFromAuth(data, email) {
+    var s = {
+      access: data.access_token,
+      refresh: data.refresh_token,
+      exp: Date.now() + (data.expires_in || 3600) * 1000,
+      userId: data.user && data.user.id,
+      email: (data.user && data.user.email) || email,
+      avatar: (data.user && data.user.user_metadata && data.user.user_metadata.avatar) || null,
+      avatarImg: (data.user && data.user.user_metadata && data.user.user_metadata.avatar_image) || null
+    };
+    try { localStorage.setItem(SESSION_KEY, JSON.stringify(s)); } catch (e) {}
+    return s;
+  }
+  function verifySession() {
+    var s = readSession();
+    if (!s) return Promise.resolve(false);
+    var v = readVerified();
+    if (v && (Date.now() - v.at) < 10 * 60 * 1000 && s.access && String(s.access).slice(36, 60) === v.tok && (!s.userId || s.userId === v.uid)) {
+      return Promise.resolve(true);
+    }
+    var tryRefresh = function () {
+      if (!s.refresh) return Promise.resolve(false);
+      return sbAuth('/auth/v1/token?grant_type=refresh_token', { method: 'POST', body: { refresh_token: s.refresh } })
+        .then(function (r) {
+          if (r.status === 200 && r.data && r.data.access_token && r.data.user) {
+            saveSessionFromAuth(r.data, s.email);
+            markVerified(r.data.user.id, r.data.access_token);
+            return true;
+          }
+          if (r.status === 400 || r.status === 401) clearSession();
+          return false;
+        })
+        .catch(function () { return false; });
+    };
+    if (!s.access) return tryRefresh();
+    return sbAuth('/auth/v1/user', { token: s.access })
+      .then(function (r) {
+        if (r.status === 200 && r.data && r.data.id) { markVerified(r.data.id, s.access); return true; }
+        if (r.status === 401) return tryRefresh();
+        return false;
+      })
+      .catch(function () { return tryRefresh(); });
+  }
+  var verifying = false;
+  function requestStart(exam, btn) {
+    if (verifying) return;
+    verifying = true;
+    var oldText = btn ? btn.textContent : '';
+    if (btn) { btn.disabled = true; btn.textContent = T.verifying; }
+    verifySession().then(function (ok) {
+      verifying = false;
+      renderCards();
+      if (ok) openExam(exam);
+      else showGate();
+    });
   }
   function showGate() {
     var b = document.getElementById('exam-gate-banner');
@@ -28,8 +105,8 @@
   var lang = (localStorage.getItem('user_lang') || 'es').toLowerCase().indexOf('en') === 0 ? 'en' : 'es';
 
   var T = {
-    es: { questions: 'preguntas', best: 'Mejor nota', none: 'Sin intentos aún', start: 'Empezar examen', passed: 'APROBADO', q: 'Pregunta', scoreMsg: 'Tu nota', passMsg: '¡Felicidades! Aprobaste el examen.', failMsg: 'Aún no llegas al 70%. Repasa el tema e inténtalo otra vez.', why: 'Explicación:', certFor: 'Por aprobar el examen de', certTitle: 'CERTIFICADO', certGiven: 'Se otorga a', certScore: 'con una nota de', team: 'Equipo NVISION', certBtnAlert: 'Escribe tu nombre completo para generar el certificado.' },
-    en: { questions: 'questions', best: 'Best score', none: 'No attempts yet', start: 'Start exam', passed: 'PASSED', q: 'Question', scoreMsg: 'Your score', passMsg: 'Congratulations! You passed the exam.', failMsg: 'Not at 70% yet. Review the topic and try again.', why: 'Explanation:', certFor: 'For passing the', certTitle: 'CERTIFICATE', certGiven: 'Awarded to', certScore: 'with a score of', team: 'NVISION Team', certBtnAlert: 'Type your full name to generate the certificate.' }
+    es: { questions: 'preguntas', best: 'Mejor nota', none: 'Sin intentos aún', start: 'Empezar examen', passed: 'APROBADO', q: 'Pregunta', scoreMsg: 'Tu nota', passMsg: '¡Felicidades! Aprobaste el examen.', failMsg: 'Aún no llegas al 70%. Repasa el tema e inténtalo otra vez.', why: 'Explicación:', certFor: 'Por aprobar el examen de', certTitle: 'CERTIFICADO', certGiven: 'Se otorga a', certScore: 'con una nota de', team: 'Equipo NVISION', certBtnAlert: 'Escribe tu nombre completo para generar el certificado.', verifying: 'Verificando tu cuenta…' },
+    en: { questions: 'questions', best: 'Best score', none: 'No attempts yet', start: 'Start exam', passed: 'PASSED', q: 'Question', scoreMsg: 'Your score', passMsg: 'Congratulations! You passed the exam.', failMsg: 'Not at 70% yet. Review the topic and try again.', why: 'Explanation:', certFor: 'For passing the', certTitle: 'CERTIFICATE', certGiven: 'Awarded to', certScore: 'with a score of', team: 'NVISION Team', certBtnAlert: 'Type your full name to generate the certificate.', verifying: 'Verifying your account…' }
   }[lang];
 
   function Q(qEs, qEn, oEs, oEn, a, wEs, wEn) { return { q: { es: qEs, en: qEn }, o: { es: oEs, en: oEn }, a: a, why: { es: wEs, en: wEn } }; }
@@ -268,13 +345,12 @@
         '<div class="exam-meta">' + exam.questions.length + ' ' + T.questions + '</div>' +
         '<div class="exam-best">' + T.best + ': <b>' + (res ? res.best + '%' : T.none) + '</b></div>' +
         '<button type="button" class="exam-btn">' + T.start + '</button>';
-      card.querySelector('button').addEventListener('click', function () { startExam(exam); });
+      card.querySelector('button').addEventListener('click', function (ev) { requestStart(exam, ev.currentTarget); });
       grid.appendChild(card);
     });
   }
 
-  function startExam(exam) {
-    if (!hasSession()) { showGate(); return; }
+  function openExam(exam) {
     current = exam;
     document.getElementById('exam-run-title').innerHTML = '<span class="exam-run-icon mono-icon">' + exam.icon + '</span>' + exam.name[lang];
     form.innerHTML = '';
@@ -409,17 +485,20 @@
   }
 
   document.getElementById('exam-submit').addEventListener('click', grade);
-  document.getElementById('exam-retry').addEventListener('click', function () { if (current) startExam(current); });
+  document.getElementById('exam-retry').addEventListener('click', function () { if (current) requestStart(current, this); });
   document.getElementById('exam-back').addEventListener('click', function () {
     run.className = 'exam-run';
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
   document.getElementById('exam-cert-btn').addEventListener('click', function () {
-    if (!hasSession()) { showGate(); return; }
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawCertificate);
-    else drawCertificate();
+    verifySession().then(function (ok) {
+      if (!ok) { showGate(); return; }
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawCertificate);
+      else drawCertificate();
+    });
   });
 
   if (!hasSession()) { var gb = document.getElementById('exam-gate-banner'); if (gb) gb.hidden = false; }
+  else verifySession().then(function (ok) { if (!ok) { var gb2 = document.getElementById('exam-gate-banner'); if (gb2) gb2.hidden = false; } });
   renderCards();
 })();
