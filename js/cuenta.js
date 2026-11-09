@@ -196,8 +196,9 @@
     if (!s) return null;
     var isSvg = s.avatar && s.avatar !== 'custom' && s.avatar !== 'initial';
     if (isSvg) return null;
-    if (s.avatarImg) return { avatar: 'custom', avatar_image: s.avatarImg };
-    if (s.avatar !== 'initial' && s.googleAvatar) return { avatar: 'custom', avatar_image: s.googleAvatar };
+    var V = window.NVISION_validAvatarImg;
+    if (s.avatarImg && (!V || V(s.avatarImg))) return { avatar: 'custom', avatar_image: s.avatarImg };
+    if (s.avatar !== 'initial' && s.googleAvatar && (!V || V(s.googleAvatar))) return { avatar: 'custom', avatar_image: s.googleAvatar };
     return null;
   }
   // Sincroniza la foto con la fila del ranking ya publicada (si existe):
@@ -254,6 +255,9 @@
     // intenta guardar la foto en la cuenta; el candado de persistencia
     // evita repetirlo.
     if (s) persistGoogleAvatar(s);
+    // Si la foto ya está guardada en la cuenta y el puntaje ya estaba
+    // publicado, la fila del ranking se actualiza sola con la foto.
+    if (s) syncRankingPhoto(s);
     el.innerHTML = profilePhotoHtml(s);
   }
 
@@ -702,17 +706,13 @@
       // URL de la foto de Google. Solo vale si pasa la misma validación
       // de la base (data: o lh3, 130000 caracteres como máximo); si el
       // usuario eligió un personaje SVG, no se publica foto (ese manda).
-      var V = window.NVISION_validAvatarImg;
-      var isSvgAvatar = s.avatar && s.avatar !== 'custom' && s.avatar !== 'initial';
-      var pubImg = null;
-      if (!isSvgAvatar) {
-        if (s.avatarImg && (!V || V(s.avatarImg))) pubImg = s.avatarImg;
-        else if (s.googleAvatar && V && V(s.googleAvatar)) pubImg = s.googleAvatar;
-      }
+      // El avatar se publica como 'custom' cuando hay foto: sin eso el
+      // ranking muestra solo la inicial aunque la foto esté guardada.
+      var photo = rankingPhoto(s);
       window.NVISION_sbAuth('/rest/v1/site_ranking?on_conflict=user_id', {
         method: 'POST', token: s.access,
         headers: { 'Prefer': 'resolution=merge-duplicates' },
-        body: { user_id: s.userId, name: name, avatar: s.avatar || null, avatar_image: pubImg, points: r.points, updated_at: new Date().toISOString() }
+        body: { user_id: s.userId, name: name, avatar: photo ? 'custom' : (s.avatar || null), avatar_image: photo ? photo.avatar_image : null, points: r.points, updated_at: new Date().toISOString() }
       }).then(function (res) {
         if (res.status === 200 || res.status === 201 || res.status === 204) st.textContent = T.rankOk + ' ' + r.points + ' ' + T.rankPts;
         else if (res.status === 404 || (res.data && (res.data.code === 'PGRST205' || res.data.code === '42P01'))) st.textContent = T.rankOff;
