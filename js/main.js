@@ -4819,14 +4819,6 @@ function setupNetworkSimulator() {
       '<circle cx="29" cy="50" r="1.3" fill="#ffffff" fill-opacity="0.5"/>' +
       '<circle cx="34" cy="50" r="1.3" fill="#ffffff" fill-opacity="0.5"/>'
     ) },
-    { id: 'globe', es: 'Mundo', en: 'Globe', svg: svg(
-      '<circle cx="32" cy="32" r="22" fill="#ffffff"/>' +
-      '<ellipse cx="32" cy="32" rx="10" ry="22" fill="none" stroke="#65a30d" stroke-width="2"/>' +
-      '<ellipse cx="32" cy="32" rx="22" ry="9" fill="none" stroke="#65a30d" stroke-width="2"/>' +
-      '<path d="M10 32h44" stroke="#65a30d" stroke-width="2"/>' +
-      '<ellipse cx="32" cy="32" rx="28" ry="10" fill="none" stroke="#ffffff" stroke-opacity="0.8" stroke-width="2" transform="rotate(-20 32 32)"/>' +
-      '<circle cx="55" cy="22" r="2.5" fill="#ffffff"/>'
-    ) },
     { id: 'trophy', es: 'Trofeo', en: 'Trophy', svg: svg(
       '<path d="M20 14c-6 0-8 3-7 7 1 3 4 4 7 4M44 14c6 0 8 3 7 7-1 3-4 4-7 4" stroke="#ffffff" stroke-width="4" stroke-linecap="round" fill="none"/>' +
       '<path d="M20 10h24v10c0 8-5 13-12 13s-12-5-12-13V10z" fill="#ffffff"/>' +
