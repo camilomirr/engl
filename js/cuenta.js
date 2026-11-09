@@ -39,6 +39,8 @@
       rankOk: '¡Puntaje publicado en el ranking con', rankPts: 'puntos!',
       rankOff: 'El ranking aún no está activado por el equipo (falta crear su tabla en Supabase). Tu puntaje ya quedó calculado y podrás publicarlo en cuanto se active.',
       rankErr: 'No se pudo publicar el puntaje ahora. Inténtalo otra vez.',
+      rankRemoved: 'Ya no apareces en el ranking.',
+      rankRemoveErr: 'No se pudo quitarte del ranking ahora. Inténtalo otra vez.',
       nextMissing: 'Te faltan', nextRuta: 'pasos de la ruta', nextExams: 'exámenes por aprobar', nextJoin: 'y',
       nextDone: 'Ya completaste la ruta y aprobaste todos los exámenes. ¡Nivel máximo!',
       statRuta: 'Ruta', statExams: 'Exámenes', statPoints: 'Puntos',
@@ -71,6 +73,8 @@
       rankOk: 'Score published to the ranking with', rankPts: 'points!',
       rankOff: 'The ranking is not enabled by the team yet (its Supabase table still needs to be created). Your score is already computed and you will be able to publish it as soon as it is on.',
       rankErr: 'Could not publish the score right now. Try again.',
+      rankRemoved: 'You no longer appear in the ranking.',
+      rankRemoveErr: 'Could not remove you from the ranking right now. Try again.',
       nextMissing: 'You still need', nextRuta: 'path steps', nextExams: 'exams to pass', nextJoin: 'and',
       nextDone: 'You completed the path and passed every exam. Max level!',
       statRuta: 'Path', statExams: 'Exams', statPoints: 'Points',
@@ -657,6 +661,23 @@
         else if (res.status === 404 || (res.data && (res.data.code === 'PGRST205' || res.data.code === '42P01'))) st.textContent = T.rankOff;
         else st.textContent = T.rankErr;
       }).catch(function () { st.textContent = T.rankErr; });
+    });
+  });
+
+  // ---- Quitarse del ranking del sitio ----
+  // Borra SOLO la fila propia (la política "ranking borrar propio" de
+  // supabase/site_ranking.sql lo permite con la sesión del usuario).
+  if ($('cuenta-unrank')) $('cuenta-unrank').addEventListener('click', function () {
+    var st = $('cuenta-rank-state');
+    ensureSession().then(function (s) {
+      if (!s) { showAuth(); return; }
+      window.NVISION_sbAuth('/rest/v1/site_ranking?user_id=eq.' + encodeURIComponent(s.userId), {
+        method: 'DELETE', token: s.access
+      }).then(function (res) {
+        if (res.status === 200 || res.status === 204) st.textContent = T.rankRemoved;
+        else if (res.status === 404 || (res.data && (res.data.code === 'PGRST205' || res.data.code === '42P01'))) st.textContent = T.rankOff;
+        else st.textContent = T.rankRemoveErr;
+      }).catch(function () { st.textContent = T.rankRemoveErr; });
     });
   });
 

@@ -42,3 +42,11 @@ create policy "ranking actualizar propio"
   on public.site_ranking for update
   using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
+
+-- Cada uno puede BORRAR solo su propia fila (botón "Quitarme del
+-- ranking" en Mi cuenta). Sin esta política el DELETE da 0 filas
+-- aunque se haga con la sesión del propio usuario.
+drop policy if exists "ranking borrar propio" on public.site_ranking;
+create policy "ranking borrar propio"
+  on public.site_ranking for delete
+  using (auth.uid() = user_id);
