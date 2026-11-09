@@ -44,6 +44,18 @@
     try { return new Date(iso).toLocaleString('es-CO', { hour: '2-digit', minute: '2-digit' }); }
     catch (e) { return ''; }
   }
+  // Fecha del día para separar los mensajes por día: "Hoy", "Ayer" o la fecha.
+  function fmtFecha(iso) {
+    try {
+      var d = new Date(iso);
+      var hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+      var dia = new Date(d); dia.setHours(0, 0, 0, 0);
+      var diff = Math.round((hoy - dia) / 86400000);
+      if (diff === 0) return 'Hoy';
+      if (diff === 1) return 'Ayer';
+      return d.toLocaleDateString('es-CO', { day: '2-digit', month: 'short', year: 'numeric' });
+    } catch (e) { return ''; }
+  }
 
   var lastRows = [];
   var view = 'picker'; // 'picker' | 'chat'
@@ -74,7 +86,7 @@
       '</div>' +
       '<div class="eqw-body" id="eqwBody"><p class="equipo-loading">Cargando…</p></div>' +
       '<form class="eqw-inputbar" id="eqwForm" hidden>' +
-        '<input id="eqwInput" type="text" maxlength="2000" required placeholder="Escribe un mensaje..." autocomplete="off">' +
+        '<textarea id="eqwInput" rows="1" maxlength="2000" required placeholder="Escribe un mensaje..." autocomplete="off"></textarea>' +
         '<button type="button" class="eqw-mode eqw-mode-edit" id="eqwEditBtn" title="Editar: haz el cambio en la página" aria-label="Editar"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></button>' +
         '<button class="btn-primary eqw-send" type="submit">Enviar</button>' +
       '</form>' +
@@ -104,6 +116,18 @@
   function setMode(m) { eqMode = m; renderMode(); }
   editBtn.addEventListener('click', function () { setMode(eqMode === 'edit' ? 'ask' : 'edit'); input.focus(); });
   renderMode();
+
+  // La caja crece con el texto (hasta 5 líneas) y Enter envía,
+  // Shift+Enter salta de línea: antes era una sola línea y no se veía
+  // lo que se escribía al pedir un cambio largo.
+  function autogrow() {
+    input.style.height = 'auto';
+    input.style.height = Math.min(input.scrollHeight, 132) + 'px';
+  }
+  input.addEventListener('input', autogrow);
+  input.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); form.requestSubmit(); }
+  });
 
   function seenKey(n) { return 'eq_seen_' + n; }
   function getSeen(n) { return localStorage.getItem(seenKey(n)) || '1970-01-01'; }
@@ -165,8 +189,11 @@
     document.getElementById('eqwHeadLogo').hidden = false;
     document.getElementById('eqwHeadAvatar').hidden = true;
     document.getElementById('eqwTitle').textContent = name;
-    document.getElementById('eqwSub').textContent = 'Chat del equipo';
+    document.getElementById('eqwSub').innerHTML = '<span class="eqw-online-dot"></span>En línea';
     form.hidden = false;
+    // Solo anima el último hilo al abrir o enviar; en los chequeos de 5 s
+    // no, para que el chat no se mueva solo.
+    body.classList.toggle('eqw-anim', !!forceBottom);
     var rows = lastRows.filter(function (t) { return t.name === name; }).slice().reverse();
     if (!rows.length) {
       body.innerHTML = '<div class="eqw-empty"><img src="' + LOGO_URL + '" alt="Muse" class="eqw-empty-logo">' +
@@ -180,7 +207,7 @@
         c.addEventListener('click', function () {
           var m = c.getAttribute('data-mode');
           if (m) setMode(m);
-          input.value = c.getAttribute('data-text'); input.focus();
+          input.value = c.getAttribute('data-text'); autogrow(); input.focus();
         });
       });
       return;
@@ -189,20 +216,30 @@
     // si ya estaba abajo (o si acaba de abrir el chat / enviar un mensaje).
     var atBottom = body.scrollHeight - body.scrollTop - body.clientHeight < 80;
     var prevTop = body.scrollTop;
-    body.innerHTML = rows.map(function (t) {
-        var done = t.status === 'listo';
-        var result = (t.result || '').trim();
-        var commit = (t.commit_sha || '').trim();
-        var museBubble = done
-          ? '<div class="eq-msg eq-msg-muse eq-msg-done"><strong>Muse ✓ Listo</strong><p>' + esc(result || 'Listo.') + '</p>' + (commit ? '<span class="eq-commit">Cambio: ' + esc(commit) + '</span><span class="eq-reload">Recarga la página con Ctrl+Shift+R para ver los cambios aplicados.</span>' : '') + '</div>'
-          : (t.status === 'proceso'
-            ? '<div class="eq-msg eq-msg-muse eq-typing"><strong>Muse</strong><p>Estoy trabajando en esto<span class="eq-dots"><i></i><i></i><i></i></span></p></div>'
-            : '<div class="eq-msg eq-msg-muse eq-typing"><strong>Muse</strong><p>Recibido. Muse lo revisa en unos minutos y te responde aquí mismo.</p></div>');
-        return '<div class="eq-chat-thread">' +
-          '<div class="eq-msg eq-msg-user"><p>' + esc(stripMode(t.task)) + '</p>' +
-          '<span class="eq-meta">' + esc(fmtHora(t.created_at)) + (done ? ' · ✓✓' : '') + '</span></div>' +
-          museBubble + '</div>';
-      }).join('');
+    var html = '';
+    var lastDay = '';
+    rows.forEach(function (t) {
+      // Separador con la fecha cuando cambia el día.
+      var day = (t.created_at || '').slice(0, 10);
+      if (day && day !== lastDay) {
+        lastDay = day;
+        var label = fmtFecha(t.created_at);
+        if (label) html += '<div class="eq-date-sep"><span>' + esc(label) + '</span></div>';
+      }
+      var done = t.status === 'listo';
+      var result = (t.result || '').trim();
+      var commit = (t.commit_sha || '').trim();
+      var museBubble = done
+        ? '<div class="eq-msg eq-msg-muse eq-msg-done"><strong>Muse ✓ Listo</strong><p>' + esc(result || 'Listo.') + '</p>' + (commit ? '<span class="eq-commit">Cambio: ' + esc(commit) + '</span><span class="eq-reload">Recarga la página con Ctrl+Shift+R para ver los cambios aplicados.</span>' : '') + '<span class="eq-meta">' + esc(fmtHora(t.updated_at || t.created_at)) + '</span></div>'
+        : (t.status === 'proceso'
+          ? '<div class="eq-msg eq-msg-muse eq-typing"><strong>Muse</strong><p>Estoy trabajando en esto<span class="eq-dots"><i></i><i></i><i></i></span></p></div>'
+          : '<div class="eq-msg eq-msg-muse eq-typing"><strong>Muse</strong><p>Recibido. Muse lo revisa en unos minutos y te responde aquí mismo.</p></div>');
+      html += '<div class="eq-chat-thread">' +
+        '<div class="eq-msg eq-msg-user"><p>' + esc(stripMode(t.task)) + '</p>' +
+        '<span class="eq-meta">' + esc(fmtHora(t.created_at)) + (done ? ' · ✓✓' : '') + '</span></div>' +
+        museBubble + '</div>';
+    });
+    body.innerHTML = html;
     if (forceBottom || atBottom) body.scrollTop = body.scrollHeight;
     else body.scrollTop = prevTop;
   }
@@ -253,6 +290,7 @@
     try {
       await sbPost('/rest/v1/team_tasks', { name: name, page: 'Chat', task: sendTask }, 'return=representation');
       input.value = '';
+      autogrow();
       eqMode = 'edit';
       renderMode();
       status.textContent = '';
@@ -260,6 +298,7 @@
     } catch (e) {
       // No tragarse el error: el mensaje se queda en la caja y se avisa.
       input.value = task;
+      autogrow();
       status.textContent = 'No se pudo enviar. Revisa tu conexión e inténtalo de nuevo.';
     } finally {
       sendBtn.disabled = false;

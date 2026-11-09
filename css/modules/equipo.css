@@ -55,6 +55,14 @@
   background: #f0f2f5; border: 1px solid var(--border, #e2e8f0); border-top: none;
 }
 .eq-chat-thread { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 0.9rem; }
+/* Separador con la fecha entre los mensajes de días distintos */
+.eq-date-sep { display: flex; justify-content: center; margin: 0.4rem 0 0.2rem; }
+.eq-date-sep span {
+  font-size: 0.72rem; font-weight: 600; color: var(--text-muted, #64748b);
+  background: color-mix(in srgb, var(--bg-surface, #fff) 85%, transparent);
+  border: 1px solid var(--border-subtle, #e2e8f0);
+  border-radius: 999px; padding: 0.2rem 0.65rem;
+}
 .eq-msg { max-width: 85%; padding: 0.7rem 0.9rem; border-radius: 12px; line-height: 1.5; }
 .eq-msg strong { display: block; font-size: 0.85rem; margin-bottom: 0.2rem; }
 .eq-msg p { margin: 0; overflow-wrap: anywhere; white-space: pre-wrap; }
@@ -158,6 +166,18 @@
 .eqw-head-who { flex: 1; display: flex; flex-direction: column; min-width: 0; }
 .eqw-head-who strong { font-size: 0.95rem; }
 .eqw-head-who span { font-size: 0.75rem; color: var(--text-muted); }
+/* Punto verde "En línea" en el encabezado del chat */
+.eqw-online-dot {
+  display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+  background: var(--accent-emerald); margin-right: 0.35rem; vertical-align: 1px;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-emerald) 22%, transparent);
+  animation: eqw-pulse 2s infinite;
+}
+@keyframes eqw-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+/* Entrada suave del último hilo al abrir el chat o al enviar (solo con
+   .eqw-anim, para que los chequeos de 5 s no muevan el chat solo) */
+.eqw-anim .eq-chat-thread:last-child .eq-msg { animation: eqw-msg-in 0.25s ease; }
+@keyframes eqw-msg-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 .eqw-close { font: inherit; font-size: 1.3rem; color: var(--text-primary); background: none; border: none; cursor: pointer; padding: 0.1rem 0.4rem; }
 .eqw-body {
   flex: 1 1 auto; min-height: 12rem; overflow-y: auto;
@@ -213,20 +233,26 @@
 @keyframes eqw-dot { 0%, 60%, 100% { opacity: 0.25; transform: translateY(0); } 30% { opacity: 1; transform: translateY(-2px); } }
 .eqw-inputbar {
   display: flex; gap: 0.5rem; padding: 0.6rem; flex: 0 0 auto;
+  align-items: flex-end;
   background: color-mix(in srgb, var(--bg-surface) 65%, transparent);
   border-top: 1px solid var(--border-subtle);
 }
-.eqw-inputbar input {
+.eqw-inputbar input,
+.eqw-inputbar textarea {
   flex: 1; min-width: 0; font: inherit; padding: 0.6rem 0.8rem; border-radius: 999px;
   border: 1px solid var(--border-subtle);
   background: var(--bg-surface);
   color: var(--text-primary);
 }
-.eqw-inputbar input:focus {
+/* La caja es un área de texto que crece con lo escrito (hasta 5 líneas) */
+.eqw-inputbar textarea { resize: none; max-height: 8.25rem; line-height: 1.4; overflow-y: auto; border-radius: 18px; }
+.eqw-inputbar input:focus,
+.eqw-inputbar textarea:focus {
   outline: none; border-color: var(--accent-cyan); background: var(--bg-card);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-cyan) 25%, transparent);
 }
-.eqw-inputbar input:disabled { opacity: 0.6; }
+.eqw-inputbar input:disabled,
+.eqw-inputbar textarea:disabled { opacity: 0.6; }
 .eqw-send { border-radius: 999px; padding: 0.6rem 1.1rem; }
 .eqw-send:disabled { opacity: 0.55; cursor: wait; }
 
@@ -275,7 +301,20 @@
   .eqw-body { min-height: 38dvh; }
   .eqw-panel .eq-msg { max-width: 92%; }
 }
+/* Anillo de foco visible al navegar el chat con el teclado */
+.eqw-fab:focus-visible,
+.eqw-close:focus-visible,
+.eqw-head-back:focus-visible,
+.eqw-mode:focus-visible,
+.eqw-chip:focus-visible,
+.eqw-body .eq-chat-row:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 2px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .eqw-panel { animation: none; }
   .eqw-fab { transition: none; }
+  .eqw-online-dot { animation: none; }
+  .eqw-anim .eq-chat-thread:last-child .eq-msg { animation: none; }
 }
