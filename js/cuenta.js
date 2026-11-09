@@ -591,7 +591,10 @@
   function handleGoogleCredential(resp) {
     var idToken = resp && resp.credential;
     if (!idToken) { msg('err', T.googleOff); return; }
-    api('/auth/v1/token?grant_type=id_token', { method: 'POST', body: { provider: 'google', token: idToken } })
+    // OJO: Supabase exige el campo "id_token" (no "token"): con "token"
+    // solo devolvía 400 "invalid request: id_token required". Se mandan
+    // los dos nombres con el mismo valor por compatibilidad.
+    api('/auth/v1/token?grant_type=id_token', { method: 'POST', body: { provider: 'google', id_token: idToken, token: idToken } })
       .then(function (r) {
         if (r.status === 200 && r.data && r.data.access_token) {
           var s = saveSessionFromAuth(r.data, (r.data.user && r.data.user.email) || '');
