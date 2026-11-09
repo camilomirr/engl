@@ -25,7 +25,8 @@
       syncOkUp: 'Progreso guardado en la nube.', syncOkDown: 'Progreso actualizado desde la nube.', syncOkSame: 'Tu progreso ya estaba al día.',
       syncPending: 'Tu cuenta funciona, pero la sincronización en la nube aún no está activada por el equipo (falta crear la tabla de progreso en Supabase). Tu progreso sigue guardado en este equipo.',
       syncFail: 'No se pudo sincronizar ahora. Tu progreso sigue guardado en este equipo.',
-      lastSync: 'Última sincronización'
+      lastSync: 'Última sincronización',
+      avatarSaved: 'Avatar guardado. Se verá en el botón de Mi cuenta en todo el sitio.', avatarErr: 'No se pudo guardar el avatar. Inténtalo otra vez.', avatarInitial: 'Inicial',
     },
     en: {
       loginT: 'Log in', registerT: 'Create account', loginB: 'Log in', registerB: 'Sign up',
@@ -40,7 +41,8 @@
       syncOkUp: 'Progress saved to the cloud.', syncOkDown: 'Progress updated from the cloud.', syncOkSame: 'Your progress was already up to date.',
       syncPending: 'Your account works, but cloud sync is not enabled by the team yet (the progress table still needs to be created in Supabase). Your progress is still saved on this device.',
       syncFail: 'Could not sync right now. Your progress is still saved on this device.',
-      lastSync: 'Last sync'
+      lastSync: 'Last sync',
+      avatarSaved: 'Avatar saved. It will show on the My account button across the site.', avatarErr: 'Could not save the avatar. Try again.', avatarInitial: 'Initial',
     }
   }[lang];
 
@@ -90,7 +92,8 @@
       refresh: data.refresh_token,
       exp: Date.now() + (data.expires_in || 3600) * 1000,
       userId: data.user && data.user.id,
-      email: (data.user && data.user.email) || email
+      email: (data.user && data.user.email) || email,
+      avatar: (data.user && data.user.user_metadata && data.user.user_metadata.avatar) || null
     };
     setSession(s);
     return s;
@@ -187,11 +190,13 @@
     $('cuenta-submit').textContent = mode === 'login' ? T.loginB : T.registerB;
     $('cuenta-switch').textContent = mode === 'login' ? T.switchReg : T.switchLogin;
     $('cuenta-pass').setAttribute('autocomplete', mode === 'login' ? 'current-password' : 'new-password');
+    $('cuenta-avatar-field').hidden = mode !== 'register';
   }
   function showPanel(session) {
     $('cuenta-auth').hidden = true;
     $('cuenta-panel').hidden = false;
     $('cuenta-user-email').textContent = session.email || '';
+    buildAvatarGrid($('avatar-grid-panel'), session.avatar || 'initial', saveAvatar);
     var meta = getMeta();
     $('cuenta-sync-state').textContent = meta.lastSyncAt ? (T.lastSync + ': ' + new Date(meta.lastSyncAt).toLocaleString(lang === 'en' ? 'en-US' : 'es-CO')) : '';
   }
@@ -216,7 +221,7 @@
     clearMsg();
     var done = function () { btn.disabled = false; renderMode(); };
     if (mode === 'register') {
-      api('/auth/v1/signup', { method: 'POST', body: { email: email, password: pass } })
+      api('/auth/v1/signup', { method: 'POST', body: { email: email, password: pass, data: { avatar: regAvatar } } })
         .then(function (r) {
           done();
           if (r.status === 200 && r.data) {
@@ -252,6 +257,49 @@
     if (s && s.access) api('/auth/v1/logout', { method: 'POST', token: s.access }).then(bye).catch(bye);
     else bye();
   });
+
+  // ---------- Avatares ----------
+  var regAvatar = 'initial';
+  function avatarOptions() { return ['initial'].concat((window.NVISION_AVATARS || []).map(function (a) { return a.id; })); }
+  function avatarName(id) {
+    if (id === 'initial') return T.avatarInitial;
+    var list = window.NVISION_AVATARS || [];
+    for (var i = 0; i < list.length; i++) if (list[i].id === id) return list[i][lang] || list[i].es;
+    return id;
+  }
+  function buildAvatarGrid(container, currentId, onPick) {
+    if (!container || !window.NVISION_avatarChip) return;
+    container.innerHTML = '';
+    var sess = getSession();
+    var email = (sess && sess.email) || ($('cuenta-email') ? $('cuenta-email').value : '') || '';
+    avatarOptions().forEach(function (id) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'avatar-opt' + (id === currentId ? ' sel' : '');
+      b.setAttribute('aria-label', avatarName(id));
+      b.innerHTML = window.NVISION_avatarChip(id, email) + '<span>' + avatarName(id) + '</span>';
+      b.addEventListener('click', function () { onPick(id); });
+      container.appendChild(b);
+    });
+  }
+  function pickRegAvatar(id) { regAvatar = id; buildAvatarGrid($('avatar-grid-reg'), regAvatar, pickRegAvatar); }
+  function saveAvatar(id) {
+    ensureSession().then(function (s) {
+      if (!s) return;
+      api('/auth/v1/user', { method: 'PUT', token: s.access, body: { data: { avatar: id } } })
+        .then(function (r) {
+          if (r.status === 200) {
+            s.avatar = id; setSession(s);
+            buildAvatarGrid($('avatar-grid-panel'), id, saveAvatar);
+            if (window.NVISION_renderAccountChip) window.NVISION_renderAccountChip();
+            msg('ok', T.avatarSaved);
+          } else msg('err', T.avatarErr);
+        })
+        .catch(function () { msg('err', T.avatarErr); });
+    });
+  }
+  if ($('cuenta-email')) $('cuenta-email').addEventListener('input', function () { if (mode === 'register') buildAvatarGrid($('avatar-grid-reg'), regAvatar, pickRegAvatar); });
+  buildAvatarGrid($('avatar-grid-reg'), regAvatar, pickRegAvatar);
 
   renderMode();
   ensureSession().then(function (s) {
