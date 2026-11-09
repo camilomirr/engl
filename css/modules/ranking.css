@@ -9,7 +9,7 @@
 .rank-table tr:first-child td { border-top: none; }
 .rank-pos { font-family: var(--font-heading); font-size: 1.35rem; color: var(--accent-cyan); width: 52px; text-align: center; }
 .rank-who { display: inline-flex; align-items: center; gap: .6rem; }
-.rank-who .avatar-chip { width: 34px; height: 34px; font-size: .95rem; }
+.rank-who .nv-avatar { width: 34px; height: 34px; font-size: .95rem; }
 .rank-pts { text-align: right; font-weight: 800; font-size: 1.05rem; white-space: nowrap; }
 .rank-pts span { color: var(--text-muted); font-weight: 600; font-size: .82rem; }
 .rank-you { background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan)); color: #fff; font-size: .7rem; font-weight: 800; letter-spacing: .05em; padding: .16rem .5rem; border-radius: 999px; text-transform: uppercase; }

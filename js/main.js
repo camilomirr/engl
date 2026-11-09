@@ -5165,7 +5165,12 @@ function setupNetworkSimulator() {
   }
   window.NVISION_googleAvatarHi = googleAvatarHi;
   function avatarChip(id, email, img) {
-    if (id === 'custom' && validAvatarImg(img)) {
+    // La foto se muestra cuando hay una válida y el usuario no eligió
+    // un personaje SVG: con 'custom' es su foto subida; con 'initial'
+    // (o sin avatar) es la foto de su cuenta de Google, para que los
+    // demás la vean en el ranking y en el perfil público. Si eligió
+    // un personaje SVG, ese manda y la foto no se muestra.
+    if (validAvatarImg(img) && (!id || id === 'custom' || id === 'initial')) {
       // data-email: si la foto no carga, el respaldo (ver abajo) vuelve
       // a la inicial de este correo en vez de dejar el icono roto.
       var emailAttr = String(email || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/'/g, '&#39;');

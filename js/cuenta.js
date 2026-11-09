@@ -169,15 +169,60 @@
       });
     }).then(function (out) {
       if (!window.NVISION_validAvatarImg || !window.NVISION_validAvatarImg(out)) throw new Error('bad-img');
-      return window.NVISION_sbAuth('/auth/v1/user', { method: 'PUT', token: s.access, body: { data: { avatar_image: out } } })
+      // Se guarda también avatar: 'custom': es la marca que hace que el
+      // ranking (y el perfil público) pinten la foto. Sin ella la fila
+      // del ranking quedaba con avatar 'initial'/null y el chip mostraba
+      // solo la inicial aunque la foto sí estuviera guardada.
+      return window.NVISION_sbAuth('/auth/v1/user', { method: 'PUT', token: s.access, body: { data: { avatar: 'custom', avatar_image: out } } })
         .then(function (r) { if (r.status !== 200) throw new Error('no-save'); return out; });
     }).then(function (out) {
       try { localStorage.setItem(GOOGLE_AVATAR_SAVED_KEY, s.googleAvatar); } catch (e) {}
-      s.avatarImg = out; setSession(s);
+      s.avatar = 'custom'; s.avatarImg = out; setSession(s);
       renderProfilePhoto();
       if (window.NVISION_renderAccountChip) window.NVISION_renderAccountChip();
+      // La foto ya está guardada en la cuenta: si el puntaje ya estaba
+      // publicado, la fila del ranking se actualiza sola con la foto.
+      syncRankingPhoto(s);
       done();
     }).catch(function () { done(); });
+  }
+
+  // Foto que debe verse de esta persona en el ranking: la foto guardada
+  // (subida o de Google) o, si la de Google aún no se ha guardado en la
+  // cuenta, su URL oficial (válida en la base) para que se vea desde ya.
+  // Con avatar SVG elegido no hay foto que publicar. Si el usuario quitó
+  // su foto (avatar 'initial'), no se vuelve a poner la de Google.
+  function rankingPhoto(s) {
+    if (!s) return null;
+    var isSvg = s.avatar && s.avatar !== 'custom' && s.avatar !== 'initial';
+    if (isSvg) return null;
+    if (s.avatarImg) return { avatar: 'custom', avatar_image: s.avatarImg };
+    if (s.avatar !== 'initial' && s.googleAvatar) return { avatar: 'custom', avatar_image: s.googleAvatar };
+    return null;
+  }
+  // Sincroniza la foto con la fila del ranking ya publicada (si existe):
+  // así las fotos aparecen aunque el puntaje se haya publicado antes de
+  // que la foto se guardara. Solo escribe cuando la fila existe y la foto
+  // cambió; la marca local evita repetir la consulta en cada visita.
+  var RANKING_PHOTO_SYNC_KEY = 'nvision_ranking_photo_synced_v1';
+  function rankingPhotoKey(img) { return img.length + ':' + img.slice(0, 48); }
+  function syncRankingPhoto(s) {
+    var photo = rankingPhoto(s);
+    if (!photo || !s.access || !s.userId || !window.NVISION_sbAuth) return;
+    try { if (localStorage.getItem(RANKING_PHOTO_SYNC_KEY) === rankingPhotoKey(photo.avatar_image)) return; } catch (e) {}
+    window.NVISION_sbAuth('/rest/v1/site_ranking?user_id=eq.' + encodeURIComponent(s.userId) + '&select=user_id,avatar,avatar_image', { token: s.access })
+      .then(function (res) {
+        if (res.status !== 200 || !Array.isArray(res.data) || !res.data.length) return;
+        var row = res.data[0];
+        if (row.avatar === 'custom' && row.avatar_image === photo.avatar_image) {
+          try { localStorage.setItem(RANKING_PHOTO_SYNC_KEY, rankingPhotoKey(photo.avatar_image)); } catch (e) {}
+          return;
+        }
+        return window.NVISION_sbAuth('/rest/v1/site_ranking?user_id=eq.' + encodeURIComponent(s.userId), { method: 'PATCH', token: s.access, body: { avatar: 'custom', avatar_image: photo.avatar_image } })
+          .then(function (r2) {
+            if (r2.status === 200 || r2.status === 204) { try { localStorage.setItem(RANKING_PHOTO_SYNC_KEY, rankingPhotoKey(photo.avatar_image)); } catch (e) {} }
+          });
+      }).catch(function () {});
   }
 
   // Nombre a mostrar: nombre completo de Google o del registro; si no hay,
@@ -652,10 +697,22 @@
       // un correo con la parte local más larga hacía fallar el envío.
       var V2 = window.NVISION_validate;
       var name = V2 ? V2.cleanName(String(s.email || 'NVISION').split('@')[0], 60) : String(s.email || 'NVISION').split('@')[0].slice(0, 60);
+      // La foto que se publica en el ranking: la guardada en la cuenta
+      // (foto subida o foto de Google ya descargada) y, si no hay, la
+      // URL de la foto de Google. Solo vale si pasa la misma validación
+      // de la base (data: o lh3, 130000 caracteres como máximo); si el
+      // usuario eligió un personaje SVG, no se publica foto (ese manda).
+      var V = window.NVISION_validAvatarImg;
+      var isSvgAvatar = s.avatar && s.avatar !== 'custom' && s.avatar !== 'initial';
+      var pubImg = null;
+      if (!isSvgAvatar) {
+        if (s.avatarImg && (!V || V(s.avatarImg))) pubImg = s.avatarImg;
+        else if (s.googleAvatar && V && V(s.googleAvatar)) pubImg = s.googleAvatar;
+      }
       window.NVISION_sbAuth('/rest/v1/site_ranking?on_conflict=user_id', {
         method: 'POST', token: s.access,
         headers: { 'Prefer': 'resolution=merge-duplicates' },
-        body: { user_id: s.userId, name: name, avatar: s.avatar || null, avatar_image: s.avatarImg || null, points: r.points, updated_at: new Date().toISOString() }
+        body: { user_id: s.userId, name: name, avatar: s.avatar || null, avatar_image: pubImg, points: r.points, updated_at: new Date().toISOString() }
       }).then(function (res) {
         if (res.status === 200 || res.status === 201 || res.status === 204) st.textContent = T.rankOk + ' ' + r.points + ' ' + T.rankPts;
         else if (res.status === 404 || (res.data && (res.data.code === 'PGRST205' || res.data.code === '42P01'))) st.textContent = T.rankOff;
