@@ -4962,131 +4962,43 @@ function setupNetworkSimulator() {
   function svg(inner) {
     return '<svg viewBox="0 0 64 64" fill="none" aria-hidden="true">' + inner + '</svg>';
   }
+  // Personaje cremoso NVISION: cabeza color crema, ojos negros
+  // redondos, sonrisa y mejillas rosadas. Cada avatar predefinido es
+  // el mismo personaje con un accesorio tecnológico de su área.
+  // behind = capa detrás de la cabeza · front = capa sobre la cara.
+  function plush(behind, front) {
+    return svg(
+      '<circle cx="14.5" cy="21" r="6" fill="#eed9b5"/>' +
+      '<circle cx="49.5" cy="21" r="6" fill="#eed9b5"/>' +
+      (behind || '') +
+      '<ellipse cx="32" cy="36" rx="20" ry="19" fill="#f7e7c8"/>' +
+      '<ellipse cx="32" cy="48" rx="13.5" ry="6.5" fill="#f0d7ab" opacity="0.5"/>' +
+      '<ellipse cx="24" cy="26.5" rx="7" ry="4.4" fill="#fff8ea" opacity="0.75"/>' +
+      '<ellipse cx="19.6" cy="40.5" rx="3.3" ry="2.1" fill="#f6a5b6" opacity="0.8"/>' +
+      '<ellipse cx="44.4" cy="40.5" rx="3.3" ry="2.1" fill="#f6a5b6" opacity="0.8"/>' +
+      '<ellipse cx="25.5" cy="34.5" rx="2.5" ry="3.3" fill="#201812"/>' +
+      '<ellipse cx="38.5" cy="34.5" rx="2.5" ry="3.3" fill="#201812"/>' +
+      '<circle cx="26.3" cy="33.2" r="0.9" fill="#ffffff"/>' +
+      '<circle cx="39.3" cy="33.2" r="0.9" fill="#ffffff"/>' +
+      '<path d="M27 41.5 Q32 45.8 37 41.5" stroke="#8a5a2b" stroke-width="2.2" stroke-linecap="round"/>' +
+      (front || '')
+    );
+  }
   var AVATARS = [
-    { id: 'chip', es: 'Chip', en: 'Chip', svg: svg(
-      '<path d="M24 15V9M32 15V9M40 15V9M24 55v-6M32 55v-6M40 55v-6M15 24H9M15 32H9M15 40H9M55 24H49M55 32H49M55 40H49" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>' +
-      '<rect x="15" y="15" width="34" height="34" rx="6" fill="#0f172a"/>' +
-      '<rect x="15" y="15" width="34" height="34" rx="6" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5"/>' +
-      '<rect x="24" y="24" width="16" height="16" rx="2" fill="#38bdf8"/>' +
-      '<circle cx="32" cy="32" r="3.5" fill="#ffffff"/>' +
-      '<circle cx="20" cy="20" r="1.6" fill="#ffffff" fill-opacity="0.8"/>' +
-      '<circle cx="44" cy="44" r="1.6" fill="#ffffff" fill-opacity="0.8"/>'
-    ) },
-    { id: 'wifi', es: 'WiFi', en: 'WiFi', svg: svg(
-      '<circle cx="32" cy="47" r="11" fill="#ffffff" fill-opacity="0.16"/>' +
-      '<path d="M15 26a24 24 0 0 1 34 0" stroke="#ffffff" stroke-opacity="0.55" stroke-width="5" stroke-linecap="round"/>' +
-      '<path d="M21 33a16 16 0 0 1 22 0" stroke="#ffffff" stroke-opacity="0.75" stroke-width="5" stroke-linecap="round"/>' +
-      '<path d="M27 40a8 8 0 0 1 10 0" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>' +
-      '<circle cx="32" cy="47" r="4.5" fill="#ffffff"/>'
-    ) },
-    { id: 'bolt', es: 'Rayo', en: 'Bolt', svg: svg(
-      '<path d="M38 6 15 37h11l-4 21 23-31H34l4-21z" fill="#ffffff" fill-opacity="0.35" transform="translate(3 2)"/>' +
-      '<path d="M36 4 13 35h11l-4 21 23-31H32l4-21z" fill="#ffffff"/>' +
-      '<path d="M52 12l1.5 3.5 3.5 1.5-3.5 1.5L52 22l-1.5-3.5L47 17l3.5-1.5z" fill="#ffffff" fill-opacity="0.9"/>' +
-      '<path d="M12 44l1 3 3 1-3 1-1 3-1-3-3-1 3-1z" fill="#ffffff" fill-opacity="0.9"/>'
-    ) },
-    { id: 'gear', es: 'Engranaje', en: 'Gear', svg: svg(
-      '<g fill="#ffffff">' +
-      '<rect x="29" y="5" width="6" height="11" rx="1.5"/>' +
-      '<rect x="29" y="5" width="6" height="11" rx="1.5" transform="rotate(45 32 32)"/>' +
-      '<rect x="29" y="5" width="6" height="11" rx="1.5" transform="rotate(90 32 32)"/>' +
-      '<rect x="29" y="5" width="6" height="11" rx="1.5" transform="rotate(135 32 32)"/>' +
-      '<rect x="29" y="5" width="6" height="11" rx="1.5" transform="rotate(180 32 32)"/>' +
-      '<rect x="29" y="5" width="6" height="11" rx="1.5" transform="rotate(225 32 32)"/>' +
-      '<rect x="29" y="5" width="6" height="11" rx="1.5" transform="rotate(270 32 32)"/>' +
-      '<rect x="29" y="5" width="6" height="11" rx="1.5" transform="rotate(315 32 32)"/>' +
-      '</g>' +
-      '<path d="M32 15a17 17 0 1 0 0 34 17 17 0 0 0 0-34zm0 11a6 6 0 1 1 0 12 6 6 0 0 1 0-12z" fill="#ffffff" fill-rule="evenodd"/>' +
-      '<circle cx="32" cy="32" r="4" fill="#0d9488"/>'
-    ) },
-    { id: 'shield', es: 'Escudo', en: 'Shield', svg: svg(
-      '<path d="M32 5l20 7v18c0 14-9 22-20 26C21 52 12 44 12 30V12l20-7z" fill="#ffffff"/>' +
-      '<path d="M32 12l13.5 4.8V30c0 9.5-6 15.5-13.5 18.5C24.5 45.5 18.5 39.5 18.5 30V16.8L32 12z" fill="#059669"/>' +
-      '<path d="M25 31l5 5 10-11" stroke="#ffffff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>' +
-      '<ellipse cx="24" cy="14" rx="7" ry="3.5" fill="#ffffff" fill-opacity="0.5" transform="rotate(-18 24 14)"/>'
-    ) },
-    { id: 'rocket', es: 'Cohete', en: 'Rocket', svg: svg(
-      '<path d="M27 41c0 6 2 10 5 12 3-2 5-6 5-12v-2H27v2z" fill="#fbbf24"/>' +
-      '<path d="M29.5 41c0 4 1 7 2.5 8.5 1.5-1.5 2.5-4.5 2.5-8.5v-1h-5v1z" fill="#f97316"/>' +
-      '<path d="M22 34l-9 12 9-2v-10z" fill="#fda4af"/>' +
-      '<path d="M42 34l9 12-9-2v-10z" fill="#fda4af"/>' +
-      '<path d="M32 6c7 6 10 14 10 24v10H22V30c0-10 3-18 10-24z" fill="#ffffff"/>' +
-      '<circle cx="32" cy="27" r="6.5" fill="#38bdf8"/>' +
-      '<circle cx="32" cy="27" r="6.5" fill="none" stroke="#0f172a" stroke-opacity="0.15" stroke-width="1.5"/>' +
-      '<circle cx="30" cy="25" r="2" fill="#ffffff" fill-opacity="0.9"/>' +
-      '<path d="M52 10l1 2.6 2.6 1-2.6 1-1 2.6-1-2.6-2.6-1 2.6-1z" fill="#ffffff" fill-opacity="0.95"/>' +
-      '<path d="M12 14l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z" fill="#ffffff" fill-opacity="0.9"/>'
-    ) },
-    { id: 'game', es: 'Juegos', en: 'Games', svg: svg(
-      '<rect x="7" y="20" width="50" height="27" rx="13" fill="#ffffff"/>' +
-      '<path d="M20 29h8M24 25v8" stroke="#a21caf" stroke-width="3.5" stroke-linecap="round"/>' +
-      '<circle cx="42" cy="30" r="3" fill="#e879f9"/>' +
-      '<circle cx="48" cy="36" r="3" fill="#a21caf"/>' +
-      '<circle cx="42" cy="41" r="3" fill="#e879f9"/>' +
-      '<circle cx="36" cy="36" r="3" fill="#a21caf"/>' +
-      '<circle cx="30" cy="42" r="1.5" fill="#a21caf" fill-opacity="0.5"/>' +
-      '<circle cx="35" cy="42" r="1.5" fill="#a21caf" fill-opacity="0.5"/>'
-    ) },
-    { id: 'monitor', es: 'Monitor', en: 'Monitor', svg: svg(
-      '<rect x="10" y="12" width="44" height="30" rx="4" fill="#0f172a"/>' +
-      '<rect x="10" y="12" width="44" height="30" rx="4" fill="none" stroke="#ffffff" stroke-opacity="0.3" stroke-width="1.5"/>' +
-      '<rect x="18" y="30" width="5" height="8" rx="1" fill="#22d3ee"/>' +
-      '<rect x="26" y="26" width="5" height="12" rx="1" fill="#22d3ee"/>' +
-      '<rect x="34" y="22" width="5" height="16" rx="1" fill="#22d3ee"/>' +
-      '<rect x="42" y="28" width="5" height="10" rx="1" fill="#ffffff" fill-opacity="0.85"/>' +
-      '<path d="M29 42h6l2 6H27z" fill="#ffffff"/>' +
-      '<rect x="22" y="48" width="20" height="4" rx="2" fill="#ffffff"/>'
-    ) },
-    { id: 'server', es: 'Servidor', en: 'Server', svg: svg(
-      '<rect x="16" y="10" width="32" height="44" rx="5" fill="#0f172a"/>' +
-      '<rect x="16" y="10" width="32" height="44" rx="5" fill="none" stroke="#ffffff" stroke-opacity="0.3" stroke-width="1.5"/>' +
-      '<circle cx="23" cy="19" r="2.2" fill="#34d399"/>' +
-      '<rect x="29" y="18" width="13" height="2.5" rx="1.25" fill="#ffffff" fill-opacity="0.6"/>' +
-      '<circle cx="23" cy="31" r="2.2" fill="#22d3ee"/>' +
-      '<rect x="29" y="30" width="13" height="2.5" rx="1.25" fill="#ffffff" fill-opacity="0.6"/>' +
-      '<circle cx="23" cy="43" r="2.2" fill="#fbbf24"/>' +
-      '<rect x="29" y="42" width="13" height="2.5" rx="1.25" fill="#ffffff" fill-opacity="0.6"/>' +
-      '<circle cx="24" cy="50" r="1.3" fill="#ffffff" fill-opacity="0.5"/>' +
-      '<circle cx="29" cy="50" r="1.3" fill="#ffffff" fill-opacity="0.5"/>' +
-      '<circle cx="34" cy="50" r="1.3" fill="#ffffff" fill-opacity="0.5"/>'
-    ) },
-    { id: 'trophy', es: 'Trofeo', en: 'Trophy', svg: svg(
-      '<path d="M20 14c-6 0-8 3-7 7 1 3 4 4 7 4M44 14c6 0 8 3 7 7-1 3-4 4-7 4" stroke="#ffffff" stroke-width="4" stroke-linecap="round" fill="none"/>' +
-      '<path d="M20 10h24v10c0 8-5 13-12 13s-12-5-12-13V10z" fill="#ffffff"/>' +
-      '<path d="M32 15l1.5 3.5L37 20l-3.5 1.5L32 25l-1.5-3.5L27 20l3.5-1.5z" fill="#ca8a04"/>' +
-      '<rect x="29" y="33" width="6" height="8" fill="#ffffff"/>' +
-      '<rect x="22" y="41" width="20" height="5" rx="2" fill="#ffffff"/>' +
-      '<rect x="18" y="46" width="28" height="5" rx="2" fill="#ffffff" fill-opacity="0.9"/>'
-    ) },
-    { id: 'book', es: 'Libro', en: 'Book', svg: svg(
-      '<path d="M32 18C26 13 18 12 12 14v32c6-2 14-1 20 4V18z" fill="#ffffff"/>' +
-      '<path d="M32 18c6-5 14-6 20-4v32c-6-2-14-1-20 4V18z" fill="#ffffff" fill-opacity="0.85"/>' +
-      '<path d="M32 18v32" stroke="#dc2626" stroke-width="2"/>' +
-      '<path d="M16 24h10M16 30h10M16 36h10" stroke="#fca5a5" stroke-width="2" stroke-linecap="round"/>' +
-      '<path d="M38 24h10M38 30h10M38 36h10" stroke="#fca5a5" stroke-width="2" stroke-linecap="round"/>'
-    ) },
-    { id: 'music', es: 'Música', en: 'Music', svg: svg(
-      '<ellipse cx="24" cy="46" rx="6" ry="4.5" fill="#ffffff" transform="rotate(-20 24 46)"/>' +
-      '<rect x="29" y="14" width="3.5" height="32" fill="#ffffff"/>' +
-      '<path d="M32.5 14c8 2 10 8 8 14-2-6-5-9-8-10v-4z" fill="#ffffff"/>' +
-      '<ellipse cx="47" cy="40" rx="5" ry="4" fill="#ffffff" transform="rotate(-20 47 40)"/>' +
-      '<rect x="51" y="12" width="3" height="28" fill="#ffffff"/>' +
-      '<path d="M54 12c6 1.5 7.5 6 6 10.5-1.5-4.5-4-7-6-8v-2.5z" fill="#ffffff" fill-opacity="0.9"/>'
-    ) },
-    { id: 'headphones', es: 'Audífonos', en: 'Headphones', svg: svg(
-      '<path d="M14 38a18 18 0 0 1 36 0" stroke="#ffffff" stroke-width="5" stroke-linecap="round" fill="none"/>' +
-      '<rect x="10" y="34" width="10" height="17" rx="4" fill="#ffffff"/>' +
-      '<rect x="44" y="34" width="10" height="17" rx="4" fill="#ffffff"/>' +
-      '<rect x="13.5" y="38" width="3.5" height="9" rx="1.75" fill="#1d4ed8"/>' +
-      '<rect x="47" y="38" width="3.5" height="9" rx="1.75" fill="#1d4ed8"/>' +
-      '<path d="M49 51v2a5 5 0 0 1-5 5h-2" stroke="#ffffff" stroke-width="3" stroke-linecap="round" fill="none"/>'
-    ) }
+    { id: 'chip', es: 'Chip', en: 'Chip', svg: plush('', '<g transform="rotate(-8 32 13)"><rect x="21" y="3" width="22" height="14" rx="3" fill="#1e293b"/><rect x="24" y="0.5" width="3.4" height="3.5" fill="#94a3b8"/><rect x="30.3" y="0.5" width="3.4" height="3.5" fill="#94a3b8"/><rect x="36.6" y="0.5" width="3.4" height="3.5" fill="#94a3b8"/><rect x="28" y="7" width="8" height="6.5" rx="1.2" fill="#38bdf8"/></g>') },
+    { id: 'wifi', es: 'WiFi', en: 'WiFi', svg: plush('', '<path d="M19 11a18.5 18.5 0 0 1 26 0" stroke="#ffffff" stroke-width="3.6" stroke-linecap="round" opacity="0.95"/><path d="M24 16.5a11.5 11.5 0 0 1 16 0" stroke="#ffffff" stroke-width="3.6" stroke-linecap="round" opacity="0.95"/><circle cx="32" cy="21" r="2.4" fill="#ffffff"/>') },
+    { id: 'bolt', es: 'Rayo', en: 'Bolt', svg: plush('', '<path d="M37 1.5 25.5 16h6L28.5 26 41.5 11h-6.5z" fill="#fde047" stroke="#d97706" stroke-width="1.2" stroke-linejoin="round"/>') },
+    { id: 'gear', es: 'Engranaje', en: 'Gear', svg: plush('<g transform="translate(51 17)" fill="#f8fafc"><rect x="-2" y="-11" width="4" height="6" rx="1"/><rect x="-2" y="-11" width="4" height="6" rx="1" transform="rotate(45)"/><rect x="-2" y="-11" width="4" height="6" rx="1" transform="rotate(90)"/><rect x="-2" y="-11" width="4" height="6" rx="1" transform="rotate(135)"/><rect x="-2" y="-11" width="4" height="6" rx="1" transform="rotate(180)"/><rect x="-2" y="-11" width="4" height="6" rx="1" transform="rotate(225)"/><rect x="-2" y="-11" width="4" height="6" rx="1" transform="rotate(270)"/><rect x="-2" y="-11" width="4" height="6" rx="1" transform="rotate(315)"/><circle r="7.5"/><circle r="3" fill="#475569"/></g>', '') },
+    { id: 'shield', es: 'Escudo', en: 'Shield', svg: plush('', '<path d="M50 39l8.5 3v6.5c0 5.2-3.6 8.4-8.5 10.5-4.9-2.1-8.5-5.3-8.5-10.5V42z" fill="#f8fafc" stroke="#065f46" stroke-width="1.4"/><path d="M46.3 48.8l2.6 2.6 4.8-5.2" stroke="#059669" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>') },
+    { id: 'rocket', es: 'Cohete', en: 'Rocket', svg: plush('<g transform="translate(9.5 11.5) rotate(-24)"><path d="M0-11c3.4 2.8 5 6.8 5 11l-1.5 6H-1.5L-3 0c0-4.2 1.6-8.2 3-11z" fill="#e2e8f0" transform="translate(1 0)"/><circle cx="1" cy="-3" r="2.3" fill="#38bdf8"/><path d="M-3 5l-4.5 5.5L-1 9z" fill="#991b1b"/><path d="M5 5l4.5 5.5L3 9z" fill="#991b1b" transform="translate(-1 0)"/><path d="M-1.8 9.5h5.6l-2.8 6z" fill="#fde047"/></g>', '') },
+    { id: 'game', es: 'Juegos', en: 'Games', svg: plush('', '<rect x="18" y="46" width="28" height="13" rx="6" fill="#312e81" stroke="#a5b4fc" stroke-width="1.2"/><path d="M23.5 52.5h6M26.5 49.5v6" stroke="#e0e7ff" stroke-width="2" stroke-linecap="round"/><circle cx="38" cy="50.8" r="1.9" fill="#f87171"/><circle cx="42.3" cy="54.2" r="1.9" fill="#4ade80"/>') },
+    { id: 'monitor', es: 'Monitor', en: 'Monitor', svg: plush('<rect x="8" y="12" width="48" height="37" rx="5" fill="#0f172a" stroke="#7dd3fc" stroke-width="2"/><circle cx="13.5" cy="17" r="1.3" fill="#f87171"/><circle cx="18.5" cy="17" r="1.3" fill="#fbbf24"/><circle cx="23.5" cy="17" r="1.3" fill="#4ade80"/><path d="M27 54h10l1.6 4.5H25.4z" fill="#0f172a"/>', '') },
+    { id: 'server', es: 'Servidor', en: 'Server', svg: plush('<rect x="45" y="16" width="14" height="14" rx="2.5" fill="#0b1220" stroke="#94a3b8" stroke-width="1.3"/><rect x="45" y="33" width="14" height="14" rx="2.5" fill="#0b1220" stroke="#94a3b8" stroke-width="1.3"/><circle cx="49" cy="23" r="1.5" fill="#4ade80"/><circle cx="49" cy="40" r="1.5" fill="#4ade80"/><path d="M53 23h3.5M53 40h3.5" stroke="#64748b" stroke-width="1.4" stroke-linecap="round"/>', '') },
+    { id: 'trophy', es: 'Trofeo', en: 'Trophy', svg: plush('', '<path d="M23.5 5h17v5.5a8.5 8 0 0 1-17 0z" fill="#fbbf24" stroke="#92400e" stroke-width="1.4"/><path d="M23.5 7.5c-3.8-.6-5.8.8-5.8 3 0 2.4 2.4 4 6 4.2M40.5 7.5c3.8-.6 5.8.8 5.8 3 0 2.4-2.4 4-6 4.2" stroke="#92400e" stroke-width="1.6" fill="none"/><rect x="30" y="17.8" width="4" height="3.4" fill="#d97706"/><rect x="25.5" y="21.2" width="13" height="2.8" rx="1.2" fill="#92400e"/>') },
+    { id: 'book', es: 'Libro', en: 'Book', svg: plush('', '<path d="M32 47.5c-5-3.4-12-3.9-17-2.4v11.2c5-1.5 12-1 17 2.4 5-3.4 12-3.9 17-2.4V45.1c-5-1.5-12-1-17 2.4z" fill="#f8fafc" stroke="#1e3a8a" stroke-width="1.6" stroke-linejoin="round"/><path d="M32 47.5v11.2" stroke="#cbd5e1" stroke-width="1.4"/>') },
+    { id: 'music', es: 'Música', en: 'Music', svg: plush('', '<rect x="45" y="5" width="2.8" height="15.5" fill="#ffffff"/><path d="M47.8 5c4.2 1 6.4 3.6 7 7.2-2.2-2.6-4.4-3.8-7-4.4z" fill="#ffffff"/><ellipse cx="41.6" cy="20.8" rx="4.4" ry="3.2" transform="rotate(-16 41.6 20.8)" fill="#ffffff"/>') },
+    { id: 'headphones', es: 'Audífonos', en: 'Headphones', svg: plush('<path d="M13.5 35a18.5 17.5 0 0 1 37 0" stroke="#1e293b" stroke-width="4.6" stroke-linecap="round"/>', '<rect x="8.5" y="31" width="7.5" height="13.5" rx="3.6" fill="#1e293b"/><rect x="48" y="31" width="7.5" height="13.5" rx="3.6" fill="#1e293b"/><rect x="11" y="35" width="2.4" height="5.5" rx="1.2" fill="#38bdf8"/><rect x="50.6" y="35" width="2.4" height="5.5" rx="1.2" fill="#38bdf8"/>') }
   ];
-  // Validación estricta de la foto personalizada: el valor vive en
-  // user_metadata y se puede escribir por API con cualquier texto, así
-  // que SOLO se acepta una imagen data: en base64 (jpeg/png/webp) de
-  // tamaño razonable. Cualquier otra cosa se descarta (anti-XSS: el
-  // chip se pinta con innerHTML en el encabezado y en el ranking).
   var AVATAR_IMG_RE = /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/;
   var AVATAR_GOOGLE_RE = /^https:\/\/lh3\.googleusercontent\.com\/[A-Za-z0-9\-_=/]+$/;
   function validAvatarImg(img) {

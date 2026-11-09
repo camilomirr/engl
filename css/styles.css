@@ -67,7 +67,7 @@
 @import url('modules/pwa.css?v=5');
 
 /* 21. Avatares de cuenta */
-@import url('modules/avatar.css?v=6');
+@import url('modules/avatar.css?v=20');
 
 /* 22. Pulido móvil (al final a propósito) */
 @import url('modules/logros.css?v=1');
@@ -79,6 +79,6 @@
 @import url('modules/comparador.css?v=2');
 @import url('modules/ingles.css?v=2');
 @import url('modules/apuntes.css?v=2');
-@import url('modules/perfil.css?v=2');
+@import url('modules/perfil.css?v=3');
 @import url('modules/mobile.css?v=2');
 
