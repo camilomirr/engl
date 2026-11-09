@@ -269,7 +269,7 @@
   color: var(--text-primary); font-size: 0.9rem; font-weight: 600; transition: var(--transition);
 }
 .glossary-btn:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
-.glossary-btn.active, .glossary-btn-primary { background: var(--accent-blue, #2563eb); border-color: var(--accent-blue, #2563eb); color: #fff; }
+.glossary-btn.active, .glossary-btn-primary { background: var(--btn-gradient); border-color: var(--accent-blue, #2563eb); color: #fff; }
 .glossary-count { color: var(--text-secondary); font-size: 0.9rem; margin: 0 0 1rem; }
 .glossary-tag {
   display: inline-block; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.04em;

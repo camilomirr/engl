@@ -28,6 +28,11 @@
   --accent-indigo: #6366f1;
   --accent-emerald: #10b981;
   --accent-amber: #f59e0b;
+
+  /* Degradado del logo para los botones principales en modo oscuro:
+     azul #0284c7 desvanecido a celeste #38bdf8, como el logo NVISION. */
+  --btn-gradient: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%);
+  --btn-gradient-hover: linear-gradient(135deg, #0369a1 0%, #0ea5e9 100%);
   
   /* Sombras y profundidad sobria */
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);

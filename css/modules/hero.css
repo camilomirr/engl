@@ -71,15 +71,17 @@
 
 /* --- MODO OSCURO (DARK THEME) --- */
 
+/* Botón principal en modo oscuro: degradado del logo (azul con desvanecido),
+   no el azul plano de antes. */
 .btn-primary {
-  background: #0284c7;
+  background: var(--btn-gradient);
   color: #ffffff !important;
   border: 1px solid #0284c7;
   box-shadow: 0 2px 8px rgba(2, 132, 199, 0.25);
 }
 
 .btn-primary:hover {
-  background: #0369a1;
+  background: var(--btn-gradient-hover);
   border-color: #0369a1;
   transform: translateY(-1px);
   box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);

@@ -3,13 +3,13 @@
    ========================================================= */
 
 /* 1. Variables, Temas, Tipografías y Reset Base */
-@import url('modules/variables.css?v=5');
+@import url('modules/variables.css?v=6');
 
 /* 2. Cabecera, Navegación, Submenús y Selector de Idioma */
 @import url('modules/header-nav.css?v=3');
 
 /* 3. Hero Section, Título Principal y Botones de Acción */
-@import url('modules/hero.css');
+@import url('modules/hero.css?v=1');
 
 /* 4. Línea de Tiempo y Módulos de Historia / Pioneros */
 @import url('modules/timeline.css');
@@ -22,16 +22,16 @@
 @import url('modules/pc3d.css?v=2');
 
 /* 7. Redes, Topologías, Simulador de Ping y Cobertura */
-@import url('modules/networks.css?v=2');
+@import url('modules/networks.css?v=3');
 
 /* 7. Glosario de Términos, Laboratorio y Footer */
-@import url('modules/laboratory.css?v=2');
+@import url('modules/laboratory.css?v=3');
 
 /* 8. Sistema de Iconos SVG y Paleta Tecnológica */
 @import url('modules/icons.css');
 
 /* 9. Asistente de búsqueda local */
-@import url('modules/local-assistant.css?v=7');
+@import url('modules/local-assistant.css?v=8');
 
 /* 10. Efecto de seguimiento del cursor */
 @import url('modules/cursor-effect.css');
@@ -43,7 +43,7 @@
 @import url('modules/mantenimiento-software.css?v=2');
 
 /* 13. Equipo NVISION — puente de tareas con Muse */
-@import url('modules/equipo.css?v=50');
+@import url('modules/equipo.css?v=51');
 
 /* 14. Buscador de la página principal */
 @import url('modules/site-search.css?v=2');
@@ -58,13 +58,13 @@
 @import url('modules/examenes.css?v=4');
 
 /* 18. Mi cuenta (Supabase) */
-@import url('modules/cuenta.css?v=7');
+@import url('modules/cuenta.css?v=8');
 
 /* 19. Barra de progreso superior (scroll + carga) */
 @import url('modules/scroll-progress.css?v=1');
 
 /* 20. PWA (botón de instalar) */
-@import url('modules/pwa.css?v=4');
+@import url('modules/pwa.css?v=5');
 
 /* 21. Avatares de cuenta */
 @import url('modules/avatar.css?v=6');

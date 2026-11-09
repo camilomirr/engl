@@ -49,13 +49,13 @@
 }
 .cuenta-field input:focus { outline: none; border-color: var(--accent-cyan); box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.22); }
 
-/* ---------- Botones (mismo estilo sobrio que el resto del sitio) ---------- */
+/* ---------- Botones (mismo degradado del logo que el resto del sitio) ---------- */
 .cuenta-btn {
   width: 100%;
   padding: 0.8rem 1.1rem;
   border-radius: var(--radius-sm);
   border: 1px solid #0284c7;
-  background: #0284c7;
+  background: var(--btn-gradient);
   color: #ffffff;
   font: inherit;
   font-weight: 700;
@@ -63,7 +63,7 @@
   box-shadow: 0 2px 8px rgba(2, 132, 199, 0.25);
   transition: var(--transition);
 }
-.cuenta-btn:hover { background: #0369a1; border-color: #0369a1; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35); }
+.cuenta-btn:hover { background: var(--btn-gradient-hover); border-color: #0369a1; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35); }
 [data-theme="light"] .cuenta-btn { background: #0f172a; border-color: #0f172a; box-shadow: 0 2px 6px rgba(15, 23, 42, 0.12); }
 [data-theme="light"] .cuenta-btn:hover { background: #1e293b; border-color: #1e293b; }
 .cuenta-btn[disabled] { opacity: 0.55; cursor: wait; transform: none; }

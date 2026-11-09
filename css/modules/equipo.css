@@ -243,8 +243,8 @@
 }
 .eqw-mode svg { display: block; }
 .eqw-mode:hover { border-color: var(--accent-cyan); }
-/* El lápiz encendido lleva el color del botón Enviar, ese azul oscuro. */
-.eqw-mode-edit.is-on { background: #0284c7; border-color: #0284c7; color: #fff; }
+/* El lápiz encendido lleva el degradado del botón Enviar. */
+.eqw-mode-edit.is-on { background: var(--btn-gradient); border-color: #0284c7; color: #fff; }
 [data-theme="light"] .eqw-mode-edit.is-on { background: #0f172a; border-color: #0f172a; color: #fff; }
 
 /* Nombre propio marcado en la lista del mini chatbot */

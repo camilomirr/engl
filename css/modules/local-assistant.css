@@ -115,8 +115,8 @@
   width: 2.45rem;
   border: 0;
   border-radius: 999px;
-  color: #082f49;
-  background: var(--accent-cyan);
+  color: #ffffff;
+  background: var(--btn-gradient);
   cursor: pointer;
 }
 
@@ -138,7 +138,7 @@
 }
 .local-assistant-ask span { font: 700 1.05rem/1 'JetBrains Mono', monospace; }
 .local-assistant-edit svg { width: 1rem; height: 1rem; }
-.local-assistant-ask.is-active { color: #082f49; background: var(--accent-cyan); border-color: transparent; }
+.local-assistant-ask.is-active { color: #ffffff; background: var(--btn-gradient); border-color: transparent; }
 .local-assistant-edit:disabled { opacity: 0.35; cursor: default; }
 .local-assistant-results { display: grid; gap: 0.55rem; margin-top: 0.8rem; max-height: 12rem; overflow-y: auto; }
 .local-assistant-result {

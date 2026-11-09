@@ -2,9 +2,9 @@
 
 /* Botón de instalar: píldora visible con icono + texto, no un icono
    más del encabezado. Así la descarga de la app se encuentra a
-   primera vista en cualquier página. Lleva el mismo color sólido del
-   botón ENVIAR (.btn-primary) para coincidir con el diseño de la
-   página: #0284c7 en oscuro, #0f172a en claro. */
+   primera vista en cualquier página. Lleva el mismo degradado del logo
+   del botón ENVIAR (.btn-primary) para coincidir con el diseño de la
+   página: degradado azul en oscuro, #0f172a en claro. */
 .pwa-install-btn {
   align-items: center;
   justify-content: center;
@@ -14,7 +14,7 @@
   padding: 0 .95rem;
   border-radius: 999px;
   border: 1px solid #0284c7;
-  background: #0284c7;
+  background: var(--btn-gradient);
   box-shadow: 0 2px 8px rgba(2, 132, 199, .25);
   color: #fff;
   font-size: .9rem;
@@ -25,7 +25,7 @@
 .pwa-install-btn[hidden] { display: none !important; }
 .pwa-install-btn:hover {
   color: #fff;
-  background: #0369a1;
+  background: var(--btn-gradient-hover);
   border-color: #0369a1;
   transform: translateY(-1px);
   box-shadow: 0 4px 14px rgba(2, 132, 199, .35);
@@ -93,7 +93,7 @@
   margin-bottom: 1rem;
   border: 1px solid #0284c7;
   border-radius: 12px;
-  background: #0284c7;
+  background: var(--btn-gradient);
   box-shadow: 0 2px 8px rgba(2, 132, 199, .25);
   color: #fff;
   font-size: 1rem;
@@ -101,7 +101,7 @@
   cursor: pointer;
 }
 .pwa-modal-install[hidden] { display: none !important; }
-.pwa-modal-install:hover { background: #0369a1; border-color: #0369a1; }
+.pwa-modal-install:hover { background: var(--btn-gradient-hover); border-color: #0369a1; }
 [data-theme="light"] .pwa-modal-install {
   background: #0f172a;
   border-color: #0f172a;
