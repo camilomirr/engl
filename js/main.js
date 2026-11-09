@@ -4962,42 +4962,71 @@ function setupNetworkSimulator() {
   function svg(inner) {
     return '<svg viewBox="0 0 64 64" fill="none" aria-hidden="true">' + inner + '</svg>';
   }
-  // Personaje cremoso NVISION: cabeza color crema, ojos negros
-  // redondos, sonrisa y mejillas rosadas. Cada avatar predefinido es
-  // el mismo personaje con un accesorio tecnológico de su área.
-  // behind = capa detrás de la cabeza · front = capa sobre la cara.
-  function plush(behind, front) {
-    return svg(
-      '<circle cx="14.5" cy="21" r="6" fill="#eed9b5"/>' +
-      '<circle cx="49.5" cy="21" r="6" fill="#eed9b5"/>' +
-      (behind || '') +
-      '<ellipse cx="32" cy="36" rx="20" ry="19" fill="#f7e7c8"/>' +
-      '<ellipse cx="32" cy="48" rx="13.5" ry="6.5" fill="#f0d7ab" opacity="0.5"/>' +
-      '<ellipse cx="24" cy="26.5" rx="7" ry="4.4" fill="#fff8ea" opacity="0.75"/>' +
-      '<ellipse cx="19.6" cy="40.5" rx="3.3" ry="2.1" fill="#f6a5b6" opacity="0.8"/>' +
-      '<ellipse cx="44.4" cy="40.5" rx="3.3" ry="2.1" fill="#f6a5b6" opacity="0.8"/>' +
-      '<ellipse cx="25.5" cy="34.5" rx="2.5" ry="3.3" fill="#201812"/>' +
-      '<ellipse cx="38.5" cy="34.5" rx="2.5" ry="3.3" fill="#201812"/>' +
-      '<circle cx="26.3" cy="33.2" r="0.9" fill="#ffffff"/>' +
-      '<circle cx="39.3" cy="33.2" r="0.9" fill="#ffffff"/>' +
-      '<path d="M27 41.5 Q32 45.8 37 41.5" stroke="#8a5a2b" stroke-width="2.2" stroke-linecap="round"/>' +
-      (front || '')
-    );
+  // Personas NVISION: busto ilustrado estilo vectorial plano
+  // (referencia que trajo Duay), una por ROL TÉCNICO. Mismo
+  // constructor con parámetros: tono de piel, peinado, camisa y
+  // accesorio del rol. Los id NO cambian: las cuentas guardadas
+  // conservan su avatar, solo cambia el dibujo y el nombre visible.
+  function svgP(inner) { return svg(inner); }
+  function hairShort(c) { return '<path d="M20.5 27.5C20.3 18.8 25.3 14.7 32 14.7c6.7 0 11.7 4.1 11.5 12.8C40.5 21.8 37 20.2 32 20.2c-5 0-8.5 1.6-11.5 7.3z" fill="' + c + '"/>'; }
+  function hairSwept(c) { return '<path d="M20.5 27.5C20.3 18.8 25.3 14.7 32 14.7c6.7 0 11.7 4.1 11.5 12.8C39.5 20.8 31.5 19.6 26 22.4c-2.4 1.2-4.2 2.9-5.5 5.1z" fill="' + c + '"/>'; }
+  function hairBun(c) { return '<circle cx="32" cy="11.6" r="5.4" fill="' + c + '"/>' + hairShort(c); }
+  function hairCurly(c) {
+    return [[22.8, 20.5, 4.6], [27.5, 15.9, 5.2], [33, 14.8, 5.4], [38.5, 15.9, 5], [42.3, 20.6, 4.2]].map(function (p) {
+      return '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="' + p[2] + '" fill="' + c + '"/>';
+    }).join('');
+  }
+  function hairSpiky(c) { return '<path d="M20.8 26 22.6 15.2l3.4 5.2L29.4 12.2l3.2 6.2 3.8-5.2 2.6 5.8 3.8-3.4.6 10.4Q32 30.6 20.8 26z" fill="' + c + '"/>'; }
+  function hairLong(c) { return '<rect x="17.4" y="12.5" width="29.2" height="41" rx="14.5" fill="' + c + '"/>'; }
+  function hairPonytail(c) { return '<path d="M41.8 19.5c4.6 5.8 5.8 15.4 4.1 26.8l-6.4-1.3c1.5-9.6 1.1-17.8-.9-24.2z" fill="' + c + '"/><circle cx="41.6" cy="18.6" r="2.1" fill="#f59e0b"/>'; }
+  var ACC_GLASSES = '<g stroke="#26303b" stroke-width="1.5" fill="#ffffff" fill-opacity="0.10"><rect x="22.6" y="26.4" width="8.6" height="7.2" rx="2.8"/><rect x="32.8" y="26.4" width="8.6" height="7.2" rx="2.8"/></g><path d="M31.2 29.4h1.6M22.6 29l-2.1-.8M41.4 29l2.1-.8" stroke="#26303b" stroke-width="1.5" fill="none"/>';
+  var ACC_HEADPHONES = '<path d="M19.6 27.5a12.4 12.4 0 0 1 24.8 0" stroke="#1f2937" stroke-width="3.6" fill="none"/><rect x="17.2" y="26.5" width="5.6" height="10" rx="2.8" fill="#1f2937"/><rect x="41.2" y="26.5" width="5.6" height="10" rx="2.8" fill="#1f2937"/><circle cx="20" cy="31.5" r="1.2" fill="#e879f9"/><circle cx="44" cy="31.5" r="1.2" fill="#e879f9"/>';
+  var ACC_HEADSET = '<path d="M20 26.8a12 12 0 0 1 24 0" stroke="#1f2937" stroke-width="2.6" fill="none"/><rect x="17.6" y="26" width="5" height="9" rx="2.5" fill="#1f2937"/><path d="M20.2 34.8Q23.5 40.5 30 39.6" stroke="#1f2937" stroke-width="1.8" fill="none" stroke-linecap="round"/><circle cx="30.4" cy="39.5" r="1.4" fill="#1f2937"/>';
+  var ACC_CODE = '<path d="M28.2 55.6l-3.2 3 3.2 3M35.8 55.6l3.2 3-3.2 3M33.4 54.8l-2.4 7.6" stroke="#ffffff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.9"/>';
+  var ACC_BOLT = '<path d="M33.8 53.8 29.2 59.4h3L31 63l4.8-5.8h-3.1z" fill="#fde047"/>';
+  function person(o) {
+    var s = '';
+    if (o.behind) s += o.behind(o.hairColor);
+    if (o.suit) {
+      s += '<path d="M14 64v-6c0-5.9 5-9.6 11.5-10.8L32 56l6.5-8.8C45 48.4 50 52.1 50 58v6z" fill="' + o.shirt + '"/>' +
+        '<path d="M27.8 47.4 32 54.6l4.2-7.2-2.3-.7h-3.8z" fill="#f8fafc"/>' +
+        '<path d="M32 51.4l-1.7 2 1.7 6.6 1.7-6.6z" fill="#dc2626"/>';
+    } else {
+      s += '<path d="M14 64v-6c0-7 8-11 18-11s18 4 18 11v6z" fill="' + o.shirt + '"/>' +
+        '<path d="M26.4 46.4a7 5.4 0 0 0 11.2 0l.1 3.2a7 5.4 0 0 1-11.4 0z" fill="' + o.collar + '"/>';
+    }
+    s += '<rect x="28.6" y="37.5" width="6.8" height="9.5" rx="2.6" fill="' + o.shade + '"/>';
+    s += '<circle cx="20.4" cy="30.5" r="2.7" fill="' + o.skin + '"/><circle cx="43.6" cy="30.5" r="2.7" fill="' + o.skin + '"/>';
+    s += '<ellipse cx="32" cy="28.5" rx="11.6" ry="12.8" fill="' + o.skin + '"/>';
+    if (o.hairTop) s += (typeof o.hairTop === 'function' ? o.hairTop(o.hairColor) : o.hairTop);
+    if (o.beard) s += '<path d="M22.3 33.2Q32 47.5 41.7 33.2l-.6 5.2Q32 49.5 22.9 38.4z" fill="' + o.hairColor + '"/>';
+    s += '<ellipse cx="23.9" cy="34.9" rx="2.6" ry="1.5" fill="#f49bab" opacity="0.5"/>' +
+      '<ellipse cx="40.1" cy="34.9" rx="2.6" ry="1.5" fill="#f49bab" opacity="0.5"/>' +
+      '<path d="M24.9 25.4q2.5-1.3 4.9-.2M34.2 25.2q2.4-1.1 4.9.2" stroke="' + o.hairColor + '" stroke-width="1.25" stroke-linecap="round" fill="none" opacity="0.85"/>' +
+      '<ellipse cx="27.4" cy="29.8" rx="1.45" ry="2.05" fill="#2a2019"/>' +
+      '<ellipse cx="36.6" cy="29.8" rx="1.45" ry="2.05" fill="#2a2019"/>' +
+      '<circle cx="27.9" cy="29.1" r="0.5" fill="#ffffff"/><circle cx="37.1" cy="29.1" r="0.5" fill="#ffffff"/>' +
+      '<path d="M32 31.6q1.1 2.3-.2 3" stroke="' + o.shade + '" stroke-width="1" stroke-linecap="round" fill="none"/>' +
+      '<path d="M27.8 36.9Q32 40.1 36.2 36.9" stroke="#8a4b2a" stroke-width="1.7" stroke-linecap="round" fill="none"/>';
+    if (o.extra) s += o.extra;
+    // Escala tipo la referencia: la cabeza ocupa ~la mitad del
+    // círculo y el busto se sale por abajo (el chip lo recorta).
+    return svgP('<g transform="translate(-16 -18) scale(1.5)">' + s + '</g>');
   }
   var AVATARS = [
-    { id: 'chip', es: 'Chip', en: 'Chip', svg: plush('', '<g transform="rotate(-8 32 13)"><rect x="21" y="3" width="22" height="14" rx="3" fill="#1e293b"/><rect x="24" y="0.5" width="3.4" height="3.5" fill="#94a3b8"/><rect x="30.3" y="0.5" width="3.4" height="3.5" fill="#94a3b8"/><rect x="36.6" y="0.5" width="3.4" height="3.5" fill="#94a3b8"/><rect x="28" y="7" width="8" height="6.5" rx="1.2" fill="#38bdf8"/></g>') },
-    { id: 'wifi', es: 'WiFi', en: 'WiFi', svg: plush('', '<path d="M19 11a18.5 18.5 0 0 1 26 0" stroke="#ffffff" stroke-width="3.6" stroke-linecap="round" opacity="0.95"/><path d="M24 16.5a11.5 11.5 0 0 1 16 0" stroke="#ffffff" stroke-width="3.6" stroke-linecap="round" opacity="0.95"/><circle cx="32" cy="21" r="2.4" fill="#ffffff"/>') },
-    { id: 'bolt', es: 'Rayo', en: 'Bolt', svg: plush('', '<path d="M37 1.5 25.5 16h6L28.5 26 41.5 11h-6.5z" fill="#fde047" stroke="#d97706" stroke-width="1.2" stroke-linejoin="round"/>') },
-    { id: 'gear', es: 'Engranaje', en: 'Gear', svg: plush('<g transform="translate(51 17)" fill="#f8fafc"><rect x="-2" y="-11" width="4" height="6" rx="1"/><rect x="-2" y="-11" width="4" height="6" rx="1" transform="rotate(45)"/><rect x="-2" y="-11" width="4" height="6" rx="1" transform="rotate(90)"/><rect x="-2" y="-11" width="4" height="6" rx="1" transform="rotate(135)"/><rect x="-2" y="-11" width="4" height="6" rx="1" transform="rotate(180)"/><rect x="-2" y="-11" width="4" height="6" rx="1" transform="rotate(225)"/><rect x="-2" y="-11" width="4" height="6" rx="1" transform="rotate(270)"/><rect x="-2" y="-11" width="4" height="6" rx="1" transform="rotate(315)"/><circle r="7.5"/><circle r="3" fill="#475569"/></g>', '') },
-    { id: 'shield', es: 'Escudo', en: 'Shield', svg: plush('', '<path d="M50 39l8.5 3v6.5c0 5.2-3.6 8.4-8.5 10.5-4.9-2.1-8.5-5.3-8.5-10.5V42z" fill="#f8fafc" stroke="#065f46" stroke-width="1.4"/><path d="M46.3 48.8l2.6 2.6 4.8-5.2" stroke="#059669" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>') },
-    { id: 'rocket', es: 'Cohete', en: 'Rocket', svg: plush('<g transform="translate(9.5 11.5) rotate(-24)"><path d="M0-11c3.4 2.8 5 6.8 5 11l-1.5 6H-1.5L-3 0c0-4.2 1.6-8.2 3-11z" fill="#e2e8f0" transform="translate(1 0)"/><circle cx="1" cy="-3" r="2.3" fill="#38bdf8"/><path d="M-3 5l-4.5 5.5L-1 9z" fill="#991b1b"/><path d="M5 5l4.5 5.5L3 9z" fill="#991b1b" transform="translate(-1 0)"/><path d="M-1.8 9.5h5.6l-2.8 6z" fill="#fde047"/></g>', '') },
-    { id: 'game', es: 'Juegos', en: 'Games', svg: plush('', '<rect x="18" y="46" width="28" height="13" rx="6" fill="#312e81" stroke="#a5b4fc" stroke-width="1.2"/><path d="M23.5 52.5h6M26.5 49.5v6" stroke="#e0e7ff" stroke-width="2" stroke-linecap="round"/><circle cx="38" cy="50.8" r="1.9" fill="#f87171"/><circle cx="42.3" cy="54.2" r="1.9" fill="#4ade80"/>') },
-    { id: 'monitor', es: 'Monitor', en: 'Monitor', svg: plush('<rect x="8" y="12" width="48" height="37" rx="5" fill="#0f172a" stroke="#7dd3fc" stroke-width="2"/><circle cx="13.5" cy="17" r="1.3" fill="#f87171"/><circle cx="18.5" cy="17" r="1.3" fill="#fbbf24"/><circle cx="23.5" cy="17" r="1.3" fill="#4ade80"/><path d="M27 54h10l1.6 4.5H25.4z" fill="#0f172a"/>', '') },
-    { id: 'server', es: 'Servidor', en: 'Server', svg: plush('<rect x="45" y="16" width="14" height="14" rx="2.5" fill="#0b1220" stroke="#94a3b8" stroke-width="1.3"/><rect x="45" y="33" width="14" height="14" rx="2.5" fill="#0b1220" stroke="#94a3b8" stroke-width="1.3"/><circle cx="49" cy="23" r="1.5" fill="#4ade80"/><circle cx="49" cy="40" r="1.5" fill="#4ade80"/><path d="M53 23h3.5M53 40h3.5" stroke="#64748b" stroke-width="1.4" stroke-linecap="round"/>', '') },
-    { id: 'trophy', es: 'Trofeo', en: 'Trophy', svg: plush('', '<path d="M23.5 5h17v5.5a8.5 8 0 0 1-17 0z" fill="#fbbf24" stroke="#92400e" stroke-width="1.4"/><path d="M23.5 7.5c-3.8-.6-5.8.8-5.8 3 0 2.4 2.4 4 6 4.2M40.5 7.5c3.8-.6 5.8.8 5.8 3 0 2.4-2.4 4-6 4.2" stroke="#92400e" stroke-width="1.6" fill="none"/><rect x="30" y="17.8" width="4" height="3.4" fill="#d97706"/><rect x="25.5" y="21.2" width="13" height="2.8" rx="1.2" fill="#92400e"/>') },
-    { id: 'book', es: 'Libro', en: 'Book', svg: plush('', '<path d="M32 47.5c-5-3.4-12-3.9-17-2.4v11.2c5-1.5 12-1 17 2.4 5-3.4 12-3.9 17-2.4V45.1c-5-1.5-12-1-17 2.4z" fill="#f8fafc" stroke="#1e3a8a" stroke-width="1.6" stroke-linejoin="round"/><path d="M32 47.5v11.2" stroke="#cbd5e1" stroke-width="1.4"/>') },
-    { id: 'music', es: 'Música', en: 'Music', svg: plush('', '<rect x="45" y="5" width="2.8" height="15.5" fill="#ffffff"/><path d="M47.8 5c4.2 1 6.4 3.6 7 7.2-2.2-2.6-4.4-3.8-7-4.4z" fill="#ffffff"/><ellipse cx="41.6" cy="20.8" rx="4.4" ry="3.2" transform="rotate(-16 41.6 20.8)" fill="#ffffff"/>') },
-    { id: 'headphones', es: 'Audífonos', en: 'Headphones', svg: plush('<path d="M13.5 35a18.5 17.5 0 0 1 37 0" stroke="#1e293b" stroke-width="4.6" stroke-linecap="round"/>', '<rect x="8.5" y="31" width="7.5" height="13.5" rx="3.6" fill="#1e293b"/><rect x="48" y="31" width="7.5" height="13.5" rx="3.6" fill="#1e293b"/><rect x="11" y="35" width="2.4" height="5.5" rx="1.2" fill="#38bdf8"/><rect x="50.6" y="35" width="2.4" height="5.5" rx="1.2" fill="#38bdf8"/>') }
+    { id: 'chip', es: 'Programador', en: 'Developer', svg: person({ skin: '#f1c27d', shade: '#d9a55f', hairColor: '#2f2a26', hairTop: hairShort, shirt: '#1d4ed8', collar: '#bfdbfe', extra: ACC_CODE }) },
+    { id: 'wifi', es: 'Redes', en: 'Networks', svg: person({ skin: '#8d5524', shade: '#74431c', hairColor: '#2b6cb0', hairTop: hairBun, shirt: '#ea580c', collar: '#ffedd5' }) },
+    { id: 'bolt', es: 'Electricista', en: 'Electrician', svg: person({ skin: '#ffdfc4', shade: '#eec39a', hairColor: '#e8b04b', hairTop: hairSpiky, shirt: '#374151', collar: '#9ca3af', extra: ACC_BOLT }) },
+    { id: 'gear', es: 'Mantenimiento', en: 'Maintenance', svg: person({ skin: '#c68642', shade: '#a96f33', hairColor: '#3a2a1a', hairTop: '<path d="M20.4 26.4a11.6 11.6 0 0 1 23.2 0z" fill="#0d9488"/><ellipse cx="32" cy="26.8" rx="14.5" ry="2.7" fill="#0b7c72"/>', shirt: '#115e59', collar: '#99f6e4' }) },
+    { id: 'shield', es: 'Seguridad', en: 'Security', svg: person({ skin: '#e0ac69', shade: '#c68e4e', hairColor: '#3b2a20', behind: hairLong, hairTop: hairShort, shirt: '#1f2937', collar: '#f1f5f9', extra: ACC_GLASSES }) },
+    { id: 'rocket', es: 'Innovación', en: 'Innovation', svg: person({ skin: '#ffdfc4', shade: '#eec39a', hairColor: '#402a1c', hairTop: hairCurly, shirt: '#e11d48', collar: '#fecdd3' }) },
+    { id: 'game', es: 'Gamer', en: 'Gamer', svg: person({ skin: '#f1c27d', shade: '#d9a55f', hairColor: '#8b5cf6', hairTop: hairSpiky, shirt: '#6d28d9', collar: '#ddd6fe', extra: ACC_HEADPHONES }) },
+    { id: 'monitor', es: 'Diseño', en: 'Design', svg: person({ skin: '#c68642', shade: '#a96f33', hairColor: '#5b3a1e', behind: hairLong, hairTop: hairShort, shirt: '#0e7490', collar: '#a5f3fc' }) },
+    { id: 'server', es: 'Sistemas', en: 'SysAdmin', svg: person({ skin: '#6b4423', shade: '#57371c', hairColor: '#17120d', hairTop: hairShort, beard: true, shirt: '#334155', collar: '#94a3b8' }) },
+    { id: 'trophy', es: 'Líder', en: 'Leader', svg: person({ skin: '#e0ac69', shade: '#c68e4e', hairColor: '#6b4a2b', hairTop: hairSwept, suit: true, shirt: '#26303b' }) },
+    { id: 'book', es: 'Docente', en: 'Teacher', svg: person({ skin: '#f1c27d', shade: '#d9a55f', hairColor: '#7c4a21', behind: hairPonytail, hairTop: hairShort, shirt: '#be185d', collar: '#fbcfe8' }) },
+    { id: 'music', es: 'Creador', en: 'Creator', svg: person({ skin: '#8d5524', shade: '#74431c', hairColor: '#7c3aed', behind: hairLong, hairTop: hairShort, shirt: '#db2777', collar: '#fbcfe8' }) },
+    { id: 'headphones', es: 'Soporte', en: 'Support', svg: person({ skin: '#e0ac69', shade: '#c68e4e', hairColor: '#241a12', hairTop: hairCurly, shirt: '#2563eb', collar: '#bfdbfe', extra: ACC_HEADSET }) }
   ];
   var AVATAR_IMG_RE = /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/;
   var AVATAR_GOOGLE_RE = /^https:\/\/lh3\.googleusercontent\.com\/[A-Za-z0-9\-_=/]+$/;
