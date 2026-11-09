@@ -41,6 +41,14 @@
   box-shadow: 0 4px 12px rgba(15, 23, 42, .18);
 }
 .pwa-install-btn .mono-icon svg { width: 18px; height: 18px; }
+/* El símbolo de descargar va en blanco: .mono-icon le pone su propio
+   color gris (var(--text-secondary) en oscuro, #475569 en claro) y
+   tapaba el blanco del botón, así que el icono se veía gris aunque el
+   texto sí era blanco. Esto lo fuerza a blanco en los dos temas. */
+.pwa-install-btn .mono-icon,
+[data-theme="light"] .pwa-install-btn .mono-icon {
+  color: #fff;
+}
 .pwa-install-label { line-height: 1; }
 
 /* En pantallas pequeñas solo el icono, para que quepa el encabezado */
