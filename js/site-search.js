@@ -2,8 +2,7 @@
    BUSCADOR DE NVISION
    Índice curado de los temas del sitio: al escribir, muestra
    resultados en vivo y cada uno lleva directo a su sección.
-   Vive en el encabezado de TODAS las páginas (botón lupa) y
-   también en la página principal, debajo de los botones.
+   Vive en el encabezado de TODAS las páginas (botón lupa).
    Bilingüe ES/EN: busca en los dos idiomas a la vez.
    ========================================================= */
 (function () {
@@ -118,8 +117,8 @@
   }
 
   // Conecta un bloque de búsqueda (formulario + campo + resultados + limpiar).
-  // Se usa para el buscador del inicio y para el del encabezado: los dos
-  // comparten el mismo índice y los mismos resultados.
+  // Se usa para el buscador desplegable del encabezado: comparte el mismo
+  // índice y los mismos resultados que tenía el del inicio.
   var wiredInputs = [];
 
   function wireSearch(form, input, resultsBox, clearBtn) {
@@ -221,13 +220,6 @@
   }
 
   function init() {
-    // Buscador del inicio (debajo de los botones del hero)
-    wireSearch(
-      document.getElementById('site-search-form'),
-      document.getElementById('site-search-input'),
-      document.getElementById('site-search-results'),
-      document.getElementById('site-search-clear')
-    );
     // Buscador desplegable del encabezado (botón lupa)
     wireSearch(
       document.getElementById('header-search-form'),
