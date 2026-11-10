@@ -704,6 +704,8 @@ const translations = {
     insp_stat_title: "Métricas de Conectividad",
     lang_select_title: "Seleccionar Idioma",
     footer_text: "NVISION",
+    nav_home: "Inicio",
+    footer_contact: "¿Dudas o sugerencias? Conoce el proyecto en su <a href=\"https://github.com/camilomirr/engl\" target=\"_blank\" rel=\"noopener\">repositorio de GitHub</a> o gestiona tu cuenta en <a href=\"cuenta.html\">Mi cuenta</a>.",
     explorer_title: "Explorador 3D del computador",
     explorer_desc: "Mueve el cursor sobre la escena para recorrer el interior de una torre y reconocer cómo se conectan sus piezas.",
     explorer_status: "ESCENA INTERACTIVA",
@@ -1841,6 +1843,8 @@ const translations = {
     insp_stat_title: "Connectivity Metrics",
     lang_select_title: "Select Language",
     footer_text: "NVISION",
+    nav_home: "Home",
+    footer_contact: "Questions or suggestions? Check out the project in its <a href=\"https://github.com/camilomirr/engl\" target=\"_blank\" rel=\"noopener\">GitHub repository</a> or manage your account in <a href=\"cuenta.html\">My account</a>.",
     explorer_title: "3D computer explorer",
     explorer_desc: "Move across the scene to travel through a tower and see how its internal parts connect.",
     explorer_status: "INTERACTIVE SCENE",
@@ -2517,6 +2521,10 @@ function applyLanguage(lang) {
   });
 
   document.documentElement.lang = lang;
+
+  // Avisar a los widgets que se dibujan con JS (pregunta del día, reto
+  // de la semana) para que se vuelvan a dibujar en el idioma nuevo.
+  window.dispatchEvent(new CustomEvent('nvision-lang-change', { detail: { lang: lang } }));
 }
 
 function closeLangDropdown() {

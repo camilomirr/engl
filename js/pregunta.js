@@ -2,11 +2,16 @@
 // Una pregunta por día (determinista por fecha) del banco de abajo.
 // El progreso vive en nvision_racha_v1 y se sincroniza con la cuenta.
 (function () {
-  var lang = (localStorage.getItem('user_lang') || 'es').toLowerCase().indexOf('en') === 0 ? 'en' : 'es';
-  var T = {
+  // El idioma se lee en cada dibujo: al cambiarlo desde el selector, el
+  // evento 'nvision-lang-change' vuelve a dibujar la pregunta en el
+  // idioma nuevo (antes quedaba en español hasta recargar la página).
+  function langNow() { return (localStorage.getItem('user_lang') || 'es').toLowerCase().indexOf('en') === 0 ? 'en' : 'es'; }
+  function texts(lang) {
+    return {
     es: { title: 'Pregunta del día', streak: 'días de racha', total: 'respondidas en total', correct: '¡Correcto!', wrong: 'Casi… la respuesta era:', done: 'Ya respondiste la de hoy. Vuelve mañana para mantener tu racha.', come: 'Vuelve mañana por otra pregunta.' },
     en: { title: 'Question of the day', streak: 'day streak', total: 'answered in total', correct: 'Correct!', wrong: 'Close… the answer was:', done: 'You already answered today. Come back tomorrow to keep your streak.', come: 'Come back tomorrow for another question.' }
-  }[lang];
+    }[lang];
+  }
 
   function Q(topic, qEs, qEn, oEs, oEn, a, wEs, wEn) { return { t: topic, q: { es: qEs, en: qEn }, o: { es: oEs, en: oEn }, a: a, why: { es: wEs, en: wEn } }; }
   var POOL = [
@@ -61,13 +66,19 @@
 
   var box = document.getElementById('pregunta-dia');
   if (!box) return;
-  var now = new Date();
-  var start = new Date(now.getFullYear(), 0, 0);
-  var doy = Math.floor((now - start) / 86400000);
-  var q = POOL[doy % POOL.length];
-  var st = load();
-  var today = dayStr(now);
-  var answered = !!st.days[today];
+
+  function render() {
+    var lang = langNow();
+    var T = texts(lang);
+    // Quitar lo dibujado en el idioma anterior, sin tocar el kicker del HTML.
+    box.querySelectorAll('.pd-head, h3, .pd-opts, .pd-msg').forEach(function (n) { n.remove(); });
+    var now = new Date();
+    var start = new Date(now.getFullYear(), 0, 0);
+    var doy = Math.floor((now - start) / 86400000);
+    var q = POOL[doy % POOL.length];
+    var st = load();
+    var today = dayStr(now);
+    var answered = !!st.days[today];
 
   var head = document.createElement('div');
   head.className = 'pd-head';
@@ -108,4 +119,9 @@
     note.textContent = T.done + ' ' + q.why[lang];
     box.appendChild(note);
   }
+  }
+
+  render();
+  // Al cambiar el idioma desde el selector, volver a dibujar en el idioma nuevo.
+  window.addEventListener('nvision-lang-change', render);
 })();

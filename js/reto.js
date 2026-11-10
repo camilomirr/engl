@@ -6,11 +6,16 @@
   'use strict';
   var box = document.getElementById('reto-semana');
   if (!box) return;
-  var lang = (localStorage.getItem('user_lang') || 'es').toLowerCase().indexOf('en') === 0 ? 'en' : 'es';
-  var T = {
+  // El idioma se lee en cada dibujo: al cambiarlo desde el selector, el
+  // evento 'nvision-lang-change' vuelve a dibujar el reto en el idioma
+  // nuevo (antes quedaba en español hasta recargar la página).
+  function langNow() { return (localStorage.getItem('user_lang') || 'es').toLowerCase().indexOf('en') === 0 ? 'en' : 'es'; }
+  function texts(lang) {
+    return {
     es: { kicker: 'Reto de la semana', done: '¡Reto completado!', todo: 'En curso', days: 'días para terminar la semana', lastDay: '¡Último día de la semana!', go: 'Ir a cumplirlo', logro: 'Desbloqueaste el logro «Reto cumplido».' },
     en: { kicker: 'Weekly challenge', done: 'Challenge completed!', todo: 'In progress', days: 'days left this week', lastDay: 'Last day of the week!', go: 'Go do it', logro: 'You unlocked the "Challenge cleared" achievement.' }
-  }[lang];
+    }[lang];
+  }
 
   function read(k) { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) { return null; } }
   function weekKey(d) {
@@ -58,9 +63,12 @@
       ok: function () { var n = read('nvision_apuntes_v1') || {}; var c = 0; if (n.topics) Object.keys(n.topics).forEach(function (k) { if (String(n.topics[k] || '').trim()) c++; }); return c >= 3; } }
   ];
 
-  var now = new Date();
-  var wk = weekKey(now);
-  var reto = POOL[wk.num % POOL.length];
+  function render() {
+    var lang = langNow();
+    var T = texts(lang);
+    var now = new Date();
+    var wk = weekKey(now);
+    var reto = POOL[wk.num % POOL.length];
   var done = reto.ok();
   var store = read('nvision_reto_v1') || { done: {} };
   if (!store.done) store.done = {};
@@ -78,4 +86,9 @@
   else h += '<a class="reto-link" href="' + reto.href + '">' + T.go + '</a>';
   h += '<p class="reto-meta">' + (left === 0 ? T.lastDay : (left + 1) + ' ' + T.days) + '</p>';
   box.innerHTML = h;
+  }
+
+  render();
+  // Al cambiar el idioma desde el selector, volver a dibujar en el idioma nuevo.
+  window.addEventListener('nvision-lang-change', render);
 })();
