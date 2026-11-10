@@ -4076,12 +4076,17 @@ function setupLocalAssistant() {
   }
   function renderChips() {
     chipsBox.replaceChildren();
-    SUGGEST.forEach((pair) => {
+    // Solo 5 sugerencias: más tapaban el chat. Al tocar una se envía el
+    // mensaje y las sugerencias desaparecen (vuelven al reabrir el panel).
+    SUGGEST.slice(0, 5).forEach((pair) => {
       const b = document.createElement('button');
       b.type = 'button';
       b.className = 'la-chip';
       b.textContent = pair[L()];
-      b.addEventListener('click', () => ask(pair[L()]));
+      b.addEventListener('click', () => {
+        chipsBox.replaceChildren();
+        ask(pair[L()]);
+      });
       chipsBox.appendChild(b);
     });
   }
@@ -5283,21 +5288,39 @@ function setupNetworkSimulator() {
     return url + '=s192-c';
   }
   window.NVISION_googleAvatarHi = googleAvatarHi;
+  // Contador para que cada copia del dibujo lleve sus propios id de
+  // degradados y filtros (ver avatarChip).
+  var avatarChipSeq = 0;
   function avatarChip(id, email, img) {
     // La foto se muestra cuando hay una válida y el usuario no eligió
-    // un personaje SVG: con 'custom' es su foto subida; con 'initial'
-    // (o sin avatar) es la foto de su cuenta de Google, para que los
-    // demás la vean en el ranking y en el perfil público. Si eligió
-    // un personaje SVG, ese manda y la foto no se muestra.
-    if (validAvatarImg(img) && (!id || id === 'custom' || id === 'initial')) {
+    // un personaje SVG: con 'custom' es su foto subida; con 'google'
+    // es la foto de su cuenta de Google; con 'initial' (o sin avatar)
+    // es la foto de Google guardada, para que los demás la vean en el
+    // ranking y en el perfil público. Si eligió un personaje SVG, ese
+    // manda y la foto no se muestra.
+    if (validAvatarImg(img) && (!id || id === 'custom' || id === 'initial' || id === 'google')) {
       // data-email: si la foto no carga, el respaldo (ver abajo) vuelve
       // a la inicial de este correo en vez de dejar el icono roto.
       var emailAttr = String(email || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/'/g, '&#39;');
       return '<span class="nv-avatar nv-avatar--img" data-email="' + emailAttr + '"><img src="' + img + '" alt=""></span>';
     }
-    if (id && id !== 'initial') {
+    if (id && id !== 'initial' && id !== 'google') {
       for (var i = 0; i < AVATARS.length; i++) {
-        if (AVATARS[i].id === id) return '<span class="nv-avatar nv-av--' + id + '">' + AVATARS[i].svg + '</span>';
+        if (AVATARS[i].id === id) {
+          // Id únicos por copia: antes todas las copias del mismo
+          // dibujo compartían los id de sus degradados y filtros
+          // (nv-sk-chip, nv-hr-chip...) y el navegador resolvía
+          // url(#...) a la PRIMERA copia del documento. En Mi cuenta
+          // esa primera copia vive en el formulario de registro, que
+          // está oculto con la sesión iniciada, y en Chrome los
+          // degradados de un subárbol oculto no pintan: por eso en la
+          // rejilla solo se veía la bola de color y el dibujo solo
+          // aparecía al elegirlo (vista previa). Con un sufijo único
+          // por copia, cada chip pinta sus propios degradados.
+          avatarChipSeq++;
+          var once = AVATARS[i].svg.replace(/nv-[a-z]+-[a-z0-9]+/g, function (m) { return m + '-c' + avatarChipSeq; });
+          return '<span class="nv-avatar nv-av--' + id + '">' + once + '</span>';
+        }
       }
     }
     var letter = (email || 'N').trim().charAt(0).toUpperCase() || 'N';
@@ -5328,7 +5351,7 @@ function setupNetworkSimulator() {
     var s = null;
     try { s = JSON.parse(localStorage.getItem('nvision_session_v1') || 'null'); } catch (e) {}
     if (!s) return;
-    var isSvgAvatar = s.avatar && s.avatar !== 'custom' && s.avatar !== 'initial';
+    var isSvgAvatar = s.avatar && s.avatar !== 'custom' && s.avatar !== 'initial' && s.avatar !== 'google';
     var img = isSvgAvatar ? s.avatarImg : (s.avatarImg || cachedGoogleAvatar(s.googleAvatar) || s.googleAvatar);
     if (!isSvgAvatar && s.googleAvatar) cacheGoogleAvatar(s.googleAvatar);
     var id = isSvgAvatar ? s.avatar : (img ? 'custom' : 'initial');
