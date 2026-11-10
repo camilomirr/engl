@@ -55,6 +55,14 @@
 .cuenta-pass-toggle { position: absolute; right: 0.45rem; top: 50%; transform: translateY(-50%); display: flex; align-items: center; justify-content: center; padding: 0.35rem; border: 0; background: none; color: var(--text-muted); cursor: pointer; border-radius: var(--radius-sm); }
 .cuenta-pass-toggle:hover { color: var(--text-primary); }
 .cuenta-pass-toggle svg { width: 20px; height: 20px; }
+/* El navegador dibuja su propio ojo en los campos de contraseña (Edge y
+   Chrome/Brave en Android): junto al botón propio el ojo se veía doble.
+   Se oculta el nativo y queda solo el nuestro, uno solo y normal. */
+.cuenta-pass-wrap input[type="password"]::-ms-reveal,
+.cuenta-pass-wrap input[type="password"]::-ms-clear { display: none; }
+.cuenta-pass-wrap input[type="password"]::-webkit-textfield-decoration-container { display: none; }
+/* Que nunca se vean los dos SVG del botón a la vez: el oculto manda. */
+.cuenta-pass-toggle svg[hidden] { display: none; }
 
 /* ---------- Botones (mismo degradado del logo que el resto del sitio) ---------- */
 .cuenta-btn {
