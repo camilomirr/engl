@@ -11,7 +11,7 @@
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <title data-i18n="page_title_cuenta">NVISION - Mi cuenta</title>
   <!-- Hojas de estilo modular -->
-  <link rel="stylesheet" href="css/styles.css?v=110">
+  <link rel="stylesheet" href="css/styles.css?v=111">
   <!-- SEO, iconos y vista previa al compartir (Open Graph / Twitter) -->
   <meta name="description" content="Mi cuenta NVISION: crea tu cuenta para guardar tu progreso de aprendizaje en la nube y recuperarlo en cualquier equipo.">
   <meta name="theme-color" content="#0a0e17">
@@ -233,11 +233,13 @@
             </button>
           </div>
         </div>
+        <div class="cuenta-forgot-row" id="cuenta-forgot-row">
+          <button class="cuenta-switch" id="cuenta-forgot" type="button" data-i18n="cuenta_forgot">¿Olvidaste tu contraseña?</button>
+        </div>
         <div class="cuenta-field" id="cuenta-pass2-field" hidden>
           <label for="cuenta-pass2" data-i18n="cuenta_pass2">Repite la contraseña</label>
           <input type="password" id="cuenta-pass2" minlength="6" autocomplete="new-password">
         </div>
-        <button class="cuenta-switch" id="cuenta-forgot" type="button" data-i18n="cuenta_forgot">¿Olvidaste tu contraseña?</button>
         <div id="cuenta-name-fields" hidden>
           <div class="cuenta-field">
             <label for="cuenta-firstname" data-i18n="cuenta_firstname">Nombre</label>
@@ -356,7 +358,7 @@
   <script src="js/logros.js?v=4"></script>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script src="js/validation.js?v=1"></script>
-  <script src="js/cuenta.js?v=95"></script>
+  <script src="js/cuenta.js?v=96"></script>
   <script src="js/progreso.js?v=1"></script>
 </body>
 </html>

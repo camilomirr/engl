@@ -353,7 +353,7 @@
     $('cuenta-pass').setAttribute('autocomplete', mode === 'login' ? 'current-password' : 'new-password');
     $('cuenta-avatar-field').hidden = mode !== 'register';
     $('cuenta-name-fields').hidden = mode !== 'register';
-    if ($('cuenta-forgot')) $('cuenta-forgot').hidden = mode !== 'login';
+    if ($('cuenta-forgot-row')) $('cuenta-forgot-row').hidden = mode !== 'login';
     if ($('cuenta-pass2-field')) $('cuenta-pass2-field').hidden = mode !== 'register';
   }
   function showPanel(session) {

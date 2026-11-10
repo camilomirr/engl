@@ -90,6 +90,12 @@
 .cuenta-btn--ghost { background: transparent; color: var(--text-secondary); width: auto; padding: 0.6rem 1.1rem; border-color: var(--border-subtle); box-shadow: none; }
 .cuenta-btn--ghost:hover { border-color: var(--accent-cyan); color: var(--text-primary); background: transparent; transform: translateY(-1px); box-shadow: none; }
 
+/* «¿Olvidaste tu contraseña?» va pegado al campo de contraseña, a la
+   derecha, como en casi todos los inicios de sesión: antes quedaba a la
+   izquierda, despegado de la contraseña y casi pegado al botón Entrar. */
+.cuenta-forgot-row { display: flex; justify-content: flex-end; margin: -0.35rem 0 1rem; }
+.cuenta-forgot-row .cuenta-switch { margin-top: 0; }
+
 .cuenta-switch {
   margin-top: 1rem;
   padding: 0;
