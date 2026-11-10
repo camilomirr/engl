@@ -3,7 +3,7 @@
    Foro El Taller, Modo Cooperativo y Presupuestos.
    ========================================================= */
 
-/* ---------- Tutor NVI-Bot ---------- */
+/* ---------- Tutor NVI-Bot (estructura v2: pestañas) ---------- */
 .tutor-wrap { position: fixed; left: 16px; bottom: 16px; z-index: 1200; }
 .tutor-fab {
   display: inline-flex; align-items: center; gap: 8px;
@@ -14,19 +14,49 @@
 .tutor-fab:hover { filter: brightness(1.1); }
 .tutor-fab-dot { width: 9px; height: 9px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 0 3px rgba(74, 222, 128, .35); }
 .tutor-panel {
-  position: absolute; left: 0; bottom: 56px; width: min(360px, calc(100vw - 32px));
+  position: absolute; left: 0; bottom: 56px; width: min(370px, calc(100vw - 32px));
   background: var(--card-bg, #0f172a); color: var(--text, #e2e8f0);
   border: 1px solid rgba(148, 163, 184, .35); border-radius: 16px;
-  box-shadow: 0 18px 50px rgba(2, 6, 23, .5); padding: 14px; 
+  box-shadow: 0 18px 50px rgba(2, 6, 23, .5); padding: 14px;
 }
-.tutor-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.tutor-head { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+.tutor-logo {
+  background: linear-gradient(135deg, #2563eb, #7c3aed); color: #fff; font-weight: 900;
+  font-size: .78rem; letter-spacing: .06em; padding: 7px 8px; border-radius: 10px;
+}
+.tutor-head-t { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.tutor-head-t small { opacity: .8; font-size: .78rem; }
 .tutor-close { background: none; border: 0; color: inherit; font-size: 1.3rem; cursor: pointer; line-height: 1; }
-.tutor-ctx { margin: 0 0 8px; font-size: .85rem; opacity: .85; }
-.tutor-log { max-height: 240px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+.tutor-ctx { margin: 2px 0 10px; font-size: .83rem; opacity: .85; }
+.tutor-tabs { display: flex; gap: 6px; margin-bottom: 12px; }
+.tutor-tab {
+  flex: 1; padding: 8px 4px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: .85rem;
+  background: transparent; color: inherit; border: 1px solid rgba(148, 163, 184, .4);
+}
+.tutor-tab.on { background: var(--accent, #2563eb); color: #fff; border-color: transparent; }
+.tutor-label { margin: 0 0 6px; font-size: .8rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; opacity: .75; }
+.tutor-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.tutor-chip {
+  padding: 5px 11px; border-radius: 999px; cursor: pointer; font-size: .83rem; font-weight: 600;
+  background: rgba(148, 163, 184, .14); color: inherit; border: 1px solid rgba(148, 163, 184, .35);
+}
+.tutor-chip.on { background: var(--accent, #2563eb); color: #fff; border-color: transparent; }
+.tutor-dots { display: flex; gap: 6px; margin-bottom: 8px; }
+.tutor-dot { width: 26px; height: 8px; border-radius: 999px; background: rgba(148, 163, 184, .3); }
+.tutor-dot.on { background: #f59e0b; }
+.tutor-hintbox {
+  background: rgba(37, 99, 235, .13); border: 1px solid rgba(37, 99, 235, .3);
+  border-radius: 10px; padding: 10px 12px; font-size: .9rem; line-height: 1.5; margin-bottom: 10px;
+}
+.tutor-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.tutor-gloss-q {
+  width: 100%; padding: 9px 10px; border-radius: 10px; margin-bottom: 10px;
+  border: 1px solid rgba(148, 163, 184, .4); background: transparent; color: inherit;
+}
+.tutor-log { max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
 .tutor-msg { margin: 0; padding: 8px 10px; border-radius: 10px; font-size: .9rem; line-height: 1.45; }
 .tutor-msg.bot { background: rgba(37, 99, 235, .16); }
 .tutor-msg.mine { background: rgba(148, 163, 184, .18); align-self: flex-end; }
-.tutor-actions { margin-bottom: 10px; }
 .tutor-form { display: flex; gap: 8px; }
 .tutor-form input {
   flex: 1; min-width: 0; padding: 9px 10px; border-radius: 10px;
@@ -89,3 +119,53 @@
 .presu-up { color: #ef4444; font-weight: 700; }
 .presu-down { color: #22c55e; font-weight: 700; }
 .presu-total { font-size: 1.15rem; font-weight: 800; }
+
+/* ---------- Pantalla Azul v2: fases, ficha y resolución ---------- */
+.bsod-steps {
+  display: flex; flex-wrap: wrap; gap: 8px; list-style: none; margin: 0 0 18px; padding: 0;
+}
+.bsod-steps li {
+  padding: 6px 14px; border-radius: 999px; font-weight: 700; font-size: .88rem;
+  border: 1px solid rgba(148, 163, 184, .4); opacity: .55;
+}
+.bsod-steps li.on { opacity: 1; background: var(--accent, #2563eb); color: #fff; border-color: transparent; }
+.bsod-steps li.done { opacity: 1; border-color: #22c55e; color: #22c55e; }
+.bsod-brief {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; margin: 14px 0;
+}
+.bsod-brief p {
+  margin: 0; padding: 10px 12px; border-radius: 10px; font-size: .92rem;
+  background: rgba(148, 163, 184, .1); border: 1px solid rgba(148, 163, 184, .25);
+}
+.bsod-cat { margin: 16px 0 4px; font-size: .95rem; }
+.bsod-result-card {
+  border: 1px solid rgba(34, 197, 94, .55); background: rgba(34, 197, 94, .08);
+  border-radius: 14px; padding: 18px;
+}
+.bsod-result-card ol { margin: 6px 0 14px 20px; }
+.bsod-result-card li { margin-bottom: 6px; }
+
+/* ---------- Foro: botón flotante con loguito ---------- */
+.foro-fab {
+  position: fixed; left: 16px; bottom: 16px; z-index: 150;
+  display: inline-flex; align-items: center; gap: 9px;
+  padding: 9px 16px 9px 10px; border-radius: 999px; text-decoration: none;
+  background: var(--card-bg, #0f172a); color: var(--text, #e2e8f0);
+  border: 1px solid rgba(148, 163, 184, .4);
+  box-shadow: 0 10px 28px rgba(2, 6, 23, .4);
+  font-weight: 800; font-size: .92rem;
+  transition: transform .18s ease;
+}
+.foro-fab:hover { transform: translateY(-3px); }
+.foro-fab .foro-fab-logo {
+  width: 30px; height: 30px; border-radius: 50%; flex: none;
+  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.foro-fab .foro-fab-logo svg { width: 19px; height: 19px; }
+/* En las páginas con Tutor (también abajo a la izquierda), el foro se apila encima. */
+body:has(.tutor-wrap) .foro-fab { bottom: 74px; }
+@media (max-width: 640px) {
+  .foro-fab { left: 10px; bottom: 10px; }
+  body:has(.tutor-wrap) .foro-fab { bottom: 64px; }
+}

@@ -136,3 +136,63 @@ html{overflow-x:hidden}
   #top10 h2 { font-size: 19px; }
   #save-score { padding: 0 2px; }
 }
+
+/* ===== Modo cooperativo «Salven la red» — diseño v2 (2026-11-10) ===== */
+#coopScreen { text-align: left; }
+#coopScreen h2 { text-align: center; }
+.coop-card {
+  background: linear-gradient(160deg, rgba(37,99,235,.12), rgba(124,58,237,.08));
+  border: 1px solid rgba(96,165,250,.45);
+  border-radius: 18px; padding: 18px; margin: 14px 0;
+  box-shadow: 0 12px 32px rgba(2,6,23,.25);
+}
+.coop-card input {
+  width: 100%; padding: 10px 12px; margin: 6px 0 12px; border-radius: 10px;
+  border: 1px solid rgba(148,163,184,.5); background: rgba(2,6,23,.25); color: inherit; font: inherit;
+}
+.coop-code {
+  font-family: Consolas, monospace; font-size: 1.7rem; font-weight: 900; letter-spacing: .35em;
+  background: rgba(2,6,23,.35); border: 1px dashed rgba(96,165,250,.7); color: #93c5fd;
+  padding: 4px 10px 4px 16px; border-radius: 10px; display: inline-block;
+}
+.coop-phase {
+  display: block; margin-top: 8px; padding: 8px 12px; border-radius: 10px; font-weight: 600;
+  background: rgba(245,158,11,.14); border: 1px solid rgba(245,158,11,.45);
+}
+.coop-phase.playing { background: rgba(239,68,68,.13); border-color: rgba(239,68,68,.5); }
+.coop-phase.won { background: rgba(34,197,94,.15); border-color: rgba(34,197,94,.55); }
+.coop-phase.lost { background: rgba(239,68,68,.18); border-color: rgba(239,68,68,.6); }
+.coop-bars { display: grid; gap: 14px; margin: 16px 0; }
+.coop-bar-row label { display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 5px; }
+.coop-track {
+  height: 18px; border-radius: 999px; background: rgba(2,6,23,.45);
+  border: 1px solid rgba(148,163,184,.35); overflow: hidden;
+}
+.coop-fill { height: 100%; width: 0; border-radius: 999px; transition: width .6s ease; }
+.coop-fill.defense {
+  background: repeating-linear-gradient(45deg, #22c55e 0 14px, #16a34a 14px 28px);
+  background-size: 200% 100%; animation: coopSlide 1.6s linear infinite;
+}
+.coop-fill.attack {
+  background: repeating-linear-gradient(45deg, #ef4444 0 14px, #b91c1c 14px 28px);
+  background-size: 200% 100%; animation: coopSlide 1s linear infinite;
+}
+@keyframes coopSlide { from { background-position: 0 0; } to { background-position: 40px 0; } }
+.coop-members { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+.coop-member {
+  min-width: 130px; flex: 1 1 130px; max-width: 220px;
+  background: rgba(2,6,23,.3); border: 1px solid rgba(148,163,184,.35);
+  border-radius: 12px; padding: 8px 10px; font-size: .88rem;
+}
+.coop-member .cm-name { font-weight: 800; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.coop-member .cm-bar { height: 6px; border-radius: 999px; background: rgba(148,163,184,.3); margin-top: 6px; overflow: hidden; }
+.coop-member .cm-bar i { display: block; height: 100%; background: #38bdf8; border-radius: 999px; transition: width .5s ease; }
+.coop-member.me { border-color: #38bdf8; box-shadow: 0 0 0 1px #38bdf8 inset; }
+#coopPlay {
+  background: rgba(2,6,23,.3); border: 1px solid rgba(148,163,184,.35);
+  border-radius: 14px; padding: 16px; margin-top: 14px;
+}
+#coopQ { margin-top: 0; }
+#coopResult { font-weight: 800; font-size: 1.05rem; }
+#coopResult.won { color: #4ade80; }
+#coopResult.lost { color: #f87171; }

@@ -11,9 +11,9 @@
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <title data-i18n="page_title_bsod">NVISION - Pantalla Azul: el detective</title>
   <!-- Hojas de estilo modular -->
-  <link rel="stylesheet" href="css/styles.css?v=114">
+  <link rel="stylesheet" href="css/styles.css?v=115">
   <!-- SEO, iconos y vista previa al compartir (Open Graph / Twitter) -->
-  <meta name="description" content="Minijuego de diagnóstico de NVISION: una pantalla azul, herramientas del laboratorio y tu criterio para encontrar si la falla es la RAM, el disco, un driver o el calor.">
+  <meta name="description" content="Minijuego de diagnóstico de NVISION en 4 fases: síntomas, investigación con herramientas del laboratorio, diagnóstico y reparación. Encuentra si la falla es la RAM, el disco, un driver o el calor.">
   <meta name="theme-color" content="#0a0e17">
   <link rel="canonical" href="https://nvision.social/pantalla-azul.html">
   <link rel="icon" href="/favicon.ico?v=4" sizes="any">
@@ -28,14 +28,14 @@
   <meta property="og:site_name" content="NVISION">
   <meta property="og:locale" content="es_CO">
   <meta property="og:title" content="NVISION - Pantalla Azul: el detective">
-  <meta property="og:description" content="Minijuego de diagnóstico de NVISION: una pantalla azul, herramientas del laboratorio y tu criterio para encontrar si la falla es la RAM, el disco, un driver o el calor.">
+  <meta property="og:description" content="Minijuego de diagnóstico de NVISION en 4 fases: síntomas, investigación con herramientas del laboratorio, diagnóstico y reparación. Encuentra si la falla es la RAM, el disco, un driver o el calor.">
   <meta property="og:url" content="https://nvision.social/pantalla-azul.html">
   <meta property="og:image" content="https://nvision.social/assets/og-image.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="NVISION - Pantalla Azul: el detective">
-  <meta name="twitter:description" content="Minijuego de diagnóstico de NVISION: una pantalla azul, herramientas del laboratorio y tu criterio para encontrar si la falla es la RAM, el disco, un driver o el calor.">
+  <meta name="twitter:description" content="Minijuego de diagnóstico de NVISION en 4 fases: síntomas, investigación con herramientas del laboratorio, diagnóstico y reparación. Encuentra si la falla es la RAM, el disco, un driver o el calor.">
   <meta name="twitter:image" content="https://nvision.social/assets/og-image.jpg">
 </head>
 <body>
@@ -207,7 +207,7 @@
   <section class="topo-hero">
     <p class="ruta-kicker" data-i18n="bsod_kicker">Minijuego de diagnóstico</p>
     <h1 data-i18n="bsod_title">Pantalla Azul: el detective</h1>
-    <p class="topo-sub" data-i18n="bsod_lead">Un equipo falló y muestra una pantalla azul. Usa las herramientas del laboratorio, interpreta los resultados y diagnostica la causa real: RAM, disco, un driver… o algo más. Cada caso resuelto suma para tus logros.</p>
+    <p class="topo-sub" data-i18n="bsod_lead">Un equipo falló y muestra una pantalla azul. Trabaja como un técnico de verdad, en 4 fases: lee los síntomas, investiga con las herramientas del laboratorio, diagnostica la causa y aplica la reparación. Cada caso resuelto suma para tus logros.</p>
   </section>
 
   <section class="mejora-wrap">
@@ -218,15 +218,46 @@
     </div>
 
     <div class="mejora-card" id="bsod-game" hidden>
-      <div class="bsod-screen" id="bsod-screen"></div>
-      <h3 data-i18n="bsod_tools">Herramientas del laboratorio</h3>
-      <p data-i18n="bsod_tools_hint">Cada herramienta que uses deja un resultado en el registro. Diagnostica con pocas herramientas para sacar mejor puntaje.</p>
-      <div class="bsod-tools" id="bsod-tools"></div>
-      <div class="bsod-log" id="bsod-log" aria-live="polite"></div>
-      <h3 data-i18n="bsod_diag">Tu diagnóstico</h3>
-      <div class="bsod-tools" id="bsod-options"></div>
-      <p class="mejora-msg" id="bsod-result" aria-live="polite"></p>
-      <button type="button" class="tool-btn tool-btn-ghost" id="bsod-back" data-i18n="bsod_back">Volver a los casos</button>
+      <ol class="bsod-steps" id="bsod-steps">
+        <li data-step="1">1 · Síntomas</li>
+        <li data-step="2">2 · Investigación</li>
+        <li data-step="3">3 · Diagnóstico</li>
+        <li data-step="4">4 · Resolución</li>
+      </ol>
+
+      <div id="bsod-phase1">
+        <div class="bsod-screen" id="bsod-screen"></div>
+        <div class="bsod-brief" id="bsod-brief"></div>
+        <button type="button" class="tool-btn" id="bsod-start">Empezar la investigación →</button>
+      </div>
+
+      <div id="bsod-phase2" hidden>
+        <h3 data-i18n="bsod_tools">Herramientas del laboratorio</h3>
+        <p><span data-i18n="bsod_tools_hint">Cada herramienta deja un resultado en el registro. Necesitas al menos 2 piezas de evidencia para diagnosticar; entre menos uses, mejor puntaje.</span>
+        · <strong id="bsod-evidence"></strong></p>
+        <div id="bsod-tools"></div>
+        <div class="bsod-log" id="bsod-log" aria-live="polite"></div>
+        <p style="margin-top:12px">
+          <button type="button" class="tool-btn" id="bsod-todiag" disabled>Ir al diagnóstico →</button>
+          <button type="button" class="tool-btn tool-btn-ghost" id="bsod-back1">← Volver a los síntomas</button>
+        </p>
+      </div>
+
+      <div id="bsod-phase3" hidden>
+        <h3 data-i18n="bsod_diag">Tu diagnóstico</h3>
+        <p id="bsod-diag-summary"></p>
+        <div class="bsod-tools" id="bsod-options"></div>
+        <p class="mejora-msg" id="bsod-diag-msg" aria-live="polite"></p>
+        <button type="button" class="tool-btn tool-btn-ghost" id="bsod-more">← Seguir investigando</button>
+      </div>
+
+      <div id="bsod-phase4" hidden>
+        <div class="bsod-result-card" id="bsod-result-card"></div>
+        <p style="margin-top:14px">
+          <button type="button" class="tool-btn" id="bsod-next">Ver los casos</button>
+          <button type="button" class="tool-btn tool-btn-ghost" id="bsod-retry">Reintentar este caso</button>
+        </p>
+      </div>
     </div>
   </section>
 
@@ -250,6 +281,7 @@
   <script src="js/site-search.js?v=85"></script>
   <script src="js/analytics.js" defer"></script>
   <script src="js/equipo-widget.js" defer"></script>
-  <script src="js/pantalla-azul.js?v=1"></script>
+  <script src="js/pantalla-azul.js?v=2"></script>
+  <script src="js/foro-boton.js?v=1" defer></script>
 </body>
 </html>

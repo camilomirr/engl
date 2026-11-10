@@ -155,13 +155,18 @@
     if (!state) return;
     var members = $('coopMembers');
     members.innerHTML = '';
-    var label = document.createElement('strong'); label.textContent = T.members + ': ';
-    members.appendChild(label);
+    var top = players.reduce(function (a, p) { return Math.max(a, parseInt(p.points, 10) || 0); }, 0) || 1;
     players.forEach(function (p) {
-      var chip = document.createElement('span');
-      chip.className = 'coop-member';
-      chip.textContent = p.name + ' · ' + (parseInt(p.points, 10) || 0) + ' ' + T.pts;
-      members.appendChild(chip);
+      var pts = parseInt(p.points, 10) || 0;
+      var card = document.createElement('div');
+      card.className = 'coop-member' + (String(p.id) === String(myId) ? ' me' : '');
+      var nm = document.createElement('span'); nm.className = 'cm-name'; nm.textContent = p.name;
+      var sc = document.createElement('span'); sc.textContent = pts + ' ' + T.pts;
+      var bar = document.createElement('div'); bar.className = 'cm-bar';
+      var fill = document.createElement('i'); fill.style.width = Math.round(pts / top * 100) + '%';
+      bar.appendChild(fill);
+      card.appendChild(nm); card.appendChild(sc); card.appendChild(bar);
+      members.appendChild(card);
     });
     var def = defense(), g = goal(), atk = attackPct();
     $('coopDefenseBar').style.width = Math.min(100, Math.round(def / g * 100)) + '%';
@@ -169,6 +174,7 @@
     $('coopAttackBar').style.width = atk + '%';
     $('coopAttackText').textContent = atk + '%';
     var phase = $('coopPhase'), play = $('coopPlay'), res = $('coopResult');
+    phase.className = 'coop-phase' + (state.status === 'playing' ? ' playing' : state.status === 'won' ? ' won' : state.status === 'lost' ? ' lost' : '');
 
     if (state.status === 'lobby') {
       phase.textContent = T.lobby;
@@ -195,7 +201,9 @@
     if (ended) return;
     ended = true;
     $('coopPlay').classList.add('hidden');
-    $('coopResult').textContent = (wonGame ? T.won : T.lost) + def + T.of + g + ' ' + T.pts + '.';
+    var resEl = $('coopResult');
+    resEl.className = wonGame ? 'won' : 'lost';
+    resEl.textContent = (wonGame ? T.won : T.lost) + def + T.of + g + ' ' + T.pts + '.';
     if (!fromState && wonGame) {
       SB.patch('/rest/v1/game_state?id=eq.' + STATE_ID, { status: 'won' }).catch(function () {});
     }
