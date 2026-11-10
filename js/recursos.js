@@ -66,9 +66,19 @@ function showFlash() {
     fc.querySelector('.glossary-fc-front').textContent = g.t;
   }
   pos.textContent = glosPos(idx + 1, orden.length, g.c);
+  var dueEl = document.getElementById('glos-due');
+  if (dueEl && window.NVISION_srs) {
+    var nd = window.NVISION_srs.dueCount('glosario', cards.map(function (c) { return datos(c).t; }));
+    dueEl.textContent = nd > 0 ? 'Repaso inteligente: hoy te tocan ' + nd + ' tarjetas' : 'Repaso inteligente: todo al día';
+  }
 }
 function openFlash() {
   var v = visibles(); orden = (v.length ? v : cards).map(datos);
+  // Repetición espaciada: primero las tarjetas vencidas o nuevas.
+  if (window.NVISION_srs) {
+    var names = window.NVISION_srs.order('glosario', orden.map(function (g) { return g.t; }));
+    orden.sort(function (a, b) { return names.indexOf(a.t) - names.indexOf(b.t); });
+  }
   idx = 0; volteada = false;
   list.style.display = 'none'; if (count) count.style.display = 'none';
   flash.hidden = false; showFlash();
@@ -84,5 +94,12 @@ fc.addEventListener('click', flip);
 document.getElementById('glos-next').addEventListener('click', function () { idx = (idx + 1) % orden.length; volteada = false; showFlash(); });
 document.getElementById('glos-prev').addEventListener('click', function () { idx = (idx - 1 + orden.length) % orden.length; volteada = false; showFlash(); });
 document.getElementById('glos-shuffle').addEventListener('click', function () { orden.sort(function () { return Math.random() - 0.5; }); idx = 0; volteada = false; showFlash(); });
+function glosSrs(known) {
+  if (!orden.length) return;
+  if (window.NVISION_srs) window.NVISION_srs.mark('glosario', orden[idx].t, known);
+  idx = (idx + 1) % orden.length; volteada = false; showFlash();
+}
+var gk = document.getElementById('glos-knew'); if (gk) gk.addEventListener('click', function () { glosSrs(true); });
+var gr = document.getElementById('glos-review'); if (gr) gr.addEventListener('click', function () { glosSrs(false); });
 render();
   })();

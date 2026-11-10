@@ -68,6 +68,13 @@
 
   // Tarjetas
   var idx = 0, flipped = false;
+  // Repetición espaciada (js/srs.js): la ronda de tarjetas empieza por
+  // las vencidas o nuevas; «La sabía / Repasar» mueven la caja Leitner.
+  var srsSeq = TERMS.map(function (t) { return t[0]; });
+  if (window.NVISION_srs) srsSeq = window.NVISION_srs.order('ingles', srsSeq);
+  srsSeq = srsSeq.map(function (nm) { return TERMS.findIndex(function (t) { return t[0] === nm; }); }).filter(function (i) { return i >= 0; });
+  if (!srsSeq.length) srsSeq = TERMS.map(function (_, i) { return i; });
+  var seqPos = 0; idx = srsSeq[0];
   var flash = document.getElementById('eng-flash');
   var count = document.getElementById('eng-count');
   function paintCard() {
@@ -76,13 +83,28 @@
     var w = document.createElement('span'); w.className = 'eng-flash-word'; w.textContent = flipped ? t[1] : t[0];
     var s = document.createElement('small'); s.textContent = flipped ? t[3] : '/' + t[2] + '/';
     flash.append(w, s);
-    count.textContent = (idx + 1) + ' / ' + TERMS.length;
+    count.textContent = (seqPos + 1) + ' / ' + TERMS.length;
   }
   flash.addEventListener('click', function () { flipped = !flipped; paintCard(); });
-  document.getElementById('eng-prev').addEventListener('click', function () { idx = (idx + TERMS.length - 1) % TERMS.length; flipped = false; paintCard(); });
-  document.getElementById('eng-next').addEventListener('click', function () { idx = (idx + 1) % TERMS.length; flipped = false; paintCard(); });
+  document.getElementById('eng-prev').addEventListener('click', function () { seqPos = (seqPos + srsSeq.length - 1) % srsSeq.length; idx = srsSeq[seqPos]; flipped = false; paintCard(); });
+  document.getElementById('eng-next').addEventListener('click', function () { seqPos = (seqPos + 1) % srsSeq.length; idx = srsSeq[seqPos]; flipped = false; paintCard(); });
   document.getElementById('eng-say').addEventListener('click', function () { speak(TERMS[idx][0] + '. ' + TERMS[idx][3]); });
   paintCard();
+  function paintDue() {
+    var d = document.getElementById('eng-due');
+    if (!d || !window.NVISION_srs) return;
+    var n = window.NVISION_srs.dueCount('ingles', TERMS.map(function (t) { return t[0]; }));
+    d.textContent = n > 0
+      ? (siteLang === 'en' ? 'Smart review: ' + n + ' cards due today' : 'Repaso inteligente: hoy te tocan ' + n + ' tarjetas')
+      : (siteLang === 'en' ? 'Smart review: all caught up' : 'Repaso inteligente: todo al día');
+  }
+  function srsGo(known) {
+    if (window.NVISION_srs) window.NVISION_srs.mark('ingles', TERMS[idx][0], known);
+    seqPos = (seqPos + 1) % srsSeq.length; idx = srsSeq[seqPos]; flipped = false; paintCard(); paintDue();
+  }
+  var bk = document.getElementById('eng-knew'); if (bk) bk.addEventListener('click', function () { srsGo(true); });
+  var brv = document.getElementById('eng-review'); if (brv) brv.addEventListener('click', function () { srsGo(false); });
+  paintDue();
 
   // Mini-quiz: 8 preguntas, opción múltiple con el significado
   var quizBox = document.getElementById('eng-quiz');
@@ -107,6 +129,7 @@
           answered++;
           var good = op === t[1];
           if (good) score++;
+          if (window.NVISION_srs) window.NVISION_srs.mark('ingles', t[0], good);
           card.querySelectorAll('.pd-opt').forEach(function (x) {
             x.disabled = true;
             if (x.textContent === t[1]) x.classList.add('is-correct');

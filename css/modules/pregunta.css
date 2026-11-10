@@ -11,3 +11,8 @@
 .pd-opt.is-correct { border-color: #22c55e; background: rgba(34,197,94,0.12); }
 .pd-opt.is-wrong { border-color: #ef4444; background: rgba(239,68,68,0.12); }
 .pd-msg { margin: 0.9rem 0 0; color: var(--text-secondary); font-size: 0.9rem; }
+
+.reto-card .reto-state { font-weight: 700; }
+.reto-card .reto-state.ok { color: #22c55e; }
+.reto-card .reto-link { display: inline-block; margin-top: 10px; padding: 9px 18px; border-radius: 999px; background: linear-gradient(135deg, #0284c7, #38bdf8); color: #fff; text-decoration: none; font-weight: 700; }
+.reto-card .reto-meta { opacity: .75; font-size: .9rem; margin-top: 8px; }

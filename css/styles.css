@@ -71,14 +71,18 @@
 
 /* 22. Pulido móvil (al final a propósito) */
 @import url('modules/logros.css?v=1');
-@import url('modules/ranking.css?v=31');
+@import url('modules/ranking.css?v=33');
 /* 23. Herramientas y páginas nuevas (2026-11-09) */
 @import url('modules/verificar.css?v=5');
-@import url('modules/pregunta.css?v=2');
+@import url('modules/pregunta.css?v=4');
 @import url('modules/terminal.css?v=2');
 @import url('modules/comparador.css?v=2');
 @import url('modules/ingles.css?v=2');
 @import url('modules/apuntes.css?v=2');
 @import url('modules/perfil.css?v=3');
 @import url('modules/mobile.css?v=2');
-
+@import url('modules/topologia.css?v=1');
+@import url('modules/sala.css?v=1');
+@import url('modules/entrevista.css?v=1');
+@import url('modules/novedades.css?v=1');
+@import url('modules/a11y.css?v=1');

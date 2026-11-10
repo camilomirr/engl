@@ -516,6 +516,16 @@
       date: new Date().toISOString()
     };
     saveState();
+    // Historial de intentos (para la gráfica de Mi cuenta): solo
+    // exámenes oficiales; el modo práctica ya retornó más arriba.
+    try {
+      var hist = [];
+      try { hist = JSON.parse(localStorage.getItem('nvision_historial_v1') || '[]'); } catch (e) { hist = []; }
+      if (!Array.isArray(hist)) hist = [];
+      hist.push({ e: current.id, p: pct, d: new Date().toISOString() });
+      if (hist.length > 80) hist = hist.slice(hist.length - 80);
+      localStorage.setItem('nvision_historial_v1', JSON.stringify(hist));
+    } catch (e) {}
     renderCards();
 
     document.getElementById('exam-score-num').textContent = pct + '%';
@@ -607,6 +617,18 @@
     ctx.fillText(T.certCode + ': ' + code + ' · ' + T.verifyAt, W / 2, H - 44);
     var codeLine = document.getElementById('cert-code-line');
     if (codeLine) codeLine.textContent = T.certCode + ': ' + code + ' · ' + T.verifyAt;
+    // QR de verificación: abre verificar.html con TODOS los datos ya
+    // cargados (el código por sí solo no permite comprobar nada).
+    try {
+      if (window.qrcode) {
+        var vUrl = 'https://nvision.social/verificar.html?c=' + encodeURIComponent(code) + '&n=' + encodeURIComponent(name) + '&e=' + encodeURIComponent(current.id) + '&p=' + pct + '&d=' + encodeURIComponent(resDate);
+        var qr = window.qrcode(0, 'M'); qr.addData(vUrl); qr.make();
+        var qn = qr.getModuleCount(), qSize = 128, qx = W - qSize - 58, qy = H - qSize - 88, qCell = qSize / qn;
+        ctx.fillStyle = '#ffffff'; ctx.fillRect(qx - 9, qy - 9, qSize + 18, qSize + 18);
+        ctx.fillStyle = '#0a0e17';
+        for (var qrY = 0; qrY < qn; qrY++) for (var qrX = 0; qrX < qn; qrX++) if (qr.isDark(qrY, qrX)) ctx.fillRect(qx + qrX * qCell, qy + qrY * qCell, qCell + 0.7, qCell + 0.7);
+      }
+    } catch (e) {}
     // Registro oficial (si el dueño ya creó la tabla certificados):
     // se intenta guardar con la sesión; si la tabla no existe, se ignora.
     var sess = readSession();

@@ -318,7 +318,7 @@ const translations = {
     nav_exams: "Exámenes y certificados",
     nav_logros: "Logros",
     nav_ranking: "Ranking",
-    nav_terminal: "Terminal de redes", nav_comparador: "Comparador", nav_ingles: "Inglés técnico", nav_apuntes: "Mis apuntes", nav_verificar: "Verificar certificado",
+    nav_terminal: "Terminal de redes", nav_comparador: "Comparador", nav_ingles: "Inglés técnico", nav_apuntes: "Mis apuntes", nav_topologia: "Simulador de topologías", nav_sala: "Quiz en vivo", nav_entrevista: "Entrevista técnica", nav_novedades: "Novedades", nav_verificar: "Verificar certificado",
     pd_kicker: "Cada día, una pregunta",
     verify_kicker: "Autenticidad", verify_title: "Verificar certificado", verify_lead: "Escribe los datos tal como aparecen en el certificado y su código de verificación. Si todo coincide, el certificado es auténtico.", verify_name: "Nombre completo", verify_exam: "Examen", verify_score: "Nota (%)", verify_date: "Fecha del examen aprobado", verify_code: "Código de verificación", verify_btn: "Verificar",
     term_kicker: "Laboratorio", term_title: "Terminal de redes", term_lead: "Una consola simulada para practicar los comandos de diagnóstico de red sin miedo a romper nada. Escribe «ayuda» para empezar.",
@@ -352,6 +352,11 @@ const translations = {
     page_title_perfil: "NVISION - Perfil público",
     page_title_ranking: "NVISION - Ranking",
     page_title_terminal: "NVISION - Terminal de redes",
+    page_title_topologia: "NVISION - Simulador de topologías de red", topo_kicker: "Laboratorio de redes", topo_title: "Simulador de topologías", topo_lead: "Arma tu red arrastrando equipos, conéctalos con cables y comprueba con un ping si todo se comunica.",
+    page_title_sala: "NVISION - Quiz en vivo", sala_kicker: "Multijugador", sala_title: "Quiz en vivo", sala_lead: "Un anfitrión crea la sala y comparte el código; los demás se unen desde su celular y compiten respondiendo en tiempo real.",
+    page_title_entrevista: "NVISION - Entrevista técnica", ent_kicker: "Prepárate", ent_title: "Entrevista técnica", ent_lead: "Practica una entrevista de trabajo de soporte y redes: responde con tus palabras y recibe retroalimentación al instante.",
+    page_title_novedades: "NVISION - Novedades", nov_kicker: "El proyecto", nov_title: "Novedades de NVISION", nov_lead: "Todo lo nuevo que llega al sitio, en orden: funciones, mejoras y arreglos del equipo.",
+    prog_h: "Mi progreso en exámenes",
     page_title_verificar: "NVISION - Verificar certificado",
     tools_title: "Herramientas de Redes",
     tools_sub: "Calcula subredes y convierte entre binario, decimal y hexadecimal sin salir de NVISION.",
@@ -1454,7 +1459,7 @@ const translations = {
     nav_exams: "Exams & certificates",
     nav_logros: "Achievements",
     nav_ranking: "Ranking",
-    nav_terminal: "Network terminal", nav_comparador: "Comparator", nav_ingles: "Technical English", nav_apuntes: "My notes", nav_verificar: "Verify certificate",
+    nav_terminal: "Network terminal", nav_comparador: "Comparator", nav_ingles: "Technical English", nav_apuntes: "My notes", nav_topologia: "Topology simulator", nav_sala: "Live quiz", nav_entrevista: "Technical interview", nav_novedades: "What's new", nav_verificar: "Verify certificate",
     pd_kicker: "One question every day",
     verify_kicker: "Authenticity", verify_title: "Verify certificate", verify_lead: "Type the details exactly as they appear on the certificate plus its verification code. If everything matches, the certificate is authentic.", verify_name: "Full name", verify_exam: "Exam", verify_score: "Score (%)", verify_date: "Passing date", verify_code: "Verification code", verify_btn: "Verify",
     term_kicker: "Lab", term_title: "Network terminal", term_lead: "A simulated console to practice network diagnostic commands with nothing to break. Type \"help\" to start.",
@@ -1488,6 +1493,11 @@ const translations = {
     page_title_perfil: "NVISION - Public profile",
     page_title_ranking: "NVISION - Ranking",
     page_title_terminal: "NVISION - Network terminal",
+    page_title_topologia: "NVISION - Network topology simulator", topo_kicker: "Networks lab", topo_title: "Topology simulator", topo_lead: "Build your network by dragging devices, wire them up and test with a ping whether everything talks.",
+    page_title_sala: "NVISION - Live quiz", sala_kicker: "Multiplayer", sala_title: "Live quiz", sala_lead: "A host creates the room and shares the code; everyone else joins from their phone and competes answering in real time.",
+    page_title_entrevista: "NVISION - Technical interview", ent_kicker: "Get ready", ent_title: "Technical interview", ent_lead: "Practice a support and networking job interview: answer in your own words and get instant feedback.",
+    page_title_novedades: "NVISION - What's new", nov_kicker: "The project", nov_title: "What's new in NVISION", nov_lead: "Everything new arriving to the site, in order: features, improvements and fixes from the team.",
+    prog_h: "My exam progress",
     page_title_verificar: "NVISION - Verify certificate",
     tools_title: "Network Tools",
     tools_sub: "Calculate subnets and convert between binary, decimal and hexadecimal without leaving NVISION.",
@@ -5231,3 +5241,40 @@ if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("/sw.js").catch(function () {});
   });
 }
+
+/* NVISION · Accesibilidad global: tamaño de letra (A / A+ / A++) y alto
+   contraste, con botones en el encabezado de todas las páginas. */
+(function () {
+  'use strict';
+  var KEY = 'nvision_a11y_v1';
+  var prefs = { font: 0, contrast: false };
+  try { var p = JSON.parse(localStorage.getItem(KEY) || 'null'); if (p) prefs = { font: p.font | 0, contrast: !!p.contrast }; } catch (e) {}
+  function apply() {
+    var h = document.documentElement;
+    if (prefs.font) h.setAttribute('data-fontscale', String(prefs.font)); else h.removeAttribute('data-fontscale');
+    if (prefs.contrast) h.setAttribute('data-contrast', 'high'); else h.removeAttribute('data-contrast');
+    try { localStorage.setItem(KEY, JSON.stringify(prefs)); } catch (e) {}
+    var fb = document.getElementById('a11y-font');
+    if (fb) fb.textContent = prefs.font === 2 ? 'A++' : prefs.font === 1 ? 'A+' : 'A';
+    var cb = document.getElementById('a11y-contrast');
+    if (cb) cb.classList.toggle('on', prefs.contrast);
+  }
+  function inject() {
+    var anchor = document.getElementById('lang-dropdown-wrapper');
+    if (!anchor || !anchor.parentNode || document.getElementById('a11y-font')) return;
+    var wrap = document.createElement('span'); wrap.className = 'a11y-wrap';
+    var fb = document.createElement('button');
+    fb.type = 'button'; fb.id = 'a11y-font'; fb.className = 'theme-switch-btn a11y-btn';
+    fb.title = 'Tamaño de letra / Font size'; fb.setAttribute('aria-label', 'Cambiar tamaño de letra');
+    fb.addEventListener('click', function () { prefs.font = (prefs.font + 1) % 3; apply(); });
+    var cb = document.createElement('button');
+    cb.type = 'button'; cb.id = 'a11y-contrast'; cb.className = 'theme-switch-btn a11y-btn';
+    cb.title = 'Alto contraste / High contrast'; cb.setAttribute('aria-label', 'Activar o desactivar alto contraste'); cb.textContent = '◐';
+    cb.addEventListener('click', function () { prefs.contrast = !prefs.contrast; apply(); });
+    wrap.appendChild(fb); wrap.appendChild(cb);
+    anchor.parentNode.insertBefore(wrap, anchor);
+    apply();
+  }
+  apply();
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', inject); else inject();
+})();

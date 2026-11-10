@@ -32,6 +32,20 @@
     result.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
+  // Enlace del QR del certificado: verificar.html?c=...&n=...&e=...&p=...&d=...
+  // trae los datos puestos y se comprueba sin que el visitante digite nada.
+  try {
+    var q = new URLSearchParams(location.search);
+    if (q.get('c')) {
+      document.getElementById('vf-code').value = q.get('c') || '';
+      if (q.get('n')) document.getElementById('vf-name').value = q.get('n');
+      if (q.get('e')) document.getElementById('vf-exam').value = q.get('e');
+      if (q.get('p')) document.getElementById('vf-score').value = q.get('p');
+      if (q.get('d')) document.getElementById('vf-date').value = q.get('d');
+      setTimeout(function () { form.dispatchEvent(new Event('submit', { cancelable: true })); }, 60);
+    }
+  } catch (e) {}
+
   form.addEventListener('submit', function (ev) {
     ev.preventDefault();
     var V = window.NVISION_validate;

@@ -11,7 +11,7 @@
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <title data-i18n="page_title_ingles">NVISION - Inglés técnico</title>
   <!-- Hojas de estilo modular -->
-  <link rel="stylesheet" href="css/styles.css?v=82">
+  <link rel="stylesheet" href="css/styles.css?v=90">
   <!-- SEO, iconos y vista previa al compartir (Open Graph / Twitter) -->
   <meta name="description" content="Inglés técnico en NVISION: vocabulario de informática con pronunciación y audio, tarjetas y un mini-quiz.">
   <meta name="theme-color" content="#0a0e17">
@@ -101,6 +101,10 @@
               <li><a href="comparador.html" data-i18n="nav_comparador">Comparador</a></li>
               <li><a href="ingles.html" data-i18n="nav_ingles">Inglés técnico</a></li>
               <li><a href="apuntes.html" data-i18n="nav_apuntes">Mis apuntes</a></li>
+              <li><a href="topologia.html" data-i18n="nav_topologia">Simulador de topologías</a></li>
+              <li><a href="sala.html" data-i18n="nav_sala">Quiz en vivo</a></li>
+              <li><a href="entrevista.html" data-i18n="nav_entrevista">Entrevista técnica</a></li>
+              <li><a href="novedades.html" data-i18n="nav_novedades">Novedades</a></li>
               <li><a href="verificar.html" data-i18n="nav_verificar">Verificar certificado</a></li>
             </ul>
           </li>
@@ -211,6 +215,9 @@
           <span id="eng-count"></span>
           <button type="button" class="tool-btn tool-btn-ghost" id="eng-next">→</button>
           <button type="button" class="tool-btn" id="eng-say" data-i18n="eng_listen">Escuchar</button>
+          <button type="button" class="tool-btn" id="eng-knew">✓ La sabía</button>
+          <button type="button" class="tool-btn tool-btn-ghost" id="eng-review">↻ Repasar</button>
+          <p id="eng-due" class="eng-due" style="margin:10px 0 0;font-size:.92rem;opacity:.85"></p>
         </div>
         <p class="eng-flash-hint" data-i18n="eng_tap">Toca la tarjeta para ver la traducción.</p>
       </div>
@@ -232,10 +239,11 @@
   </footer>
 
   <!-- Script interactivo bilingüe y menú móvil -->
-  <script src="js/main.js?v=103"></script>
-  <script src="js/site-search.js?v=80"></script>
+  <script src="js/main.js?v=110"></script>
+  <script src="js/site-search.js?v=84"></script>
   <script src="js/analytics.js?v=1" defer></script>
   <script src="js/equipo-widget.js?v=17" defer></script>
-  <script src="js/ingles.js?v=1"></script>
+  <script src="js/srs.js?v=1"></script>
+  <script src="js/ingles.js?v=4"></script>
 </body>
 </html>

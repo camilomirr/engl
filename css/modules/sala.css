@@ -1,0 +1,27 @@
+/* NVISION · Quiz en vivo */
+.sala-wrap { max-width: 900px; margin: 22px auto 60px; padding: 0 16px; }
+.sala-card { border: 1px solid var(--border-subtle); background: var(--bg-card); border-radius: 16px; padding: 22px; }
+.sala-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+@media (max-width: 680px) { .sala-cols { grid-template-columns: 1fr; } }
+.sala-col h2 { margin: 0 0 8px; font-size: 1.15rem; }
+.sala-col p { color: var(--text-secondary); line-height: 1.6; }
+.sala-col label { display: block; margin: 10px 0; font-weight: 600; font-size: .9rem; color: var(--text-secondary); }
+.sala-col input { display: block; width: 100%; margin-top: 5px; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border-subtle); background: var(--bg-surface); color: var(--text-primary); font: inherit; }
+.sala-msg { min-height: 1.4em; font-weight: 700; color: #f59e0b; }
+.sala-note { color: var(--text-muted); font-size: .88rem; line-height: 1.55; }
+.sala-room-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.sala-code { font-family: "JetBrains Mono", monospace; font-size: 1.5rem; letter-spacing: 4px; color: var(--accent-cyan); }
+.sala-status { color: var(--text-secondary); font-weight: 600; }
+.sala-players { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 14px 0; }
+.sala-chip { padding: 6px 12px; border-radius: 999px; border: 1px solid var(--border-subtle); background: var(--bg-surface); font-size: .88rem; font-weight: 600; }
+.sala-chip.me { border-color: var(--accent-cyan); color: var(--accent-cyan); }
+.sala-stage h3 { margin: 6px 0 14px; line-height: 1.45; }
+.sala-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 560px) { .sala-opts { grid-template-columns: 1fr; } }
+.sala-opt { padding: 14px; border-radius: 12px; border: 1px solid var(--border-subtle); background: var(--bg-surface); color: var(--text-primary); font: inherit; font-weight: 600; cursor: pointer; text-align: left; }
+.sala-opt.is-correct { border-color: #22c55e; background: rgba(34,197,94,.14); }
+.sala-opt.is-wrong { border-color: #ef4444; background: rgba(239,68,68,.12); }
+.sala-opt:disabled { cursor: default; opacity: .92; }
+.sala-hostbar { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+.sala-podium { line-height: 1.9; font-weight: 600; }
+.sala-note-line { font-weight: 700; margin-top: 12px; }

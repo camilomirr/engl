@@ -1,0 +1,18 @@
+/* NVISION · Accesibilidad: tamaño de letra escalable y alto contraste.
+   Los botones viven en el encabezado (los inyecta js/main.js) y el estado
+   se guarda en localStorage (nvision_a11y_v1). */
+html[data-fontscale="1"] { font-size: 112.5%; }
+html[data-fontscale="2"] { font-size: 125%; }
+html[data-contrast="high"] {
+  --bg-deep: #000000; --bg-surface: #05070c; --bg-card: #0b0f16; --bg-card-hover: #111827;
+  --text-primary: #ffffff; --text-secondary: #dbe4f0; --text-muted: #a8b6c8;
+  --border-subtle: rgba(255, 255, 255, 0.42); --border-hover: rgba(56, 189, 248, 0.85);
+}
+html[data-contrast="high"][data-theme="light"] {
+  --bg-deep: #ffffff; --bg-surface: #ffffff; --bg-card: #ffffff; --bg-card-hover: #f1f5f9;
+  --text-primary: #000000; --text-secondary: #1e293b; --text-muted: #334155;
+  --border-subtle: rgba(0, 0, 0, 0.45); --border-hover: rgba(2, 132, 199, 0.85);
+}
+.a11y-wrap { display: inline-flex; gap: 6px; align-items: center; }
+.a11y-btn { font-weight: 800; min-width: 40px; }
+.a11y-btn.on { outline: 2px solid var(--accent-cyan); outline-offset: 1px; }

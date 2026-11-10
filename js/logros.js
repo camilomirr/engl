@@ -25,7 +25,8 @@
     paquete: '<svg ' + A + '><path d="M12 3 4 7v10l8 4 8-4V7z"/><path d="M4 7l8 4 8-4"/><path d="M12 11v10"/></svg>',
     nivel: '<svg ' + A + '><path d="M4 19.5h16"/><polyline points="5 15 10 9.5 13 12.5 19 5.5"/><polyline points="14.5 5.5 19 5.5 19 10"/></svg>',
     libro: '<svg ' + A + '><path d="M12 6c-2-1.5-4.5-2-8-2v14c3.5 0 6 .5 8 2 2-1.5 4.5-2 8-2V4c-3.5 0-6 .5-8 2z"/><line x1="12" y1="6" x2="12" y2="20"/></svg>',
-    terminal: '<svg ' + A + '><rect x="2" y="3" width="20" height="18" rx="2"/><polyline points="6 9 10 12 6 15"/><line x1="12.5" y1="17" x2="17.5" y2="17"/></svg>'
+    terminal: '<svg ' + A + '><rect x="2" y="3" width="20" height="18" rx="2"/><polyline points="6 9 10 12 6 15"/><line x1="12.5" y1="17" x2="17.5" y2="17"/></svg>',
+    meta: '<svg ' + A + '><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1.1" fill="currentColor"/></svg>'
   };
 
   var DEFS = [
@@ -47,7 +48,8 @@
     { id: 'primer-apunte', icon: IC.libro, n: { es: 'Primer apunte', en: 'First note' }, d: { es: 'Escribe tu primer apunte en Mis apuntes.', en: 'Write your first note in My notes.' }, ok: function (c) { return (c.notesTopics || 0) >= 1; } },
     { id: 'diario', icon: IC.libro, n: { es: 'Diario de estudio', en: 'Study journal' }, d: { es: 'Ten apuntes guardados en 3 temas distintos.', en: 'Keep saved notes in 3 different topics.' }, ok: function (c) { return (c.notesTopics || 0) >= 3; } },
     { id: 'consola', icon: IC.terminal, n: { es: 'Operador de consola', en: 'Console operator' }, d: { es: 'Completa las 3 misiones de la terminal simulada.', en: 'Complete all 3 missions of the simulated terminal.' }, ok: function (c) { return (c.termMissions || 0) >= 3; } },
-    { id: 'polivalente', icon: IC.nivel, n: { es: 'Polivalente', en: 'Versatile' }, d: { es: 'Presenta exámenes de 3 temas distintos.', en: 'Take exams on 3 different topics.' }, ok: function (c) { return c.attempted >= 3; } }
+    { id: 'polivalente', icon: IC.nivel, n: { es: 'Polivalente', en: 'Versatile' }, d: { es: 'Presenta exámenes de 3 temas distintos.', en: 'Take exams on 3 different topics.' }, ok: function (c) { return c.attempted >= 3; } },
+    { id: 'reto-semana', icon: IC.meta, n: { es: 'Reto cumplido', en: 'Challenge cleared' }, d: { es: 'Completa el reto de la semana de la página principal.', en: 'Complete the weekly challenge from the home page.' }, ok: function (c) { return (c.retoCount || 0) >= 1; } }
   ];
 
   function read(key) { try { return JSON.parse(localStorage.getItem(key) || 'null'); } catch (e) { return null; } }
@@ -68,6 +70,9 @@
     var notes = read('nvision_apuntes_v1');
     var notesTopics = 0;
     if (notes && notes.topics) Object.keys(notes.topics).forEach(function (k) { if (String(notes.topics[k] || '').trim()) notesTopics++; });
+    var retoDoc = read('nvision_reto_v1');
+    var retoCount = 0;
+    if (retoDoc && retoDoc.done) Object.keys(retoDoc.done).forEach(function (k) { if (retoDoc.done[k]) retoCount++; });
     var term = read('nvision_terminal_v1');
     var termMissions = 0;
     if (term && term.done) term.done.forEach(function (d) { if (d) termMissions++; });
@@ -92,7 +97,7 @@
       bestSum: bestSum,
       wsStarted: !!ws,
       delivered: (ws && ws.career && ws.career.delivered) || 0,
-      wsLevel: (ws && ws.career && ws.career.level) || 0
+      wsLevel: (ws && ws.career && ws.career.level) || 0, retoCount: retoCount
     };
   }
 
