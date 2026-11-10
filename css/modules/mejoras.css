@@ -169,3 +169,19 @@ body:has(.tutor-wrap) .foro-fab { bottom: 74px; }
   .foro-fab { left: 10px; bottom: 10px; }
   body:has(.tutor-wrap) .foro-fab { bottom: 64px; }
 }
+
+/* ---------- Tutor: pistas desbloqueadas visibles ---------- */
+.tutor-hints-list { max-height: 210px; overflow-y: auto; margin-bottom: 10px; }
+.tutor-hint-card {
+  background: rgba(245, 158, 11, .12); border: 1px solid rgba(245, 158, 11, .4);
+  border-radius: 10px; padding: 9px 11px; font-size: .9rem; line-height: 1.5; margin-bottom: 8px;
+}
+.tutor-hint-card.fresh { animation: tutorFresh 1.2s ease; }
+@keyframes tutorFresh {
+  0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, .55); }
+  100% { box-shadow: 0 0 0 12px rgba(245, 158, 11, 0); }
+}
+.tutor-hint-badge {
+  display: inline-block; font-weight: 800; font-size: .75rem; margin-right: 8px;
+  background: rgba(245, 158, 11, .25); padding: 2px 8px; border-radius: 999px;
+}

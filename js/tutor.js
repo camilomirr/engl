@@ -24,6 +24,7 @@
       tabHints: 'Pistas', tabGloss: 'Glosario', tabAsk: 'Preguntar',
       topic: 'Tema', hintBtn: 'Dame una pista', hintNext: 'Siguiente pista', hintReset: 'Reiniciar pistas',
       hintDone: 'Ya tienes el concepto clave de este tema. ¡Aplícalo en el simulador!',
+      seeGloss: 'Ver el término en el Glosario', unlocked: 'Tus pistas de este tema',
       level: 'Nivel', of: 'de',
       glossPh: 'Buscar un término…', glossPick: 'Toca un término para ver su definición.',
       fromGlossary: 'Del glosario NVISION:', seeRoute: 'Refuerzo en la ruta:',
@@ -40,6 +41,7 @@
       tabHints: 'Hints', tabGloss: 'Glossary', tabAsk: 'Ask',
       topic: 'Topic', hintBtn: 'Give me a hint', hintNext: 'Next hint', hintReset: 'Reset hints',
       hintDone: 'You already have the key concept for this topic. Apply it in the simulator!',
+      seeGloss: 'See the term in the Glossary', unlocked: 'Your hints for this topic',
       level: 'Level', of: 'of',
       glossPh: 'Search a term…', glossPick: 'Tap a term to see its definition.',
       fromGlossary: 'From the NVISION glossary:', seeRoute: 'Reinforce on the path:',
@@ -167,6 +169,7 @@
         '<div class="tutor-chips" id="tutor-chips"></div>' +
         '<div class="tutor-dots" id="tutor-dots" aria-hidden="true"></div>' +
         '<div class="tutor-hintbox" id="tutor-hintbox"></div>' +
+        '<div class="tutor-hints-list" id="tutor-hints-list"></div>' +
         '<div class="tutor-actions"><button type="button" class="tool-btn" id="tutor-hint">' + T.hintBtn + '</button>' +
         '<button type="button" class="tool-btn tool-btn-ghost" id="tutor-reset">' + T.hintReset + '</button></div>' +
       '</div>' +
@@ -222,27 +225,61 @@
     });
     document.getElementById('tutor-ctx').textContent = T.ctxLine + T.topics[detectedContext()] + '.';
   }
+  // Las pistas de un tema: HINTS[tema] es {es: [...], en: [...]}; se
+  // devuelve SIEMPRE la lista del idioma activo (antes se usaba el
+  // objeto entero y la función explotaba: ninguna pista se pintaba).
+  function hintsOf(key) { return (HINTS[key] || HINTS.generic)[lang]; }
+
   function renderHintState() {
+    var list = hintsOf(topic);
     var lvl = hintLevels[topic] || 0;
-    var list = HINTS[topic] || HINTS.generic;
     dotsBox.innerHTML = '';
     list.forEach(function (_, i) {
       var d = document.createElement('span');
       d.className = 'tutor-dot' + (i < lvl ? ' on' : '');
       dotsBox.appendChild(d);
     });
-    if (lvl === 0) hintBox.textContent = T.topics[topic] + ' · ' + T.level + ' 0 ' + T.of + ' ' + list.length + '.';
-    else hintBox.textContent = '💡 ' + T.level + ' ' + lvl + ' ' + T.of + ' ' + list.length + ': ' + list[lvl - 1][lang];
+    hintBox.textContent = T.topics[topic] + ' · ' + T.level + ' ' + lvl + ' ' + T.of + ' ' + list.length + (lvl >= list.length ? ' — ' + T.hintDone : '');
+    // TODAS las pistas desbloqueadas quedan visibles como tarjetas,
+    // la más reciente resaltada: la pista siempre se refleja.
+    var box = document.getElementById('tutor-hints-list');
+    box.innerHTML = '';
+    if (lvl > 0) {
+      var h = document.createElement('p');
+      h.className = 'tutor-label'; h.textContent = T.unlocked;
+      box.appendChild(h);
+    }
+    for (var i = 0; i < lvl; i++) {
+      var card = document.createElement('div');
+      card.className = 'tutor-hint-card' + (i === lvl - 1 ? ' fresh' : '');
+      var badge = document.createElement('span');
+      badge.className = 'tutor-hint-badge';
+      badge.textContent = '💡 ' + T.level + ' ' + (i + 1);
+      card.appendChild(badge);
+      card.appendChild(document.createTextNode(list[i]));
+      box.appendChild(card);
+    }
+    if (lvl >= list.length) {
+      var go = document.createElement('button');
+      go.type = 'button'; go.className = 'tool-btn tool-btn-ghost';
+      go.textContent = '📖 ' + T.seeGloss;
+      go.addEventListener('click', function () {
+        var tab = document.querySelector('.tutor-tab[data-tab="gloss"]');
+        if (tab) tab.click();
+      });
+      box.appendChild(go);
+    }
     hintBtn.textContent = lvl === 0 ? T.hintBtn : (lvl < list.length ? T.hintNext : T.hintBtn);
     hintBtn.disabled = lvl >= list.length;
-    if (lvl >= list.length) hintBox.textContent += ' ' + T.hintDone;
   }
   hintBtn.addEventListener('click', function () {
-    var list = HINTS[topic] || HINTS.generic;
+    var list = hintsOf(topic);
     var lvl = hintLevels[topic] || 0;
     if (lvl >= list.length) return;
     hintLevels[topic] = lvl + 1;
     renderHintState();
+    var box = document.getElementById('tutor-hints-list');
+    if (box) box.scrollTop = box.scrollHeight;
   });
   document.getElementById('tutor-reset').addEventListener('click', function () {
     hintLevels[topic] = 0; renderHintState();

@@ -27,7 +27,7 @@
       correct: '¡Diagnóstico correcto!',
       fixTitle: 'La reparación, paso a paso',
       breakdown: 'Desglose del puntaje', bBase: 'Puntaje base', bTools: 'Herramientas extra', bWrong: 'Diagnósticos errados', bTotal: 'Total del caso',
-      bestMark: 'Tu mejor marca en este caso' },
+      bestMark: 'Tu mejor marca en este caso', rankPts: 'pts sumados a tu puntaje del sitio' },
     en: { solved: 'Solved', play: 'Investigate case', again: 'Try again', caseWord: 'Case', best: 'Best total score',
       pc: 'Machine', use: 'Owner\'s use', change: 'Recent change',
       catMemoria: 'Memory', catDisco: 'Disk & files', catSoftware: 'Software & drivers', catFisico: 'Physical inspection',
@@ -38,7 +38,7 @@
       correct: 'Correct diagnosis!',
       fixTitle: 'The repair, step by step',
       breakdown: 'Score breakdown', bBase: 'Base score', bTools: 'Extra tools', bWrong: 'Wrong diagnoses', bTotal: 'Case total',
-      bestMark: 'Your best mark on this case' }
+      bestMark: 'Your best mark on this case', rankPts: 'pts added to your site score' }
   }[lang];
 
   var CATS = { memoria: T.catMemoria, disco: T.catDisco, software: T.catSoftware, fisico: T.catFisico };
@@ -173,9 +173,10 @@
   function solvedCount() { return Object.keys(store.solved).length; }
   function totalBest() { return Object.keys(store.solved).reduce(function (a, k) { return a + (store.solved[k] || 0); }, 0); }
 
+  function rankBonus() { return Math.min(150, Math.round(totalBest() / 4)); }
   function renderCases() {
     $('bsod-progress').textContent = solvedCount() + '/' + CASES.length;
-    $('bsod-best').textContent = totalBest() ? T.best + ': ' + totalBest() : '';
+    $('bsod-best').textContent = totalBest() ? T.best + ': ' + totalBest() + ' · +' + rankBonus() + ' ' + T.rankPts : '';
     casesEl.innerHTML = '';
     CASES.forEach(function (c, i) {
       var card = document.createElement('div');

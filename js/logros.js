@@ -79,8 +79,8 @@
     var retoCount = 0;
     if (retoDoc && retoDoc.done) Object.keys(retoDoc.done).forEach(function (k) { if (retoDoc.done[k]) retoCount++; });
     var bsod = read('nvision_bsod_v1');
-    var bsodSolved = 0;
-    if (bsod && bsod.solved) Object.keys(bsod.solved).forEach(function (k) { if (bsod.solved[k] != null) bsodSolved++; });
+    var bsodSolved = 0, bsodTotal = 0;
+    if (bsod && bsod.solved) Object.keys(bsod.solved).forEach(function (k) { if (bsod.solved[k] != null) { bsodSolved++; bsodTotal += bsod.solved[k] || 0; } });
     var foro = read('nvision_foro_v1');
     var presu = read('nvision_presupuestos_v1');
     var coop = read('nvision_coop_v1');
@@ -109,7 +109,7 @@
       wsStarted: !!ws,
       delivered: (ws && ws.career && ws.career.delivered) || 0,
       wsLevel: (ws && ws.career && ws.career.level) || 0, retoCount: retoCount,
-      bsodSolved: bsodSolved, foroAnswers: (foro && foro.answers) || 0, foroSolved: (foro && foro.solvedMine) || 0, presuWins: presu && presu.wins || 0, coopWins: (coop && coop.wins) || 0
+      bsodSolved: bsodSolved, bsodTotal: bsodTotal, foroAnswers: (foro && foro.answers) || 0, foroSolved: (foro && foro.solvedMine) || 0, presuWins: presu && presu.wins || 0, coopWins: (coop && coop.wins) || 0
     };
   }
 
@@ -133,8 +133,11 @@
       try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) {}
     }
     var count = list.filter(function (a) { return a.unlocked; }).length;
-    var points = ctx.bestSum + ctx.rutaDone * 10 + count * 15;
-    return { ctx: ctx, list: list, count: count, total: DEFS.length, points: points, fresh: fresh };
+    // El minijuego Pantalla Azul también suma: la cuarta parte de la
+    // suma de tus mejores puntajes por caso (máx. 600/4 = 150 pts).
+    var bsodBonus = Math.min(150, Math.round((ctx.bsodTotal || 0) / 4));
+    var points = ctx.bestSum + ctx.rutaDone * 10 + count * 15 + bsodBonus;
+    return { ctx: ctx, list: list, count: count, total: DEFS.length, points: points, fresh: fresh, bsodBonus: bsodBonus };
   }
 
   var T = {

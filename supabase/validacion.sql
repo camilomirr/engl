@@ -68,13 +68,15 @@ alter table public.team_tasks
   add constraint team_tasks_task_len   check (char_length(task) between 1 and 2000),
   add constraint team_tasks_result_len check (char_length(result) <= 4000);
 
--- site_ranking: el máximo legítimo hoy es 910 puntos
--- (5 exámenes × 100 + 11 pasos de ruta × 10 + 19 logros × 15);
--- se deja 1000 de margen para contenido nuevo. El tope de 100000
+-- site_ranking: el máximo legítimo hoy es 1135 puntos
+-- (5 exámenes × 100 + 11 pasos de ruta × 10 + 25 logros × 15
+-- + hasta 150 del minijuego Pantalla Azul: la cuarta parte de la
+-- suma de mejores puntajes de sus 6 casos);
+-- se deja 1200 de margen para contenido nuevo. El tope de 100000
 -- permitía publicar un puntaje imposible y reinar en el ranking.
 alter table public.site_ranking drop constraint if exists ranking_points_rng;
 alter table public.site_ranking
-  add constraint ranking_points_rng check (points >= 0 and points <= 1000);
+  add constraint ranking_points_rng check (points >= 0 and points <= 1200);
 
 -- user_progress: el progreso legítimo pesa pocos KB (los apuntes
 -- completos, ~100 KB); 512 KB de tope frena el abuso de espacio
