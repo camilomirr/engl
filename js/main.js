@@ -3802,22 +3802,86 @@ function setupLocalAssistant() {
   const askBtn = $('.local-assistant-ask');
   const editBtn = $('.local-assistant-edit');
 
-  /* ===== Voz: micrófono (SpeechRecognition) y lectura (speechSynthesis) ===== */
+  /* ===== Voz: micrófono (SpeechRecognition) y lectura (speechSynthesis) =====
+     Correcciones (2026-11-09, a pedido de Duay):
+     - La lectura ahora elige una VOZ real del idioma: antes solo fijaba
+       el idioma sin escoger voz, y muchos equipos leían el español con
+       la voz inglesa por defecto, o no leían nada.
+     - Las respuestas largas se parten en frases y se leen en cola:
+       Chrome corta las lecturas largas (~15 segundos) a la mitad.
+     - speak() ya no va pegado a cancel(): así Chrome perdía lecturas.
+     - El micrófono muestra lo que va escuchando (resultados parciales),
+       se detiene al tocarlo de nuevo y AVISA en el chat cuando algo
+       falla (permiso, red o silencio), en vez de fallar sin decir nada. */
   const micBtn = $('.local-assistant-mic');
   const voiceBtn = $('.local-assistant-voice');
   let voiceOn = false;
   try { voiceOn = localStorage.getItem('nvision_voice_tts') === '1'; } catch (e) {}
+  const speechLang = () => (currentLang === 'en' ? 'en-US' : 'es-ES');
   function cleanForSpeech(t) {
-    return String(t || '').replace(/\[\[[^\]]+\]\]/g, '').replace(/\*\*/g, '').replace(/\s+/g, ' ').trim().slice(0, 420);
+    return String(t || '')
+      .replace(/\[\[[^\]]+\]\]/g, '')
+      .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+      .replace(/\*\*/g, '')
+      .replace(/[`#*_~>]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
   }
+  // Trozos cortos por frases: cada uno se lee como una frase en cola
+  // y ninguno pasa de 200 caracteres.
+  function speechChunks(t) {
+    const clean = cleanForSpeech(t);
+    if (!clean) return [];
+    const parts = clean.match(/[^.!?…]+[.!?…]*\s*/g) || [clean];
+    const out = [];
+    let cur = '';
+    parts.forEach((p) => {
+      if ((cur + p).length > 180 && cur) { out.push(cur.trim()); cur = ''; }
+      cur += p;
+      while (cur.length > 200) { out.push(cur.slice(0, 200).trim()); cur = cur.slice(200); }
+    });
+    if (cur.trim()) out.push(cur.trim());
+    return out;
+  }
+  let voiceList = [];
+  function refreshVoices() {
+    try { voiceList = speechSynthesis.getVoices() || []; } catch (e) { voiceList = []; }
+  }
+  if ('speechSynthesis' in window) {
+    refreshVoices();
+    try { speechSynthesis.addEventListener('voiceschanged', refreshVoices); } catch (e) {}
+  }
+  function pickVoice() {
+    const want = speechLang();
+    const pref = want.slice(0, 2);
+    return voiceList.find((v) => v.lang === want)
+      || voiceList.find((v) => String(v.lang || '').toLowerCase().indexOf(pref) === 0)
+      || null;
+  }
+  let speechSession = 0;
   function speakNow(t) {
     if (!voiceOn || !('speechSynthesis' in window)) return;
+    const chunks = speechChunks(t);
+    if (!chunks.length) return;
+    const session = ++speechSession;
+    const start = () => {
+      if (session !== speechSession) return;
+      const voice = pickVoice();
+      chunks.forEach((c) => {
+        try {
+          const u = new SpeechSynthesisUtterance(c);
+          u.lang = speechLang();
+          if (voice) u.voice = voice;
+          u.rate = 1.0;
+          speechSynthesis.speak(u);
+        } catch (e) {}
+      });
+    };
     try {
-      const u = new SpeechSynthesisUtterance(cleanForSpeech(t));
-      u.lang = currentLang === 'en' ? 'en-US' : 'es-ES';
-      u.rate = 1.0;
-      speechSynthesis.cancel();
-      speechSynthesis.speak(u);
+      if (speechSynthesis.speaking || speechSynthesis.pending) {
+        speechSynthesis.cancel();
+        setTimeout(start, 70);
+      } else start();
     } catch (e) {}
   }
   if ('speechSynthesis' in window && voiceBtn) {
@@ -3829,26 +3893,69 @@ function setupLocalAssistant() {
       try { localStorage.setItem('nvision_voice_tts', voiceOn ? '1' : '0'); } catch (e) {}
       voiceBtn.setAttribute('aria-pressed', voiceOn ? 'true' : 'false');
       voiceBtn.classList.toggle('is-on', voiceOn);
-      if (!voiceOn) { try { speechSynthesis.cancel(); } catch (e) {} }
+      if (!voiceOn) { speechSession++; try { speechSynthesis.cancel(); } catch (e) {} }
     });
   }
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (SR && micBtn) {
     micBtn.hidden = false;
+    let rec = null;
+    let heard = false;
+    let notedError = false;
+    // Los avisos van como mensaje del asistente: visibles y, si la
+    // lectura está activa, también se escuchan.
+    const micNote = (es, en) => { try { addMsg('bot', currentLang === 'en' ? en : es); } catch (e) {} };
     micBtn.addEventListener('click', () => {
+      if (rec) { try { rec.stop(); } catch (e) {} return; }
       try {
-        const rec = new SR();
-        rec.lang = currentLang === 'en' ? 'en-US' : 'es-ES';
-        rec.interimResults = false;
+        rec = new SR();
+        heard = false;
+        notedError = false;
+        rec.lang = speechLang();
+        rec.interimResults = true;
+        rec.continuous = false;
+        rec.maxAlternatives = 1;
         micBtn.classList.add('is-on');
         rec.addEventListener('result', (ev) => {
-          const txt = ev.results && ev.results[0] && ev.results[0][0] ? ev.results[0][0].transcript : '';
-          if (txt) { input.value = txt; if (form.requestSubmit) form.requestSubmit(); }
+          let interim = '';
+          for (let i = ev.resultIndex || 0; i < ev.results.length; i++) {
+            const r = ev.results[i];
+            if (!r || !r[0]) continue;
+            if (r.isFinal) {
+              const txt = String(r[0].transcript || '').trim();
+              if (txt) { heard = true; input.value = txt; if (form.requestSubmit) form.requestSubmit(); }
+            } else interim += r[0].transcript;
+          }
+          if (interim && !heard) input.value = interim;
         });
-        rec.addEventListener('end', () => micBtn.classList.remove('is-on'));
-        rec.addEventListener('error', () => micBtn.classList.remove('is-on'));
+        rec.addEventListener('error', (ev) => {
+          const code = ev && ev.error;
+          if (code === 'not-allowed' || code === 'service-not-allowed') {
+            notedError = true;
+            micNote('No tengo permiso para usar el micrófono. Actívalo en los ajustes del navegador para este sitio e inténtalo de nuevo.',
+              'I do not have microphone permission. Enable it in your browser settings for this site and try again.');
+          } else if (code === 'network') {
+            notedError = true;
+            micNote('El reconocimiento de voz necesita internet y no hubo conexión. Revisa tu red e inténtalo de nuevo.',
+              'Voice recognition needs the internet and there was no connection. Check your network and try again.');
+          } else if (code && code !== 'aborted' && code !== 'no-speech') {
+            notedError = true;
+            micNote('No pude activar el reconocimiento de voz en este navegador.',
+              'I could not start voice recognition in this browser.');
+          }
+        });
+        rec.addEventListener('end', () => {
+          const wasHeard = heard;
+          const hadError = notedError;
+          rec = null;
+          micBtn.classList.remove('is-on');
+          if (!wasHeard && !hadError) {
+            micNote('No te escuché. Toca el micrófono y habla cerca del dispositivo.',
+              'I did not hear you. Tap the microphone and speak close to the device.');
+          }
+        });
         rec.start();
-      } catch (e) { micBtn.classList.remove('is-on'); }
+      } catch (e) { rec = null; micBtn.classList.remove('is-on'); }
     });
   }
   /* Modo "Solo preguntar": activado con el botón "?", el asistente solo
