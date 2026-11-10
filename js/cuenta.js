@@ -355,6 +355,10 @@
     $('cuenta-name-fields').hidden = mode !== 'register';
     if ($('cuenta-forgot-row')) $('cuenta-forgot-row').hidden = mode !== 'login';
     if ($('cuenta-pass2-field')) $('cuenta-pass2-field').hidden = mode !== 'register';
+    // Al cambiar de entrar a registrarse (o al revés) la clave vuelve a
+    // quedar oculta con el ojo abierto, para que el icono nunca quede
+    // desincronizado con lo que se ve en el campo.
+    syncPassToggle(false);
   }
   function showPanel(session) {
     $('cuenta-auth').hidden = true;
@@ -440,15 +444,28 @@
   });
 
   // ---- Ver / ocultar la contraseña ----
-  if ($('cuenta-pass-toggle')) $('cuenta-pass-toggle').addEventListener('click', function () {
+  // El icono que se ve es la ACCIÓN que hace el botón, no el estado:
+  // con la clave oculta sale el ojo abierto encendido (tócalo para ver)
+  // y con la clave visible sale el ojo tachado (tócalo para ocultar).
+  // OJO: en los SVG no sirve asignar .hidden = true/false: esa propiedad
+  // solo existe en elementos HTML, y en un SVG solo crea una propiedad
+  // suelta sin tocar el atributo, así que el icono nunca cambiaba y el
+  // ojo abierto se quedaba fijo aunque la clave ya se viera. Se mueve
+  // el atributo con setAttribute/removeAttribute, que es lo que esconde
+  // el CSS (.cuenta-pass-toggle svg[hidden]).
+  function syncPassToggle(show) {
     var inp = $('cuenta-pass');
-    var isPass = inp.type === 'password';
-    inp.type = isPass ? 'text' : 'password';
-    var open = this.querySelector('.cuenta-eye-open');
-    var off = this.querySelector('.cuenta-eye-off');
-    if (open) open.hidden = isPass;
-    if (off) off.hidden = !isPass;
-    this.setAttribute('aria-label', isPass ? T.hidePass : T.showPass);
+    var btn = $('cuenta-pass-toggle');
+    if (!inp || !btn) return;
+    inp.type = show ? 'text' : 'password';
+    var open = btn.querySelector('.cuenta-eye-open');
+    var off = btn.querySelector('.cuenta-eye-off');
+    if (open) { if (show) open.setAttribute('hidden', ''); else open.removeAttribute('hidden'); }
+    if (off) { if (show) off.removeAttribute('hidden'); else off.setAttribute('hidden', ''); }
+    btn.setAttribute('aria-label', show ? T.hidePass : T.showPass);
+  }
+  if ($('cuenta-pass-toggle')) $('cuenta-pass-toggle').addEventListener('click', function () {
+    syncPassToggle($('cuenta-pass').type === 'password');
   });
 
   // ---- Actualizar datos (nombre y apellido) ----
