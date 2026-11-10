@@ -49,7 +49,12 @@
     { id: 'diario', icon: IC.libro, n: { es: 'Diario de estudio', en: 'Study journal' }, d: { es: 'Ten apuntes guardados en 3 temas distintos.', en: 'Keep saved notes in 3 different topics.' }, ok: function (c) { return (c.notesTopics || 0) >= 3; } },
     { id: 'consola', icon: IC.terminal, n: { es: 'Operador de consola', en: 'Console operator' }, d: { es: 'Completa las 3 misiones de la terminal simulada.', en: 'Complete all 3 missions of the simulated terminal.' }, ok: function (c) { return (c.termMissions || 0) >= 3; } },
     { id: 'polivalente', icon: IC.nivel, n: { es: 'Polivalente', en: 'Versatile' }, d: { es: 'Presenta exámenes de 3 temas distintos.', en: 'Take exams on 3 different topics.' }, ok: function (c) { return c.attempted >= 3; } },
-    { id: 'reto-semana', icon: IC.meta, n: { es: 'Reto cumplido', en: 'Challenge cleared' }, d: { es: 'Completa el reto de la semana de la página principal.', en: 'Complete the weekly challenge from the home page.' }, ok: function (c) { return (c.retoCount || 0) >= 1; } }
+    { id: 'reto-semana', icon: IC.meta, n: { es: 'Reto cumplido', en: 'Challenge cleared' }, d: { es: 'Completa el reto de la semana de la página principal.', en: 'Complete the weekly challenge from the home page.' }, ok: function (c) { return (c.retoCount || 0) >= 1; } },
+    { id: 'primer-diagnostico', icon: IC.terminal, n: { es: 'Primer diagnóstico', en: 'First diagnosis' }, d: { es: 'Resuelve tu primer caso en el minijuego Pantalla Azul.', en: 'Solve your first case in the Blue Screen mini-game.' }, ok: function (c) { return (c.bsodSolved || 0) >= 1; } },
+    { id: 'detective-errores', icon: IC.nivel, n: { es: 'Detective de errores', en: 'Error detective' }, d: { es: 'Resuelve 5 casos de Pantalla Azul.', en: 'Solve 5 Blue Screen cases.' }, ok: function (c) { return (c.bsodSolved || 0) >= 5; } },
+    { id: 'buen-vecino', icon: IC.libro, n: { es: 'Buen vecino del Taller', en: 'Helpful neighbour' }, d: { es: 'Responde 3 preguntas de la comunidad en el foro El Taller.', en: 'Answer 3 community questions in The Workshop forum.' }, ok: function (c) { return (c.foroAnswers || 0) >= 3; } },
+    { id: 'comprador-inteligente', icon: IC.paquete, n: { es: 'Comprador inteligente', en: 'Smart buyer' }, d: { es: 'Supera un reto en el simulador de Presupuestos reales.', en: 'Clear a challenge in the Real budgets simulator.' }, ok: function (c) { return (c.presuWins || 0) >= 1; } },
+    { id: 'salvador-red', icon: IC.estrella, n: { es: 'Salvador de la red', en: 'Network saviour' }, d: { es: 'Gana una misión cooperativa en el Redes Challenge.', en: 'Win a cooperative mission in the Networks Challenge.' }, ok: function (c) { return (c.coopWins || 0) >= 1; } }
   ];
 
   function read(key) { try { return JSON.parse(localStorage.getItem(key) || 'null'); } catch (e) { return null; } }
@@ -73,6 +78,12 @@
     var retoDoc = read('nvision_reto_v1');
     var retoCount = 0;
     if (retoDoc && retoDoc.done) Object.keys(retoDoc.done).forEach(function (k) { if (retoDoc.done[k]) retoCount++; });
+    var bsod = read('nvision_bsod_v1');
+    var bsodSolved = 0;
+    if (bsod && bsod.solved) Object.keys(bsod.solved).forEach(function (k) { if (bsod.solved[k] != null) bsodSolved++; });
+    var foro = read('nvision_foro_v1');
+    var presu = read('nvision_presupuestos_v1');
+    var coop = read('nvision_coop_v1');
     var term = read('nvision_terminal_v1');
     var termMissions = 0;
     if (term && term.done) term.done.forEach(function (d) { if (d) termMissions++; });
@@ -97,7 +108,8 @@
       bestSum: bestSum,
       wsStarted: !!ws,
       delivered: (ws && ws.career && ws.career.delivered) || 0,
-      wsLevel: (ws && ws.career && ws.career.level) || 0, retoCount: retoCount
+      wsLevel: (ws && ws.career && ws.career.level) || 0, retoCount: retoCount,
+      bsodSolved: bsodSolved, foroAnswers: (foro && foro.answers) || 0, foroSolved: (foro && foro.solvedMine) || 0, presuWins: presu && presu.wins || 0, coopWins: (coop && coop.wins) || 0
     };
   }
 

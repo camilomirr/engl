@@ -14,7 +14,7 @@ Qué comprueban:
   6. Los 5 exámenes tienen 15 preguntas, con opciones ES/EN parejas y la
      respuesta correcta dentro de rango.
   7. El banco de la pregunta del día tiene 32 preguntas válidas.
-  8. Hay 19 logros con ids únicos.
+  8. Hay 25 logros con ids únicos.
   9. La capa js/validation.js expone las funciones esperadas.
  10. El catálogo del Workshop es JSON válido con 88 componentes.
  11. No hay ninguna clave service_role de Supabase en el repo.
@@ -212,7 +212,7 @@ for call in pool:
 print("== Logros ==")
 logros = read("js/logros.js")
 ids = re.findall(r"\{ id: '([a-z0-9-]+)'", logros)
-check(len(ids) == 19, "hay 19 logros (hay %d)" % len(ids))
+check(len(ids) == 25, "hay 25 logros (hay %d)" % len(ids))
 check(len(ids) == len(set(ids)), "ids de logros unicos")
 
 print("== Capa de validacion ==")

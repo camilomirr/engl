@@ -1,0 +1,91 @@
+/* =========================================================
+   NVISION · Mejoras 2026-11-10: Tutor NVI-Bot, Pantalla Azul,
+   Foro El Taller, Modo Cooperativo y Presupuestos.
+   ========================================================= */
+
+/* ---------- Tutor NVI-Bot ---------- */
+.tutor-wrap { position: fixed; left: 16px; bottom: 16px; z-index: 1200; }
+.tutor-fab {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--accent, #2563eb); color: #fff; border: 0; cursor: pointer;
+  padding: 10px 16px; border-radius: 999px; font-weight: 700; font-size: .92rem;
+  box-shadow: 0 8px 24px rgba(2, 6, 23, .35);
+}
+.tutor-fab:hover { filter: brightness(1.1); }
+.tutor-fab-dot { width: 9px; height: 9px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 0 3px rgba(74, 222, 128, .35); }
+.tutor-panel {
+  position: absolute; left: 0; bottom: 56px; width: min(360px, calc(100vw - 32px));
+  background: var(--card-bg, #0f172a); color: var(--text, #e2e8f0);
+  border: 1px solid rgba(148, 163, 184, .35); border-radius: 16px;
+  box-shadow: 0 18px 50px rgba(2, 6, 23, .5); padding: 14px; 
+}
+.tutor-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.tutor-close { background: none; border: 0; color: inherit; font-size: 1.3rem; cursor: pointer; line-height: 1; }
+.tutor-ctx { margin: 0 0 8px; font-size: .85rem; opacity: .85; }
+.tutor-log { max-height: 240px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+.tutor-msg { margin: 0; padding: 8px 10px; border-radius: 10px; font-size: .9rem; line-height: 1.45; }
+.tutor-msg.bot { background: rgba(37, 99, 235, .16); }
+.tutor-msg.mine { background: rgba(148, 163, 184, .18); align-self: flex-end; }
+.tutor-actions { margin-bottom: 10px; }
+.tutor-form { display: flex; gap: 8px; }
+.tutor-form input {
+  flex: 1; min-width: 0; padding: 9px 10px; border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, .4); background: transparent; color: inherit;
+}
+@media (max-width: 640px) { .tutor-wrap { left: 10px; bottom: 10px; } }
+
+/* ---------- Piezas comunes de las páginas nuevas ---------- */
+.mejora-wrap { max-width: 1060px; margin: 0 auto; padding: 8px 16px 48px; }
+.mejora-card {
+  background: var(--card-bg, rgba(148, 163, 184, .07));
+  border: 1px solid rgba(148, 163, 184, .25); border-radius: 16px; padding: 20px; margin-bottom: 18px;
+}
+.mejora-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
+.mejora-msg { min-height: 1.4em; font-weight: 600; }
+.mejora-bar { height: 14px; border-radius: 999px; background: rgba(148, 163, 184, .25); overflow: hidden; }
+.mejora-bar > i { display: block; height: 100%; width: 0; border-radius: 999px; transition: width .5s ease; }
+.bar-ok { background: #22c55e; } .bar-bad { background: #ef4444; } .bar-mid { background: #f59e0b; }
+.mejora-chip { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: .8rem; font-weight: 700; background: rgba(37, 99, 235, .18); }
+.mejora-input, .mejora-textarea, .mejora-select {
+  width: 100%; padding: 10px 12px; border-radius: 10px; margin: 6px 0 12px;
+  border: 1px solid rgba(148, 163, 184, .45); background: transparent; color: inherit; font: inherit;
+}
+.mejora-textarea { min-height: 110px; resize: vertical; }
+.mejora-label { font-weight: 700; display: block; }
+
+/* ---------- Pantalla Azul ---------- */
+.bsod-screen {
+  background: #0b5cad; color: #fff; border-radius: 12px; padding: 26px 22px;
+  font-family: "Segoe UI", Inter, Arial, sans-serif; min-height: 300px;
+}
+.bsod-face { font-size: 4rem; font-weight: 200; margin: 0 0 10px; }
+.bsod-code { font-family: Consolas, monospace; background: rgba(0,0,0,.25); padding: 2px 8px; border-radius: 6px; }
+.bsod-tools { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+.bsod-tool[disabled] { opacity: .45; }
+.bsod-log {
+  font-family: Consolas, monospace; font-size: .88rem; white-space: pre-wrap;
+  background: rgba(2, 6, 23, .08); border: 1px dashed rgba(148, 163, 184, .5);
+  border-radius: 10px; padding: 12px; min-height: 90px; margin-top: 10px;
+}
+.bsod-case-btn { text-align: left; width: 100%; cursor: pointer; }
+
+/* ---------- Foro El Taller ---------- */
+.foro-item { border-bottom: 1px solid rgba(148, 163, 184, .25); padding: 14px 0; }
+.foro-item:last-child { border-bottom: 0; }
+.foro-q-title { font-size: 1.05rem; font-weight: 700; margin: 0 0 4px; }
+.foro-meta { font-size: .83rem; opacity: .8; }
+.foro-answer { border-left: 3px solid rgba(148, 163, 184, .4); padding: 8px 12px; margin: 10px 0; }
+.foro-answer.solved { border-left-color: #22c55e; background: rgba(34, 197, 94, .08); }
+.foro-tag { font-size: .75rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
+
+/* ---------- Cooperativo (Redes Challenge) ---------- */
+.coop-wrap { max-width: 860px; margin: 0 auto; padding: 10px 14px 30px; }
+.coop-bars { display: grid; gap: 10px; margin: 14px 0; }
+.coop-member { display: inline-block; margin: 3px 6px 3px 0; padding: 4px 10px; border-radius: 999px; background: rgba(148,163,184,.2); font-size: .88rem; }
+
+/* ---------- Presupuestos ---------- */
+.presu-table { width: 100%; border-collapse: collapse; }
+.presu-table th, .presu-table td { padding: 8px; border-bottom: 1px solid rgba(148, 163, 184, .25); text-align: left; }
+.presu-up { color: #ef4444; font-weight: 700; }
+.presu-down { color: #22c55e; font-weight: 700; }
+.presu-total { font-size: 1.15rem; font-weight: 800; }

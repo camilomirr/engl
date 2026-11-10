@@ -130,3 +130,20 @@ desplegadas por el dueño y claves VAPID: es un proyecto aparte, no un ajuste.
 | 5. GA4 | ⏳ Falta el ID `G-…` |
 | 6. Flujo CI en `.github/workflows/` | ⏳ Sin colocar (listo en `tests/`) |
 | 7. Push reales | 🔭 Futuro |
+
+---
+
+## 8. Activar el foro «El Taller» ⏳ pendiente
+
+**Por qué:** la página `foro.html` ya existe y lee/escribe en dos tablas nuevas
+(`foro_preguntas` y `foro_respuestas`) que aún no están en la base. Sin este
+paso, el foro muestra el aviso de «todavía no está activado».
+
+**Pasos:**
+1. Abrir el archivo `supabase/foro.sql` de este repo.
+2. Copiarlo entero en el SQL Editor y darle **Run**.
+3. Comprobar: `select count(*) from public.foro_preguntas;` debe responder `0`
+   (la tabla existe y está vacía), ya no un error de «tabla no encontrada».
+
+Las políticas incluidas dejan leer a todo el mundo y escribir solo con sesión,
+con cada fila atada a su dueño (`auth.uid() = user_id`), igual que el ranking.

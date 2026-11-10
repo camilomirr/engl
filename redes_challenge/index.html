@@ -6,7 +6,7 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; img-src 'self' data: https://images.unsplash.com https://encrypted-tbn0.gstatic.com https://acf.geeknetic.es https://jensa.vtexassets.com https://www.esmero.com.co https://pisces.bbystatic.com https://placaschinas.com https://th.bing.com https://www.cyberpuerta.mx https://www.legionmac.com https://www.ntcompatible.com https://*.googleusercontent.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://xiuztrujrwdgcpjrruxu.supabase.co https://*.googleusercontent.com; media-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'">
   <title>NVISION - Redes Challenge</title>
   <!-- Misma hoja de estilos de NVISION: la barra de arriba y el logo son los del sitio -->
-  <link rel="stylesheet" href="../css/styles.css?v=108">
+  <link rel="stylesheet" href="../css/styles.css?v=114">
   <link rel="stylesheet" href="estilos.css">
   <!-- SEO, iconos y vista previa al compartir (Open Graph / Twitter) -->
   <meta name="description" content="Redes Challenge de NVISION: pon a prueba lo que sabes de redes, suma puntos y compite en el ranking.">
@@ -70,6 +70,7 @@
               <li><a href="../redes.html#alcance-redes" data-i18n="nav_scope">Clasificación de Redes</a></li>
               <li><a href="../redes.html#topologias" data-i18n="nav_topologies">Topologías</a></li>
               <li><a href="index.html" class="btn-challenge"><span class="mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 8h10.5a4 4 0 0 1 3.9 4.8l-.6 3.1a3 3 0 0 1-5.4 1.4L13.5 15.5h-3l-1.4 1.8a3 3 0 0 1-5.4-1.4l-.6-3.1A4 4 0 0 1 6.5 8z"/><path d="M8 11v3M6.5 12.5h3"/><circle cx="15.8" cy="11.6" r="0.4" fill="currentColor"/><circle cx="17.8" cy="13.4" r="0.4" fill="currentColor"/></svg></span> Redes Challenge</a></li>
+              <li><a href="../pantalla-azul.html" data-i18n="nav_pantalla">Pantalla Azul</a></li>
               <li><a href="../redes.html#simulador-red" data-i18n="nav_simulator">Simulador Ping</a></li>
               <li><a href="../redes.html#switch-3d" data-i18n="nav_switch3d">El switch por dentro</a></li>
               <li><a href="../wifi.html" data-i18n="nav_wifi">WiFi Avanzado</a></li>
@@ -86,6 +87,7 @@
             <ul class="nav-submenu">
               <li class="nav-mobile-back"><button type="button"><span class="mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></span><span data-i18n="nav_back">Volver</span></button></li>
               <li><a href="../recursos.html#glosario" data-i18n="nav_glossary">Glosario</a></li>
+              <li><a href="../foro.html" data-i18n="nav_foro">Foro El Taller</a></li>
               <li><a href="../recursos.html#laboratorio" data-i18n="nav_lab">Laboratorio de Códigos</a></li>
               <li><a href="../mantenimiento-software.html" data-i18n="nav_ms">Mantenimiento por software</a></li>
               <li><a href="../ruta.html" data-i18n="nav_route">Ruta de aprendizaje</a></li>
@@ -102,6 +104,7 @@
               <li><a href="../pc3d.html#visor-3d" data-i18n="nav_pc3d_viewer">Visor 3D</a></li>
               <li><a href="../pc3d.html#componentes-3d" data-i18n="nav_pc3d_parts">Componentes y tipos</a></li>
               <li><a href="../pc3d.html#mantenimiento" data-i18n="nav_pc3d_maintenance">Mantenimiento del PC</a></li>
+              <li><a href="../presupuestos.html" data-i18n="nav_presu">Presupuestos reales</a></li>
             </ul>
           </li>
         </ul>
@@ -239,6 +242,51 @@
           <button id="btnJoin" class="primary" type="button">Iniciar juego</button>
           <p id="joinStatus" aria-live="polite"></p>
         </div>
+        <div id="coopEntry" style="margin-top:22px;border-top:1px dashed rgba(148,163,184,.4);padding-top:16px">
+          <h3 id="coopEntryTitle">🛡️ Modo cooperativo: salven la red</h3>
+          <p id="coopEntryText">Formen un equipo, entren con el mismo código y respondan juntos para detener un ciberataque antes de que tome la red empresarial. Aquí no compiten entre ustedes: ganan o pierden en equipo.</p>
+          <button id="btnCoopOpen" class="primary" type="button">Entrar al modo cooperativo</button>
+        </div>
+      </div>
+
+      <div id="coopScreen" class="hidden">
+        <h2 id="coopTitle">🛡️ Misión cooperativa: salven la red</h2>
+        <p id="coopIntro">Un ciberataque avanza sobre la red de una empresa. Cada respuesta correcta del equipo suma defensa; si el ataque llega al 100% antes de completar la defensa, la red cae.</p>
+
+        <div id="coopHome">
+          <h3 id="coopCreateTitle">Crear la sala del equipo</h3>
+          <label for="coopName1" id="coopName1Label">Tu nombre</label>
+          <input id="coopName1" maxlength="24" autocomplete="off">
+          <button id="btnCoopCreate" class="primary" type="button">Crear sala y recibir código</button>
+          <h3 id="coopJoinTitle">Unirme con un código</h3>
+          <label for="coopCode" id="coopCodeLabel">Código de la sala (4 letras)</label>
+          <input id="coopCode" maxlength="4" autocomplete="off" style="text-transform:uppercase">
+          <label for="coopName2" id="coopName2Label">Tu nombre</label>
+          <input id="coopName2" maxlength="24" autocomplete="off">
+          <button id="btnCoopJoin" class="primary" type="button">Unirme al equipo</button>
+          <p id="coopHomeStatus" aria-live="polite"></p>
+        </div>
+
+        <div id="coopRoom" class="hidden">
+          <p><span id="coopRoomLabel">Sala</span> <strong id="coopRoomCode"></strong> · <span id="coopPhase"></span></p>
+          <div id="coopMembers"></div>
+          <div class="coop-bars">
+            <div><strong id="coopDefenseLabel">Defensa del equipo</strong>
+              <div class="mejora-bar"><i id="coopDefenseBar" class="bar-ok"></i></div>
+              <span id="coopDefenseText"></span></div>
+            <div><strong id="coopAttackLabel">Avance del ataque</strong>
+              <div class="mejora-bar"><i id="coopAttackBar" class="bar-bad"></i></div>
+              <span id="coopAttackText"></span></div>
+          </div>
+          <button id="btnCoopStart" class="primary hidden" type="button">Iniciar la misión (soy el anfitrión)</button>
+          <div id="coopPlay" class="hidden">
+            <h3 id="coopQ"></h3>
+            <div id="coopOptions" class="options"></div>
+            <p id="coopFeedback" aria-live="polite"></p>
+          </div>
+          <p id="coopResult" aria-live="polite"></p>
+          <button id="btnCoopLeave" type="button">Salir del modo cooperativo</button>
+        </div>
       </div>
 
       <div id="lobbyScreen" class="hidden">
@@ -316,9 +364,10 @@
 
   <!-- Scripts de NVISION (barra, tema e idioma) + lógica del juego -->
   <script src="../js/main.js"></script>
-  <script src="../js/site-search.js?v=84"></script>
+  <script src="../js/site-search.js?v=85"></script>
   <script src="../js/validation.js?v=1"></script>
   <script src="juego.js" defer></script>
+  <script src="coop.js?v=1" defer></script>
   <script src="../js/equipo-widget.js?v=17" defer></script>
 </body>
 </html>

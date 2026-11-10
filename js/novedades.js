@@ -7,6 +7,9 @@
   if (!box) return;
   var lang = (localStorage.getItem('user_lang') || 'es').toLowerCase().indexOf('en') === 0 ? 'en' : 'es';
   var ENTRIES = [
+    { d: '2026-11-10', tag: { es: 'Funciones', en: 'Features' },
+      t: { es: 'Cinco mejoras nuevas: tutor, foro, cooperativo y más', en: 'Five new improvements: tutor, forum, co-op and more' },
+      x: { es: 'Estrenamos el Tutor NVI-Bot con pistas por niveles en los simuladores (sin darte la respuesta), el minijuego Pantalla Azul de diagnóstico, el foro de soporte El Taller, el modo cooperativo «Salven la red» en el Redes Challenge y el simulador de Presupuestos reales del Taller de PC. Todo suma logros y puntos al ranking.', en: 'Meet the NVI-Bot Tutor with leveled hints in the simulators (without giving away the answer), the Blue Screen diagnosis mini-game, The Workshop support forum, the "Save the network" co-op mode in the Networks Challenge and the Real budgets simulator in the PC Workshop. Everything earns achievements and ranking points.' } },
     { d: '2026-11-09', tag: { es: 'Funciones', en: 'Features' },
       t: { es: 'Diez mejoras nuevas', en: 'Ten new improvements' },
       x: { es: 'Llegan el simulador de topologías de red, el quiz en vivo con código de sala, certificados con código QR, la gráfica de progreso en Mi cuenta, el repaso inteligente con repetición espaciada, el modo entrevista técnica, el reto de la semana, el ranking semanal, esta página de novedades y los controles de accesibilidad (tamaño de letra y alto contraste).', en: 'Welcome the network topology simulator, the live quiz with room codes, QR-code certificates, the progress chart in My account, smart spaced-repetition review, the technical interview mode, the weekly challenge, the weekly ranking, this news page and the accessibility controls (font size and high contrast).' } },
