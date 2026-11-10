@@ -163,6 +163,12 @@
   top: 100%;
   left: 0;
   min-width: 230px;
+  /* Acomodo automático: el panel nunca pasa del ancho ni del alto
+     de la pantalla; si un catálogo crece, el panel hace scroll
+     propio en vez de salirse. */
+  max-width: min(300px, 94vw);
+  max-height: calc(100vh - 96px);
+  overflow-y: auto;
   background: var(--bg-surface);
   border: 1px solid var(--border-hover);
   border-radius: var(--radius-md);
@@ -470,6 +476,13 @@
 
 .nav-mobile-back {
   display: none;
+}
+
+/* En escritorio, los dos últimos catálogos abren su panel alineado
+   a la derecha: así el panel nunca se sale por el borde derecho,
+   sin importar cuánto crezca el encabezado. */
+@media (min-width: 1241px) {
+  .nav-item-dropdown:nth-last-child(-n+2) .nav-submenu { left: auto; right: 0; }
 }
 
 /* Responsividad para móviles del menú */

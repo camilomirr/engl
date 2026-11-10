@@ -6,7 +6,7 @@
 @import url('modules/variables.css?v=7');
 
 /* 2. Cabecera, Navegación, Submenús y Selector de Idioma */
-@import url('modules/header-nav.css?v=5');
+@import url('modules/header-nav.css?v=7');
 
 /* 3. Hero Section, Título Principal y Botones de Acción */
 @import url('modules/hero.css?v=1');
@@ -64,7 +64,7 @@
 @import url('modules/scroll-progress.css?v=1');
 
 /* 20. PWA (botón de instalar) */
-@import url('modules/pwa.css?v=5');
+@import url('modules/pwa.css?v=7');
 
 /* 21. Avatares de cuenta */
 @import url('modules/avatar.css?v=20');

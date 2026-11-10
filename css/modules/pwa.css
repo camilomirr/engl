@@ -1,61 +1,30 @@
 /* NVISION - PWA: botón de instalar en el encabezado + hoja de instalación */
 
-/* Botón de instalar: píldora visible con icono + texto, no un icono
-   más del encabezado. Así la descarga de la app se encuentra a
-   primera vista en cualquier página. Lleva el mismo degradado del logo
-   del botón ENVIAR (.btn-primary) para coincidir con el diseño de la
-   página: degradado azul en oscuro, #0f172a en claro. */
+/* Botón de instalar: REDONDO y pequeño, acoplado al encabezado
+   (a pedido de Duay, 2026-11-09). Hereda el estilo de los demás
+   botones circulo del encabezado (.theme-switch-btn: cristal, borde
+   sutil, 38px) y solo añade el tinte cian del icono de descarga
+   para que siga encontrándose a primera vista. La etiqueta de texto
+   ya no se muestra nunca: el nombre accesible queda en el
+   aria-label/title del botón («Instalar app»). */
 .pwa-install-btn {
-  align-items: center;
-  justify-content: center;
-  gap: .45rem;
-  width: auto;
-  height: 38px;
-  padding: 0 .95rem;
-  border-radius: 999px;
-  border: 1px solid #0284c7;
-  background: var(--btn-gradient);
-  box-shadow: 0 2px 8px rgba(2, 132, 199, .25);
-  color: #fff;
-  font-size: .9rem;
-  font-weight: 600;
-  white-space: nowrap;
+  border-radius: 50%;
+  color: var(--accent-cyan);
 }
 .pwa-install-btn:not([hidden]) { display: inline-flex; }
 .pwa-install-btn[hidden] { display: none !important; }
 .pwa-install-btn:hover {
-  color: #fff;
-  background: var(--btn-gradient-hover);
-  border-color: #0369a1;
+  color: var(--accent-cyan);
+  border-color: var(--border-hover);
+  background: var(--bg-card-hover);
   transform: translateY(-1px);
-  box-shadow: 0 4px 14px rgba(2, 132, 199, .35);
-}
-[data-theme="light"] .pwa-install-btn {
-  background: #0f172a;
-  border-color: #0f172a;
-  box-shadow: 0 2px 6px rgba(15, 23, 42, .12);
-}
-[data-theme="light"] .pwa-install-btn:hover {
-  background: #1e293b;
-  border-color: #1e293b;
-  box-shadow: 0 4px 12px rgba(15, 23, 42, .18);
 }
 .pwa-install-btn .mono-icon svg { width: 18px; height: 18px; }
-/* El símbolo de descargar va en blanco: .mono-icon le pone su propio
-   color gris (var(--text-secondary) en oscuro, #475569 en claro) y
-   tapaba el blanco del botón, así que el icono se veía gris aunque el
-   texto sí era blanco. Esto lo fuerza a blanco en los dos temas. */
 .pwa-install-btn .mono-icon,
 [data-theme="light"] .pwa-install-btn .mono-icon {
-  color: #fff;
+  color: var(--accent-cyan);
 }
-.pwa-install-label { line-height: 1; }
-
-/* En pantallas pequeñas solo el icono, para que quepa el encabezado */
-@media (max-width: 640px) {
-  .pwa-install-label { display: none; }
-  .pwa-install-btn { width: 38px; padding: 0; }
-}
+.pwa-install-label { display: none; }
 
 /* Hoja de instalación (modal) con los pasos según el dispositivo */
 .pwa-modal {
