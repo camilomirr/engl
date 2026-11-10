@@ -839,7 +839,11 @@
     try {
       google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: handleGoogleCredential });
       var w = Math.min(400, Math.max(200, wrap.clientWidth || 320));
-      google.accounts.id.renderButton(wrap, { theme: 'outline', size: 'large', text: 'continue_with', shape: 'rectangular', width: w });
+      // El botón oficial se pide en negro relleno cuando el sitio está
+      // en oscuro (su predeterminado) y en contorno claro en modo claro,
+      // para que se acople al tema en vez de verse como un parche blanco.
+      var gisTheme = document.documentElement.getAttribute('data-theme') === 'light' ? 'outline' : 'filled_black';
+      google.accounts.id.renderButton(wrap, { theme: gisTheme, size: 'large', text: 'continue_with', shape: 'rectangular', width: w });
       wrap.hidden = false;
       // OJO: .cuenta-google tiene display:flex en el CSS, que vence al
       // atributo hidden; hay que esconderlo por estilo para que no queden

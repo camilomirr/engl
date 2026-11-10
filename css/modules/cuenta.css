@@ -111,13 +111,22 @@
 /* ---------- Divisor y botón de Google ---------- */
 .cuenta-divider { display: flex; align-items: center; gap: .8rem; margin: 1.1rem 0 .9rem; color: var(--text-muted); font-size: .85rem; }
 .cuenta-divider::before, .cuenta-divider::after { content: ''; flex: 1; height: 1px; background: var(--border-subtle); }
-.cuenta-google { display: flex; align-items: center; justify-content: center; gap: .6rem; width: 100%; background: #ffffff; color: #1f1f1f; border: 1px solid #dadce0; box-shadow: var(--shadow-sm); }
-.cuenta-google svg { width: 20px; height: 20px; flex: none; }
-.cuenta-google:hover { background: #f8f9fa; border-color: #dadce0; color: #1f1f1f; transform: translateY(-1px); box-shadow: var(--shadow-md); }
-/* En modo claro el botón principal es azul oscuro, así que el de Google
-   también queda oscuro y sus letras van en blanco para que se lean. */
-[data-theme="light"] .cuenta-google { background: #0f172a; color: #ffffff; border-color: #0f172a; }
-[data-theme="light"] .cuenta-google:hover { background: #1e293b; border-color: #1e293b; color: #ffffff; }
+/* Botón de Google ACOPLADO al diseño de NVISION: misma superficie de
+   cristal, borde sutil, radio y movimiento que los demás botones de la
+   cuenta. La «G» de colores va sobre un disco blanco para seguir
+   siendo reconocible sobre el fondo oscuro (pauta de marca de Google). */
+.cuenta-google { display: flex; align-items: center; justify-content: center; gap: .6rem; width: 100%; padding: 0.8rem 1.1rem; background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); box-shadow: var(--shadow-sm); font-weight: 700; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.cuenta-google svg { width: 18px; height: 18px; flex: none; background: #ffffff; border-radius: 50%; padding: 4px; box-sizing: content-box; }
+.cuenta-google:hover { background: var(--bg-card-hover); border-color: var(--border-hover); color: var(--text-primary); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+/* En modo claro: blanco con borde suave y texto azul oscuro, como una
+   acción secundaria junto al botón principal azul oscuro del tema. */
+[data-theme="light"] .cuenta-google { background: #ffffff; color: #0f172a; border-color: rgba(15, 23, 42, 0.16); }
+[data-theme="light"] .cuenta-google svg { background: transparent; padding: 0; width: 20px; height: 20px; }
+[data-theme="light"] .cuenta-google:hover { background: #f8fafc; border-color: rgba(2, 132, 199, 0.45); color: #0f172a; }
+/* El botón que dibuja Google (GIS) también se integra: centrado y con
+   el mismo aire respecto a los elementos vecinos. Su tema (oscuro o
+   claro) lo elige cuenta.js según el tema del sitio. */
+#cuenta-google-gis:not([hidden]) { display: flex; justify-content: center; margin-top: .6rem; }
 
 /* ---------- Panel: perfil y estadísticas ---------- */
 .cuenta-profile { padding-bottom: 1.2rem; border-bottom: 1px solid var(--border-subtle); }
