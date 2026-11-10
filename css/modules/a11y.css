@@ -16,3 +16,23 @@ html[data-contrast="high"][data-theme="light"] {
 .a11y-wrap { display: inline-flex; gap: 6px; align-items: center; }
 .a11y-btn { font-weight: 800; min-width: 40px; }
 .a11y-btn.on { outline: 2px solid var(--accent-cyan); outline-offset: 1px; }
+
+/* Pantallas pequeñas: al sumar los botones de accesibilidad, el
+   encabezado se quedaba sin espacio y el botón de menú salía de la
+   pantalla (<480px). Se compactan los controles del encabezado. */
+@media (max-width: 560px) {
+  .header-container { gap: 5px; }
+  .header-container .theme-switch-btn,
+  .header-container .menu-toggle-btn { width: 32px; height: 32px; min-width: 32px; }
+  .a11y-wrap { gap: 4px; }
+  .a11y-btn { min-width: 30px; padding: 4px 6px; }
+  .brand-logo .brand-text { font-size: 1.05rem; }
+}
+@media (max-width: 560px) {
+  .header-container { padding-left: 6px; padding-right: 6px; }
+}
+@media (max-width: 420px) {
+  /* Si ni compactando cabe, el encabezado pasa a dos filas en vez de
+     dejar botones fuera de la pantalla. */
+  .header-container { flex-wrap: wrap; }
+}

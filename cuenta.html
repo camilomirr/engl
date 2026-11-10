@@ -11,7 +11,7 @@
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <title data-i18n="page_title_cuenta">NVISION - Mi cuenta</title>
   <!-- Hojas de estilo modular -->
-  <link rel="stylesheet" href="css/styles.css?v=90">
+  <link rel="stylesheet" href="css/styles.css?v=93">
   <!-- SEO, iconos y vista previa al compartir (Open Graph / Twitter) -->
   <meta name="description" content="Mi cuenta NVISION: crea tu cuenta para guardar tu progreso de aprendizaje en la nube y recuperarlo en cualquier equipo.">
   <meta name="theme-color" content="#0a0e17">
@@ -50,75 +50,92 @@
 
       <nav id="nav-menu" class="nav-menu">
         <ul class="nav-links">
-          <!-- Menú 1: Hardware & Computadores -->
+          <!-- Catálogo 1: Aprende -->
           <li class="nav-item-dropdown">
             <button type="button" class="nav-dropdown-trigger" aria-expanded="false">
-              <span data-i18n="nav_grp_hardware">Hardware</span>
+              <span data-i18n="nav_cat_aprende">Aprende</span>
               <span class="nav-arrow mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
             </button>
             <ul class="nav-submenu">
               <li class="nav-mobile-back"><button type="button"><span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></span><span data-i18n="nav_back">Volver</span></button></li>
+              <li><a href="hardware.html" data-i18n="nav_hardware">Hardware</a></li>
               <li><a href="hardware.html#historia" data-i18n="nav_history">Historia</a></li>
               <li><a href="hardware.html#componentes" data-i18n="nav_components">Componentes</a></li>
-            </ul>
-          </li>
-
-          <!-- Menú 2: Redes & Topologías -->
-          <li class="nav-item-dropdown">
-            <button type="button" class="nav-dropdown-trigger" aria-expanded="false">
-              <span data-i18n="nav_grp_networks">Redes</span>
-              <span class="nav-arrow mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
-            </button>
-            <ul class="nav-submenu">
-              <li class="nav-mobile-back"><button type="button"><span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></span><span data-i18n="nav_back">Volver</span></button></li>
+              <li><a href="redes.html" data-i18n="nav_redes">Redes</a></li>
               <li><a href="redes.html#redes" data-i18n="nav_network">Del Hardware a la Red</a></li>
               <li><a href="redes.html#alcance-redes" data-i18n="nav_scope">Clasificación de Redes</a></li>
               <li><a href="redes.html#topologias" data-i18n="nav_topologies">Topologías</a></li>
-              <li><a href="redes_challenge/index.html" class="btn-challenge"><span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 8h10.5a4 4 0 0 1 3.9 4.8l-.6 3.1a3 3 0 0 1-5.4 1.4L13.5 15.5h-3l-1.4 1.8a3 3 0 0 1-5.4-1.4l-.6-3.1A4 4 0 0 1 6.5 8z"/><path d="M8 11v3M6.5 12.5h3"/><circle cx="15.8" cy="11.6" r="0.4" fill="currentColor"/><circle cx="17.8" cy="13.4" r="0.4" fill="currentColor"/></svg></span> Redes Challenge</a></li>
-              <li><a href="redes.html#simulador-red" data-i18n="nav_simulator">Simulador Ping</a></li>
-              <li><a href="redes.html#switch-3d" data-i18n="nav_switch3d">El switch por dentro</a></li>
-                          <li><a href="wifi.html" data-i18n="nav_wifi">WiFi Avanzado</a></li>
-                          <li><a href="redes.html#herramientas" data-i18n="nav_tools">Herramientas de redes</a></li>
+              <li><a href="wifi.html" data-i18n="nav_wifi">WiFi Avanzado</a></li>
+              <li><a href="mantenimiento-software.html" data-i18n="nav_ms">Mantenimiento por software</a></li>
+              <li><a href="pc3d.html#mantenimiento" data-i18n="nav_pc3d_maintenance">Mantenimiento del PC</a></li>
+              <li><a href="ruta.html" data-i18n="nav_route">Ruta de aprendizaje</a></li>
+              <li><a href="recursos.html#glosario" data-i18n="nav_glossary">Glosario</a></li>
+              <li><a href="ingles.html" data-i18n="nav_ingles">Inglés técnico</a></li>
             </ul>
           </li>
 
-          <!-- Menú 3: Recursos & Práctica -->
+          <!-- Catálogo 2: Laboratorios -->
           <li class="nav-item-dropdown">
             <button type="button" class="nav-dropdown-trigger" aria-expanded="false">
-              <span data-i18n="nav_grp_resources">Recursos</span>
+              <span data-i18n="nav_cat_lab">Laboratorios</span>
               <span class="nav-arrow mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
             </button>
             <ul class="nav-submenu">
               <li class="nav-mobile-back"><button type="button"><span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></span><span data-i18n="nav_back">Volver</span></button></li>
-              <li><a href="recursos.html#glosario" data-i18n="nav_glossary">Glosario</a></li>
-              <li><a href="recursos.html#laboratorio" data-i18n="nav_lab">Laboratorio de Códigos</a></li>
-              <li><a href="mantenimiento-software.html" data-i18n="nav_ms">Mantenimiento por software</a></li>
-              <li><a href="ruta.html" data-i18n="nav_route">Ruta de aprendizaje</a></li>
-              <li><a href="examenes.html" data-i18n="nav_exams">Exámenes y certificados</a></li>
-              <li><a href="logros.html" data-i18n="nav_logros">Logros</a></li>
-              <li><a href="ranking.html" data-i18n="nav_ranking">Ranking</a></li>
+              <li><a href="topologia.html" data-i18n="nav_topologia">Simulador de topologías</a></li>
+              <li><a href="redes.html#simulador-red" data-i18n="nav_simulator">Simulador Ping</a></li>
+              <li><a href="redes.html#switch-3d" data-i18n="nav_switch3d">El switch por dentro</a></li>
+              <li><a href="redes.html#herramientas" data-i18n="nav_tools">Herramientas de redes</a></li>
               <li><a href="terminal.html" data-i18n="nav_terminal">Terminal de redes</a></li>
               <li><a href="comparador.html" data-i18n="nav_comparador">Comparador</a></li>
-              <li><a href="ingles.html" data-i18n="nav_ingles">Inglés técnico</a></li>
-              <li><a href="apuntes.html" data-i18n="nav_apuntes">Mis apuntes</a></li>
-              <li><a href="topologia.html" data-i18n="nav_topologia">Simulador de topologías</a></li>
-              <li><a href="sala.html" data-i18n="nav_sala">Quiz en vivo</a></li>
-              <li><a href="entrevista.html" data-i18n="nav_entrevista">Entrevista técnica</a></li>
-              <li><a href="novedades.html" data-i18n="nav_novedades">Novedades</a></li>
+              <li><a href="recursos.html#laboratorio" data-i18n="nav_lab">Laboratorio de Códigos</a></li>
+              <li><a href="pc3d.html#visor-3d" data-i18n="nav_pc3d_viewer">Visor 3D</a></li>
+              <li><a href="pc3d.html#componentes-3d" data-i18n="nav_pc3d_parts">Componentes y tipos</a></li>
               <li><a href="verificar.html" data-i18n="nav_verificar">Verificar certificado</a></li>
             </ul>
           </li>
+
+          <!-- Catálogo 3: Juegos -->
           <li class="nav-item-dropdown">
             <button type="button" class="nav-dropdown-trigger" aria-expanded="false">
-              <span data-i18n="nav_grp_pc3d">PC3D y más</span>
+              <span data-i18n="nav_cat_juegos">Juegos</span>
               <span class="nav-arrow mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
             </button>
             <ul class="nav-submenu">
               <li class="nav-mobile-back"><button type="button"><span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></span><span data-i18n="nav_back">Volver</span></button></li>
-              <li><a href="pc3d.html#visor-3d" data-i18n="nav_pc3d_viewer">Visor 3D</a></li>
-              <li><a href="workshop/index.html">NVISION PC Workshop</a></li>
-              <li><a href="pc3d.html#componentes-3d" data-i18n="nav_pc3d_parts">Componentes y tipos</a></li>
-              <li><a href="pc3d.html#mantenimiento" data-i18n="nav_pc3d_maintenance">Mantenimiento del PC</a></li>
+              <li><a href="workshop/index.html" data-i18n="nav_workshop">NVISION PC Workshop</a></li>
+              <li><a href="redes_challenge/index.html" class="btn-challenge"><span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 8h10.5a4 4 0 0 1 3.9 4.8l-.6 3.1a3 3 0 0 1-5.4 1.4L13.5 15.5h-3l-1.4 1.8a3 3 0 0 1-5.4-1.4l-.6-3.1A4 4 0 0 1 6.5 8z"/><path d="M8 11v3M6.5 12.5h3"/><circle cx="15.8" cy="11.6" r="0.4" fill="currentColor"/><circle cx="17.8" cy="13.4" r="0.4" fill="currentColor"/></svg></span> Redes Challenge</a></li>
+              <li><a href="sala.html" data-i18n="nav_sala">Quiz en vivo</a></li>
+            </ul>
+          </li>
+
+          <!-- Catálogo 4: Exámenes y progreso -->
+          <li class="nav-item-dropdown">
+            <button type="button" class="nav-dropdown-trigger" aria-expanded="false">
+              <span data-i18n="nav_cat_examenes">Exámenes y progreso</span>
+              <span class="nav-arrow mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+            </button>
+            <ul class="nav-submenu">
+              <li class="nav-mobile-back"><button type="button"><span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></span><span data-i18n="nav_back">Volver</span></button></li>
+              <li><a href="examenes.html" data-i18n="nav_exams">Exámenes y certificados</a></li>
+              <li><a href="logros.html" data-i18n="nav_logros">Logros</a></li>
+              <li><a href="ranking.html" data-i18n="nav_ranking">Ranking</a></li>
+            </ul>
+          </li>
+
+          <!-- Catálogo 5: Mi NVISION -->
+          <li class="nav-item-dropdown">
+            <button type="button" class="nav-dropdown-trigger" aria-expanded="false">
+              <span data-i18n="nav_cat_cuenta">Mi NVISION</span>
+              <span class="nav-arrow mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+            </button>
+            <ul class="nav-submenu">
+              <li class="nav-mobile-back"><button type="button"><span class="mono-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></span><span data-i18n="nav_back">Volver</span></button></li>
+              <li><a href="cuenta.html" data-i18n="nav_account">Mi cuenta</a></li>
+              <li><a href="apuntes.html" data-i18n="nav_apuntes">Mis apuntes</a></li>
+              <li><a href="entrevista.html" data-i18n="nav_entrevista">Entrevista técnica</a></li>
+              <li><a href="novedades.html" data-i18n="nav_novedades">Novedades</a></li>
+              <li><a href="privacidad.html" data-i18n="nav_privacidad">Privacidad</a></li>
             </ul>
           </li>
         </ul>
@@ -343,7 +360,7 @@
   </footer>
 
   <!-- Script interactivo bilingüe y menú móvil -->
-  <script src="js/main.js?v=110"></script>
+  <script src="js/main.js?v=116"></script>
   <script src="js/site-search.js?v=84"></script>
   <script src="js/analytics.js?v=1" defer></script>
   <script src="js/equipo-widget.js?v=17" defer></script>
