@@ -5,7 +5,7 @@
    fuentes, imágenes externas) NO se toca. */
 'use strict';
 
-var CACHE = 'nvision-pwa-v13';
+var CACHE = 'nvision-pwa-v14';
 
 var SHELL = [
   '/',
@@ -41,7 +41,8 @@ var SHELL = [
   '/assets/icons/icon-192.png',
   '/assets/icons/icon-512.png',
   '/assets/icons/apple-touch-icon.png',
-  '/assets/og-image.jpg'
+  '/assets/og-image.jpg',
+  '/assets/google-g.svg'
 ];
 
 self.addEventListener('install', function (event) {
