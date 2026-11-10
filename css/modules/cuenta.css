@@ -117,6 +117,11 @@
    siendo reconocible sobre el fondo oscuro (pauta de marca de Google). */
 .cuenta-google { display: flex; align-items: center; justify-content: center; gap: .6rem; width: 100%; padding: 0.8rem 1.1rem; background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); box-shadow: var(--shadow-sm); font-weight: 700; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 .cuenta-google svg { width: 18px; height: 18px; flex: none; background: #ffffff; border-radius: 50%; padding: 4px; box-sizing: content-box; }
+/* El botón nace oculto en el HTML (hidden): esta regla hace que el
+   atributo mande sobre el display:flex, así el botón solo aparece cuando
+   el JS comprueba que el botón oficial de Google no cargó. Sin esto, el
+   flex lo mostraba en cuanto llegaba el CSS, con la «G» sin tamaño. */
+.cuenta-google[hidden] { display: none; }
 .cuenta-google:hover { background: var(--bg-card-hover); border-color: var(--border-hover); color: var(--text-primary); transform: translateY(-1px); box-shadow: var(--shadow-md); }
 /* En modo claro: blanco con borde suave y texto azul oscuro, como una
    acción secundaria junto al botón principal azul oscuro del tema. */

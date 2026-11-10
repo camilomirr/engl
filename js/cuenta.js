@@ -23,7 +23,7 @@
       userExists: 'Ese correo ya tiene una cuenta. Inicia sesión.',
       netErr: 'Sin conexión con el servidor. Revisa tu internet e inténtalo otra vez.',
       loggedAs: 'Sesión iniciada como',
-      avatarSaved: 'Avatar guardado. Se verá en el botón de Mi cuenta en todo el sitio.', avatarErr: 'No se pudo guardar el avatar. Inténtalo otra vez.', avatarInitial: 'Inicial',
+      avatarSaved: 'Avatar guardado. Se verá en el botón de Mi cuenta en todo el sitio.', avatarErr: 'No se pudo guardar el avatar. Inténtalo otra vez.', avatarInitial: 'Inicial', avatarGoogle: 'Google',
       avatarPhoto: 'Foto', avatarRemove: 'Quitar foto', avatarImgErr: 'Esa imagen no se pudo usar. Prueba con otra.',
       googleOff: 'El ingreso con Google aún no está activado por el equipo. Por ahora entra con tu correo y contraseña.',
       forgotNeedEmail: 'Escribe tu correo arriba para enviarte el enlace.',
@@ -57,7 +57,7 @@
       userExists: 'That email already has an account. Log in instead.',
       netErr: 'No connection to the server. Check your internet and try again.',
       loggedAs: 'Logged in as',
-      avatarSaved: 'Avatar saved. It will show on the My account button across the site.', avatarErr: 'Could not save the avatar. Try again.', avatarInitial: 'Initial',
+      avatarSaved: 'Avatar saved. It will show on the My account button across the site.', avatarErr: 'Could not save the avatar. Try again.', avatarInitial: 'Initial', avatarGoogle: 'Google',
       avatarPhoto: 'Photo', avatarRemove: 'Remove photo', avatarImgErr: 'That image could not be used. Try another one.',
       googleOff: 'Google sign-in is not enabled by the team yet. For now, log in with your email and password.',
       forgotNeedEmail: 'Type your email above so we can send you the link.',
@@ -139,7 +139,7 @@
   var googleAvatarPersisting = null;
   function persistGoogleAvatar(s) {
     if (!s || !s.googleAvatar || !s.access) return;
-    if ((s.avatar && s.avatar !== 'initial') || s.avatarImg) return;
+    if ((s.avatar && s.avatar !== 'initial' && s.avatar !== 'google') || s.avatarImg) return;
     try { if (localStorage.getItem(GOOGLE_AVATAR_SAVED_KEY) === s.googleAvatar) return; } catch (e) {}
     if (googleAvatarPersisting === s.googleAvatar) return;
     googleAvatarPersisting = s.googleAvatar;
@@ -169,15 +169,17 @@
       });
     }).then(function (out) {
       if (!window.NVISION_validAvatarImg || !window.NVISION_validAvatarImg(out)) throw new Error('bad-img');
-      // Se guarda también avatar: 'custom': es la marca que hace que el
-      // ranking (y el perfil público) pinten la foto. Sin ella la fila
-      // del ranking quedaba con avatar 'initial'/null y el chip mostraba
-      // solo la inicial aunque la foto sí estuviera guardada.
-      return window.NVISION_sbAuth('/auth/v1/user', { method: 'PUT', token: s.access, body: { data: { avatar: 'custom', avatar_image: out } } })
+      // Se guarda también avatar: 'custom' (o se conserva 'google'
+      // si el usuario eligió la foto de Google): es la marca que hace
+      // que el ranking (y el perfil público) pinten la foto. Sin ella
+      // la fila del ranking quedaba con avatar 'initial'/null y el
+      // chip mostraba solo la inicial aunque la foto sí estuviera
+      // guardada.
+      return window.NVISION_sbAuth('/auth/v1/user', { method: 'PUT', token: s.access, body: { data: { avatar: s.avatar === 'google' ? 'google' : 'custom', avatar_image: out } } })
         .then(function (r) { if (r.status !== 200) throw new Error('no-save'); return out; });
     }).then(function (out) {
       try { localStorage.setItem(GOOGLE_AVATAR_SAVED_KEY, s.googleAvatar); } catch (e) {}
-      s.avatar = 'custom'; s.avatarImg = out; setSession(s);
+      s.avatar = (s.avatar === 'google') ? 'google' : 'custom'; s.avatarImg = out; setSession(s);
       renderProfilePhoto();
       if (window.NVISION_renderAccountChip) window.NVISION_renderAccountChip();
       // La foto ya está guardada en la cuenta: si el puntaje ya estaba
@@ -194,7 +196,7 @@
   // su foto (avatar 'initial'), no se vuelve a poner la de Google.
   function rankingPhoto(s) {
     if (!s) return null;
-    var isSvg = s.avatar && s.avatar !== 'custom' && s.avatar !== 'initial';
+    var isSvg = s.avatar && s.avatar !== 'custom' && s.avatar !== 'initial' && s.avatar !== 'google';
     if (isSvg) return null;
     var V = window.NVISION_validAvatarImg;
     if (s.avatarImg && (!V || V(s.avatarImg))) return { avatar: 'custom', avatar_image: s.avatarImg };
@@ -239,7 +241,7 @@
   // Google; si tampoco, el avatar SVG elegido o la inicial del correo.
   function profilePhotoHtml(s) {
     if (!s || !window.NVISION_avatarChip) return '';
-    var isSvg = s.avatar && s.avatar !== 'custom' && s.avatar !== 'initial';
+    var isSvg = s.avatar && s.avatar !== 'custom' && s.avatar !== 'initial' && s.avatar !== 'google';
     // Foto guardada en el aparato manda sobre la URL remota de Google.
     var cached = (!isSvg && s.googleAvatar && window.NVISION_cachedGoogleAvatar) ? window.NVISION_cachedGoogleAvatar(s.googleAvatar) : null;
     var img = isSvg ? s.avatarImg : (s.avatarImg || cached || s.googleAvatar);
@@ -360,7 +362,7 @@
     $('cuenta-user-email').textContent = session.email || '';
     $('cuenta-user-name').textContent = displayName(session);
     renderProfilePhoto();
-    buildAvatarGrid($('avatar-grid-panel'), session.avatar || 'initial', saveAvatar, session.avatarImg);
+    buildAvatarGrid($('avatar-grid-panel'), (session.avatar && session.avatar !== 'initial') ? session.avatar : 'google', saveAvatar, session.avatarImg);
     refreshRemoveBtn();
     var strip = $('cuenta-logros');
     if (strip && window.NVISION_LOGROS) window.NVISION_LOGROS.renderStrip(strip);
@@ -396,14 +398,26 @@
   // botón propio de Google llegó a dibujarse, para no revivir el botón
   // viejo al volver.
   var gisRendered = false;
+  // gisFailed: la librería de Google no cargó tras 10 intentos (5 s). El
+  // botón propio solo aparece como respaldo cuando esto es verdad: antes
+  // aparecía en cuanto llegaba el CSS, y la «G» se veía gigante mientras
+  // el botón oficial todavía estaba por dibujarse.
+  var gisFailed = false;
+  function applyGoogleBtn() {
+    var g = $('cuenta-google');
+    if (!g) return;
+    var resetOpen = $('cuenta-reset') && !$('cuenta-reset').hidden;
+    var show = !gisRendered && gisFailed && !resetOpen;
+    g.hidden = !show;
+    g.style.display = show ? '' : 'none';
+  }
   function showReset(on) {
     if ($('cuenta-reset')) $('cuenta-reset').hidden = !on;
     if ($('cuenta-form')) $('cuenta-form').hidden = on;
     if ($('cuenta-switch')) $('cuenta-switch').hidden = on;
     var div = document.querySelector('.cuenta-divider');
     if (div) div.hidden = on;
-    var g = $('cuenta-google');
-    if (g) g.style.display = on ? 'none' : (gisRendered ? 'none' : '');
+    applyGoogleBtn();
     var gis = $('cuenta-google-gis');
     if (gis) gis.hidden = on ? true : !gisRendered;
   }
@@ -547,29 +561,46 @@
   });
 
   // ---------- Avatares ----------
-  var regAvatar = 'initial';
+  var regAvatar = 'google';
   var regAvatarImg = null;
   var fileTarget = 'reg';
   var PHOTO_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="9" cy="9" r="2"></circle><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path></svg>';
-  function avatarOptions() { return ['initial'].concat((window.NVISION_AVATARS || []).map(function (a) { return a.id; })); }
+  function avatarOptions() { return ['google'].concat((window.NVISION_AVATARS || []).map(function (a) { return a.id; })); }
   function avatarName(id) {
+    if (id === 'google') return T.avatarGoogle;
     if (id === 'initial') return T.avatarInitial;
     if (id === 'custom') return T.avatarPhoto;
     var list = window.NVISION_AVATARS || [];
     for (var i = 0; i < list.length; i++) if (list[i].id === id) return list[i][lang] || list[i].es;
     return id;
   }
+  // Foto de la cuenta de Google para la opción 'Google': la copia
+  // guardada en el aparato manda; si no, la URL oficial de Google.
+  // Sin foto de Google (cuenta de correo o registro nuevo) no hay
+  // imagen y el chip cae a la inicial del correo.
+  function googlePhoto() {
+    var s = getSession();
+    if (!s || !s.googleAvatar) return null;
+    var V = window.NVISION_validAvatarImg;
+    var cached = window.NVISION_cachedGoogleAvatar ? window.NVISION_cachedGoogleAvatar(s.googleAvatar) : null;
+    if (cached && (!V || V(cached))) return cached;
+    if (!V || V(s.googleAvatar)) return s.googleAvatar;
+    return null;
+  }
   function buildAvatarGrid(container, currentId, onPick, customImg) {
     if (!container || !window.NVISION_avatarChip) return;
     container.innerHTML = '';
     var sess = getSession();
     var email = (sess && sess.email) || ($('cuenta-email') ? $('cuenta-email').value : '') || '';
+    // 'initial' ya no se ofrece: las cuentas viejas con ese valor
+    // quedan como 'Google' (su foto de Google o su inicial).
+    if (currentId === 'initial') currentId = 'google';
     avatarOptions().forEach(function (id) {
       var b = document.createElement('button');
       b.type = 'button';
       b.className = 'avatar-opt' + (id === currentId ? ' sel' : '');
       b.setAttribute('aria-label', avatarName(id));
-      b.innerHTML = window.NVISION_avatarChip(id, email) + '<span>' + avatarName(id) + '</span>';
+      b.innerHTML = window.NVISION_avatarChip(id, email, id === 'google' ? googlePhoto() : undefined) + '<span>' + avatarName(id) + '</span>';
       b.addEventListener('click', function () { onPick(id); });
       container.appendChild(b);
     });
@@ -592,7 +623,8 @@
     var nm = pv.querySelector('.avatar-preview-name');
     var sess = getSession();
     var email = (sess && sess.email) || ($('cuenta-email') ? $('cuenta-email').value : '') || '';
-    if (chip) chip.innerHTML = window.NVISION_avatarChip(currentId, email, customImg);
+    if (currentId === 'initial') currentId = 'google';
+    if (chip) chip.innerHTML = window.NVISION_avatarChip(currentId, email, currentId === 'google' ? googlePhoto() : customImg);
     if (nm) nm.textContent = avatarName(currentId);
   }
   function refreshRemoveBtn() {
@@ -610,12 +642,17 @@
     if (id === 'custom') { openAvatarFile('panel'); return; }
     ensureSession().then(function (s) {
       if (!s) return;
-      window.NVISION_sbAuth('/auth/v1/user', { method: 'PUT', token: s.access, body: { data: { avatar: id } } })
+      // 'Google' usa la foto de la cuenta de Google: se guarda el
+      // avatar 'google' y se limpia la foto subida, para que el chip,
+      // el perfil y el ranking muestren la foto de Google.
+      var body = (id === 'google') ? { avatar: 'google', avatar_image: null } : { avatar: id };
+      window.NVISION_sbAuth('/auth/v1/user', { method: 'PUT', token: s.access, body: { data: body } })
         .then(function (r) {
           if (r.status === 200) {
-            s.avatar = id; setSession(s);
+            s.avatar = id; if (id === 'google') s.avatarImg = null; setSession(s);
             buildAvatarGrid($('avatar-grid-panel'), id, saveAvatar, s.avatarImg);
             renderProfilePhoto();
+            refreshRemoveBtn();
             if (window.NVISION_renderAccountChip) window.NVISION_renderAccountChip();
             msg('ok', T.avatarSaved);
           } else msg('err', T.avatarErr);
@@ -676,11 +713,11 @@
   function removeAvatarImage() {
     ensureSession().then(function (s) {
       if (!s) return;
-      window.NVISION_sbAuth('/auth/v1/user', { method: 'PUT', token: s.access, body: { data: { avatar: 'initial', avatar_image: null } } })
+      window.NVISION_sbAuth('/auth/v1/user', { method: 'PUT', token: s.access, body: { data: { avatar: 'google', avatar_image: null } } })
         .then(function (r) {
           if (r.status === 200) {
-            s.avatar = 'initial'; s.avatarImg = null; setSession(s);
-            buildAvatarGrid($('avatar-grid-panel'), 'initial', saveAvatar, null);
+            s.avatar = 'google'; s.avatarImg = null; setSession(s);
+            buildAvatarGrid($('avatar-grid-panel'), 'google', saveAvatar, null);
             renderProfilePhoto();
             refreshRemoveBtn();
             if (window.NVISION_renderAccountChip) window.NVISION_renderAccountChip();
@@ -857,7 +894,12 @@
     var gisTries = 0;
     var gisTimer = setInterval(function () {
       gisTries++;
-      if (initGoogleGIS() || gisTries >= 10) clearInterval(gisTimer);
+      if (initGoogleGIS()) { clearInterval(gisTimer); }
+      else if (gisTries >= 10) {
+        clearInterval(gisTimer);
+        gisFailed = true;
+        applyGoogleBtn();
+      }
     }, 500);
   }
   (function handleAuthRedirect() {
