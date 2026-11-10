@@ -7,7 +7,9 @@
 .ent-msg.bot { background: var(--bg-surface); border: 1px solid var(--border-subtle); align-self: flex-start; }
 .ent-msg.me { background: linear-gradient(135deg, #0284c7, #38bdf8); color: #fff; align-self: flex-end; }
 .ent-in { display: flex; gap: 8px; padding: 12px; border-top: 1px solid var(--border-subtle); }
-.ent-in input { flex: 1; padding: 11px 13px; border-radius: 10px; border: 1px solid var(--border-subtle); background: var(--bg-surface); color: var(--text-primary); font: inherit; }
+.ent-in input { flex: 1; min-width: 0; padding: 11px 13px; border-radius: 10px; border: 1px solid var(--border-subtle); background: var(--bg-surface); color: var(--text-primary); font: inherit; }
 .ent-side { border: 1px solid var(--border-subtle); background: var(--bg-card); border-radius: 16px; padding: 18px; }
+.tool-btn { flex: none; white-space: nowrap; padding: 11px 18px; border-radius: 10px; border: 1px solid #0284c7; background: var(--btn-gradient); color: #fff; font: inherit; font-weight: 700; cursor: pointer; box-shadow: 0 2px 8px rgba(2, 132, 199, 0.25); transition: var(--transition); }
+.tool-btn:hover { background: var(--btn-gradient-hover); transform: translateY(-1px); }
 .ent-score { font-weight: 800; margin: 14px 0 0; }
 .ent-tip { color: var(--text-secondary); line-height: 1.6; font-size: .92rem; }

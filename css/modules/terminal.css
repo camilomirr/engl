@@ -16,8 +16,9 @@
 .term-out .term-err { color: #f87171; }
 .term-in { display: flex; align-items: center; gap: 0.5rem; border-top: 1px solid #1e293b; padding: 0.6rem 1rem; }
 .term-prompt { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; color: #7dd3fc; white-space: nowrap; }
-.term-in input { flex: 1; background: transparent; border: 0; outline: 0; color: #f8fafc; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; }
+.term-in input { flex: 1; min-width: 0; background: transparent; border: 0; outline: 0; color: #f8fafc; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; }
 @media (max-width: 700px) { .term-missions { grid-template-columns: 1fr; } .term-out { height: 300px; } }
+@media (max-width: 480px) { .term-prompt { font-size: 0.72rem; } .term-out { font-size: 0.76rem; padding: 0.8rem; } .term-bar-title { font-size: 0.68rem; } }
 
 /* Hero acorde al resto del sitio (patrón logros/ruta) */
 .term-hero { text-align: center; padding: 3.2rem 1.25rem 1.6rem; }
