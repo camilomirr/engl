@@ -11,8 +11,8 @@
   var out = document.getElementById('ping-out');
   var lang = (localStorage.getItem('user_lang') || 'es').toLowerCase().indexOf('en') === 0 ? 'en' : 'es';
   var T = {
-    es: { names: { pc: 'PC', switch: 'Switch', router: 'Router', server: 'Servidor', cloud: 'Internet' }, linked: 'Cable conectado: ', pickFirst: 'Toca el primer equipo…', pickSecond: 'Ahora toca el segundo equipo para conectar el cable.', need2: 'Necesitas al menos 2 equipos para enviar un ping.', same: 'El origen y el destino son el mismo equipo.', ok: '¡Ping exitoso! ', hops: 'saltos', via: 'Camino', fail: 'Sin respuesta: no hay camino de cables entre ', and: ' y ', deleted: 'Equipo borrado (y sus cables).', r1: 'Reto 1: haz ping entre dos PCs conectadas a un mismo switch', r2: 'Reto 2: haz ping entre dos PCs de redes distintas unidas por un router', doneTag: 'Completado' },
-    en: { names: { pc: 'PC', switch: 'Switch', router: 'Router', server: 'Server', cloud: 'Internet' }, linked: 'Cable connected: ', pickFirst: 'Tap the first device…', pickSecond: 'Now tap the second device to run the cable.', need2: 'You need at least 2 devices to send a ping.', same: 'Source and destination are the same device.', ok: 'Ping successful! ', hops: 'hops', via: 'Path', fail: 'No reply: there is no cable path between ', and: ' and ', deleted: 'Device deleted (and its cables).', r1: 'Challenge 1: ping between two PCs plugged into the same switch', r2: 'Challenge 2: ping between two PCs on different networks joined by a router', doneTag: 'Done' }
+    es: { names: { pc: 'PC', switch: 'Switch', router: 'Router', server: 'Servidor', cloud: 'Internet' }, linked: 'Cable conectado: ', pickFirst: 'Toca el primer equipo…', pickSecond: 'Ahora toca el segundo equipo para conectar el cable.', need2: 'Necesitas al menos 2 equipos para enviar un ping.', same: 'El origen y el destino son el mismo equipo.', ok: '¡Ping exitoso! ', hops: 'saltos', via: 'Camino', fail: 'Sin respuesta: no hay camino de cables entre ', and: ' y ', deleted: 'Equipo borrado (y sus cables).', r1: 'Reto 1: haz ping entre dos PCs conectadas a un mismo switch', r2: 'Reto 2: haz ping entre dos PCs de redes distintas unidas por un router', doneTag: 'Completado', resetRetos: 'Reiniciar retos', retosReset: 'Retos reiniciados: son los mismos retos, ahora sin resolver. Haz ping de nuevo para completarlos.' },
+    en: { names: { pc: 'PC', switch: 'Switch', router: 'Router', server: 'Server', cloud: 'Internet' }, linked: 'Cable connected: ', pickFirst: 'Tap the first device…', pickSecond: 'Now tap the second device to run the cable.', need2: 'You need at least 2 devices to send a ping.', same: 'Source and destination are the same device.', ok: 'Ping successful! ', hops: 'hops', via: 'Path', fail: 'No reply: there is no cable path between ', and: ' and ', deleted: 'Device deleted (and its cables).', r1: 'Challenge 1: ping between two PCs plugged into the same switch', r2: 'Challenge 2: ping between two PCs on different networks joined by a router', doneTag: 'Done', resetRetos: 'Reset challenges', retosReset: 'Challenges reset: the same challenges, now unsolved. Ping again to complete them.' }
   }[lang];
   var ICONS = {
     pc: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M9 20h6M12 16v4"/></svg>',
@@ -22,6 +22,7 @@
     cloud: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17.5 18.5a4.5 4.5 0 0 0 .9-8.85A6 6 0 0 0 6.7 8.6 4.8 4.8 0 0 0 7 18.5z"/></svg>'
   };
   var KEY = 'nvision_topologia_v1';
+  var RESET_KEY = 'nvision_topo_retos_reset', RESET_TOKEN = '2026-11-10-v1';
   var state = null;
   function load() {
     try { state = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { state = null; }
@@ -30,6 +31,17 @@
         nodes: [ { id: 'n1', type: 'pc', x: 0.16, y: 0.42 }, { id: 'n2', type: 'switch', x: 0.47, y: 0.42 }, { id: 'n3', type: 'pc', x: 0.78, y: 0.42 } ],
         links: [ ['n1', 'n2'], ['n2', 'n3'] ] };
     }
+    if (!state.retos) state.retos = {};
+    // Reinicio de retos pedido el 2026-11-10 (una sola vez por navegador):
+    // los retos quedan iguales, pero SIN resolver. Solo se limpia
+    // state.retos; el diseño (equipos y cables) se conserva tal cual.
+    try {
+      if (localStorage.getItem(RESET_KEY) !== RESET_TOKEN) {
+        state.retos = {};
+        localStorage.setItem(RESET_KEY, RESET_TOKEN);
+        save();
+      }
+    } catch (e) {}
   }
   function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
   function byId(id) { return state.nodes.filter(function (n) { return n.id === id; })[0]; }
@@ -141,6 +153,16 @@
   });
   document.getElementById('topo-clear-wires').addEventListener('click', function () { state.links = []; save(); render(); });
   document.getElementById('topo-clear-all').addEventListener('click', function () { state = { seq: 0, nodes: [], links: [], retos: state.retos }; save(); render(); });
+  // Reiniciar retos: los mismos retos, sin resolver. No borra el diseño.
+  var resetRetosBtn = document.getElementById('topo-reset-retos');
+  if (resetRetosBtn) {
+    resetRetosBtn.textContent = T.resetRetos;
+    resetRetosBtn.addEventListener('click', function () {
+      state.retos = {};
+      save(); renderRetos();
+      out.textContent = T.retosReset; out.className = 'topo-out';
+    });
+  }
 
   function path(from, to) {
     var prev = {}, q = [from]; prev[from] = null;

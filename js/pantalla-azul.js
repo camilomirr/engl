@@ -10,10 +10,21 @@
 //                     desglose del puntaje.
 // Los casos resueltos se guardan en nvision_bsod_v1 (mejor puntaje por
 // caso) y alimentan los logros del sitio.
+// Reinicio pedido el 2026-11-10: eliminar el valor actual del minijuego y
+// reiniciar SOLO su puntaje. Se aplica una sola vez por navegador (marca
+// nvision_bsod_reset) y también hay un botón «Reiniciar puntaje» en la
+// página para repetirlo cuando se quiera. Nada más se toca.
 (function () {
   'use strict';
   var lang = (localStorage.getItem('user_lang') || 'es').toLowerCase().indexOf('en') === 0 ? 'en' : 'es';
   var KEY = 'nvision_bsod_v1';
+  var RESET_KEY = 'nvision_bsod_reset', RESET_TOKEN = '2026-11-10-v1';
+  try {
+    if (localStorage.getItem(RESET_KEY) !== RESET_TOKEN) {
+      localStorage.removeItem(KEY);
+      localStorage.setItem(RESET_KEY, RESET_TOKEN);
+    }
+  } catch (e) {}
   var V = window.NVISION_validate;
 
   var T = {
@@ -27,7 +38,8 @@
       correct: '¡Diagnóstico correcto!',
       fixTitle: 'La reparación, paso a paso',
       breakdown: 'Desglose del puntaje', bBase: 'Puntaje base', bTools: 'Herramientas extra', bWrong: 'Diagnósticos errados', bTotal: 'Total del caso',
-      bestMark: 'Tu mejor marca en este caso', rankPts: 'pts sumados a tu puntaje del sitio' },
+      bestMark: 'Tu mejor marca en este caso', rankPts: 'pts sumados a tu puntaje del sitio',
+      reset: 'Reiniciar puntaje', resetConfirm: '¿Eliminar el puntaje obtenido en Pantalla Azul? Solo se reinicia este minijuego; todo lo demás queda igual.' },
     en: { solved: 'Solved', play: 'Investigate case', again: 'Try again', caseWord: 'Case', best: 'Best total score',
       pc: 'Machine', use: 'Owner\'s use', change: 'Recent change',
       catMemoria: 'Memory', catDisco: 'Disk & files', catSoftware: 'Software & drivers', catFisico: 'Physical inspection',
@@ -38,7 +50,8 @@
       correct: 'Correct diagnosis!',
       fixTitle: 'The repair, step by step',
       breakdown: 'Score breakdown', bBase: 'Base score', bTools: 'Extra tools', bWrong: 'Wrong diagnoses', bTotal: 'Case total',
-      bestMark: 'Your best mark on this case', rankPts: 'pts added to your site score' }
+      bestMark: 'Your best mark on this case', rankPts: 'pts added to your site score',
+      reset: 'Reset score', resetConfirm: 'Delete the score earned in Blue Screen? Only this minigame resets; everything else stays the same.' }
   }[lang];
 
   var CATS = { memoria: T.catMemoria, disco: T.catDisco, software: T.catSoftware, fisico: T.catFisico };
@@ -354,6 +367,19 @@
     document.getElementById('bsod-cases').scrollIntoView({ behavior: 'smooth' });
   });
   $('bsod-retry').addEventListener('click', function () { if (current) openCase(current); });
+  // Reiniciar SOLO el puntaje de este minijuego: borra sus casos resueltos
+  // (y con eso su aporte a los puntos del sitio); no toca nada más.
+  var resetBtn = $('bsod-reset');
+  if (resetBtn) {
+    resetBtn.textContent = T.reset;
+    resetBtn.addEventListener('click', function () {
+      if (!window.confirm(T.resetConfirm)) return;
+      store = { solved: {} };
+      save(store);
+      gameEl.hidden = true;
+      renderCases();
+    });
+  }
 
   renderCases();
 })();

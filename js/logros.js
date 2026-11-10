@@ -78,6 +78,15 @@
     var retoDoc = read('nvision_reto_v1');
     var retoCount = 0;
     if (retoDoc && retoDoc.done) Object.keys(retoDoc.done).forEach(function (k) { if (retoDoc.done[k]) retoCount++; });
+    // Reinicio de Pantalla Azul (2026-11-10, una sola vez por navegador):
+    // se elimina el puntaje guardado de ese minijuego y solo ese, para
+    // que su aporte a los puntos del sitio arranque en cero.
+    try {
+      if (localStorage.getItem('nvision_bsod_reset') !== '2026-11-10-v1') {
+        localStorage.removeItem('nvision_bsod_v1');
+        localStorage.setItem('nvision_bsod_reset', '2026-11-10-v1');
+      }
+    } catch (e) {}
     var bsod = read('nvision_bsod_v1');
     var bsodSolved = 0, bsodTotal = 0;
     if (bsod && bsod.solved) Object.keys(bsod.solved).forEach(function (k) { if (bsod.solved[k] != null) { bsodSolved++; bsodTotal += bsod.solved[k] || 0; } });
