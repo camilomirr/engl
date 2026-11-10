@@ -11,8 +11,8 @@
   var V = window.NVISION_validate;
 
   var T = {
-    es: { market: 'Mercado simulado de hoy', win: '🏆 ¡Reto superado! Puntaje costo-beneficio: ', over: 'Te pasaste del presupuesto por $', lowPerf: 'Falta rendimiento: necesitas ', psuBad: 'La fuente no aguanta: el consumo estimado supera su capacidad.', psuOk: '✓ alcanza', choose: 'Elige una pieza', doneBefore: 'Ya superaste este reto antes (mejor: ', up: '▲', down: '▼', vsBase: 'vs. precio base', perfShort: 'Rend.', chkParts: 'Piezas elegidas', chkBudget: 'Presupuesto', chkPerf: 'Rendimiento', chkPsu: 'Fuente suficiente', doneChip: '✓ Reto superado · Mejor puntaje: ' },
-    en: { market: 'Simulated market today', win: '🏆 Challenge cleared! Cost-benefit score: ', over: 'You went over budget by $', lowPerf: 'Not enough performance: you need ', psuBad: 'The PSU cannot keep up: estimated draw exceeds its capacity.', psuOk: '✓ enough', choose: 'Choose a part', doneBefore: 'You already cleared this challenge (best: ', up: '▲', down: '▼', vsBase: 'vs. base price', perfShort: 'Perf.', chkParts: 'Parts chosen', chkBudget: 'Budget', chkPerf: 'Performance', chkPsu: 'Enough power', doneChip: '✓ Challenge cleared · Best score: ' }
+    es: { market: 'Mercado simulado de hoy', win: '🏆 ¡Reto superado! Puntaje costo-beneficio: ', over: 'Te pasaste del presupuesto por $', lowPerf: 'Falta rendimiento: necesitas ', psuBad: 'La fuente no aguanta: el consumo estimado supera su capacidad.', psuOk: '✓ alcanza', choose: 'Elige una pieza', doneBefore: 'Ya superaste este reto antes (mejor: ', up: '▲', down: '▼', vsBase: 'vs. precio base', chkParts: 'Piezas elegidas', chkBudget: 'Presupuesto', chkPerf: 'Rendimiento', chkPsu: 'Fuente suficiente', doneChip: '✓ Reto superado · Mejor puntaje: ' },
+    en: { market: 'Simulated market today', win: '🏆 Challenge cleared! Cost-benefit score: ', over: 'You went over budget by $', lowPerf: 'Not enough performance: you need ', psuBad: 'The PSU cannot keep up: estimated draw exceeds its capacity.', psuOk: '✓ enough', choose: 'Choose a part', doneBefore: 'You already cleared this challenge (best: ', up: '▲', down: '▼', vsBase: 'vs. base price', chkParts: 'Parts chosen', chkBudget: 'Budget', chkPerf: 'Performance', chkPsu: 'Enough power', doneChip: '✓ Challenge cleared · Best score: ' }
   }[lang];
 
   // precio base (USD), rendimiento (0-30 por pieza) y consumo (W).
@@ -123,9 +123,10 @@
       cat.parts.forEach(function (p, i) {
         var o = document.createElement('option');
         o.value = String(i);
-        // La opción misma muestra precio de hoy y rendimiento: así la
-        // lista desplegable informa antes de elegir, no después.
-        o.textContent = p.n + ' · ' + money(priceToday(cat.id, p)) + ' · ' + T.perfShort + ' ' + p.perf;
+        // La opción muestra nombre y precio de hoy. El rendimiento NO
+        // va en la lista: solo se refleja en su casilla de la tabla,
+        // como pidió Yurlei el 2026-11-10.
+        o.textContent = p.n + ' · ' + money(priceToday(cat.id, p));
         sel.appendChild(o);
       });
       if (picks[cat.id] != null) sel.value = String(picks[cat.id]);
