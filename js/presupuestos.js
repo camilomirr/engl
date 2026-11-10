@@ -123,10 +123,11 @@
       cat.parts.forEach(function (p, i) {
         var o = document.createElement('option');
         o.value = String(i);
-        // La opción muestra nombre y precio de hoy. El rendimiento NO
-        // va en la lista: solo se refleja en su casilla de la tabla,
-        // como pidió Yurlei el 2026-11-10.
-        o.textContent = p.n + ' · ' + money(priceToday(cat.id, p));
+        // La opción muestra SOLO el nombre del componente. Ni el
+        // precio ni el rendimiento van en la lista desplegable: cada
+        // dato se refleja únicamente en su casilla de la tabla
+        // (Precio de hoy / Rendimiento), como pidió Yurlei el 2026-11-10.
+        o.textContent = p.n;
         sel.appendChild(o);
       });
       if (picks[cat.id] != null) sel.value = String(picks[cat.id]);
