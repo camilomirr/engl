@@ -492,17 +492,14 @@ const translations = {
     wifi_f3_q: "¿El WPS es seguro?",
     wifi_f3_p: "El botón físico WPS es práctico para enlazar el repetidor, pero el WPS por código PIN es vulnerable. Si tu panel lo permite, desactiva el WPS por PIN y deja solo el botón.",
     assistant_title: "Asistente NVISION",
-    assistant_status: "Chat entrenado",
-    assistant_welcome: "Pregúntame sobre el contenido del sitio. Si no sé algo, puedes enseñármelo en la pestaña Entrenar.",
+    assistant_welcome: "Pregúntame sobre el contenido del sitio.",
     assistant_placeholder: "Escribe tu pregunta…",
     assistant_search: "Enviar",
     assistant_ask_only: "Solo preguntar: solo responde, no hace pasos",
     assistant_edit_last: "Editar último mensaje",
     assistant_empty: "No encontré una coincidencia. Prueba con otra palabra clave.",
     assistant_open: "Abrir sección",
-    assistant_tab_chat: "Chat",
-    assistant_tab_train: "Entrenar",
-    assistant_fallback: "Todavía no sé responder eso [[think]]. Prueba con otras palabras, o enséñame la respuesta para que la próxima vez la sepa.",
+    assistant_fallback: "Todavía no sé responder eso [[think]]. Prueba con otras palabras.",
     assistant_teach_title: "Enseñar una respuesta nueva",
     assistant_teach_q: "Formas de preguntarlo (una por línea)",
     assistant_teach_a: "Respuesta",
@@ -523,9 +520,7 @@ const translations = {
     assistant_saved_toast: "¡Aprendido! Ya conozco esta respuesta.",
     assistant_need_both: "Escribe al menos una pregunta y la respuesta.",
     assistant_thanks: "¡Gracias! [[heart_green]]",
-    assistant_teach_this: "Enséñame esta respuesta",
     assistant_up: "Me sirvió",
-    assistant_down: "Mejorar",
     assistant_no_match: "Sin coincidencia clara",
     assistant_match: "Coincide con",
     assistant_missed_empty: "Aún no hay preguntas pendientes.",
@@ -1634,17 +1629,14 @@ const translations = {
     wifi_f3_q: "Is WPS safe?",
     wifi_f3_p: "The physical WPS button is handy for linking the repeater, but PIN-based WPS is vulnerable. If your panel allows it, disable PIN WPS and keep only the button.",
     assistant_title: "NVISION Assistant",
-    assistant_status: "Trained chat",
-    assistant_welcome: "Ask me about the site content. If I miss something, you can teach me in the Train tab.",
+    assistant_welcome: "Ask me about the site content.",
     assistant_placeholder: "Type your question…",
     assistant_search: "Send",
     assistant_ask_only: "Ask only: just answers, no step-by-step",
     assistant_edit_last: "Edit last message",
     assistant_empty: "I could not find a match. Try another keyword.",
     assistant_open: "Open section",
-    assistant_tab_chat: "Chat",
-    assistant_tab_train: "Train",
-    assistant_fallback: "I do not know how to answer that yet [[think]]. Try other words, or teach me the answer so I know it next time.",
+    assistant_fallback: "I do not know how to answer that yet [[think]]. Try other words.",
     assistant_teach_title: "Teach a new answer",
     assistant_teach_q: "Ways to ask it (one per line)",
     assistant_teach_a: "Answer",
@@ -1665,9 +1657,7 @@ const translations = {
     assistant_saved_toast: "Learned! I know this answer now.",
     assistant_need_both: "Write at least one question and the answer.",
     assistant_thanks: "Thanks! [[heart_green]]",
-    assistant_teach_this: "Teach me this answer",
     assistant_up: "It helped",
-    assistant_down: "Improve",
     assistant_no_match: "No clear match",
     assistant_match: "Matches",
     assistant_missed_empty: "No pending questions yet.",
@@ -2943,7 +2933,7 @@ function setupLocalAssistant() {
     { c: 'Otro', k: ['que es una red social', 'redes sociales que son', 'red social que significa'], r: ['Una **red social** (Instagram, TikTok, X) es una plataforma para publicar, seguir gente y conversar: su negocio es tu atención y tus datos. Cuida lo que publicas: una vez en internet, casi nunca se borra del todo.', 'A **social network** (Instagram, TikTok, X) is a platform to post, follow people and chat: its business is your attention and data. Mind what you post: once online, it almost never fully disappears.'] },
     { c: 'Otro', k: ['que es spam', 'spam correo', 'correo spam que es'], r: ['El **spam** es el correo o mensaje masivo no pedido (publicidad, estafas, cadenas): molesta y a veces esconde phishing. No respondas ni abras sus enlaces: márcalo como spam y el filtro aprenderá.', '**Spam** is unsolicited bulk mail or messages (ads, scams, chains): annoying and sometimes hiding phishing. Do not reply or open its links: mark it as spam and the filter will learn.'] },
     { c: 'Otro', k: ['que es la inteligencia artificial', 'inteligencia artificial que es', 'que es ia'], r: ['La **inteligencia artificial (IA)** es software que aprende de muchos ejemplos para hacer tareas que antes pedían personas: reconocer imágenes, traducir, conversar o predecir. No "piensa" como tú: calcula probabilidades con lo que aprendió.', '**Artificial intelligence (AI)** is software that learns from many examples to do tasks that once needed people: recognizing images, translating, chatting or predicting. It does not "think" like you: it computes probabilities from what it learned.'] },
-    { c: 'Otro', k: ['que es un chatbot', 'chatbot que es', 'chatbot de reglas'], r: ['Un **chatbot** es un programa que conversa con texto: este asistente de NVISION es un chatbot de **reglas**, entrenado con fichas sobre el sitio (no una IA generativa): entiende tu pregunta, busca la ficha que mejor calza y responde con ella.', 'A **chatbot** is a program that chats in text: this NVISION assistant is a **rule-based** chatbot, trained on cards about the site (not a generative AI): it understands your question, finds the best-matching card and answers with it.'] },
+    { c: 'Otro', k: ['que es un chatbot', 'chatbot que es', 'chatbot de reglas'], r: ['Un **chatbot** es un programa que conversa con texto: este asistente de NVISION es un chatbot de **reglas**, con fichas sobre el sitio (no una IA generativa): entiende tu pregunta, busca la ficha que mejor calza y responde con ella.', 'A **chatbot** is a program that chats in text: this NVISION assistant is a **rule-based** chatbot, with cards about the site (not a generative AI): it understands your question, finds the best-matching card and answers with it.'] },
     { c: 'Otro', k: ['que es una criptomoneda', 'criptomoneda que es', 'blockchain que es'], r: ['Una **criptomoneda** (Bitcoin, Ethereum) es dinero digital sin banco central, guardado en una **blockchain**: un registro público compartido que nadie puede borrar a escondidas. Su precio sube y baja muchísimo, y perder tu clave es perder tus monedas.', 'A **cryptocurrency** (Bitcoin, Ethereum) is digital money with no central bank, kept on a **blockchain**: a shared public ledger nobody can secretly erase. Its price swings wildly, and losing your key means losing your coins.'] },
 { c: 'Recursos', k: ['que es el mantenimiento por software', 'mantenimiento por software', 'mantenimiento preventivo por software', 'software maintenance'], r: ['Es el cuidado que se hace **sin abrir el computador**: actualizar, proteger, limpiar, respaldar y revisar el sistema antes de que falle. Bien hecho, evita virus, lentitud, errores y pérdida de archivos.', 'It is the care done **without opening the computer**: updating, protecting, cleaning, backing up and checking the system before it fails. Done well, it prevents viruses, slowness, errors and lost files.'], href: 'mantenimiento-software.html#que-es' },
     { c: 'Recursos', k: ['regla de oro mantenimiento', 'primero la copia de seguridad', 'antes de actualizar copia', 'golden rule backup'], r: ['**Regla de oro: primero la copia de seguridad, después cualquier cambio.** Antes de actualizar o limpiar algo importante, guarda tus archivos: si algo sale mal, vuelves atrás sin perder nada.', '**Golden rule: backup first, changes second.** Before updating or cleaning anything important, save your files: if something goes wrong, you roll back without losing anything.'], href: 'mantenimiento-software.html#paso-a-paso' },
@@ -3018,7 +3008,7 @@ function setupLocalAssistant() {
     { c: 'Otro', k: ['ventiladores hacen mucho ruido', 'ruido fuerte pc', 'suena mucho el computador'], r: ['Ruido fuerte: casi siempre son **ventiladores con polvo o trabajando al máximo por calor**. Limpia filtros y ventiladores con aire comprimido (sujetándolos) y revisa temperaturas; si el ruido es eléctrico o hay olor a quemado, apaga y consulta técnico.', 'Loud noise: almost always **fans full of dust or running at max because of heat**. Clean filters and fans with compressed air (holding them) and check temperatures; if the noise is electrical or there is a burning smell, power off and consult a technician.'], href: 'pc3d.html#mantenimiento' },
     { c: 'Otro', k: ['no carga la bateria', 'bateria no carga', 'portatil no carga'], r: ['Si no carga: prueba otro toma y otro cargador compatible, revisa que el conector no esté flojo o sucio y observa la salud de la batería. Si está **hinchada**, no la cargues ni la pinches: servicio técnico.', 'If it will not charge: try another outlet and another compatible charger, check the connector is not loose or dirty and watch battery health. If it is **swollen**, do not charge or puncture it: get a technician.'] },
     { c: 'Otro', k: ['hola', 'buenas', 'buenos dias', 'hey', 'saludos', 'hello', 'hi'], r: ['¡Hola! Soy el asistente de **NVISION** [[robot]]. Pregúntame de hardware, redes, el switch, el WiFi o del juego **Redes Challenge** [[gamepad]]. Toca una sugerencia o escribe tu duda.', 'Hi! I am the **NVISION** assistant [[robot]]. Ask me about hardware, networks, the switch, WiFi or the **Redes Challenge** game [[gamepad]]. Tap a suggestion or type your question.'] },
-    { c: 'Otro', k: ['quien eres', 'que eres', 'que haces', 'para que sirves', 'ayuda', 'help', 'who are you', 'what can you do'], r: ['Soy un asistente **entrenado con el contenido de NVISION**: respondo desde una base de conocimiento guardada en la página, sin internet y sin IA externa. Si algo no lo sé, puedes **enseñármelo** en la pestaña «Entrenar» y lo aprendo en este navegador.', 'I am an assistant **trained on NVISION content**: I answer from a knowledge base stored in the page, no internet and no external AI. If I miss something, you can **teach me** in the "Train" tab and I learn it in this browser.'], },
+    { c: 'Otro', k: ['quien eres', 'que eres', 'que haces', 'para que sirves', 'ayuda', 'help', 'who are you', 'what can you do'], r: ['Soy un asistente de **NVISION**: respondo desde una base de conocimiento guardada en la página, sin internet y sin IA externa.', 'I am a **NVISION** assistant: I answer from a knowledge base stored in the page, no internet and no external AI.'], },
     { c: 'Hardware', k: ['que es la cpu', 'procesador', 'cpu', 'cerebro del computador', 'what is the cpu', 'processor'], r: ['La **CPU** es el cerebro del PC: ejecuta las instrucciones de los programas. Se mide en núcleos e hilos (procesadores lógicos) y en GHz. En el detector del laboratorio puedes ver cuántos hilos tiene tu equipo.', 'The **CPU** is the brain of the PC: it runs program instructions. It is measured in cores and threads (logical processors) and in GHz. In the lab detector you can see how many threads your machine has.'], href: 'hardware.html#componentes' },
     { c: 'Hardware', k: ['que es la ram', 'memoria ram', 'ram', 'para que sirve la ram', 'what is ram'], r: ['La **RAM** es la memoria de trabajo: guarda lo que el PC está usando ahora mismo y se borra al apagar. Más RAM = más programas abiertos sin que el equipo se ponga lento.', '**RAM** is the working memory: it holds what the PC is using right now and it clears when you shut down. More RAM = more open programs without slowdowns.'], href: 'hardware.html#componentes' },
     { c: 'Hardware', k: ['tarjeta grafica', 'gpu', 'tarjeta de video', 'graphics card'], r: ['La **GPU** (tarjeta gráfica) dibuja todo lo que ves: pantalla, videos y juegos. Puede venir integrada en el procesador o ser una tarjeta dedicada con su propia memoria.', 'The **GPU** (graphics card) draws everything you see: screen, videos and games. It can be integrated into the processor or be a dedicated card with its own memory.'], href: 'hardware.html#componentes' },
@@ -3049,8 +3039,8 @@ function setupLocalAssistant() {
     { c: 'WiFi', k: ['cambiar clave wifi', 'contraseña del router', 'seguridad wifi', 'wpa2 wpa3', 'change wifi password'], r: ['Cambia la clave del WiFi desde el panel del router (**192.168.1.1**): contraseña nueva de más de 12 caracteres y seguridad **WPA2 o WPA3**. Y nunca dejes el usuario admin de fábrica del panel.', 'Change the WiFi password from the router panel (**192.168.1.1**): a new password over 12 characters and **WPA2 or WPA3** security. And never keep the panel factory admin user.'], href: 'wifi.html#instalar-modem' },
     { c: 'WiFi', k: ['2.4 o 5 ghz', 'banda wifi', 'wifi lento', 'canal wifi', 'wifi slow', 'wifi band'], r: ['**2.4 GHz** llega más lejos y cruza paredes, pero es más lenta; **5 GHz** es mucho más rápida cerca del módem. Si el WiFi va lento en un edificio lleno de redes, cambia el canal (1, 6 u 11 en 2.4 GHz).', '**2.4 GHz** reaches farther and crosses walls, but it is slower; **5 GHz** is much faster near the modem. If WiFi is slow in a building full of networks, change the channel (1, 6 or 11 on 2.4 GHz).'], href: 'wifi.html#instalar-modem' },
     { c: 'Otro', k: ['por donde empiezo', 'ruta de aprendizaje', 'que ver primero', 'como usar el sitio', 'donde empiezo', 'learning path', 'where do i start'], r: ['Ruta sugerida: **1)** Historia y componentes en Hardware, **2)** el explorador 3D de PC3D, **3)** tipos de red y topologías en Redes, **4)** el laboratorio del switch y el simulador ping, **5)** los códigos y el glosario en Recursos, y **6)** la guía WiFi. En ese orden todo encaja.', 'Suggested path: **1)** History and components in Hardware, **2)** the PC3D 3D explorer, **3)** network types and topologies in Networks, **4)** the switch lab and the ping simulator, **5)** the codes and glossary in Resources, and **6)** the WiFi guide. In that order everything clicks.'] },
-    { c: 'Otro', k: ['gracias', 'muchas gracias', 'te agradezco', 'thanks', 'thank you'], r: ['¡Con gusto! [[heart_green]] Si te queda otra duda del sitio, pregúntame; y si alguna vez no sé algo, puedes enseñármelo en la pestaña «Entrenar».', 'You are welcome! [[heart_green]] If you have another question about the site, ask me; and if I ever miss something, you can teach me in the "Train" tab.'] },
-    { c: 'Otro', k: ['chao', 'adios', 'hasta luego', 'nos vemos', 'bye', 'see you'], r: ['¡Hasta pronto! [[wave]] Recuerda: el switch aprende solo si le envías tramas… y yo también aprendo si me enseñas.', 'See you soon! [[wave]] Remember: the switch only learns if you send it frames… and I learn too if you teach me.'] },
+    { c: 'Otro', k: ['gracias', 'muchas gracias', 'te agradezco', 'thanks', 'thank you'], r: ['¡Con gusto! [[heart_green]] Si te queda otra duda del sitio, pregúntame.', 'You are welcome! [[heart_green]] If you have another question about the site, ask me.'] },
+    { c: 'Otro', k: ['chao', 'adios', 'hasta luego', 'nos vemos', 'bye', 'see you'], r: ['¡Hasta pronto! [[wave]] Recuerda: el switch aprende solo si le envías tramas.', 'See you soon! [[wave]] Remember: the switch only learns if you send it frames.'] },
 { c: 'Hardware', k: ['diferencia entre ram y disco', 'ram vs ssd', 'ram o almacenamiento', 'memoria ram o disco duro', 'ram vs storage'], r: ['No es lo mismo: la **RAM** es el escritorio de trabajo (rápida, temporal, se vacía al apagar) y el **almacenamiento** es el archivador (permanente). Un PC necesita los dos: sin RAM no trabaja y sin disco no guarda nada.', '**RAM** is the work desk (fast, temporary, cleared at shutdown) and **storage** is the filing cabinet (permanent). A PC needs both: without RAM it cannot work and without a drive it cannot keep anything.'], href: 'hardware.html#componentes' },
     { c: 'Hardware', k: ['que son los nucleos', 'nucleos e hilos', 'cuantos nucleos necesito', 'hilos del procesador', 'cores and threads', 'what are cores'], r: ['Cada **núcleo** es un cerebro independiente dentro de la CPU; los **hilos** (procesadores lógicos) son las tareas que cada núcleo puede turnarse. Más núcleos = más tareas a la vez: para estudiar y navegar bastan 4; para editar video o jugar ayudan 6-8.', 'Each **core** is an independent brain inside the CPU; **threads** (logical processors) are the tasks each core can juggle. More cores = more tasks at once: 4 is enough for study and browsing; 6-8 help for video editing or gaming.'], href: 'hardware.html#componentes' },
     { c: 'Hardware', k: ['intel o amd', 'intel core o ryzen', 'que procesador es mejor', 'amd ryzen', 'intel vs amd', 'ryzen vs intel'], r: ['Las dos grandes marcas de CPU para PC son **Intel Core** y **AMD Ryzen** (y **ARM** domina en celulares). Ninguna gana siempre: se compite modelo contra modelo según precio y uso. En PC3D ves los tipos y qué mirar antes de elegir.', 'The two big PC CPU brands are **Intel Core** and **AMD Ryzen** (and **ARM** rules phones). Neither always wins: compare model against model by price and use. In PC3D you can see the types and what to check before choosing.'], href: 'pc3d.html#componentes-3d' },
@@ -3450,7 +3440,7 @@ function setupLocalAssistant() {
     {"c":"Recursos","k":["malwarebytes free para que sirve","malwarebytes segunda opinion","que es malwarebytes","malwarebytes free vs pro","what is malwarebytes free","malwarebytes second opinion"],"r":["**Malwarebytes Free** es la **segunda opinión antimalware**: análisis bajo demanda, gratis, con versión Pro de pago. Úsalo para revisar un equipo con sospecha de infección, además de tu antivirus principal: no lo tengas como segundo antivirus residente a la vez que Defender.","**Malwarebytes Free** is the **second-opinion antimalware**: on-demand scans, free, with a paid Pro version. Use it to check a machine you suspect is infected, in addition to your main antivirus: do not run it as a second resident antivirus alongside Defender."],"href":"mantenimiento-software.html#programas"},
     {"c":"Recursos","k":["ccleaner free para que sirve","ccleaner limpieza inicio","que es ccleaner","ccleaner vs bleachbit","what is ccleaner free","ccleaner startup manager"],"r":["**CCleaner Free** limpia temporales, caché y archivos inútiles y gestiona el inicio, con más opciones y guía que BleachBit, pero es algo más pesado (eficiencia media) y tiene versión Pro de pago. Es para quien quiere una limpieza guiada sin tocar el registro.","**CCleaner Free** cleans temporary files, cache and junk and manages startup, with more options and guidance than BleachBit, but it is a bit heavier (medium efficiency) and has a paid Pro version. It is for those who want guided cleaning without touching the registry."],"href":"mantenimiento-software.html#programas"},
     {"c":"Recursos","k":["copia de windows veeam","veeam agent free para que sirve","copia de seguridad completa windows","como hacer copia completa sistema","windows backup veeam free","full system backup free"],"r":["**Copia de Windows / Veeam Agent Free** hace la **copia de seguridad completa** del sistema y los archivos, gratis en su uso básico. Es la opción para proteger trabajos, fotos y documentos importantes; la primera copia tarda más. Recuerda la regla 3-2-1: 3 copias, en 2 medios distintos, 1 fuera de casa o en la nube, y comprueba alguna vez que la copia se puede restaurar de verdad.","**Windows Backup / Veeam Agent Free** makes a **full backup** of the system and files, free for basic use. It is the option to protect important work, photos and documents; the first backup takes longer. Remember the 3-2-1 rule: 3 copies, on 2 different media, 1 off-site or in the cloud, and check sometime that the backup can actually be restored."],"href":"mantenimiento-software.html#programas"},
-    {"c":"Otro","k":["como entrenar al asistente","ensenar al asistente","abrir el asistente","donde esta el asistente","pestana entrenar","how to train the assistant","teach the chatbot","open the assistant"],"r":["El **asistente** se abre con el botón flotante del chat. Si no sabe algo, en la pestaña **Entrenar** puedes enseñarle la pregunta y su respuesta, y ver las preguntas que no supo responder. Lo aprendido se guarda **solo en este navegador**: en otro equipo o navegador tendrás que enseñarle de nuevo.","Open the **assistant** with the floating chat button. If it does not know something, use the **Train** tab to teach it the question and its answer, and to see the questions it could not answer. What it learns is stored **only in this browser**: on another computer or browser you will have to teach it again."],"href":"index.html"},
+    {"c":"Otro","k":["como entrenar al asistente","ensenar al asistente","abrir el asistente","donde esta el asistente","pestana entrenar","how to train the assistant","teach the chatbot","open the assistant"],"r":["El **asistente** se abre con el botón flotante del chat y responde desde su base de conocimiento sobre el sitio.","Open the **assistant** with the floating chat button. It answers from its knowledge base about the site."],"href":"index.html"},
     {"c":"Recursos","k":["archivo hosts que es","para que sirve el archivo hosts","editar archivo hosts","bloquear paginas con hosts","hosts file windows","what is the hosts file","block websites with hosts file"],"r":["El **archivo hosts** es una lista local que Windows consulta **antes** de preguntar al DNS: cada línea mapea un dominio a una IP. Sirve para pruebas y bloqueos: agrega `127.0.0.1 sitio.com` al final de `C:\\Windows\\System32\\drivers\\etc\\hosts` (edítalo como administrador) y ese sitio dejará de abrirse en esa PC. Úsalo con cuidado: una entrada vieja puede dejarte sin acceso a un sitio legítimo, y si los cambios no aplican, vacía la caché con `ipconfig /flushdns`.","The **hosts file** is a local list Windows checks **before** asking DNS: each line maps a domain to an IP. It is used for testing and blocking: append `127.0.0.1 site.com` to the end of `C:\\Windows\\System32\\drivers\\etc\\hosts` (edit it as administrator) and that site will stop opening on that PC. Use it carefully: a stale entry can lock you out of a legitimate site, and if changes do not apply, flush the cache with `ipconfig /flushdns`."],"href":"recursos.html#laboratorio"},
     {"c":"Otro","k":["windows defender que es","defender antivirus de windows","proteccion integrada de windows","microsoft defender antivirus","necesito otro antivirus","what is windows defender","windows built in antivirus","do i need another antivirus"],"r":["**Windows Defender** (Microsoft Defender Antivirus) es el antivirus integrado de Windows: se activa solo, se actualiza con Windows Update y ofrece protección en tiempo real, control de comportamiento y de dispositivos sin instalar nada extra. Para uso normal no necesitas otro antivirus de pago: dos antivirus a la vez pelean por recursos y bajan la protección. Refuérzalo activando la **protección contra ransomware** (acceso controlado a carpetas) y la **protección en la nube**, y revisa el historial de amenazas después de cada análisis completo mensual.","**Windows Defender** (Microsoft Defender Antivirus) is Windows' built-in antivirus: it turns on by itself, updates through Windows Update and offers real-time protection, behavior and device control with nothing extra to install. For normal use you do not need another paid antivirus: two antivirus suites fight over resources and lower your protection. Strengthen it by enabling **ransomware protection** (controlled folder access) and **cloud-delivered protection**, and review the threat history after each monthly full scan."],"href":"mantenimiento-software.html#rutina"}
 ,
@@ -3722,16 +3712,12 @@ function setupLocalAssistant() {
   assistant.innerHTML = `
     <div class="local-assistant-panel" id="local-assistant-panel" hidden>
       <div class="local-assistant-header">
-        <div><strong data-i18n="assistant_title">Asistente NVISION</strong><small data-i18n="assistant_status">Chat entrenado</small></div>
+        <div><strong data-i18n="assistant_title">Asistente NVISION</strong></div>
         <button class="local-assistant-close" type="button" aria-label="Cerrar" data-i18n-title="assistant_close_title">×</button>
       </div>
       <div class="local-assistant-body">
-        <div class="la-tabs" role="tablist">
-          <button type="button" class="la-tab is-active" data-tab="chat" data-i18n="assistant_tab_chat">Chat</button>
-          <button type="button" class="la-tab" data-tab="train" data-i18n="assistant_tab_train">Entrenar</button>
-        </div>
         <div class="la-view la-view-chat">
-          <p class="local-assistant-welcome" data-i18n="assistant_welcome">Pregúntame sobre el contenido del sitio. Si no sé algo, puedes enseñármelo en la pestaña Entrenar.</p>
+          <p class="local-assistant-welcome" data-i18n="assistant_welcome">Pregúntame sobre el contenido del sitio.</p>
           <div class="la-log" aria-live="polite"></div>
           <div class="la-chips"></div>
         </div>
@@ -3987,10 +3973,7 @@ function setupLocalAssistant() {
       const up = document.createElement('button');
       up.type = 'button'; up.innerHTML = ICONS.thumb_up; up.title = T().assistant_up; up.setAttribute('aria-label', T().assistant_up);
       up.addEventListener('click', () => { f.innerHTML = fmt(T().assistant_thanks); });
-      const down = document.createElement('button');
-      down.type = 'button'; down.innerHTML = ICONS.thumb_down + ' ' + esc(T().assistant_down);
-      down.addEventListener('click', () => goTeach(q));
-      f.append(up, down);
+      f.append(up);
       d.appendChild(f);
     }
     log.appendChild(d);
@@ -4017,14 +4000,6 @@ function setupLocalAssistant() {
           doBtn.addEventListener('click', () => ask(L() === 1 ? 'Do it' : 'Hazlo'));
           log.lastChild.appendChild(doBtn);
         }
-      }
-      if (teachQ) {
-        const b = document.createElement('button');
-        b.type = 'button';
-        b.className = 'la-chip';
-        b.textContent = T().assistant_teach_this;
-        b.addEventListener('click', () => goTeach(teachQ));
-        log.lastChild.appendChild(b);
       }
     }, 350);
   }
