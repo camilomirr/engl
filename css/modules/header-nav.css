@@ -188,21 +188,16 @@
   pointer-events: none;
 }
 
-/* Puente invisible para que el cursor no pierda el hover */
-.nav-submenu::before {
-  content: '';
-  position: absolute;
-  top: -12px;
-  left: 0;
-  right: 0;
-  height: 14px;
-}
-
+/* El panel abierto ya no queda separado de la etiqueta: antes el
+   translateY(4px) dejaba un hueco de 4px por el que se perdía el
+   hover al bajar el mouse a escoger. El puente viejo
+   (.nav-submenu::before) no servía: el overflow-y: auto del panel
+   lo recortaba, así que el hueco quedaba sin cubrir. */
 .nav-item-dropdown:hover .nav-submenu,
 .nav-item-dropdown.is-open .nav-submenu {
   opacity: 1;
   visibility: visible;
-  transform: translateY(4px) scale(1);
+  transform: translateY(0) scale(1);
   pointer-events: auto;
 }
 
@@ -483,6 +478,23 @@
    sin importar cuánto crezca el encabezado. */
 @media (min-width: 1241px) {
   .nav-item-dropdown:nth-last-child(-n+2) .nav-submenu { left: auto; right: 0; }
+
+  /* Puente invisible entre la etiqueta y el panel: vive en el <li>
+     (no en el panel, donde el overflow lo recortaba) y cubre el
+     hueco durante la animación de apertura, para que el menú no se
+     cierre al bajar el mouse a escoger. El panel pinta por encima
+     (z-index 120), así que el puente solo actúa en el hueco. */
+  .nav-item-dropdown::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 300px;
+    max-width: 94vw;
+    height: 10px;
+  }
+
+  .nav-item-dropdown:nth-last-child(-n+2)::after { left: auto; right: 0; }
 }
 
 /* Responsividad para móviles del menú */
