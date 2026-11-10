@@ -1,8 +1,6 @@
-/* NVISION · Accesibilidad: tamaño de letra escalable y alto contraste.
-   Los botones viven en el encabezado (los inyecta js/main.js) y el estado
-   se guarda en localStorage (nvision_a11y_v1). */
-html[data-fontscale="1"] { font-size: 112.5%; }
-html[data-fontscale="2"] { font-size: 125%; }
+/* NVISION · Accesibilidad: alto contraste. El botón vive en el
+   encabezado (lo inyecta js/main.js) y el estado se guarda en
+   localStorage (nvision_a11y_v1). */
 html[data-contrast="high"] {
   --bg-deep: #000000; --bg-surface: #05070c; --bg-card: #0b0f16; --bg-card-hover: #111827;
   --text-primary: #ffffff; --text-secondary: #dbe4f0; --text-muted: #a8b6c8;

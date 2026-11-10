@@ -5244,36 +5244,32 @@ if ("serviceWorker" in navigator) {
   });
 }
 
-/* NVISION · Accesibilidad global: tamaño de letra (A / A+ / A++) y alto
-   contraste, con botones en el encabezado de todas las páginas. */
+/* NVISION · Accesibilidad global: alto contraste, con su botón en el
+   encabezado de todas las páginas. (El botón de tamaño de letra se
+   retiró el 2026-11-09 a pedido de Duay; si un visitante lo había
+   activado, apply() le quita la escala guardada al cargar.) */
 (function () {
   'use strict';
   var KEY = 'nvision_a11y_v1';
-  var prefs = { font: 0, contrast: false };
-  try { var p = JSON.parse(localStorage.getItem(KEY) || 'null'); if (p) prefs = { font: p.font | 0, contrast: !!p.contrast }; } catch (e) {}
+  var prefs = { contrast: false };
+  try { var p = JSON.parse(localStorage.getItem(KEY) || 'null'); if (p) prefs = { contrast: !!p.contrast }; } catch (e) {}
   function apply() {
     var h = document.documentElement;
-    if (prefs.font) h.setAttribute('data-fontscale', String(prefs.font)); else h.removeAttribute('data-fontscale');
+    h.removeAttribute('data-fontscale');
     if (prefs.contrast) h.setAttribute('data-contrast', 'high'); else h.removeAttribute('data-contrast');
     try { localStorage.setItem(KEY, JSON.stringify(prefs)); } catch (e) {}
-    var fb = document.getElementById('a11y-font');
-    if (fb) fb.textContent = prefs.font === 2 ? 'A++' : prefs.font === 1 ? 'A+' : 'A';
     var cb = document.getElementById('a11y-contrast');
     if (cb) cb.classList.toggle('on', prefs.contrast);
   }
   function inject() {
     var anchor = document.getElementById('lang-dropdown-wrapper');
-    if (!anchor || !anchor.parentNode || document.getElementById('a11y-font')) return;
+    if (!anchor || !anchor.parentNode || document.getElementById('a11y-contrast')) return;
     var wrap = document.createElement('span'); wrap.className = 'a11y-wrap';
-    var fb = document.createElement('button');
-    fb.type = 'button'; fb.id = 'a11y-font'; fb.className = 'theme-switch-btn a11y-btn';
-    fb.title = 'Tamaño de letra / Font size'; fb.setAttribute('aria-label', 'Cambiar tamaño de letra');
-    fb.addEventListener('click', function () { prefs.font = (prefs.font + 1) % 3; apply(); });
     var cb = document.createElement('button');
     cb.type = 'button'; cb.id = 'a11y-contrast'; cb.className = 'theme-switch-btn a11y-btn';
     cb.title = 'Alto contraste / High contrast'; cb.setAttribute('aria-label', 'Activar o desactivar alto contraste'); cb.textContent = '◐';
     cb.addEventListener('click', function () { prefs.contrast = !prefs.contrast; apply(); });
-    wrap.appendChild(fb); wrap.appendChild(cb);
+    wrap.appendChild(cb);
     anchor.parentNode.insertBefore(wrap, anchor);
     apply();
   }
