@@ -198,11 +198,15 @@
     setTimeout(function () {
       out.textContent = '✓ ' + T.ok + label(byId(a)) + ' → ' + label(byId(b)) + ' · ' + (p.length - 1) + ' ' + T.hops + ' · ' + T.via + ': ' + p.map(function (id) { return label(byId(id)); }).join(' → ');
       out.className = 'topo-out ok';
-      // Retos
+      // Retos. La comprobación calza con lo que el reto pide en palabras:
+      // Reto 1 = dos PCs por un mismo switch, sin router en el camino.
+      // Reto 2 = dos PCs unidas por un router en el camino (con o sin
+      // switches; antes exigía 2+ switches y un armado válido con el
+      // router NO quedaba reflejado como completado).
       var types = p.map(function (id) { return byId(id).type; });
       if (byId(a).type === 'pc' && byId(b).type === 'pc') {
         if (types.indexOf('switch') !== -1 && types.indexOf('router') === -1 && !state.retos.r1) { state.retos.r1 = 1; save(); }
-        if (types.indexOf('router') !== -1 && types.filter(function (t) { return t === 'switch'; }).length >= 2 && !state.retos.r2) { state.retos.r2 = 1; save(); }
+        if (types.indexOf('router') !== -1 && !state.retos.r2) { state.retos.r2 = 1; save(); }
         renderRetos();
       }
     }, p.length * 260 + 60);

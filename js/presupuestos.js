@@ -11,42 +11,56 @@
   var V = window.NVISION_validate;
 
   var T = {
-    es: { market: 'Mercado simulado de hoy', win: '🏆 ¡Reto superado! Puntaje costo-beneficio: ', over: 'Te pasaste del presupuesto por $', lowPerf: 'Falta rendimiento: necesitas ', psuBad: 'La fuente no aguanta: el consumo estimado supera su capacidad.', psuOk: '✓ alcanza', choose: 'Elige una pieza', doneBefore: 'Ya superaste este reto antes (mejor: ', up: '▲', down: '▼', vsBase: 'vs. precio base' },
-    en: { market: 'Simulated market today', win: '🏆 Challenge cleared! Cost-benefit score: ', over: 'You went over budget by $', lowPerf: 'Not enough performance: you need ', psuBad: 'The PSU cannot keep up: estimated draw exceeds its capacity.', psuOk: '✓ enough', choose: 'Choose a part', doneBefore: 'You already cleared this challenge (best: ', up: '▲', down: '▼', vsBase: 'vs. base price' }
+    es: { market: 'Mercado simulado de hoy', win: '🏆 ¡Reto superado! Puntaje costo-beneficio: ', over: 'Te pasaste del presupuesto por $', lowPerf: 'Falta rendimiento: necesitas ', psuBad: 'La fuente no aguanta: el consumo estimado supera su capacidad.', psuOk: '✓ alcanza', choose: 'Elige una pieza', doneBefore: 'Ya superaste este reto antes (mejor: ', up: '▲', down: '▼', vsBase: 'vs. precio base', perfShort: 'Rend.', chkParts: 'Piezas elegidas', chkBudget: 'Presupuesto', chkPerf: 'Rendimiento', chkPsu: 'Fuente suficiente', doneChip: '✓ Reto superado · Mejor puntaje: ' },
+    en: { market: 'Simulated market today', win: '🏆 Challenge cleared! Cost-benefit score: ', over: 'You went over budget by $', lowPerf: 'Not enough performance: you need ', psuBad: 'The PSU cannot keep up: estimated draw exceeds its capacity.', psuOk: '✓ enough', choose: 'Choose a part', doneBefore: 'You already cleared this challenge (best: ', up: '▲', down: '▼', vsBase: 'vs. base price', perfShort: 'Perf.', chkParts: 'Parts chosen', chkBudget: 'Budget', chkPerf: 'Performance', chkPsu: 'Enough power', doneChip: '✓ Challenge cleared · Best score: ' }
   }[lang];
 
   // precio base (USD), rendimiento (0-30 por pieza) y consumo (W).
   var CATS = [
     { id: 'cpu', name: { es: 'Procesador', en: 'Processor' }, parts: [
       { n: 'Ryzen 3 4100', price: 75, perf: 8, w: 65 },
+      { n: 'Core i3-12100F', price: 95, perf: 11, w: 58 },
       { n: 'Core i5-12400F', price: 130, perf: 14, w: 65 },
+      { n: 'Ryzen 5 5600', price: 145, perf: 17, w: 65 },
       { n: 'Ryzen 7 5800X', price: 175, perf: 19, w: 105 },
       { n: 'Core i7-13700K', price: 320, perf: 26, w: 125 } ] },
     { id: 'gpu', name: { es: 'Tarjeta de video', en: 'Graphics card' }, parts: [
       { n: 'Sin tarjeta (integrada)', price: 0, perf: 2, w: 0 },
       { n: 'GTX 1660 Super', price: 160, perf: 12, w: 125 },
+      { n: 'RX 6600', price: 210, perf: 16, w: 132 },
       { n: 'RTX 4060', price: 300, perf: 22, w: 115 },
+      { n: 'RTX 4060 Ti', price: 380, perf: 25, w: 160 },
       { n: 'RTX 4070 Ti', price: 620, perf: 30, w: 285 } ] },
     { id: 'ram', name: { es: 'Memoria RAM', en: 'RAM' }, parts: [
       { n: '8 GB DDR4 3200', price: 25, perf: 4, w: 4 },
       { n: '16 GB DDR4 3200', price: 45, perf: 8, w: 5 },
-      { n: '32 GB DDR5 5600', price: 95, perf: 13, w: 6 } ] },
+      { n: '16 GB DDR5 5200', price: 55, perf: 10, w: 5 },
+      { n: '32 GB DDR5 5600', price: 95, perf: 13, w: 6 },
+      { n: '64 GB DDR5 6000', price: 180, perf: 16, w: 7 } ] },
     { id: 'ssd', name: { es: 'Almacenamiento', en: 'Storage' }, parts: [
+      { n: 'SSD SATA 240 GB', price: 20, perf: 3, w: 3 },
       { n: 'SSD SATA 480 GB', price: 32, perf: 4, w: 3 },
       { n: 'NVMe 1 TB Gen3', price: 58, perf: 8, w: 4 },
-      { n: 'NVMe 2 TB Gen4', price: 120, perf: 12, w: 5 } ] },
+      { n: 'NVMe 2 TB Gen4', price: 120, perf: 12, w: 5 },
+      { n: 'NVMe 4 TB Gen4', price: 260, perf: 15, w: 6 } ] },
     { id: 'board', name: { es: 'Placa base', en: 'Motherboard' }, parts: [
       { n: 'Placa básica A520/B660', price: 85, perf: 3, w: 45 },
       { n: 'Placa intermedia B550/B760', price: 140, perf: 5, w: 50 },
-      { n: 'Placa avanzada X670/Z790', price: 240, perf: 7, w: 55 } ] },
+      { n: 'Placa intermedia con WiFi', price: 165, perf: 6, w: 52 },
+      { n: 'Placa avanzada X670/Z790', price: 240, perf: 7, w: 55 },
+      { n: 'Placa premium X870/Z890', price: 330, perf: 9, w: 60 } ] },
     { id: 'psu', name: { es: 'Fuente de poder', en: 'Power supply' }, parts: [
       { n: '450 W genérica', price: 28, perf: 0, w: 0, cap: 450 },
+      { n: '550 W 80+', price: 45, perf: 1, w: 0, cap: 550 },
       { n: '650 W 80+ Bronze', price: 62, perf: 1, w: 0, cap: 650 },
-      { n: '850 W 80+ Gold', price: 110, perf: 2, w: 0, cap: 850 } ] },
+      { n: '850 W 80+ Gold', price: 110, perf: 2, w: 0, cap: 850 },
+      { n: '1000 W 80+ Platinum', price: 160, perf: 3, w: 0, cap: 1000 } ] },
     { id: 'case', name: { es: 'Gabinete', en: 'Case' }, parts: [
       { n: 'Gabinete sencillo', price: 35, perf: 1, w: 0 },
+      { n: 'Gabinete mini torre', price: 50, perf: 2, w: 0 },
       { n: 'Gabinete con buen flujo de aire', price: 70, perf: 3, w: 0 },
-      { n: 'Gabinete premium con vidrio', price: 130, perf: 4, w: 0 } ] }
+      { n: 'Gabinete premium con vidrio', price: 130, perf: 4, w: 0 },
+      { n: 'Gabinete panorámico premium', price: 180, perf: 5, w: 0 } ] }
   ];
 
   var CHALLENGES = [
@@ -109,7 +123,9 @@
       cat.parts.forEach(function (p, i) {
         var o = document.createElement('option');
         o.value = String(i);
-        o.textContent = p.n;
+        // La opción misma muestra precio de hoy y rendimiento: así la
+        // lista desplegable informa antes de elegir, no después.
+        o.textContent = p.n + ' · ' + money(priceToday(cat.id, p)) + ' · ' + T.perfShort + ' ' + p.perf;
         sel.appendChild(o);
       });
       if (picks[cat.id] != null) sel.value = String(picks[cat.id]);
@@ -161,6 +177,27 @@
     var pct = Math.min(100, Math.round(t.total / challenge.budget * 100));
     bar.style.width = pct + '%';
     bar.className = t.total > challenge.budget ? 'bar-bad' : (pct > 85 ? 'bar-mid' : 'bar-ok');
+    renderChecklist(t);
+    var done = document.getElementById('presu-done');
+    if (done) done.textContent = store.best[challenge.id] != null ? T.doneChip + store.best[challenge.id] : '';
+  }
+
+  // La comprobación del reto, reflejada en vivo: cada requisito con su
+  // ✓ o ✗ mientras se arma, no solo un mensaje al apretar el botón.
+  function renderChecklist(t) {
+    var chosen = CATS.filter(function (cat) { return picks[cat.id] != null; }).length;
+    var rows = [
+      { id: 'presu-chk-parts', label: T.chkParts, detail: chosen + ' / ' + CATS.length, state: t.complete ? 'ok' : '' },
+      { id: 'presu-chk-budget', label: T.chkBudget, detail: money(t.total) + ' / ' + money(challenge.budget), state: t.total > challenge.budget ? 'bad' : (t.total > 0 ? 'ok' : '') },
+      { id: 'presu-chk-perf', label: T.chkPerf, detail: t.perf + ' / ' + challenge.perf, state: t.perf >= challenge.perf ? 'ok' : (t.complete ? 'bad' : '') },
+      { id: 'presu-chk-psu', label: T.chkPsu, detail: t.cap ? (t.watts + ' W / ' + t.cap + ' W') : '—', state: t.cap ? (t.psuOk ? 'ok' : 'bad') : '' }
+    ];
+    rows.forEach(function (r) {
+      var el = document.getElementById(r.id);
+      if (!el) return;
+      el.className = r.state;
+      el.textContent = (r.state === 'ok' ? '✓ ' : r.state === 'bad' ? '✗ ' : '○ ') + r.label + ': ' + r.detail;
+    });
   }
 
   function renderAll() { renderChallenges(); renderTable(); renderTotals(); document.getElementById('presu-result').textContent = store.best[challenge.id] != null ? T.doneBefore + store.best[challenge.id] + ')' : ''; }
@@ -181,6 +218,7 @@
     }
     res.textContent = T.win + score + '.';
     renderChallenges();
+    renderTotals();
   });
   document.getElementById('presu-reset').addEventListener('click', function () { picks = {}; renderAll(); });
 

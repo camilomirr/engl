@@ -11,7 +11,7 @@
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <title data-i18n="page_title_presu">NVISION - Presupuestos reales: arma tu PC</title>
   <!-- Hojas de estilo modular -->
-  <link rel="stylesheet" href="css/styles.css?v=117">
+  <link rel="stylesheet" href="css/styles.css?v=118">
   <!-- SEO, iconos y vista previa al compartir (Open Graph / Twitter) -->
   <meta name="description" content="Simulador de presupuestos de NVISION: arma una PC con precios que fluctúan cada día, cumple el reto de rendimiento sin pasarte del presupuesto y con la fuente adecuada.">
   <meta name="theme-color" content="#0a0e17">
@@ -234,6 +234,13 @@
       <p class="presu-total"><span data-i18n="presu_total">Total</span>: <span id="presu-total">$0</span>
       · <span data-i18n="presu_perf2">Rendimiento</span>: <span id="presu-perf">0</span>
       · <span data-i18n="presu_psu">Fuente</span>: <span id="presu-psu"></span></p>
+      <ul class="presu-checklist" id="presu-checklist">
+        <li id="presu-chk-parts"></li>
+        <li id="presu-chk-budget"></li>
+        <li id="presu-chk-perf"></li>
+        <li id="presu-chk-psu"></li>
+      </ul>
+      <p><span class="mejora-chip" id="presu-done"></span></p>
       <p data-i18n="presu_budgetbar">Uso del presupuesto</p>
       <div class="mejora-bar"><i id="presu-budget-bar" class="bar-mid"></i></div>
       <p class="mejora-msg" id="presu-result" aria-live="polite"></p>
@@ -262,7 +269,7 @@
   <script src="js/site-search.js?v=85"></script>
   <script src="js/analytics.js" defer"></script>
   <script src="js/equipo-widget.js" defer"></script>
-  <script src="js/presupuestos.js?v=1"></script>
+  <script src="js/presupuestos.js?v=2"></script>
   <script src="js/foro-boton.js?v=1" defer></script>
 </body>
 </html>

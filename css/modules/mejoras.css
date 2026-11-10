@@ -133,6 +133,13 @@
 .presu-up { color: #ef4444; font-weight: 700; }
 .presu-down { color: #22c55e; font-weight: 700; }
 .presu-total { font-size: 1.15rem; font-weight: 800; }
+.presu-checklist { list-style: none; margin: 10px 0 4px; padding: 0; display: grid; gap: 4px; }
+.presu-checklist li { font-weight: 700; opacity: .7; }
+.presu-checklist li.ok { color: #22c55e; opacity: 1; }
+.presu-checklist li.bad { color: #ef4444; opacity: 1; }
+[data-theme="light"] .presu-checklist li.ok { color: #15803d; }
+[data-theme="light"] .presu-checklist li.bad { color: #dc2626; }
+.mejora-chip:empty { display: none; }
 
 /* ---------- Pantalla Azul v2: fases, ficha y resolución ---------- */
 .bsod-steps {
