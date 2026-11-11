@@ -13,7 +13,7 @@
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>NVISION PC Workshop - Taller virtual de armado de PC</title>
   <!-- Hojas de estilo modular -->
-  <link rel="stylesheet" href="../css/styles.css?v=118">
+  <link rel="stylesheet" href="../css/styles.css?v=122">
   <link rel="stylesheet" href="css/workshop.css?v=20">
   <script type="importmap">
     {
@@ -232,9 +232,9 @@
       </div>
       <div class="ws-holding">
         <p id="ws-holding-text">Ninguna pieza en la mano. Elige una del inventario.</p>
-        <button type="button" class="ws-btn ws-btn--install" id="ws-install-btn" data-ws="install" style="display:none">Instalar en su punto</button>
+        <button type="button" class="ws-btn ws-btn--install u-hidden" id="ws-install-btn" data-ws="install">Instalar en su punto</button>
       </div>
-      <div class="ws-holding" id="ws-selected" style="display:none">
+      <div class="ws-holding u-hidden" id="ws-selected">
         <p id="ws-selected-text"></p>
         <button type="button" class="ws-btn" id="ws-remove-btn" data-ws="remove">Retirar al inventario</button>
       </div>
@@ -269,7 +269,7 @@
           <button type="button" class="ws-tool" data-tool="paste" data-ws="toolPaste">🧴 Pasta térmica</button>
         </div>
         <div id="ws-tasks-list"></div>
-        <button type="button" class="ws-btn ws-btn--install" id="ws-task-btn" style="display:none">▶ Hacer el siguiente paso</button>
+        <button type="button" class="ws-btn ws-btn--install u-hidden" id="ws-task-btn">▶ Hacer el siguiente paso</button>
       </div>
       <ul class="ws-messages" id="ws-messages" aria-live="polite"></ul>
     </div>
@@ -338,10 +338,10 @@
     <p>© 2026 - <span data-i18n="footer_text">NVISION</span></p>
   </footer>
 
-  <script src="../js/main.js?v=132"></script>
+  <script src="../js/main.js?v=136"></script>
   <script src="../js/site-search.js?v=85"></script>
   <script src="js/error-trap.js"></script>
-<script type="module" src="js/main.js?v=132"></script>
+<script type="module" src="js/main.js?v=136"></script>
   <script src="../js/equipo-widget.js?v=17" defer></script>
 </body>
 </html>

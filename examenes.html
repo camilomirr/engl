@@ -11,7 +11,7 @@
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <title data-i18n="page_title_examenes">NVISION - Exámenes y certificados</title>
   <!-- Hojas de estilo modular -->
-  <link rel="stylesheet" href="css/styles.css?v=118">
+  <link rel="stylesheet" href="css/styles.css?v=122">
   <!-- SEO, iconos y vista previa al compartir (Open Graph / Twitter) -->
   <meta name="description" content="Exámenes de NVISION: pon a prueba lo que sabes de hardware, redes, mantenimiento y WiFi, y descarga tu certificado con tu nombre al aprobar.">
   <meta name="theme-color" content="#0a0e17">
@@ -227,10 +227,10 @@
       <span id="exam-timer" class="exam-timer" hidden></span>
       <button type="button" class="exam-btn exam-btn--ghost" id="exam-back" data-i18n="exam_back">Volver a los exámenes</button>
     </div>
-    <p style="color: var(--text-muted); font-size: 0.88rem;" data-i18n="exam_min">Nota mínima para aprobar: 70%</p>
+    <p class="u-note-muted" data-i18n="exam_min">Nota mínima para aprobar: 70%</p>
     <form id="exam-form"></form>
 
-    <div class="exam-result" id="exam-result" style="display: none;">
+    <div class="exam-result" id="exam-result">
       <div class="score" id="exam-score-num">0%</div>
       <p id="exam-result-msg"></p>
       <div class="exam-cert" id="exam-cert">
@@ -251,7 +251,7 @@
 
     <div class="exam-actions">
       <button type="button" class="exam-btn" id="exam-submit" data-i18n="exam_submit">Calificar examen</button>
-      <button type="button" class="exam-btn exam-btn--ghost" id="exam-retry" style="display: none;" data-i18n="exam_retry">Intentar de nuevo</button>
+      <button type="button" class="exam-btn exam-btn--ghost u-hidden" id="exam-retry" data-i18n="exam_retry">Intentar de nuevo</button>
     </div>
   </section>
 
@@ -271,13 +271,13 @@
   </footer>
 
   <!-- Script interactivo bilingüe y menú móvil -->
-  <script src="js/main.js?v=132"></script>
+  <script src="js/main.js?v=136"></script>
   <script src="js/site-search.js?v=85"></script>
   <script src="js/analytics.js?v=1" defer></script>
   <script src="js/equipo-widget.js?v=17" defer></script>
   <script src="js/validation.js?v=1"></script>
   <script src="js/vendor/qrcode.min.js"></script>
-  <script src="js/examenes.js?v=84"></script>
+  <script src="js/examenes.js?v=88"></script>
   <script src="js/foro-boton.js?v=1" defer></script>
 </body>
 </html>

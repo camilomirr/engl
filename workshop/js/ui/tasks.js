@@ -33,12 +33,12 @@ export function createTasksPanel(handlers) {
       listEl.innerHTML = '';
       if (!view || !view.partName) {
         listEl.innerHTML = '<p class="ws-note">' + s.pick + '</p>';
-        if (btn) btn.style.display = 'none';
+        if (btn) btn.classList.add('u-hidden');
         return;
       }
       if (!view.tasks.length) {
         listEl.innerHTML = '<p class="ws-note">' + s.none + '</p>';
-        if (btn) btn.style.display = 'none';
+        if (btn) btn.classList.add('u-hidden');
         return;
       }
       view.tasks.forEach(tk => {
@@ -49,7 +49,7 @@ export function createTasksPanel(handlers) {
       });
       if (btn) {
         const pending = view.tasks.some(tk => tk.done < tk.count);
-        btn.style.display = pending ? '' : 'none';
+        btn.classList.toggle('u-hidden', !pending);
         btn.textContent = '▶ ' + s.doIt;
         if (!pending) {
           const done = document.createElement('p');

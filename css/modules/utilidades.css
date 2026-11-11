@@ -1,0 +1,16 @@
+/* NVISION · Utilidades: clases para los estilos que antes iban en
+   línea (style="...") y la CSP del sitio bloqueaba sin aplicarlos.
+   Cada clase reproduce EXACTAMENTE la declaración que reemplaza. */
+.u-hidden { display: none; }
+.u-scroll-25 { max-height: 25rem; overflow-y: auto; }
+.u-img-block { width: 100%; height: auto; display: block; }
+.u-list-clean { list-style: none; margin: 8px 0 0; padding: 0; }
+.u-note-muted { color: var(--text-muted); font-size: 0.88rem; }
+.u-note-soft { margin: 10px 0 0; font-size: .92rem; opacity: .85; }
+.u-ic-40 { width: 2.5rem; height: 2.5rem; margin: 0 auto 0.5rem; }
+.u-upper { text-transform: uppercase; }
+.u-mt-12 { margin-top: 12px; }
+.u-mt-14 { margin-top: 14px; }
+.u-mt-18 { margin-top: 1.1rem; }
+.u-mt-22 { margin-top: 1.4rem; }
+.u-divider-dash { margin-top: 22px; border-top: 1px dashed rgba(148, 163, 184, .4); padding-top: 16px; }

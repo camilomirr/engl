@@ -11,11 +11,11 @@ pegar el archivo indicado y **Run**.
 
 ---
 
-## 1. Crear el registro oficial de certificados ⏳ pendiente
+## 1. Crear el registro oficial de certificados ✅ hecho (verificado el 2026-11-10)
 
-**Por qué:** hoy la tabla `certificados` no existe (la API responde 404), así que
-`verificar.html` solo puede decir «autenticidad no confirmada», aunque el código
-del certificado coincida.
+**Estado:** la tabla `certificados` ya existe (la API responde 200, vacía por
+ahora), así que `verificar.html` ya puede confirmar contra el registro oficial
+los certificados que se registren. Este paso queda como referencia histórica.
 
 **Pasos:**
 1. Abrir el archivo `supabase/certificados.sql` de este repo.
@@ -30,9 +30,10 @@ verificación puede confirmar que consta en el registro oficial.
 
 ## 2. Aplicar los límites de la base y borrar una fila de auditoría ⏳ pendiente
 
-**Por qué:** en `team_tasks` sigue viva la fila de prueba `id 59` con nombre
-`__audit__` (la dejó la auditoría de seguridad y solo se puede borrar desde
-dentro), y conviene dejar aplicados todos los límites (CHECK) en un solo paso.
+**Por qué:** conviene dejar aplicados todos los límites (CHECK) en un solo
+paso. La fila de prueba `id 59` (`__audit__`) que dejó la auditoría YA se
+borró (verificado el 2026-11-10: ya no existe), así que de este paso solo
+queda la PARTE 1 de límites, si aún no se corrió.
 
 **Pasos:**
 1. Abrir `supabase/validacion.sql`.
@@ -147,3 +148,4 @@ paso, el foro muestra el aviso de «todavía no está activado».
 
 Las políticas incluidas dejan leer a todo el mundo y escribir solo con sesión,
 con cada fila atada a su dueño (`auth.uid() = user_id`), igual que el ranking.
+

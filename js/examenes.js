@@ -473,7 +473,7 @@
     resultBox.style.display = 'none';
     document.getElementById('exam-cert').className = 'exam-cert';
     document.getElementById('exam-submit').style.display = '';
-    document.getElementById('exam-retry').style.display = 'none';
+    document.getElementById('exam-retry').classList.add('u-hidden');
     run.className = 'exam-run on';
     run.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
@@ -504,7 +504,7 @@
       resultBox.style.display = '';
       document.getElementById('exam-cert').className = 'exam-cert';
       document.getElementById('exam-submit').style.display = 'none';
-      document.getElementById('exam-retry').style.display = '';
+      document.getElementById('exam-retry').classList.remove('u-hidden');
       resultBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
@@ -534,7 +534,7 @@
     resultBox.style.display = '';
     document.getElementById('exam-cert').className = 'exam-cert' + (passed ? ' on' : '');
     document.getElementById('exam-submit').style.display = 'none';
-    document.getElementById('exam-retry').style.display = '';
+    document.getElementById('exam-retry').classList.remove('u-hidden');
     resultBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 

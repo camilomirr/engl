@@ -41,7 +41,10 @@
     var stripe = (w.c1 === w.c2)
       ? 'background:' + w.c1
       : 'background:repeating-linear-gradient(45deg,' + w.c1 + ' 0 6px,' + w.c2 + ' 6px 12px)';
-    b.innerHTML = '<span class="cable-wire-color" style="' + stripe + '"></span><span></span>';
+    b.innerHTML = '<span class="cable-wire-color"></span><span></span>';
+    // El color es dinámico: se aplica por CSSOM (la CSP bloquea el
+    // atributo style dentro del HTML inyectado, no esta vía).
+    b.querySelector('.cable-wire-color').style.cssText = stripe;
     b.querySelector('span:last-child').textContent = w[lang];
     return b;
   }

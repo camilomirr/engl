@@ -188,9 +188,9 @@ export function createHud(handlers) {
     $('ws-progress-bar').style.width = (done / 8 * 100) + '%';
     // panel de la mano / seleccion
     $('ws-holding-text').textContent = holding ? s.holding + holding.name : s.holdingNone;
-    $('ws-install-btn').style.display = holding ? '' : 'none';
+    $('ws-install-btn').classList.toggle('u-hidden', !holding);
     const selItem = selectedCat ? installed[selectedCat] : null;
-    $('ws-selected').style.display = selItem ? '' : 'none';
+    $('ws-selected').classList.toggle('u-hidden', !selItem);
     if (selItem) $('ws-selected-text').textContent = s.selected + selItem.name + ' (' + (s.catNames[selectedCat]) + ')';
   }
   // seguir el selector de idioma del sitio

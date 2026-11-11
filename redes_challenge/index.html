@@ -6,7 +6,7 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; img-src 'self' data: https://images.unsplash.com https://encrypted-tbn0.gstatic.com https://acf.geeknetic.es https://jensa.vtexassets.com https://www.esmero.com.co https://pisces.bbystatic.com https://placaschinas.com https://th.bing.com https://www.cyberpuerta.mx https://www.legionmac.com https://www.ntcompatible.com https://*.googleusercontent.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://xiuztrujrwdgcpjrruxu.supabase.co https://*.googleusercontent.com; media-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'">
   <title>NVISION - Redes Challenge</title>
   <!-- Misma hoja de estilos de NVISION: la barra de arriba y el logo son los del sitio -->
-  <link rel="stylesheet" href="../css/styles.css?v=118">
+  <link rel="stylesheet" href="../css/styles.css?v=122">
   <link rel="stylesheet" href="estilos.css">
   <!-- SEO, iconos y vista previa al compartir (Open Graph / Twitter) -->
   <meta name="description" content="Redes Challenge de NVISION: pon a prueba lo que sabes de redes, suma puntos y compite en el ranking.">
@@ -242,7 +242,7 @@
           <button id="btnJoin" class="primary" type="button">Iniciar juego</button>
           <p id="joinStatus" aria-live="polite"></p>
         </div>
-        <div id="coopEntry" style="margin-top:22px;border-top:1px dashed rgba(148,163,184,.4);padding-top:16px">
+        <div id="coopEntry" class="u-divider-dash">
           <h3 id="coopEntryTitle">🛡️ Modo cooperativo: salven la red</h3>
           <p id="coopEntryText">Formen un equipo, entren con el mismo código y respondan juntos para detener un ciberataque antes de que tome la red empresarial. Aquí no compiten entre ustedes: ganan o pierden en equipo.</p>
           <button id="btnCoopOpen" class="primary" type="button">Entrar al modo cooperativo</button>
@@ -260,7 +260,7 @@
           <button id="btnCoopCreate" class="primary" type="button">Crear sala y recibir código</button>
           <h3 id="coopJoinTitle">Unirme con un código</h3>
           <label for="coopCode" id="coopCodeLabel">Código de la sala (4 letras)</label>
-          <input id="coopCode" maxlength="4" autocomplete="off" style="text-transform:uppercase">
+          <input id="coopCode" class="u-upper" maxlength="4" autocomplete="off">
           <label for="coopName2" id="coopName2Label">Tu nombre</label>
           <input id="coopName2" maxlength="24" autocomplete="off">
           <button id="btnCoopJoin" class="primary" type="button">Unirme al equipo</button>

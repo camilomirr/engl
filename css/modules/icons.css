@@ -2,6 +2,8 @@
    SISTEMA DE ICONOGRAFÍA VECTORIAL TÉCNICA (ESTILO NVIDIA / HARDWARE PRO)
    ========================================================= */
 
+.mono-icon.heart-red { color: #ef4444; }
+.mono-icon.heart-green { color: #22c55e; }
 .mono-icon {
   display: inline-flex;
   align-items: center;

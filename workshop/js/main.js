@@ -12,7 +12,7 @@ import { createScene } from './core/scene.js?v=19';
 import { loadState, saveState, buy as ecoBuy, sell as ecoSell, advanceDay } from './core/economy.js?v=18';
 import { createShop } from './ui/shop.js?v=19';
 import { tasksFor, doNextTask, assemblyPending, TOOLS } from './core/assembly.js?v=18';
-import { createTasksPanel } from './ui/tasks.js?v=18';
+import { createTasksPanel } from './ui/tasks.js?v=22';
 import { runPost, biosRows, stressTest, temps } from './core/boot.js?v=18';
 import { createMonitor } from './ui/monitor.js?v=18';
 import { genOrders, evaluate as evalOrder, applyDelivery, levelFor } from './core/career.js?v=19';
@@ -20,7 +20,7 @@ import { createOrders } from './ui/orders.js?v=18';
 import { scores, fpsTable, buildSummary, buildCode, parseCode } from './core/bench.js?v=18';
 import { sfx, setSoundEnabled } from './core/sfx.js?v=18';
 import { createTutorial } from './ui/tutorial.js?v=18';
-import { createHud, t } from './ui/hud.js?v=19';
+import { createHud, t } from './ui/hud.js?v=23';
 
 const installed = {};   // categoria -> componente
 const game = loadState(); // dinero, dia, inventario propio y armado guardado
