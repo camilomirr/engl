@@ -2843,8 +2843,14 @@ function setupThemeToggle() {
   const themeToggleBtn = document.getElementById('theme-toggle');
   const themeIcon = document.getElementById('theme-icon');
   
-  const savedTheme = localStorage.getItem('user_theme');
-  const currentTheme = savedTheme || 'light';
+  const savedTheme = localStorage.getItem('user_theme_v2');
+  /* Modo claro predeterminado en todas las páginas (2026-11-11): la
+     preferencia guardada anterior ('user_theme') se ignora y se borra,
+     para que quien tenía el oscuro guardado vuelva a ver claro al entrar.
+     El botón de tema sigue funcionando y la elección nueva se guarda en
+     'user_theme_v2', así que quien quiera oscuro lo vuelve a elegir una vez. */
+  try { localStorage.removeItem('user_theme'); } catch (e) {}
+  const currentTheme = savedTheme === 'dark' ? 'dark' : 'light';
   
   function applyTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
@@ -2865,7 +2871,7 @@ function setupThemeToggle() {
     themeToggleBtn.addEventListener('click', () => {
       const activeTheme = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
       const nextTheme = activeTheme === 'light' ? 'dark' : 'light';
-      localStorage.setItem('user_theme', nextTheme);
+      localStorage.setItem('user_theme_v2', nextTheme);
       applyTheme(nextTheme);
     });
   }
