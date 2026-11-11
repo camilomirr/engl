@@ -11,7 +11,7 @@
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <title data-i18n="page_title_bsod">NVISION - Pantalla Azul: el detective</title>
   <!-- Hojas de estilo modular -->
-  <link rel="stylesheet" href="css/styles.css?v=124">
+  <link rel="stylesheet" href="css/styles.css?v=125">
   <!-- SEO, iconos y vista previa al compartir (Open Graph / Twitter) -->
   <meta name="description" content="Minijuego de diagnóstico de NVISION en 4 fases: síntomas, investigación con herramientas del laboratorio, diagnóstico y reparación. Encuentra si la falla es la RAM, el disco, un driver o el calor.">
   <meta name="theme-color" content="#f8fafc">
@@ -211,6 +211,24 @@
   </section>
 
   <section class="mejora-wrap">
+    <div class="bsod-intro">
+      <div class="bsod-problem">
+        <div class="bsod-screen bsod-screen-mini">
+          <p class="bsod-face">:(</p>
+          <p data-i18n="bsod_screen_line">Tu PC tuvo un problema y necesita reiniciarse.</p>
+          <p><span class="bsod-code">MEMORY_MANAGEMENT</span></p>
+        </div>
+        <div>
+          <h2 data-i18n="bsod_problem_title">El problema</h2>
+          <p data-i18n="bsod_problem_text">De repente, todo se congela y la pantalla se pone azul con un mensaje de error. Windows se detiene a propósito para proteger tus archivos cuando algo grave falla: la memoria RAM, el disco, un controlador o el calor. Sin saber leer esa pantalla, lo único que queda es reiniciar y cruzar los dedos.</p>
+        </div>
+      </div>
+      <div class="bsod-about">
+        <h2 data-i18n="bsod_about_title">¿De qué trata esta página?</h2>
+        <p data-i18n="bsod_about_text">Aquí aprendes a leer esa pantalla y a encontrar la causa como un técnico de verdad. Eres el detective: en cada caso revisas los síntomas, investigas con las herramientas del laboratorio, das tu diagnóstico y aplicas la reparación. Son 6 casos reales y cada uno que resuelvas suma puntos y logros.</p>
+      </div>
+    </div>
+
     <div class="mejora-card">
       <p><strong data-i18n="bsod_progress">Casos resueltos:</strong> <span id="bsod-progress">0/6</span>
       <span class="mejora-chip" id="bsod-best"></span>
@@ -278,11 +296,11 @@
   </footer>
 
   <!-- Script interactivo bilingüe y menú móvil -->
-  <script src="js/main.js?v=139"></script>
+  <script src="js/main.js?v=140"></script>
   <script src="js/site-search.js?v=85"></script>
   <script src="js/analytics.js" defer"></script>
   <script src="js/equipo-widget.js" defer"></script>
   <script src="js/pantalla-azul.js?v=4"></script>
-  <script src="js/foro-boton.js?v=1" defer></script>
+  <script src="js/foro-boton.js?v=2" defer></script>
 </body>
 </html>

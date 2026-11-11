@@ -166,6 +166,21 @@
 .bsod-result-card ol { margin: 6px 0 14px 20px; }
 .bsod-result-card li { margin-bottom: 6px; }
 
+/* ---------- Pantalla Azul: primero el problema, luego de qué trata ---------- */
+.bsod-intro { display: grid; gap: 14px; margin-bottom: 18px; }
+.bsod-problem {
+  display: grid; grid-template-columns: minmax(230px, 320px) 1fr; gap: 16px; align-items: center;
+  border: 1px solid rgba(148, 163, 184, .25); border-radius: 16px; padding: 16px;
+}
+.bsod-screen-mini { min-height: 0; padding: 18px; }
+.bsod-screen-mini .bsod-face { font-size: 2.6rem; }
+.bsod-screen-mini p { margin: 0 0 8px; }
+.bsod-screen-mini p:last-child { margin-bottom: 0; }
+.bsod-about { border: 1px solid rgba(148, 163, 184, .25); border-radius: 16px; padding: 16px 18px; }
+.bsod-problem h2, .bsod-about h2 { margin: 0 0 8px; font-size: 1.15rem; }
+.bsod-problem p, .bsod-about p { margin: 0; line-height: 1.6; }
+@media (max-width: 640px) { .bsod-problem { grid-template-columns: 1fr; } }
+
 /* ---------- Foro: botón flotante con loguito ---------- */
 .foro-fab {
   position: fixed; left: 16px; bottom: 16px; z-index: 150;
