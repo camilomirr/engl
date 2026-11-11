@@ -85,7 +85,10 @@
     flash.append(w, s);
     count.textContent = (seqPos + 1) + ' / ' + TERMS.length;
   }
-  flash.addEventListener('click', function () { flipped = !flipped; paintCard(); });
+  flash.addEventListener('click', function () {
+    flipped = !flipped; paintCard();
+    flash.classList.remove('flip'); void flash.offsetWidth; flash.classList.add('flip');
+  });
   document.getElementById('eng-prev').addEventListener('click', function () { seqPos = (seqPos + srsSeq.length - 1) % srsSeq.length; idx = srsSeq[seqPos]; flipped = false; paintCard(); });
   document.getElementById('eng-next').addEventListener('click', function () { seqPos = (seqPos + 1) % srsSeq.length; idx = srsSeq[seqPos]; flipped = false; paintCard(); });
   document.getElementById('eng-say').addEventListener('click', function () { speak(TERMS[idx][0] + '. ' + TERMS[idx][3]); });
@@ -157,7 +160,10 @@
   // Modos
   document.querySelectorAll('.eng-mode').forEach(function (b) {
     b.addEventListener('click', function () {
-      document.querySelectorAll('.eng-mode').forEach(function (x) { x.classList.toggle('is-on', x === b); });
+      document.querySelectorAll('.eng-mode').forEach(function (x) {
+        x.classList.toggle('is-on', x === b);
+        x.setAttribute('aria-selected', x === b ? 'true' : 'false');
+      });
       var m = b.dataset.mode;
       document.getElementById('eng-list').hidden = m !== 'list';
       document.getElementById('eng-cards').hidden = m !== 'cards';
