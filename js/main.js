@@ -2844,7 +2844,7 @@ function setupThemeToggle() {
   const themeIcon = document.getElementById('theme-icon');
   
   const savedTheme = localStorage.getItem('user_theme');
-  const currentTheme = savedTheme || 'dark';
+  const currentTheme = savedTheme || 'light';
   
   function applyTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
