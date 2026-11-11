@@ -19,11 +19,6 @@ section[id], div[id], h2[id] { scroll-margin-top: 84px; }
     bottom: max(0.85rem, env(safe-area-inset-bottom));
   }
   .local-assistant-toggle { width: 3rem; height: 3rem; }
-  .eqw-fab {
-    width: 3rem; height: 3rem;
-    right: max(0.85rem, env(safe-area-inset-right));
-    bottom: calc(4.35rem + env(safe-area-inset-bottom));
-  }
 
   /* Objetivos táctiles cómodos (mínimo ~40-48px de alto) */
   .site-search-chip { min-height: 2.5rem; padding-inline: 0.9rem; }

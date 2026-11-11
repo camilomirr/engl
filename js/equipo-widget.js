@@ -1,3 +1,7 @@
+// DESACTIVADO el 2026-11-11 a petición de Duay: ninguna página
+// carga ya este widget. Se conserva el archivo por si el equipo
+// decide volver a activarlo (basta con reponer la etiqueta
+// <script src="js/equipo-widget.js"> en las páginas).
 // Widget flotante del chat del equipo NVISION con Muse.
 // Vive ENCIMA del botón del chatbot del sitio (el asistente local) y
 // PERSISTE entre páginas: el nombre elegido, la vista y si el panel estaba
