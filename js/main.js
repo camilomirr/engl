@@ -1310,7 +1310,35 @@ const translations = {
     red_topo_aria_mesh: "Diagrama Topología en Malla",
     red_topo_aria_ring: "Diagrama Topología en Anillo",
     red_topo_aria_star: "Diagrama Topología en Estrella",
-    red_topo_aria_tree: "Diagrama Topología en Árbol"
+    red_topo_aria_tree: "Diagrama Topología en Árbol",
+
+    // Privacidad
+    privacy_title: "Política de Privacidad",
+    privacy_updated: "Última actualización: 9 de noviembre de 2026 · NVISION (nvision.social)",
+    privacy_intro: "NVISION es un sitio educativo creado por estudiantes para aprender hardware, redes y mantenimiento de computadores. Esta política explica qué datos recogemos cuando usas el sitio y qué hacemos con ellos.",
+    privacy_s1_title: "1. Qué datos recogemos",
+    privacy_s1_li1: "<strong>Datos de tu cuenta (solo si creas una):</strong> nombre, apellido, correo electrónico y foto de perfil si inicias sesión con Google. También guardamos el avatar que elijas y tu progreso de aprendizaje (pasos de la ruta, exámenes, logros y puntos).",
+    privacy_s1_li2: "<strong>Datos del juego Redes Challenge:</strong> el nombre con el que juegas y tus puntos, que aparecen en el TOP del juego mientras la sala está abierta.",
+    privacy_s1_li3: "<strong>Preferencias en tu navegador:</strong> el tema (claro u oscuro) y el idioma que eliges. Se guardan solo en tu equipo.",
+    privacy_s1_li4: "<strong>Mensajes del chat del equipo:</strong> los mensajes que escribes en el chat flotante del equipo NVISION, para que el equipo pueda responderte.",
+    privacy_s1_note: "No recogemos tu ubicación, tus contactos ni el contenido de tus archivos.",
+    privacy_s2_title: "2. Para qué usamos tus datos",
+    privacy_s2_li1: "Mostrarte tu progreso y sincronizarlo entre tus dispositivos.",
+    privacy_s2_li2: "Mostrar el ranking del juego Redes Challenge.",
+    privacy_s2_li3: "Responder a tus mensajes en el chat del equipo.",
+    privacy_s2_li4: "Mejorar el sitio. No usamos tus datos para publicidad.",
+    privacy_s3_title: "3. Con quién se comparten",
+    privacy_s3_text: "No vendemos ni compartimos tus datos con terceros con fines publicitarios. Tus datos se guardan en los servicios que hacen funcionar el sitio:",
+    privacy_s3_li1: "<strong>Supabase:</strong> guarda tu cuenta y tu progreso en la nube.",
+    privacy_s3_li2: "<strong>Google:</strong> solo si eliges \"Continuar con Google\" para iniciar sesión; Google comparte con NVISION tu nombre, tu correo y tu foto de perfil, y nada más.",
+    privacy_s4_title: "4. Cuánto tiempo los guardamos",
+    privacy_s4_text: "Guardamos los datos de tu cuenta y tu progreso mientras tu cuenta exista. Los puntos del juego se guardan mientras la sala del juego esté abierta.",
+    privacy_s5_title: "5. Tus derechos",
+    privacy_s5_text: "Puedes pedir en cualquier momento que eliminemos tu cuenta y todos tus datos. Escríbenos a <a href=\"mailto:ca@edunv.dev\">ca@edunv.dev</a> desde el correo de tu cuenta y lo haremos. También puedes cerrar sesión cuando quieras; tu progreso seguirá guardado hasta que pidas eliminarlo.",
+    privacy_s6_title: "6. Menores de edad",
+    privacy_s6_text: "NVISION es un proyecto educativo para estudiantes. No recogemos datos de menores con fines comerciales ni mostramos publicidad.",
+    privacy_s7_title: "7. Cambios en esta política",
+    privacy_s7_text: "Si cambiamos esta política, actualizaremos la fecha de arriba y lo avisaremos en el sitio."
   },
   en: {
     badge_hero: "Network Structure",
@@ -2457,7 +2485,35 @@ const translations = {
     red_topo_aria_mesh: "Mesh Topology Diagram",
     red_topo_aria_ring: "Ring Topology Diagram",
     red_topo_aria_star: "Star Topology Diagram",
-    red_topo_aria_tree: "Tree Topology Diagram"
+    red_topo_aria_tree: "Tree Topology Diagram",
+
+    // Privacy
+    privacy_title: "Privacy Policy",
+    privacy_updated: "Last updated: November 9, 2026 · NVISION (nvision.social)",
+    privacy_intro: "NVISION is an educational website built by students to learn about computer hardware, networks and maintenance. This policy explains what data we collect when you use the site and what we do with it.",
+    privacy_s1_title: "1. Data we collect",
+    privacy_s1_li1: "<strong>Account data (only if you create an account):</strong> first name, last name, email address and profile picture if you sign in with Google. We also store the avatar you choose and your learning progress (route steps, exams, achievements and points).",
+    privacy_s1_li2: "<strong>Redes Challenge game data:</strong> the name you play with and your points, shown in the game's TOP list while the room is open.",
+    privacy_s1_li3: "<strong>Browser preferences:</strong> your theme (light or dark) and language, stored only on your device.",
+    privacy_s1_li4: "<strong>Team chat messages:</strong> the messages you write in the NVISION team floating chat, so the team can reply to you.",
+    privacy_s1_note: "We do not collect your location, your contacts or the content of your files.",
+    privacy_s2_title: "2. How we use your data",
+    privacy_s2_li1: "To show your progress and sync it across your devices.",
+    privacy_s2_li2: "To show the Redes Challenge game leaderboard.",
+    privacy_s2_li3: "To reply to your messages in the team chat.",
+    privacy_s2_li4: "To improve the site. We do not use your data for advertising.",
+    privacy_s3_title: "3. Who we share it with",
+    privacy_s3_text: "We do not sell or share your data with third parties for advertising. Your data lives in the services that run the site:",
+    privacy_s3_li1: "<strong>Supabase:</strong> stores your account and progress in the cloud.",
+    privacy_s3_li2: "<strong>Google:</strong> only if you choose \"Continue with Google\" to sign in; Google shares your name, email and profile picture with NVISION, and nothing else.",
+    privacy_s4_title: "4. How long we keep it",
+    privacy_s4_text: "We keep your account data and progress while your account exists. Game points are kept while the game room is open.",
+    privacy_s5_title: "5. Your rights",
+    privacy_s5_text: "You can ask us to delete your account and all your data at any time. Email us at <a href=\"mailto:ca@edunv.dev\">ca@edunv.dev</a> from your account's email address and we will do it. You can also sign out whenever you like; your progress stays saved until you ask for deletion.",
+    privacy_s6_title: "6. Children",
+    privacy_s6_text: "NVISION is an educational project for students. We do not collect children's data for commercial purposes and we do not show advertising.",
+    privacy_s7_title: "7. Changes to this policy",
+    privacy_s7_text: "If we change this policy, we will update the date above and announce it on the site."
   }
 };
 
