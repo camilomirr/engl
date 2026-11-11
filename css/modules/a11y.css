@@ -1,6 +1,9 @@
-/* NVISION · Accesibilidad: alto contraste. El botón vive en el
-   encabezado (lo inyecta js/main.js) y el estado se guarda en
-   localStorage (nvision_a11y_v1). */
+/* NVISION · Accesibilidad: alto contraste. El botón se retiró el
+   2026-11-11 a pedido de Camilo (js/main.js ya no lo inyecta ni
+   aplica data-contrast), así que estas reglas quedaron inertes y solo
+   se conservan por si el modo vuelve algún día. Lo que sigue activo
+   de este archivo es la compactación del encabezado en pantallas
+   pequeñas de más abajo. */
 html[data-contrast="high"] {
   --bg-deep: #05070d;
   --bg-surface: rgba(8, 12, 22, 0.78);

@@ -5357,35 +5357,17 @@ if ("serviceWorker" in navigator) {
   });
 }
 
-/* NVISION · Accesibilidad global: alto contraste, con su botón en el
-   encabezado de todas las páginas. (El botón de tamaño de letra se
-   retiró el 2026-11-09 a pedido de Duay; si un visitante lo había
-   activado, apply() le quita la escala guardada al cargar.) */
+/* NVISION · Accesibilidad: el botón de alto contraste se retiró el
+   2026-11-11 a pedido de Camilo. Si un visitante lo tenía activado,
+   esto le quita el modo al cargar (y limpia la preferencia guardada);
+   el botón de tamaño de letra ya se había retirado el 2026-11-09 a
+   pedido de Duay, y aquí también se quita su escala guardada. */
 (function () {
   'use strict';
-  var KEY = 'nvision_a11y_v1';
-  var prefs = { contrast: false };
-  try { var p = JSON.parse(localStorage.getItem(KEY) || 'null'); if (p) prefs = { contrast: !!p.contrast }; } catch (e) {}
-  function apply() {
-    var h = document.documentElement;
-    h.removeAttribute('data-fontscale');
-    if (prefs.contrast) h.setAttribute('data-contrast', 'high'); else h.removeAttribute('data-contrast');
-    try { localStorage.setItem(KEY, JSON.stringify(prefs)); } catch (e) {}
-    var cb = document.getElementById('a11y-contrast');
-    if (cb) cb.classList.toggle('on', prefs.contrast);
-  }
-  function inject() {
-    var anchor = document.getElementById('lang-dropdown-wrapper');
-    if (!anchor || !anchor.parentNode || document.getElementById('a11y-contrast')) return;
-    var wrap = document.createElement('span'); wrap.className = 'a11y-wrap';
-    var cb = document.createElement('button');
-    cb.type = 'button'; cb.id = 'a11y-contrast'; cb.className = 'theme-switch-btn a11y-btn';
-    cb.title = 'Alto contraste / High contrast'; cb.setAttribute('aria-label', 'Activar o desactivar alto contraste'); cb.textContent = '◐';
-    cb.addEventListener('click', function () { prefs.contrast = !prefs.contrast; apply(); });
-    wrap.appendChild(cb);
-    anchor.parentNode.insertBefore(wrap, anchor);
-    apply();
-  }
-  apply();
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', inject); else inject();
+  try {
+    document.documentElement.removeAttribute('data-contrast');
+    document.documentElement.removeAttribute('data-fontscale');
+    var p = JSON.parse(localStorage.getItem('nvision_a11y_v1') || 'null');
+    if (p) { p.contrast = false; localStorage.setItem('nvision_a11y_v1', JSON.stringify(p)); }
+  } catch (e) {}
 })();
