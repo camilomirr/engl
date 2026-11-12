@@ -272,82 +272,10 @@ body:before, [data-theme="light"] body:before {
 [data-theme="light"] ::-webkit-scrollbar-thumb { background: #1e293b; }
 [data-theme="light"] ::-webkit-scrollbar-thumb:hover { background: #334155; }
 
-/* ===== Diseño azul de la foto de Deivison (2026-11-12) =====
-   El diseño que traia el juego en la foto: fondo azul marino
-   oscuro, paneles azul oscuro translucidos y neon cian en
-   bordes, cables, nodos y botones. Va AL FINAL para mandar
-   sobre la gama roja anterior; solo aplica a esta pagina
-   porque estilos.css no se carga en ninguna otra. La
-   retroalimentacion verde (acierto) y roja (fallo) NO cambia. */
-/* Variables del juego y del sitio en azul/cian */
-:root, [data-theme="light"] {
-  --rojo: #0090ff;
-  --rojo-claro: #22d3ee;
-  --line: #0090ff;
-  --accent-cyan: #22d3ee;
-  --accent-blue: #0090ff;
-  --border-hover: rgba(34, 211, 238, 0.45);
-  --border-glow: rgba(34, 211, 238, 0.6);
-}
-/* Fondo azul marino oscuro con brillo arriba, como la foto */
-body, [data-theme="light"] body {
-  background: radial-gradient(ellipse at 50% 0%, #14419e 0, #081f52 42%, #020617 78%);
-  background-color: #020617;
-}
-body:before, [data-theme="light"] body:before {
-  opacity: .28;
-  background-image: linear-gradient(rgba(0, 170, 255, .5) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 170, 255, .5) 1px, transparent 1px);
-}
-/* Titulo y marcador */
-.game-hud h1 span, [data-theme="light"] .game-hud h1 span { color: #22d3ee; }
-[data-theme="light"] .stats { background: rgba(6, 26, 66, .82); border-color: rgba(34, 211, 238, .5); box-shadow: 0 0 18px rgba(0, 150, 255, .25); }
-.divider, [data-theme="light"] .divider { background: #22d3ee; }
-/* Menu lateral azul */
-[data-theme="light"] .sidebar { background: rgba(5, 22, 55, .85); border-color: rgba(34, 211, 238, .4); box-shadow: 0 0 24px rgba(0, 150, 255, .18); }
-[data-theme="light"] .navitem { color: #c7e6ff; border-bottom-color: rgba(34, 211, 238, .18); }
-.navitem.active, [data-theme="light"] .navitem.active { background: linear-gradient(100deg, #0057ff, #00a2ff); box-shadow: 0 0 25px rgba(0, 162, 255, .8); outline-color: #22d3ee; }
-[data-theme="light"] .tip { background: rgba(6, 26, 66, .9); border-color: #00bfff; color: #a8d8ff; }
-.navitem-link:hover { background: rgba(0, 144, 255, .22); }
-/* Panel principal y barra de pregunta en azul */
-[data-theme="light"] .panel { background: linear-gradient(145deg, rgba(10, 38, 99, .93), rgba(3, 14, 43, .95)); border-color: #00a2ff; box-shadow: 0 15px 50px rgba(0, 0, 0, .6), inset 0 0 30px rgba(0, 162, 255, .12), 0 0 24px rgba(0, 162, 255, .18); }
-[data-theme="light"] .panel:before { border-color: rgba(34, 211, 238, .35); }
-[data-theme="light"] .questionbar { background: linear-gradient(110deg, #071c46, #0a2a63); border-color: rgba(34, 211, 238, .4); }
-.questiontag, [data-theme="light"] .questiontag { background: linear-gradient(120deg, #2f6bff, #00c2ff); border-color: #22d3ee; box-shadow: 0 0 16px rgba(0, 194, 255, .5); }
-.questionbar h2 { text-shadow: 0 0 12px rgba(0, 194, 255, .45); }
-.questionbar h2 em { color: #22d3ee; }
-/* Topologia en neon cian (antes rojo) */
-.diagram, [data-theme="light"] .diagram { background: radial-gradient(ellipse at center, #0a2f6e 0, #041636 58%, #01081f 100%); border-color: #00cfff; box-shadow: inset 0 0 45px rgba(0, 170, 255, .28), 0 0 24px rgba(0, 170, 255, .35); }
-.diagram:before, [data-theme="light"] .diagram:before { background: linear-gradient(transparent 96%, rgba(0, 207, 255, .18) 97%), linear-gradient(90deg, transparent 96%, rgba(0, 207, 255, .18) 97%); }
-.diagram svg line, [data-theme="light"] .diagram svg line { stroke: #22d3ee; filter: drop-shadow(0 0 6px #00a2ff) drop-shadow(0 0 16px rgba(0, 162, 255, .55)); }
-.diagram svg .linkshadow, [data-theme="light"] .diagram svg .linkshadow { stroke: #0077ff; filter: blur(4px); }
-.diagram svg .node, [data-theme="light"] .diagram svg .node { stroke: #7dd3fc; filter: drop-shadow(0 0 12px #00a2ff) drop-shadow(0 10px 12px rgba(0, 0, 0, .55)); }
-.diagram svg .switch, [data-theme="light"] .diagram svg .switch { stroke: #7dd3fc; filter: drop-shadow(0 0 12px #00a2ff) drop-shadow(0 10px 12px rgba(0, 0, 0, .55)); }
-.diagram svg .nodebase, [data-theme="light"] .diagram svg .nodebase { fill: #00a2ff; }
-.diagram svg .floor, [data-theme="light"] .diagram svg .floor { fill: #00a2ff; opacity: .18; }
-.diagram svg text.nodelabel, [data-theme="light"] .diagram svg text.nodelabel { fill: #e0f7ff; text-shadow: 0 0 6px #00a2ff; }
-/* Topologia MAS SENSITIVA: el diagrama sigue el mouse casi al instante */
+/* ===== Rojo, negro y gris (pedido 2026-11-12) =====
+   La gama del juego vuelve a ser rojo, negro y gris: se quito
+   la seccion del diseño azul, asi mandan de nuevo el fondo
+   oscuro definitivo y el neon rojo de la topologia. Lo unico
+   que se conserva del paso anterior es la topologia mas
+   sensitiva: el diagrama sigue el mouse casi al instante. */
 .diagram svg { transition: transform .07s ease-out; }
-/* Botones en azul como los de la foto */
-.panel button, [data-theme="light"] .panel button { background: linear-gradient(120deg, #0d47c9, #07307f); color: #fff; border-color: #00bfff; box-shadow: inset 0 0 14px rgba(0, 162, 255, .18), 0 4px 12px rgba(0, 0, 0, .4); }
-.panel button:hover:not(:disabled), [data-theme="light"] .panel button:hover:not(:disabled) { border-color: #22d3ee; box-shadow: 0 0 18px rgba(0, 194, 255, .55), inset 0 0 18px rgba(0, 162, 255, .25); }
-.options button { box-shadow: 0 6px 0 #04265e, 0 12px 20px rgba(0, 0, 0, .5); }
-.options button:active { box-shadow: 0 2px 0 #04265e, 0 6px 12px rgba(0, 0, 0, .5); }
-.primary, [data-theme="light"] .primary { background: linear-gradient(120deg, #0057ff, #00a2ff); border-color: #22d3ee; }
-@keyframes nextPulse { 0%, 100% { box-shadow: 0 0 12px rgba(0, 162, 255, .5); } 50% { box-shadow: 0 0 30px rgba(0, 194, 255, .85); } }
-#feedback, [data-theme="light"] #feedback { color: #bae6fd; }
-.btn-return-big, [data-theme="light"] .btn-return-big { border-color: #00bfff; color: #fff; }
-.btn-return-big:hover, [data-theme="light"] .btn-return-big:hover { background: #0090ff; box-shadow: 0 0 20px rgba(0, 162, 255, .7); }
-/* Arte de la derecha (globo y router) en azul neon */
-.rightart, [data-theme="light"] .rightart { color: #22d3ee; }
-.globe, [data-theme="light"] .globe { background: radial-gradient(circle at 30% 25%, #7dd3fc, #0284c7 30%, #0a1e42 72%); border-color: #00bfff; box-shadow: 0 24px 28px -12px rgba(0, 0, 0, .5), 0 0 34px rgba(0, 162, 255, .55), inset -20px -10px 35px rgba(0, 0, 0, .4); }
-.globe:before, .globe:after, [data-theme="light"] .globe:before, [data-theme="light"] .globe:after { border-color: #38bdf8; }
-.router, [data-theme="light"] .router { background: linear-gradient(150deg, #0284c7, #0a1e42 72%); border-color: #00bfff; box-shadow: 0 26px 24px -10px rgba(0, 0, 0, .5), 0 0 22px rgba(0, 162, 255, .45); }
-.router:after, [data-theme="light"] .router:after { background-image: radial-gradient(circle, #22d3ee 3.5px, transparent 4px); filter: drop-shadow(0 0 6px #00cfff); }
-.rightart p { text-shadow: 0 0 12px rgba(0, 194, 255, .8); }
-/* Formularios, TOP y admin en azul oscuro */
-#playerName, #joinForm input, #adminModal input, .admin-box input { background: #061a3f; color: #eaf7ff; border-color: #00a2ff; }
-.admin-box { background: #0a1f44; color: #eaf7ff; }
-#top10 { border-top-color: #00a2ff; }
-#topStatus { color: #7dd3fc; }
-#inTopBanner { color: #4ade80; }
-#countdown { color: #22d3ee; }
