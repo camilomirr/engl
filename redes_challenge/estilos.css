@@ -279,3 +279,7 @@ body:before, [data-theme="light"] body:before {
    que se conserva del paso anterior es la topologia mas
    sensitiva: el diagrama sigue el mouse casi al instante. */
 .diagram svg { transition: transform .07s ease-out; }
+
+/* Letras de la parte superior en rojo (antes azul celeste): el CHALLENGE del título y la línea divisora de las estadísticas */
+.game-hud h1 span{color:#ff1e2d}
+.game-hud .divider{background:#ff1e2d}
