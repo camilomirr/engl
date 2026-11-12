@@ -4,3 +4,9 @@
 *.js text eol=lf
 *.md text eol=lf
 *.json text eol=lf
+
+# El puente es para Windows: conservar CRLF y bytes exactos
+bridge/hardware-server.ps1 -text
+bridge/iniciar-servidor.bat -text
+bridge/LEEME.txt -text
+downloads/PC-Hardware-Bridge.zip binary
