@@ -110,3 +110,25 @@
     bottom: 0.9rem;
   }
 }
+
+/* =========================================================
+   ETIQUETAS CON HARDWARE REAL (puente local)
+   Solo cambia el texto de la etiqueta: la etiqueta real
+   lleva borde y punto verdes y recorta nombres largos con
+   puntos suspensivos (el nombre completo queda en title).
+   El modelo 3D no cambia.
+   ========================================================= */
+.pc-label.is-real { max-width: min(230px, 42vw); overflow: hidden; text-overflow: ellipsis; border-color: rgba(16,185,129,.65); color: #d1fae5; }
+.pc-label.is-real::after { background: rgba(16,185,129,.6); }
+.pc-label.is-real::before { background: #10b981; box-shadow: 0 0 8px #10b981; }
+
+.pc-hw-block { display: grid; gap: .5rem; margin-top: .5rem; padding-top: .9rem; border-top: 1px solid var(--border-subtle); }
+.pc-hw-kicker { color: var(--accent-cyan); font: 700 0.7rem 'JetBrains Mono', monospace; letter-spacing: 0.1em; }
+.pc-hw-status { display: flex; align-items: center; gap: .5rem; color: var(--text-secondary); font: 600 .78rem 'Plus Jakarta Sans', sans-serif; line-height: 1.45; }
+.pc-hw-dot { width: 7px; height: 7px; flex-shrink: 0; border-radius: 50%; background: var(--text-muted); }
+.pc-hw-dot.is-checking { background: var(--accent-amber); animation: explorerPulse 1s ease-in-out infinite; }
+.pc-hw-dot.is-real, .pc-hw-dot.is-demo { background: var(--accent-emerald); box-shadow: 0 0 8px var(--accent-emerald); }
+.pc-hw-dot.is-error { background: #ef4444; }
+.pc-hw-help { margin: 0; color: var(--text-secondary); font-size: .78rem; line-height: 1.55; }
+.pc-hw-help[hidden], #pc-hw-clear[hidden] { display: none; }
+.pc-scene-btn:disabled { opacity: .55; cursor: wait; }

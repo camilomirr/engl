@@ -727,7 +727,7 @@ function init() {
         // con las etiquetas puestas se veía el nombre dos veces (rótulo + flotante)
         const rect = shell.getBoundingClientRect();
         tooltip.hidden = false;
-        tooltip.textContent = t(partById[id].key);
+        tooltip.textContent = labelTextFor(partById[id]);
         tooltip.style.left = `${event.clientX - rect.left + 14}px`;
         tooltip.style.top = `${event.clientY - rect.top + 14}px`;
       } else if (pickPowerButton(event)) {
@@ -956,6 +956,41 @@ function init() {
       labelsWrap.appendChild(el);
       labelEls[p.id] = el;
     });
+  }
+  // --- Etiquetas con hardware real (puente local, js/pc-hardware.js) ---
+  // Solo cambia el TEXTO de las etiquetas flotantes y del rótulo al
+  // pasar el cursor. El modelo 3D, las posiciones y la animación
+  // quedan intactos. Mientras una etiqueta muestra un dato real se
+  // le quita data-i18n para que el cambio de idioma no la pise;
+  // al volver a las etiquetas normales se restaura todo.
+  let realLabels = null;
+  function labelTextFor(p) {
+    if (realLabels && realLabels[p.id]) return realLabels[p.id];
+    return t(p.key);
+  }
+  function applyRealLabels(map) {
+    realLabels = map && Object.keys(map).length ? map : null;
+    PARTS.forEach((p) => {
+      const el = labelEls[p.id];
+      if (!el) return;
+      if (realLabels && realLabels[p.id]) {
+        el.textContent = realLabels[p.id];
+        el.title = realLabels[p.id];
+        el.classList.add('is-real');
+        el.removeAttribute('data-i18n');
+      } else {
+        el.textContent = t(p.key);
+        el.removeAttribute('title');
+        el.classList.remove('is-real');
+        el.dataset.i18n = p.key;
+      }
+    });
+  }
+  window.addEventListener('nvision:hardware-labels', (ev) => {
+    applyRealLabels(ev.detail && ev.detail.labels ? ev.detail.labels : null);
+  });
+  if (window.__nvisionHardwareLabels) {
+    applyRealLabels(window.__nvisionHardwareLabels.labels || null);
   }
   if (labelsToggle) {
     labelsToggle.addEventListener('click', () => {

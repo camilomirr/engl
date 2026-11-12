@@ -244,6 +244,27 @@ for path in glob.glob("**/*", root_dir=ROOT, recursive=True):
         bad.append(path)
 check(not bad, "ninguna clave service_role en el repo " + str(bad))
 
+print("== Etiquetas hardware PC3D ==")
+pc3d = read("pc3d.html")
+check("http://127.0.0.1:8765" in pc3d and "http://localhost:8765" in pc3d,
+      "pc3d.html: CSP permite el puente local (127.0.0.1/localhost:8765)")
+check("js/pc-hardware.js" in pc3d, "pc3d.html carga js/pc-hardware.js")
+for hid in ("pc-hw-detect", "pc-hw-demo", "pc-hw-clear", "pc-hw-status", "pc-hw-help"):
+    check('id="%s"' % hid in pc3d, "pc3d.html tiene #%s" % hid)
+hw = read("js/pc-hardware.js")
+check("nvision:hardware-labels" in hw, "pc-hardware.js emite nvision:hardware-labels")
+check("innerHTML" not in hw, "pc-hardware.js no usa innerHTML (datos del puente solo como texto)")
+check("Ver ejemplo" in hw or "demo" in hw.lower(), "pc-hardware.js trae modo ejemplo")
+viewer = read("js/pc3d-viewer.js")
+check("nvision:hardware-labels" in viewer and "is-real" in viewer,
+      "visor 3D aplica etiquetas reales sin tocar el modelo")
+model = read("js/pc3d-model.js")
+check("hardware-labels" not in model and "pc-hardware" not in model,
+      "pc3d-model.js intacto: sin referencias al puente")
+explorer_css = read("css/modules/pc-explorer.css")
+check(".pc-label.is-real" in explorer_css and ".pc-hw-block" in explorer_css,
+      "pc-explorer.css tiene estilos de etiquetas reales y del bloque del puente")
+
 print("== Sintaxis JS ==")
 node = shutil.which("node")
 if node:
