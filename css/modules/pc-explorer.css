@@ -132,3 +132,4 @@
 .pc-hw-help { margin: 0; color: var(--text-secondary); font-size: .78rem; line-height: 1.55; }
 .pc-hw-help[hidden], #pc-hw-clear[hidden] { display: none; }
 .pc-scene-btn:disabled { opacity: .55; cursor: wait; }
+a.pc-scene-btn { text-decoration: none; }

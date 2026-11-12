@@ -1,0 +1,70 @@
+﻿PC HARDWARE BRIDGE — NVISION (PC3D)
+====================================
+
+¿Qué es esto?
+-------------
+Un puente pequeño que vive solo en tu PC con Windows. Cuando está
+corriendo, la página PC3D de NVISION (https://nvision.social/pc3d.html)
+puede leer el hardware real de tu equipo y mostrarlo en las etiquetas
+del modelo 3D. Sin el puente, la página solo muestra los nombres
+generales o los datos de muestra del botón "Ver ejemplo".
+
+¿Qué datos muestra?
+--------------------
+Sistema operativo, procesador, memoria RAM por módulo, tarjeta
+gráfica, discos, unidad óptica y placa madre. No muestra
+temperaturas, porcentajes de uso, contraseñas ni archivos, y no
+guarda nada: cada consulta se responde en el momento.
+
+Privacidad
+----------
+- El puente solo escucha en tu propio equipo (127.0.0.1:8765).
+  Nada sale a internet y ningún otro equipo de tu red puede
+  entrar.
+- Solo acepta peticiones del navegador desde NVISION y desde
+  este mismo equipo (localhost). Cualquier otro sitio web
+  recibe un error 403.
+- Cuando termines, cierra la ventana del puente (CTRL + C o
+  cierra la ventana). Sin la ventana abierta no hay puente.
+
+Cómo usarlo (paso a paso)
+--------------------------
+1) Descomprime esta carpeta donde quieras (por ejemplo, en
+   Escritorio o en Documentos). No la dejes dentro del ZIP:
+   el .bat debe estar junto al .ps1.
+2) Haz doble clic en "iniciar-servidor.bat". Se abrirá una
+   ventana negra que dice "Servidor iniciado correctamente".
+   Déjala abierta mientras usas la página.
+   - Si Windows SmartScreen dice que es un archivo no
+     reconocido, pulsa "Más información" y luego
+     "Ejecutar de todas formas". El código es texto plano:
+     puedes abrir hardware-server.ps1 con el Bloc de notas
+     y leer todo lo que hace antes de ejecutarlo.
+3) Abre https://nvision.social/pc3d.html en Chrome o Edge y
+   pulsa "Detectar mi PC" en el panel del visor.
+4) Si el navegador pide permiso de acceso a la red local,
+   acéptalo. Sin ese permiso la página no puede hablar con
+   el puente.
+5) Para volver a las etiquetas generales, pulsa
+   "Etiquetas normales". Para detener el puente, cierra su
+   ventana o pulsa CTRL + C dentro de ella.
+
+Si algo falla
+-------------
+- "No se pudo iniciar el servidor" o el puerto ocupado:
+  el puerto 8765 ya está en uso. Cierra el otro puente o
+  JARVIS (que usa el mismo puerto) e inténtalo de nuevo.
+- La página dice "No se encontró el puente": revisa que la
+  ventana del puente siga abierta y que ejecutaste el .bat
+  desde la carpeta descomprimida, no desde dentro del ZIP.
+- El navegador negó el permiso: abre el candado junto a la
+  dirección de la página, revisa el permiso de red local y
+  vuelve a pulsar "Detectar mi PC".
+- Solo funciona en Windows. En celular o Mac usa el botón
+  "Ver ejemplo" de la página.
+
+Archivos de esta carpeta
+-------------------------
+- hardware-server.ps1 ... el puente (PowerShell, texto plano)
+- iniciar-servidor.bat .. el lanzador (doble clic)
+- LEEME.txt ............. estas instrucciones

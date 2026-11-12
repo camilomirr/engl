@@ -58,6 +58,7 @@
     es: {
       kicker: 'ETIQUETAS CON TU PC',
       detect: 'Detectar mi PC',
+      download: 'Descargar puente (ZIP)',
       demo: 'Ver ejemplo',
       clear: 'Etiquetas normales',
       idle: 'Etiquetas: nombres generales',
@@ -65,13 +66,14 @@
       real: 'Etiquetas con tu hardware real',
       demoStatus: 'Ejemplo · datos de muestra, no es tu PC',
       error: 'No se encontró el puente. Sigue los pasos.',
-      help: 'En tu PC con Windows: 1) abre la carpeta del puente y ejecuta iniciar-servidor.bat, dejando la ventana abierta; 2) vuelve aquí y pulsa Detectar mi PC; 3) si el navegador pide permiso de acceso a la red local, acéptalo. Al terminar, cierra la ventana del puente. Solo funciona en Windows; en celular o Mac usa Ver ejemplo.',
+      help: 'En tu PC con Windows: 1) pulsa Descargar puente, descomprime la carpeta y ejecuta iniciar-servidor.bat, dejando la ventana abierta; 2) vuelve aquí y pulsa Detectar mi PC; 3) si el navegador pide permiso de acceso a la red local, acéptalo. Al terminar, cierra la ventana del puente. Solo funciona en Windows; en celular o Mac usa Ver ejemplo.',
       modules: 'módulos',
       noOptical: 'Sin unidad óptica'
     },
     en: {
       kicker: 'LABELS WITH YOUR PC',
       detect: 'Detect my PC',
+      download: 'Download bridge (ZIP)',
       demo: 'See an example',
       clear: 'Default labels',
       idle: 'Labels: generic names',
@@ -79,7 +81,7 @@
       real: 'Labels with your real hardware',
       demoStatus: 'Example · sample data, not your PC',
       error: 'Bridge not found. Follow the steps.',
-      help: 'On your Windows PC: 1) open the bridge folder and run iniciar-servidor.bat, leaving the window open; 2) come back here and press Detect my PC; 3) if the browser asks for local-network access, allow it. When done, close the bridge window. Windows only; on phone or Mac use See an example.',
+      help: 'On your Windows PC: 1) press Download bridge, unzip the folder and run iniciar-servidor.bat, leaving the window open; 2) come back here and press Detect my PC; 3) if the browser asks for local-network access, allow it. When done, close the bridge window. Windows only; on phone or Mac use See an example.',
       modules: 'modules',
       noOptical: 'No optical drive'
     }

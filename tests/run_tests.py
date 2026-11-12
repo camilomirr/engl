@@ -27,6 +27,7 @@ import re
 import shutil
 import subprocess
 import sys
+import zipfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FAILS = []
@@ -264,6 +265,40 @@ check("hardware-labels" not in model and "pc-hardware" not in model,
 explorer_css = read("css/modules/pc-explorer.css")
 check(".pc-label.is-real" in explorer_css and ".pc-hw-block" in explorer_css,
       "pc-explorer.css tiene estilos de etiquetas reales y del bloque del puente")
+
+# Descarga del puente (ZIP) y fuentes del puente
+check('id="pc-hw-download"' in pc3d and 'href="downloads/PC-Hardware-Bridge.zip"' in pc3d,
+      "pc3d.html tiene el botón Descargar puente enlazado al ZIP")
+zip_path = os.path.join(ROOT, "downloads", "PC-Hardware-Bridge.zip")
+zip_ok = os.path.isfile(zip_path) and os.path.getsize(zip_path) < 100 * 1024
+zip_contents_ok = False
+if zip_ok:
+    try:
+        with zipfile.ZipFile(zip_path) as zf:
+            expected = ["PC-Hardware-Bridge/hardware-server.ps1",
+                        "PC-Hardware-Bridge/iniciar-servidor.bat",
+                        "PC-Hardware-Bridge/LEEME.txt"]
+            zip_contents_ok = zf.namelist() == expected and all(
+                zf.read(name) == open(os.path.join(ROOT, "bridge", os.path.basename(name)), "rb").read()
+                for name in expected)
+    except zipfile.BadZipFile:
+        zip_contents_ok = False
+check(zip_ok and zip_contents_ok,
+      "El ZIP del puente existe y su contenido coincide byte a byte con bridge/")
+ps1 = open(os.path.join(ROOT, "bridge", "hardware-server.ps1"), encoding="utf-8-sig").read()
+check("Test-AllowedOrigin" in ps1 and "nvision.social" in ps1
+      and "Access-Control-Allow-Origin: *" not in ps1,
+      "El .ps1 limita el origen a NVISION/localhost (sin CORS *)")
+check("1.1" in ps1 and "ReceiveTimeout" in ps1 and "Get-CimSafe" in ps1,
+      "El .ps1 es la versión 1.1 con tiempos de espera y lectura segura")
+bat = open(os.path.join(ROOT, "bridge", "iniciar-servidor.bat"), encoding="utf-8").read()
+check("hardware-server.ps1" in bat and "ExecutionPolicy Bypass" in bat,
+      "El .bat lanza el .ps1")
+leeme = open(os.path.join(ROOT, "bridge", "LEEME.txt"), encoding="utf-8-sig").read()
+check("iniciar-servidor.bat" in leeme and "8765" in leeme and "Detectar mi PC" in leeme,
+      "LEEME.txt explica cómo usar el puente")
+check(os.path.isfile(os.path.join(ROOT, "tools", "build_bridge_zip.py")),
+      "Existe el generador del ZIP del puente")
 
 print("== Sintaxis JS ==")
 node = shutil.which("node")
