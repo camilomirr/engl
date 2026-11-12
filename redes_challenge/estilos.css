@@ -196,3 +196,78 @@ html{overflow-x:hidden}
 #coopResult { font-weight: 800; font-size: 1.05rem; }
 #coopResult.won { color: #4ade80; }
 #coopResult.lost { color: #f87171; }
+
+/* ===== Fondo oscuro definitivo del juego (pedido 2026-11-12) =====
+   Esta seccion va AL FINAL a proposito: redes_challenge/estilos.css
+   solo se carga en esta pagina, asi que el fondo oscuro aplica
+   solo al juego y no toca el resto del sitio. Se repiten las
+   reglas con [data-theme="light"] porque el sitio arranca en
+   claro: asi el juego se ve oscuro siempre, con el atributo
+   en dark o en light. */
+/* Variables del sitio en oscuro (barra NVISION y pie incluidos) */
+:root, [data-theme="light"] {
+  --bg-deep: #0a0e17;
+  --bg-surface: rgba(15, 23, 42, 0.85);
+  --bg-card: rgba(18, 26, 43, 0.75);
+  --bg-card-hover: rgba(24, 35, 58, 0.9);
+  --header-bg: rgba(10, 14, 23, 0.35);
+  --footer-bg: #070a10;
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-hover: rgba(56, 189, 248, 0.35);
+  --border-glow: rgba(56, 189, 248, 0.5);
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --text-placeholder: #94a3b8;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 28px rgba(0, 0, 0, 0.5);
+}
+/* Fondo general oscuro: degradado gris casi negro con tinte rojo */
+body, [data-theme="light"] body {
+  background: radial-gradient(ellipse at 50% 30%, #313131 0, #181818 45%, #0c0c0c 100%);
+  background-color: #0c0c0c;
+  color: #f8f8f8;
+}
+body:before, [data-theme="light"] body:before {
+  opacity: .22;
+  background-image: linear-gradient(#a60a0a 1px, transparent 1px), linear-gradient(90deg, #a60a0a 1px, transparent 1px);
+}
+/* Titulo y marcador */
+[data-theme="light"] .game-hud h1 { color: var(--text-primary); }
+[data-theme="light"] .subtitle { color: var(--text-secondary); }
+[data-theme="light"] .stats { background: var(--bg-card); border-color: var(--border-hover); color: #f8f8f8; box-shadow: var(--shadow-sm); }
+/* Menu lateral */
+[data-theme="light"] .sidebar { background: #1c1c1cc9; border-color: #424242; box-shadow: 0 0 24px #ff000015; }
+[data-theme="light"] .navitem { color: #d2d2d2; border-bottom-color: #353535; }
+[data-theme="light"] .tip { background: #1f1f1f; border-color: #ff0808; color: #b2b2b2; }
+/* Panel principal y barra de pregunta */
+[data-theme="light"] .panel { background: linear-gradient(145deg, #282828ef, #171717ef); border-color: #da0808; box-shadow: 0 15px 50px #00000099, inset 0 0 30px #ff080812; color: #f8f8f8; }
+[data-theme="light"] .panel:before { border-color: #841313; }
+[data-theme="light"] .questionbar { background: linear-gradient(110deg, #202020, #292929); border-color: #414141; }
+/* Zona de la topologia: se mantiene el neon rojo sobre oscuro */
+[data-theme="light"] .diagram { background: radial-gradient(ellipse at center, #2b0609 0, #150507 60%, #0a0a0a 100%); border-color: #ff073a; box-shadow: inset 0 0 45px #ff073a33, 0 0 24px #ff073a45; }
+[data-theme="light"] .diagram svg text.nodelabel { fill: #ffe9e9; text-shadow: 0 0 6px #ff073a; }
+/* Botones de respuesta */
+[data-theme="light"] .panel button { background: linear-gradient(120deg, #343434, #2a2a2a); color: #fafafa; border-color: #ff0000; box-shadow: inset 0 0 14px #ff000012, 0 4px 12px #00000055; }
+[data-theme="light"] .panel button:hover:not(:disabled) { box-shadow: 0 0 18px #ff000070, inset 0 0 18px #ff000022; }
+.options button { box-shadow: 0 6px 0 #7a0b12, 0 12px 20px #00000066; }
+.options button:active { box-shadow: 0 2px 0 #7a0b12, 0 6px 12px #00000066; }
+[data-theme="light"] #feedback { color: #c6c6c6; }
+[data-theme="light"] footer { color: #aeaeae; }
+[data-theme="light"] .btn-return-big { color: #fff; border-color: #ff0808; }
+[data-theme="light"] .btn-return-big:hover { background: #ff0808; color: #fff; }
+/* Arte de la derecha (globo y router) en oscuro */
+[data-theme="light"] .rightart { color: #ff0000; }
+[data-theme="light"] .globe { background: radial-gradient(circle at 30% 25%, #ff3838, #b80707 28%, #1c1c1c 70%); border-color: #ff0808; box-shadow: 0 24px 28px -12px #00000059, 0 0 30px #ff000080, inset -20px -10px 35px #0c0c0c; }
+[data-theme="light"] .globe:before, [data-theme="light"] .globe:after { border-color: #ff2f2f; }
+[data-theme="light"] .router { background: linear-gradient(150deg, #e82828, #272727 70%); border-color: #ff1616; box-shadow: 0 26px 24px -10px #00000055, 0 0 20px #ff000066; }
+[data-theme="light"] .router:after { background-image: radial-gradient(circle, #ff0000 3.5px, transparent 4px); filter: drop-shadow(0 0 6px #ff0000); }
+/* Formularios y paneles que venian en blanco (TOP, Kahoot, admin, cooperativo) */
+#playerName, #joinForm input, #adminModal input, .admin-box input { background: #171717; color: #f2f2f2; border-color: #ff0808; }
+.admin-box { background: #1c1c1c; color: #f2f2f2; }
+#topStatus { color: #ff8a80; }
+/* Barra de desplazamiento en oscuro tambien con el atributo en light */
+[data-theme="light"] ::-webkit-scrollbar-track { background: #0a0e17; }
+[data-theme="light"] ::-webkit-scrollbar-thumb { background: #1e293b; }
+[data-theme="light"] ::-webkit-scrollbar-thumb:hover { background: #334155; }
