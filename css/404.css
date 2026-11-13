@@ -24,40 +24,19 @@ body {
     var(--nf-bg);
 }
 
-/* Encabezado del sitio, sin JavaScript (la CSP de 404 prohíbe scripts):
-   los submenús ya se abren con :hover en el CSS del sitio; aquí se
-   suman :focus-within (teclado y toque) y el menú visible en pantallas
-   angostas, donde el sitio normal usa el botón de hamburguesa. */
-.nav-item-dropdown:focus-within .nav-submenu {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0) scale(1);
-  pointer-events: auto;
+.nf-header {
+  padding: 1.1rem clamp(1rem, 4vw, 2.5rem);
 }
 
-@media (max-width: 1240px) {
-  .site-header .header-container { flex-wrap: wrap; }
-  .site-header .nav-menu {
-    position: static;
-    display: block;
-    padding: 0 0 0.6rem;
-    background: none;
-    border: 0;
-    box-shadow: none;
-  }
-  .site-header .nav-links {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    align-items: center;
-  }
-  .site-header .nav-item-dropdown { width: auto; }
-  .site-header .nav-dropdown-trigger {
-    width: auto;
-    min-height: 2.5rem;
-    padding: 0.5rem 0.8rem;
-  }
+.nf-brand {
+  font-family: 'Bebas Neue', 'Arial Narrow', sans-serif;
+  font-size: 1.9rem;
+  letter-spacing: 0.14em;
+  color: var(--nf-cyan);
+  text-decoration: none;
 }
+
+.nf-brand span { color: var(--nf-text); }
 
 .nf-main {
   flex: 1;
