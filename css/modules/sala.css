@@ -24,4 +24,11 @@
 .sala-opt:disabled { cursor: default; opacity: .92; }
 .sala-hostbar { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
 .sala-podium { line-height: 1.9; font-weight: 600; }
+.sala-timer { display: flex; align-items: center; gap: 12px; margin: 4px 0 12px; }
+.sala-timer-num { font-family: "JetBrains Mono", monospace; font-size: 1.6rem; font-weight: 700; color: var(--accent-cyan); min-width: 2ch; text-align: center; }
+.sala-timer.is-urgent .sala-timer-num { color: #ef4444; }
+.sala-timer-track { flex: 1; height: 8px; border-radius: 999px; background: var(--bg-surface); border: 1px solid var(--border-subtle); overflow: hidden; }
+.sala-timer-bar { height: 100%; width: 100%; border-radius: 999px; background: var(--accent-cyan); transition: width .25s linear; }
+.sala-timer.is-urgent .sala-timer-bar { background: #ef4444; }
+.sala-timer-label { font-size: .82rem; color: var(--text-secondary); font-weight: 600; }
 .sala-note-line { font-weight: 700; margin-top: 12px; }
