@@ -776,16 +776,29 @@
   // ---- Quitarse del ranking del sitio ----
   // Borra SOLO la fila propia (la política "ranking borrar propio" de
   // supabase/site_ranking.sql lo permite con la sesión del usuario).
+  // OJO (corregido 2026-11-12): un DELETE en PostgREST responde 204
+  // aunque RLS no deje borrar NINGUNA fila, y el botón decía "Ya no
+  // apareces" sin haber borrado nada (pasó en vivo: la policy de
+  // borrado no estaba aplicada en la base). Por eso se pide
+  // return=representation y solo se confirma si la respuesta trae la
+  // fila borrada; si no, se verifica con un GET antes de avisar.
   if ($('cuenta-unrank')) $('cuenta-unrank').addEventListener('click', function () {
     var st = $('cuenta-rank-state');
     ensureSession().then(function (s) {
       if (!s) { showAuth(); return; }
-      window.NVISION_sbAuth('/rest/v1/site_ranking?user_id=eq.' + encodeURIComponent(s.userId), {
-        method: 'DELETE', token: s.access
+      var mine = '/rest/v1/site_ranking?user_id=eq.' + encodeURIComponent(s.userId);
+      window.NVISION_sbAuth(mine, {
+        method: 'DELETE', token: s.access,
+        headers: { 'Prefer': 'return=representation' }
       }).then(function (res) {
-        if (res.status === 200 || res.status === 204) st.textContent = T.rankRemoved;
-        else if (res.status === 404 || (res.data && (res.data.code === 'PGRST205' || res.data.code === '42P01'))) st.textContent = T.rankOff;
-        else st.textContent = T.rankRemoveErr;
+        if (res.status === 404 || (res.data && (res.data.code === 'PGRST205' || res.data.code === '42P01'))) { st.textContent = T.rankOff; return; }
+        if ((res.status === 200 || res.status === 204) && Array.isArray(res.data) && res.data.length > 0) { st.textContent = T.rankRemoved; return; }
+        // Sin representación de la fila borrada no se puede creer el
+        // 204: comprobar si la fila sigue ahí.
+        window.NVISION_sbAuth(mine + '&select=user_id', { token: s.access }).then(function (chk) {
+          var sigue = Array.isArray(chk.data) && chk.data.length > 0;
+          st.textContent = sigue ? T.rankRemoveErr : T.rankRemoved;
+        }).catch(function () { st.textContent = T.rankRemoveErr; });
       }).catch(function () { st.textContent = T.rankRemoveErr; });
     });
   });

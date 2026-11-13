@@ -131,24 +131,6 @@
 
 .local-assistant-submit svg { width: 1rem; height: 1rem; }
 
-/* Botones junto a enviar: "?" (Solo preguntar, se activa) y lápiz (editar
-   el último mensaje). Mismo tamaño redondo que el de enviar. */
-.local-assistant-ask,
-.local-assistant-edit {
-  display: grid;
-  flex: none;
-  place-items: center;
-  width: 2.45rem;
-  border: 1px solid var(--border-subtle);
-  border-radius: 999px;
-  color: var(--accent-cyan);
-  background: transparent;
-  cursor: pointer;
-}
-.local-assistant-ask span { font: 700 1.05rem/1 'JetBrains Mono', monospace; }
-.local-assistant-edit svg { width: 1rem; height: 1rem; }
-.local-assistant-ask.is-active { color: #ffffff; background: var(--btn-gradient); border-color: transparent; }
-.local-assistant-edit:disabled { opacity: 0.35; cursor: default; }
 .local-assistant-results { display: grid; gap: 0.55rem; margin-top: 0.8rem; max-height: 12rem; overflow-y: auto; }
 .local-assistant-result {
   padding: 0.65rem;
@@ -184,14 +166,10 @@
   .la-card textarea,
   .la-card input[type="text"],
   .la-card select { font-size: 1rem; }
-  /* En celular los tres botones redondos (enviar, ?, lápiz) se achican un
-     poco y la fila se aprieta: a 360px la caja de texto ganaba solo ~158px
-     y costaba escribir; ahora le quedan ~182px y los botones siguen
-     cómodos de tocar (35px). */
+  /* En celular el botón redondo de enviar se achica un poco y la fila se
+     aprieta para que la caja de texto gane espacio. */
   .local-assistant-form { gap: 0.35rem; padding: 0.6rem; }
-  .local-assistant-submit,
-  .local-assistant-ask,
-  .local-assistant-edit { width: 2.2rem; }
+  .local-assistant-submit { width: 2.2rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {

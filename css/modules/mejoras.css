@@ -195,7 +195,9 @@
 .foro-fab:hover { transform: translateY(-3px); }
 .foro-fab .foro-fab-logo {
   width: 30px; height: 30px; border-radius: 50%; flex: none;
-  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  /* Sin fondo de color (antes un degradado naranja/rojo): solo el
+     símbolo de las personas, a petición de Camilo (2026-11-12). */
+  background: transparent;
   display: inline-flex; align-items: center; justify-content: center;
 }
 .foro-fab .foro-fab-logo svg { width: 19px; height: 19px; }

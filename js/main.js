@@ -3628,7 +3628,7 @@ function setupLocalAssistant() {
     { c: 'WiFi', k: ['alguien roba mi wifi', 'como saber si me roban wifi', 'detectar intrusos en mi wifi', 'vecino conectado a mi wifi'], r: ['Para saber si alguien usa tu WiFi, revisa la lista de dispositivos conectados en el panel o la app del router y busca equipos que no reconozcas. Si encuentras un intruso, cambia la clave por una larga con WPA3, desactiva WPS y expulsa el dispositivo desconocido.', 'To check if someone is using your WiFi, look at the list of connected devices in the router panel or app and look for devices you do not recognize. If you find an intruder, change the password to a long one with WPA3, turn off WPS, and remove the unknown device.'], href: 'wifi.html' },
     { c: 'WiFi', k: ['wifi publico es seguro', 'usar wifi gratis con seguridad', 'vpn en wifi publico', 'peligros wifi publico'], r: ['El WiFi público no es seguro por sí solo: cualquiera en la misma red puede espiar el tráfico sin cifrar, por eso nunca hagas pagos ni entres al banco en una red abierta. Usa una VPN, verifica que las páginas tengan HTTPS y desactiva el uso compartido de archivos mientras estés conectado.', 'Public WiFi is not safe by itself: anyone on the same network can spy on unencrypted traffic, so never make payments or log into your bank on an open network. Use a VPN, check that websites use HTTPS, and turn off file sharing while you are connected.'], href: 'wifi.html' },
     { c: 'WiFi', k: ['compartir wifi con codigo qr', 'qr para compartir wifi', 'generar qr de mi wifi', 'pasar clave wifi con qr'], r: ['Puedes compartir tu WiFi con un código QR sin dictar la clave: en Android está en Ajustes, WiFi, tocar la red y Compartir; en iPhone se genera desde Atajos o con la app del router. Quien escanea el código se conecta al instante, sin escribir la contraseña.', 'You can share your WiFi with a QR code without saying the password out loud: on Android go to Settings, WiFi, tap the network and Share; on iPhone, generate it from Shortcuts or with the router app. Anyone who scans the code connects instantly, without typing the password.'], href: 'wifi.html' },
-    { c: 'Redes Challenge', k: ['como entrar a una sala del modo kahoot', 'entrar a una sala kahoot redes challenge', 'como unirse a una partida kahoot', 'sala cerrada no puedo entrar al juego'], r: ['Para entrar a una sala del modo Kahoot, el admin primero debe abrir la sala; sin sala abierta el botón Iniciar juego queda bloqueado. Luego escribes tu nombre y apellido y entras a esperar el Start del admin con la cuenta regresiva 5-4-3-2-1.', 'To join a Kahoot mode room, the admin must open the room first; without an open room the Start game button stays locked. Then you type your first and last name and wait for the admin to press Start with the 5-4-3-2-1 countdown.'], href: 'redes_challenge/index.html' },
+    { c: 'Redes Challenge', k: ['como entrar a una sala del modo kahoot', 'entrar a una sala kahoot redes challenge', 'como unirse a una partida kahoot', 'sala cerrada no puedo entrar al juego'], r: ['Para entrar a una sala del modo Kahoot, el admin primero debe abrir la sala; sin sala abierta el botón Iniciar juego queda bloqueado. Luego escribes tu apodo (solo letras y números) y entras a esperar el Start del admin con la cuenta regresiva 5-4-3-2-1.', 'To join a Kahoot mode room, the admin must open the room first; without an open room the Start game button stays locked. Then you type your nickname (letters and numbers only) and wait for the admin to press Start with the 5-4-3-2-1 countdown.'], href: 'redes_challenge/index.html' },
     { c: 'Redes Challenge', k: ['como se calculan los puntos por rapidez en redes challenge', 'puntos por rapidez redes challenge', 'cuantos puntos da responder rapido', 'bonus por rapidez en el juego kahoot'], r: ['Cada respuesta correcta vale 10 puntos base, más un bonus de hasta 5 puntos según lo rápido que respondas dentro de los 20 segundos por pregunta. El máximo es 15 puntos por pregunta y 150 en total, y el TOP 5 se actualiza en vivo.', 'Each correct answer is worth 10 base points, plus a bonus of up to 5 points depending on how fast you answer within the 20 seconds per question. The maximum is 15 points per question and 150 in total, and the live TOP 5 updates in real time.'], href: 'redes_challenge/index.html' },
   ];
   const SUGGEST = [
@@ -3823,10 +3823,6 @@ function setupLocalAssistant() {
       </div>
       <form class="local-assistant-form">
         <input class="local-assistant-input" type="text" autocomplete="off" maxlength="300" data-i18n-placeholder="assistant_placeholder" placeholder="Escribe tu pregunta…">
-        <button class="local-assistant-ask" type="button" data-i18n-title="assistant_ask_only" title="Solo preguntar: solo responde, no hace pasos" aria-label="Solo preguntar" aria-pressed="false"><span aria-hidden="true">?</span></button>
-        <button class="local-assistant-edit" type="button" data-i18n-title="assistant_edit_last" title="Editar último mensaje" aria-label="Editar último mensaje" disabled>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path></svg>
-        </button>
         <button class="local-assistant-mic" type="button" title="Preguntar por voz" aria-label="Preguntar por voz" hidden>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10a7 7 0 0 0 14 0"></path><path d="M12 19v3"></path></svg>
         </button>
@@ -3851,8 +3847,6 @@ function setupLocalAssistant() {
   const input = $('.local-assistant-input');
   const log = $('.la-log');
   const chipsBox = $('.la-chips');
-  const askBtn = $('.local-assistant-ask');
-  const editBtn = $('.local-assistant-edit');
 
   /* ===== Voz: micrófono (SpeechRecognition) y lectura (speechSynthesis) =====
      Correcciones (2026-11-09, a pedido de Duay):
@@ -4010,10 +4004,11 @@ function setupLocalAssistant() {
       } catch (e) { rec = null; micBtn.classList.remove('is-on'); }
     });
   }
-  /* Modo "Solo preguntar": activado con el botón "?", el asistente solo
-     responde la pregunta y nunca da pasos ni hace nada por su cuenta. */
-  let askOnly = false;
-  /* Último mensaje del usuario, para el botón lápiz (editar y reenviar). */
+  /* Los botones "?" (Solo preguntar) y lápiz (Editar último mensaje) se
+     quitaron a petición de Camilo (2026-11-12): el asistente responde
+     siempre en su modo normal. askOnly queda fijo en false y
+     lastUserMsg/lastUserEl solo conservan el último mensaje en el chat. */
+  const askOnly = false;
   let lastUserMsg = '';
   let lastUserEl = null;
   const L = () => (currentLang === 'en' ? 1 : 0);
@@ -4074,7 +4069,6 @@ function setupLocalAssistant() {
     if (!text) return;
     addMsg('user', text);
     lastUserMsg = text;
-    editBtn.disabled = false;
     // 1) "¿qué más?" solo: seguir con el último tema
     if (isPureFollowUp(text)) { askFollowUp(text); return; }
     const nq = norm(text);
@@ -4286,25 +4280,6 @@ function setupLocalAssistant() {
     const v = input.value;
     input.value = '';
     ask(v);
-  });
-  /* Botón "?" (Solo preguntar): se activa y queda marcado; mientras esté
-     activo el asistente solo responde, no da pasos ni hace nada. */
-  askBtn.addEventListener('click', () => {
-    askOnly = !askOnly;
-    askBtn.classList.toggle('is-active', askOnly);
-    askBtn.setAttribute('aria-pressed', String(askOnly));
-    input.focus();
-  });
-  /* Botón lápiz (Editar): devuelve el último mensaje enviado al cuadro
-     de texto para corregirlo y reenviarlo. */
-  editBtn.addEventListener('click', () => {
-    if (!lastUserMsg) return;
-    if (lastUserEl && lastUserEl.isConnected) lastUserEl.remove();
-    input.value = lastUserMsg;
-    lastUserMsg = '';
-    lastUserEl = null;
-    editBtn.disabled = true;
-    input.focus();
   });
 }
 
