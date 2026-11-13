@@ -5,70 +5,13 @@
 
   var KEY = 'nvision_examenes_v1';
 
-  // Regla del sitio: para presentar un examen y descargar el certificado
-  // hay que tener una cuenta REAL. No basta con que exista una sesión
-  // guardada: antes de abrir el examen y antes de entregar el certificado
-  // se le pregunta a Supabase si el token de la sesión es de verdad
-  // (una sesión inventada a mano la rechaza el servidor).
-  // URL y llave anon de Supabase y cliente de auth: viven en js/main.js
+  // Los exámenes son ABIERTOS: no hace falta cuenta ni inicio de sesión
+  // (decisión de Duay, 2026-11-12). Antes se exigía una cuenta verificada
+  // por el servidor; esa puerta se quitó por completo. La sesión solo se
+  // usa, si existe, para intentar el registro oficial del certificado.
   // Sesión: vive en js/main.js (window.NVISION_session); aquí solo se usa.
-  // Antes había una copia propia de la sesión, más pobre (sin foto de Google
-  // ni nombre): al refrescar el token desde aquí se BORRABAN de la sesión.
-  var VERIFIED_KEY = 'nvision_verified_v1';
-
   function readSession() { return window.NVISION_session.get(); }
-  function hasSession() { return window.NVISION_session.has(); }
-  function clearSession() { window.NVISION_session.clear(); }
-  function readVerified() {
-    try { return JSON.parse(sessionStorage.getItem(VERIFIED_KEY) || 'null'); } catch (e) { return null; }
-  }
-  function markVerified(uid, access) {
-    try { sessionStorage.setItem(VERIFIED_KEY, JSON.stringify({ uid: uid, tok: String(access || '').slice(36, 60), at: Date.now() })); } catch (e) {}
-  }
-  function saveSessionFromAuth(data, email) { return window.NVISION_session.saveFromAuth(data, email); }
-  function verifySession() {
-    var s = readSession();
-    if (!s) return Promise.resolve(false);
-    var v = readVerified();
-    if (v && (Date.now() - v.at) < 10 * 60 * 1000 && s.access && String(s.access).slice(36, 60) === v.tok && (!s.userId || s.userId === v.uid)) {
-      return Promise.resolve(true);
-    }
-    var tryRefresh = function () {
-      if (!s.refresh) return Promise.resolve(false);
-      return window.NVISION_sbAuth('/auth/v1/token?grant_type=refresh_token', { method: 'POST', body: { refresh_token: s.refresh } })
-        .then(function (r) {
-          if (r.status === 200 && r.data && r.data.access_token && r.data.user) {
-            saveSessionFromAuth(r.data, s.email);
-            markVerified(r.data.user.id, r.data.access_token);
-            return true;
-          }
-          if (r.status === 400 || r.status === 401) clearSession();
-          return false;
-        })
-        .catch(function () { return false; });
-    };
-    if (!s.access) return tryRefresh();
-    return window.NVISION_sbAuth('/auth/v1/user', { token: s.access })
-      .then(function (r) {
-        if (r.status === 200 && r.data && r.data.id) { markVerified(r.data.id, s.access); return true; }
-        if (r.status === 401) return tryRefresh();
-        return false;
-      })
-      .catch(function () { return tryRefresh(); });
-  }
-  var verifying = false;
-  function requestStart(exam, btn, mode) {
-    if (verifying) return;
-    verifying = true;
-    var oldText = btn ? btn.textContent : '';
-    if (btn) { btn.disabled = true; btn.textContent = T.verifying; }
-    verifySession().then(function (ok) {
-      verifying = false;
-      renderCards();
-      if (ok) openExam(exam, mode);
-      else showGate();
-    });
-  }
+  function requestStart(exam, btn, mode) { openExam(exam, mode); }
 
   // Código de verificación del certificado: se calcula igual en
   // verificar.js — FNV-1a sobre nombre|examen|nota|fecha.
@@ -81,21 +24,12 @@
     return 'NV-' + b.slice(0, 5) + '-' + b.slice(5, 10);
   }
   window.NVISION_certCodeFor = certCodeFor;
-  function showGate() {
-    var b = document.getElementById('exam-gate-banner');
-    if (!b) return;
-    b.hidden = false;
-    b.classList.remove('pulse');
-    void b.offsetWidth;
-    b.classList.add('pulse');
-    b.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }
   var PASS = 70;
   var lang = (localStorage.getItem('user_lang') || 'es').toLowerCase().indexOf('en') === 0 ? 'en' : 'es';
 
   var T = {
-    es: { questions: 'preguntas', best: 'Mejor nota', none: 'Sin intentos aún', start: 'Empezar examen', passed: 'APROBADO', q: 'Pregunta', scoreMsg: 'Tu nota', passMsg: '¡Felicidades! Aprobaste el examen.', failMsg: 'Aún no llegas al 70%. Repasa el tema e inténtalo otra vez.', why: 'Explicación:', certFor: 'Por aprobar el examen de', certTitle: 'CERTIFICADO', certGiven: 'Se otorga a', certScore: 'con una nota de', team: 'Equipo NVISION', certBtnAlert: 'Escribe tu nombre completo para generar el certificado.', verifying: 'Verificando tu cuenta…', shareBtn: 'Compartir certificado', shareText: '¡Aprobé el examen de {exam} en NVISION con {pct}% y obtuve mi certificado!', practice: 'Practicar', practiceMsg: 'Modo práctica: preguntas mezcladas, sin certificado y la nota no se guarda.', certCode: 'Código de verificación', verifyAt: 'Verifícalo en nvision.social/verificar.html', timeUp: 'Tiempo cumplido' },
-    en: { questions: 'questions', best: 'Best score', none: 'No attempts yet', start: 'Start exam', passed: 'PASSED', q: 'Question', scoreMsg: 'Your score', passMsg: 'Congratulations! You passed the exam.', failMsg: 'Not at 70% yet. Review the topic and try again.', why: 'Explanation:', certFor: 'For passing the', certTitle: 'CERTIFICATE', certGiven: 'Awarded to', certScore: 'with a score of', team: 'NVISION Team', certBtnAlert: 'Type your full name to generate the certificate.', verifying: 'Verifying your account…', shareBtn: 'Share certificate', shareText: 'I passed the {exam} exam on NVISION with {pct}% and earned my certificate!', practice: 'Practice', practiceMsg: 'Practice mode: shuffled questions, no certificate and the score is not saved.', certCode: 'Verification code', verifyAt: 'Verify it at nvision.social/verificar.html', timeUp: 'Time is up' }
+    es: { questions: 'preguntas', best: 'Mejor nota', none: 'Sin intentos aún', start: 'Empezar examen', passed: 'APROBADO', q: 'Pregunta', scoreMsg: 'Tu nota', passMsg: '¡Felicidades! Aprobaste el examen.', failMsg: 'Aún no llegas al 70%. Repasa el tema e inténtalo otra vez.', why: 'Explicación:', certFor: 'Por aprobar el examen de', certTitle: 'CERTIFICADO', certGiven: 'Se otorga a', certScore: 'con una nota de', team: 'Equipo NVISION', certBtnAlert: 'Escribe tu nombre completo para generar el certificado.', shareBtn: 'Compartir certificado', shareText: '¡Aprobé el examen de {exam} en NVISION con {pct}% y obtuve mi certificado!', practice: 'Practicar', practiceMsg: 'Modo práctica: preguntas mezcladas, sin certificado y la nota no se guarda.', certCode: 'Código de verificación', verifyAt: 'Verifícalo en nvision.social/verificar.html', timeUp: 'Tiempo cumplido' },
+    en: { questions: 'questions', best: 'Best score', none: 'No attempts yet', start: 'Start exam', passed: 'PASSED', q: 'Question', scoreMsg: 'Your score', passMsg: 'Congratulations! You passed the exam.', failMsg: 'Not at 70% yet. Review the topic and try again.', why: 'Explanation:', certFor: 'For passing the', certTitle: 'CERTIFICATE', certGiven: 'Awarded to', certScore: 'with a score of', team: 'NVISION Team', certBtnAlert: 'Type your full name to generate the certificate.', shareBtn: 'Share certificate', shareText: 'I passed the {exam} exam on NVISION with {pct}% and earned my certificate!', practice: 'Practice', practiceMsg: 'Practice mode: shuffled questions, no certificate and the score is not saved.', certCode: 'Verification code', verifyAt: 'Verify it at nvision.social/verificar.html', timeUp: 'Time is up' }
   }[lang];
 
   function Q(qEs, qEn, oEs, oEn, a, wEs, wEn) { return { q: { es: qEs, en: qEn }, o: { es: oEs, en: oEn }, a: a, why: { es: wEs, en: wEn } }; }
@@ -630,7 +564,8 @@
       }
     } catch (e) {}
     // Registro oficial (si el dueño ya creó la tabla certificados):
-    // se intenta guardar con la sesión; si la tabla no existe, se ignora.
+    // solo se intenta cuando hay sesión iniciada; sin sesión el
+    // certificado se descarga igual y su código se comprueba por suma.
     var sess = readSession();
     if (sess && sess.access && window.NVISION_SUPABASE_ANON_KEY) {
       try {
@@ -677,17 +612,12 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
   document.getElementById('exam-cert-btn').addEventListener('click', function () {
-    verifySession().then(function (ok) {
-      if (!ok) { showGate(); return; }
-      if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawCertificate);
-      else drawCertificate();
-    });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawCertificate);
+    else drawCertificate();
   });
 
   var natBtn = document.getElementById('cert-share-native');
   if (natBtn) { natBtn.textContent = T.shareBtn; if (!navigator.share) natBtn.style.display = 'none'; }
 
-  if (!hasSession()) { var gb = document.getElementById('exam-gate-banner'); if (gb) gb.hidden = false; }
-  else verifySession().then(function (ok) { if (!ok) { var gb2 = document.getElementById('exam-gate-banner'); if (gb2) gb2.hidden = false; } });
   renderCards();
 })();

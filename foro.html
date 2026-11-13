@@ -212,13 +212,15 @@
 
   <section class="mejora-wrap">
     <div class="mejora-card" id="foro-off" hidden>
-      <p class="mejora-msg" data-i18n="foro_off">El foro todavía no está activado en la base de datos. El equipo debe ejecutar supabase/foro.sql en Supabase; mientras tanto, pregunta en el chat del equipo de tu cuenta.</p>
+      <p class="mejora-msg" data-i18n="foro_off">El foro todavía no está activado en la base de datos. El equipo debe ejecutar supabase/foro.sql en Supabase.</p>
     </div>
 
     <div class="mejora-card">
       <h2 data-i18n="foro_new">Publica tu problema</h2>
       <p id="foro-auth-note"></p>
       <form id="foro-form">
+        <label class="mejora-label" for="foro-nombre" data-i18n="foro_fname">Tu nombre</label>
+        <input class="mejora-input" id="foro-nombre" type="text" maxlength="60" autocomplete="nickname">
         <label class="mejora-label" for="foro-titulo" data-i18n="foro_ftitle">Título del problema</label>
         <input class="mejora-input" id="foro-titulo" type="text" maxlength="120" required>
         <label class="mejora-label" for="foro-etiqueta" data-i18n="foro_ftag">Tema</label>
@@ -271,9 +273,9 @@
   </footer>
 
   <!-- Script interactivo bilingüe y menú móvil -->
-  <script src="js/main.js?v=141"></script>
+  <script src="js/main.js?v=142"></script>
   <script src="js/site-search.js?v=85"></script>
   <script src="js/analytics.js" defer"></script>
-  <script src="js/foro.js?v=1"></script>
+  <script src="js/foro.js?v=2"></script>
 </body>
 </html>

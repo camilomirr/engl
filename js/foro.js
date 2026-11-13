@@ -1,11 +1,13 @@
-// NVISION · Foro de Soporte Comunitario «El Taller» (2026-11-10)
-// Preguntas y respuestas en Supabase (tablas foro_preguntas /
-// foro_respuestas, SQL en supabase/foro.sql). Leer es público; publicar
-// exige cuenta y cada fila va atada a su dueño (RLS). El autor de la
-// pregunta marca la respuesta que lo solucionó. Todo el texto de los
-// usuarios se pinta con textContent y se limpia con NVISION_validate.
-// La actividad local (respuestas dadas, soluciones logradas) se guarda
-// en nvision_foro_v1 y alimenta los logros del sitio.
+// NVISION · Foro de Soporte Comunitario «El Taller» (2026-11-10;
+// sin cuenta desde 2026-11-12, decisión de Duay: leer y publicar no
+// exigen inicio de sesión). Preguntas y respuestas en Supabase (tablas
+// foro_preguntas / foro_respuestas, SQL en supabase/foro.sql). Quien
+// publica escribe su nombre y ese nombre queda como autor; la "dueña"
+// de una pregunta es quien usa el mismo nombre, y ella marca la
+// respuesta que lo solucionó. Todo el texto de los usuarios se pinta
+// con textContent y se limpia con NVISION_validate. La actividad local
+// (respuestas dadas, soluciones logradas) se guarda en nvision_foro_v1
+// y alimenta los logros del sitio.
 (function () {
   'use strict';
   var lang = (localStorage.getItem('user_lang') || 'es').toLowerCase().indexOf('en') === 0 ? 'en' : 'es';
@@ -14,16 +16,24 @@
   var SB = window.NVISION_sb;
 
   var T = {
-    es: { needLogin: 'Para publicar necesitas una cuenta NVISION: entra en Mi cuenta y vuelve aquí.', hi: 'Publicas como', loading: 'Cargando preguntas…', empty: 'Todavía no hay preguntas. ¡Sé la primera persona en preguntar!', answers: 'respuestas', solvedTag: 'Solucionada', openTag: 'Abierta', view: 'Ver y responder', markSolved: 'Marcar como solución', solvedBadge: '✓ Solución', by: 'por', publishOk: '¡Pregunta publicada!', publishErr: 'No se pudo publicar. Revisa tu sesión e inténtalo de nuevo.', answerOk: '¡Respuesta enviada! Gracias por ayudar.', answerErr: 'No se pudo enviar. Revisa tu sesión e inténtalo de nuevo.', tooShortQ: 'Cuéntanos un poco más: el título necesita 4+ caracteres y el detalle 10+.', tooShortA: 'La respuesta necesita al menos 2 caracteres.', markedOk: 'Solución marcada. ¡Gracias por cerrar el caso!', netErr: 'Sin conexión con el foro. Inténtalo más tarde.' },
-    en: { needLogin: 'You need an NVISION account to post: sign in under My account and come back.', hi: 'Posting as', loading: 'Loading questions…', empty: 'No questions yet. Be the first to ask!', answers: 'answers', solvedTag: 'Solved', openTag: 'Open', view: 'View and answer', markSolved: 'Mark as solution', solvedBadge: '✓ Solution', by: 'by', publishOk: 'Question published!', publishErr: 'Could not publish. Check your session and try again.', answerOk: 'Answer sent! Thanks for helping.', answerErr: 'Could not send. Check your session and try again.', tooShortQ: 'Tell us a bit more: title needs 4+ characters and details 10+.', tooShortA: 'The answer needs at least 2 characters.', markedOk: 'Solution marked. Thanks for closing the case!', netErr: 'Cannot reach the forum. Try again later.' }
+    es: { needName: 'Escribe tu nombre para publicar.', hi: 'Publicas como', loading: 'Cargando preguntas…', empty: 'Todavía no hay preguntas. ¡Sé la primera persona en preguntar!', answers: 'respuestas', solvedTag: 'Solucionada', openTag: 'Abierta', view: 'Ver y responder', markSolved: 'Marcar como solución', solvedBadge: '✓ Solución', by: 'por', publishOk: '¡Pregunta publicada!', publishErr: 'No se pudo publicar. Revisa tu conexión e inténtalo de nuevo.', answerOk: '¡Respuesta enviada! Gracias por ayudar.', answerErr: 'No se pudo enviar. Revisa tu conexión e inténtalo de nuevo.', tooShortQ: 'Cuéntanos un poco más: el título necesita 4+ caracteres y el detalle 10+.', tooShortA: 'La respuesta necesita al menos 2 caracteres.', markedOk: 'Solución marcada. ¡Gracias por cerrar el caso!', netErr: 'Sin conexión con el foro. Inténtalo más tarde.' },
+    en: { needName: 'Type your name to post.', hi: 'Posting as', loading: 'Loading questions…', empty: 'No questions yet. Be the first to ask!', answers: 'answers', solvedTag: 'Solved', openTag: 'Open', view: 'View and answer', markSolved: 'Mark as solution', solvedBadge: '✓ Solution', by: 'by', publishOk: 'Question published!', publishErr: 'Could not publish. Check your connection and try again.', answerOk: 'Answer sent! Thanks for helping.', answerErr: 'Could not send. Check your connection and try again.', tooShortQ: 'Tell us a bit more: title needs 4+ characters and details 10+.', tooShortA: 'The answer needs at least 2 characters.', markedOk: 'Solution marked. Thanks for closing the case!', netErr: 'Cannot reach the forum. Try again later.' }
   }[lang];
 
   function $(id) { return document.getElementById(id); }
-  function session() { return window.NVISION_session ? window.NVISION_session.get() : null; }
-  function myName(s) {
-    var raw = (s && (s.fullName || s.firstName)) || (s && s.email ? String(s.email).split('@')[0] : 'NVISION');
-    return V ? V.cleanName(raw, 60) : String(raw).slice(0, 60);
+  // Nombre visible del foro: lo escribe quien publica y se recuerda en
+  // este equipo (sin cuenta). Si hay sesión, se prellena con su nombre.
+  var NAME_KEY = 'nvision_foro_nombre';
+  function cleanStr(raw, n) { return V ? V.cleanName(raw, n) : String(raw || '').slice(0, n); }
+  function displayName() {
+    var input = $('foro-nombre');
+    var raw = input ? input.value : '';
+    if (!String(raw || '').trim()) {
+      try { raw = localStorage.getItem(NAME_KEY) || ''; } catch (e) { raw = ''; }
+    }
+    return cleanStr(String(raw || '').trim(), 60);
   }
+  function saveName(name) { try { localStorage.setItem(NAME_KEY, name); } catch (e) {} }
   function load() { try { var d = JSON.parse(localStorage.getItem(KEY) || 'null'); if (d) return d; } catch (e) {} return { answers: 0, solvedMine: 0 }; }
   function save(d) { try { localStorage.setItem(KEY, JSON.stringify(d)); } catch (e) {} }
   function fmtDate(iso) { try { return new Date(iso).toLocaleDateString(lang === 'en' ? 'en-US' : 'es-CO', { day: 'numeric', month: 'short' }); } catch (e) { return ''; } }
@@ -31,9 +41,10 @@
   var listEl = $('foro-list'), detailEl = $('foro-detail'), current = null, counts = {};
 
   function authNote() {
-    var s = session(), note = $('foro-auth-note');
+    var note = $('foro-auth-note');
     if (!note) return;
-    note.textContent = s ? T.hi + ' ' + myName(s) + '.' : T.needLogin;
+    var n = displayName();
+    note.textContent = n ? T.hi + ' ' + n + '.' : T.needName;
   }
 
   function showOff() { var off = $('foro-off'); if (off) off.hidden = false; if (listEl) listEl.innerHTML = ''; }
@@ -59,11 +70,11 @@
   // Si alguna respuesta mía quedó marcada como solución, se cuenta
   // para el logro «Manos que ayudan» la próxima vez que entro al foro.
   function syncSolvedMine(qs) {
-    var s = session(); if (!s || !s.userId) return;
+    var n = displayName(); if (!n) return;
     var solvedIds = {};
     qs.forEach(function (q) { if (q.solucion_id) solvedIds[q.solucion_id] = true; });
     if (!Object.keys(solvedIds).length) return;
-    SB.get('/rest/v1/foro_respuestas?select=id&user_id=eq.' + encodeURIComponent(s.userId)).then(function (mine) {
+    SB.get('/rest/v1/foro_respuestas?select=id&autor=eq.' + encodeURIComponent(n)).then(function (mine) {
       var n = (mine || []).filter(function (a) { return solvedIds[a.id]; }).length;
       var d = load(); if (d.solvedMine !== n) { d.solvedMine = n; save(d); }
     }).catch(function () {});
@@ -111,7 +122,7 @@
     SB.get('/rest/v1/foro_respuestas?select=id,user_id,autor,cuerpo,created_at&pregunta_id=eq.' + q.id + '&order=created_at.asc&limit=200')
       .then(function (rs) {
         box.textContent = '';
-        var s = session();
+        var mine = displayName();
         (rs || []).forEach(function (a) {
           var div = document.createElement('div');
           div.className = 'foro-answer' + (q.solucion_id === a.id ? ' solved' : '');
@@ -119,7 +130,7 @@
           meta.textContent = a.autor + ' · ' + fmtDate(a.created_at) + (q.solucion_id === a.id ? ' · ' + T.solvedBadge : '');
           var p = document.createElement('p'); p.textContent = a.cuerpo; p.style.whiteSpace = 'pre-wrap'; p.style.margin = '4px 0';
           div.appendChild(meta); div.appendChild(p);
-          if (s && s.userId === q.user_id && q.solucion_id !== a.id) {
+          if (mine && mine === q.autor && q.solucion_id !== a.id) {
             var b = document.createElement('button');
             b.type = 'button'; b.className = 'tool-btn tool-btn-ghost'; b.textContent = T.markSolved;
             b.addEventListener('click', function () { markSolved(q, a.id); });
@@ -133,58 +144,66 @@
   }
 
   function markSolved(q, answerId) {
-    var s = session(); if (!s) return;
-    window.NVISION_sbAuth('/rest/v1/foro_preguntas?id=eq.' + q.id, { method: 'PATCH', token: s.access, body: { solucion_id: answerId } })
-      .then(function (res) {
-        if (res.status === 200 || res.status === 204) {
-          q.solucion_id = answerId;
-          $('foro-answer-msg').textContent = T.markedOk;
-          loadAnswers(q); loadQuestions();
-        } else $('foro-answer-msg').textContent = T.answerErr;
+    SB.patch('/rest/v1/foro_preguntas?id=eq.' + q.id, { solucion_id: answerId })
+      .then(function () {
+        q.solucion_id = answerId;
+        $('foro-answer-msg').textContent = T.markedOk;
+        loadAnswers(q); loadQuestions();
       }).catch(function () { $('foro-answer-msg').textContent = T.answerErr; });
   }
 
   var form = $('foro-form');
   if (form) form.addEventListener('submit', function (ev) {
     ev.preventDefault();
-    var msg = $('foro-msg'), s = session();
-    if (!s || !s.access) { msg.textContent = T.needLogin; return; }
+    var msg = $('foro-msg');
+    var autor = displayName();
+    if (!autor) { msg.textContent = T.needName; var ni = $('foro-nombre'); if (ni) ni.focus(); return; }
+    saveName(autor);
     var titulo = V ? V.cleanText($('foro-titulo').value, 120) : $('foro-titulo').value.slice(0, 120);
     var cuerpo = V ? V.cleanText($('foro-cuerpo').value, 2000) : $('foro-cuerpo').value.slice(0, 2000);
     if (titulo.length < 4 || cuerpo.length < 10) { msg.textContent = T.tooShortQ; return; }
-    window.NVISION_sbAuth('/rest/v1/foro_preguntas', {
-      method: 'POST', token: s.access, headers: { 'Prefer': 'return=minimal' },
-      body: { user_id: s.userId, autor: myName(s), titulo: titulo, cuerpo: cuerpo, etiqueta: $('foro-etiqueta').value }
-    }).then(function (res) {
-      if (res.status === 200 || res.status === 201 || res.status === 204) {
-        msg.textContent = T.publishOk; form.reset(); loadQuestions();
-      } else if (res.status === 404) showOff();
-      else msg.textContent = T.publishErr;
-    }).catch(function () { msg.textContent = T.publishErr; });
+    SB.post('/rest/v1/foro_preguntas', { autor: autor, titulo: titulo, cuerpo: cuerpo, etiqueta: $('foro-etiqueta').value }, 'return=minimal')
+      .then(function () { msg.textContent = T.publishOk; form.reset(); restoreName(); loadQuestions(); authNote(); })
+      .catch(function (e) {
+        if (String(e && e.message).indexOf('404') >= 0) showOff();
+        else msg.textContent = T.publishErr;
+      });
   });
 
   var aform = $('foro-answer-form');
   if (aform) aform.addEventListener('submit', function (ev) {
     ev.preventDefault();
-    var msg = $('foro-answer-msg'), s = session();
+    var msg = $('foro-answer-msg');
     if (!current) return;
-    if (!s || !s.access) { msg.textContent = T.needLogin; return; }
+    var autor = displayName();
+    if (!autor) { msg.textContent = T.needName; return; }
+    saveName(autor);
     var cuerpo = V ? V.cleanText($('foro-answer-text').value, 2000) : $('foro-answer-text').value.slice(0, 2000);
     if (cuerpo.length < 2) { msg.textContent = T.tooShortA; return; }
-    window.NVISION_sbAuth('/rest/v1/foro_respuestas', {
-      method: 'POST', token: s.access, headers: { 'Prefer': 'return=minimal' },
-      body: { pregunta_id: current.id, user_id: s.userId, autor: myName(s), cuerpo: cuerpo }
-    }).then(function (res) {
-      if (res.status === 200 || res.status === 201 || res.status === 204) {
+    SB.post('/rest/v1/foro_respuestas', { pregunta_id: current.id, autor: autor, cuerpo: cuerpo }, 'return=minimal')
+      .then(function () {
         var d = load(); d.answers = (d.answers || 0) + 1; save(d);
         msg.textContent = T.answerOk; aform.reset(); loadAnswers(current); loadQuestions();
-      } else if (res.status === 404) showOff();
-      else msg.textContent = T.answerErr;
-    }).catch(function () { msg.textContent = T.answerErr; });
+      })
+      .catch(function (e) {
+        if (String(e && e.message).indexOf('404') >= 0) showOff();
+        else msg.textContent = T.answerErr;
+      });
   });
 
+  function restoreName() {
+    var input = $('foro-nombre'); if (!input) return;
+    var saved = '';
+    try { saved = localStorage.getItem(NAME_KEY) || ''; } catch (e) {}
+    if (!saved && window.NVISION_session) {
+      var s = window.NVISION_session.get();
+      saved = (s && (s.fullName || s.firstName)) || '';
+    }
+    input.value = cleanStr(saved, 60);
+  }
   var back = $('foro-back');
   if (back) back.addEventListener('click', function () { detailEl.hidden = true; current = null; });
+  restoreName();
   authNote();
   loadQuestions();
 })();

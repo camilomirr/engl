@@ -140,6 +140,10 @@ desplegadas por el dueño y claves VAPID: es un proyecto aparte, no un ajuste.
 (`foro_preguntas` y `foro_respuestas`) que aún no están en la base. Sin este
 paso, el foro muestra el aviso de «todavía no está activado».
 
+**Diseño:** el foro funciona SIN cuenta (decisión de Duay, 2026-11-12): quien
+publica escribe su nombre y la autoría va por ese nombre; nadie puede borrar
+filas desde la web. El detalle está en el encabezado de `foro.sql`.
+
 **Pasos:**
 1. Abrir el archivo `supabase/foro.sql` de este repo.
 2. Copiarlo entero en el SQL Editor y darle **Run**.

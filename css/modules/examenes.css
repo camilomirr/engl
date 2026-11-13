@@ -43,13 +43,9 @@
   color: var(--accent-cyan);
   margin-right: 0.35rem;
 }
-/* Candado del aviso de cuenta: alineado con el texto */
-.exam-gate-banner__txt { display: inline-flex; align-items: center; gap: 0.5rem; }
-.exam-gate-banner__txt .mono-icon { color: var(--accent-cyan); }
 /* Modo claro: cian oscuro de alto contraste, como el resto de iconos */
 [data-theme="light"] .exam-card .exam-emoji,
-[data-theme="light"] .exam-run-icon,
-[data-theme="light"] .exam-gate-banner__txt .mono-icon { color: #0284c7; }
+[data-theme="light"] .exam-run-icon { color: #0284c7; }
 [data-theme="light"] .exam-card .exam-emoji { background: rgba(14, 165, 233, 0.08); }
 .exam-card h3 { margin: 0; color: var(--text-primary); }
 .exam-card p { margin: 0; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5; flex: 1; }
@@ -151,29 +147,6 @@
 .exam-cert .exam-btn { margin-top: 0.8rem; }
 
 .exam-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 1.2rem; justify-content: center; }
-
-/* Aviso: se necesita cuenta para presentar el examen */
-.exam-gate-banner {
-  max-width: 1100px;
-  margin: 0 auto 1.4rem;
-  padding: 0.9rem 1.1rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  background: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  color: var(--text-primary);
-}
-.exam-gate-banner[hidden] { display: none !important; }
-.exam-gate-banner.pulse { animation: exam-gate-pulse 0.9s ease 2; }
-@keyframes exam-gate-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0); }
-  50% { box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.45); }
-}
-.exam-gate-banner__btn { text-decoration: none; }
 
 /* Compartir el certificado */
 .exam-share { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: .85rem; }
