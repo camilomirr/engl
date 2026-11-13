@@ -3,11 +3,12 @@
 // la misma infraestructura del Redes Challenge). El anfitrión crea la
 // sala y avanza las preguntas; los jugadores se unen con el código y
 // responden desde su dispositivo. Sin Realtime: sondeo cada ~1.8 s.
-// PUNTOS: 10 por acierto (máximo 80). La base de datos limita live_players
-// a 150 puntos (restricción live_players_points_rng de validacion.sql),
-// así que 100 por acierto era imposible: el segundo acierto se rechazaba
-// y todos quedaban en 100 en el podio. Si el dueño corre
-// supabase/sala-puntos.sql (límite 800), se puede volver a 100.
+// PUNTOS: 100 por acierto (máximo 800). OJO: la base limitaba live_players
+// a 150 puntos (restricción live_players_points_rng de validacion.sql) y
+// el segundo acierto se rechazaba en silencio, dejando a todos en 100 en
+// el podio; el límite se subió a 800 corriendo supabase/sala-puntos.sql
+// (2026-11-13). Las respuestas incorrectas nunca suman: solo se guarda
+// puntaje cuando la respuesta es correcta.
 // Temporizador: cada pregunta dura QUESTION_SECONDS segundos para TODOS
 // a la vez. El reloj se calcula desde game_state.started_at, que el
 // anfitrión reinicia al iniciar y en cada cambio de pregunta, así que
@@ -22,8 +23,8 @@
   var KEY = window.NVISION_SUPABASE_ANON_KEY;
   var lang = (localStorage.getItem('user_lang') || 'es').toLowerCase().indexOf('en') === 0 ? 'en' : 'es';
   var T = {
-    es: { wait: 'Esperando a que el anfitrión inicie…', playing: 'En juego · pregunta ', of: ' de ', finished: '¡Fin del quiz!', lobby: 'En el lobby', players: 'Jugadores', youHost: 'Eres el anfitrión: cuando estén todos, pulsa «Iniciar el quiz».', correct: '¡Correcto! +10', wrong: 'Incorrecto', answered: 'Respuesta registrada. Espera la siguiente pregunta…', noRoom: 'Esa sala no está activa. Revisa el código.', started: 'El quiz ya empezó; espera la próxima sala.', needName: 'Escribe tu nombre para unirte.', badCode: 'El código son 4 letras.', roomGone: 'La sala terminó o el anfitrión la cerró.', podium: 'Podio final', pts: 'pts', q: 'Pregunta', next: 'Siguiente pregunta', podiumBtn: 'Ver el podio', timeUp: '¡Se acabó el tiempo!', timeLeft: 'segundos para responder' },
-    en: { wait: 'Waiting for the host to start…', playing: 'Playing · question ', of: ' of ', finished: 'Quiz over!', lobby: 'In the lobby', players: 'Players', youHost: 'You are the host: when everyone is in, press "Start the quiz".', correct: 'Correct! +10', wrong: 'Wrong', answered: 'Answer saved. Wait for the next question…', noRoom: 'That room is not active. Check the code.', started: 'The quiz already started; wait for the next room.', needName: 'Type your name to join.', badCode: 'The code is 4 letters.', roomGone: 'The room ended or the host closed it.', podium: 'Final podium', pts: 'pts', q: 'Question', next: 'Next question', podiumBtn: 'See the podium', timeUp: 'Time is up!', timeLeft: 'seconds to answer' }
+    es: { wait: 'Esperando a que el anfitrión inicie…', playing: 'En juego · pregunta ', of: ' de ', finished: '¡Fin del quiz!', lobby: 'En el lobby', players: 'Jugadores', youHost: 'Eres el anfitrión: cuando estén todos, pulsa «Iniciar el quiz».', correct: '¡Correcto! +100', wrong: 'Incorrecto', answered: 'Respuesta registrada. Espera la siguiente pregunta…', noRoom: 'Esa sala no está activa. Revisa el código.', started: 'El quiz ya empezó; espera la próxima sala.', needName: 'Escribe tu nombre para unirte.', badCode: 'El código son 4 letras.', roomGone: 'La sala terminó o el anfitrión la cerró.', podium: 'Podio final', pts: 'pts', q: 'Pregunta', next: 'Siguiente pregunta', podiumBtn: 'Ver el podio', timeUp: '¡Se acabó el tiempo!', timeLeft: 'segundos para responder' },
+    en: { wait: 'Waiting for the host to start…', playing: 'Playing · question ', of: ' of ', finished: 'Quiz over!', lobby: 'In the lobby', players: 'Players', youHost: 'You are the host: when everyone is in, press "Start the quiz".', correct: 'Correct! +100', wrong: 'Wrong', answered: 'Answer saved. Wait for the next question…', noRoom: 'That room is not active. Check the code.', started: 'The quiz already started; wait for the next room.', needName: 'Type your name to join.', badCode: 'The code is 4 letters.', roomGone: 'The room ended or the host closed it.', podium: 'Final podium', pts: 'pts', q: 'Question', next: 'Next question', podiumBtn: 'See the podium', timeUp: 'Time is up!', timeLeft: 'seconds to answer' }
   }[lang];
   var BANK = [
     { q: { es: '¿Qué dispositivo conecta varias redes y decide la mejor ruta?', en: 'Which device connects several networks and picks the best route?' }, o: [{ es: 'Switch', en: 'Switch' }, { es: 'Router', en: 'Router' }, { es: 'Hub', en: 'Hub' }, { es: 'Módem USB', en: 'USB modem' }], a: 1 },
@@ -209,11 +210,11 @@
           answeredFor = qi;
           var good = oi === item.a;
           if (good) {
-            myPoints += 10;
+            myPoints += 100;
             req('PATCH', '/live_players?id=eq.' + myId, { points: myPoints }).catch(function () {
               // Si la base rechaza el puntaje, el total local no debe mentir:
               // se revierte para que el siguiente acierto no parta de un total falso.
-              myPoints -= 10;
+              myPoints -= 100;
             });
           }
           grid.querySelectorAll('.sala-opt').forEach(function (x, xi) { x.disabled = true; if (xi === item.a) x.classList.add('is-correct'); else if (x === b) x.classList.add('is-wrong'); });

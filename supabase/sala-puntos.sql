@@ -1,14 +1,14 @@
 -- NVISION · Quiz en vivo: subir el límite de puntos de live_players a 800.
--- SOLO LO PUEDE CORRER EL DUEÑO (Camilo) en Supabase → SQL Editor → Run.
+-- ✅ CORRIDO el 2026-11-13 en el SQL Editor; la sala ya volvió a 100
+-- puntos por acierto. Se conserva como registro y por si hay que
+-- recrear la restricción.
 --
 -- POR QUÉ: la restricción live_players_points_rng (de validacion.sql) limita
 -- los puntos a 150, que es el máximo del Redes Challenge. El Quiz en vivo
 -- daba 100 puntos por acierto y tiene 8 preguntas (máximo 800), así que el
 -- segundo acierto de cada jugador se rechazaba en silencio y el podio
--- mostraba a todos con 100 puntos. Mientras tanto la sala da 10 por acierto
--- (máximo 80); al correr este archivo se puede volver a 100 por acierto
--- cambiando una línea en js/sala.js (myPoints += 10 → += 100, y los textos
--- "+10" → "+100") y subiendo la versión ?v= del script en sala.html.
+-- mostraba a todos con 100 puntos. Hubo una corrección temporal a 10 por
+-- acierto y, al correrse este archivo, la sala volvió a 100 por acierto.
 -- 800 cubre los dos juegos: el Challenge llega a 150 y la sala a 800.
 -- Idempotente: se puede correr varias veces sin daño.
 

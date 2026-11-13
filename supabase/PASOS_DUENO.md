@@ -11,21 +11,17 @@ pegar el archivo indicado y **Run**.
 
 ---
 
-## 0. Subir el límite de puntos del Quiz en vivo a 800 ⏳ pendiente
+## 0. Subir el límite de puntos del Quiz en vivo a 800 ✅ hecho (2026-11-13)
 
 **Por qué:** el Quiz en vivo (`sala.html`) daba 100 puntos por acierto y tiene
 8 preguntas, pero la base de datos solo admite 150 puntos por jugador
 (restricción `live_players_points_rng`). El segundo acierto se rechazaba y el
-podio mostraba a todos con 100 puntos. La sala ya está corregida en código
-(10 puntos por acierto, máximo 80) y funciona sin este paso; correr este SQL
-solo sirve para poder volver a 100 puntos por acierto más adelante.
+podio mostraba a todos con 100 puntos.
 
-**Pasos:**
-1. Abrir el archivo `supabase/sala-puntos.sql` de este repo.
-2. Copiarlo entero en el SQL Editor y darle **Run**.
-3. La comprobación del final debe mostrar la restricción con `points <= 800`.
-4. Avisar a Duay: al correr esto, el equipo puede devolver la sala a 100
-   puntos por acierto con un cambio de una línea en `js/sala.js`.
+**Ya hecho:** se corrió `supabase/sala-puntos.sql` en el SQL Editor (la
+comprobación mostró `points <= 800`) y la sala volvió a 100 puntos por
+acierto en `js/sala.js`. Verificado en vivo: un jugador puede pasar de
+100 puntos (200 aceptados; 801 sigue rechazado).
 
 ---
 
