@@ -3,6 +3,12 @@
 // la misma infraestructura del Redes Challenge). El anfitrión crea la
 // sala y avanza las preguntas; los jugadores se unen con el código y
 // responden desde su dispositivo. Sin Realtime: sondeo cada ~1.8 s.
+// Temporizador: cada pregunta dura QUESTION_SECONDS segundos para TODOS
+// a la vez. El reloj se calcula desde game_state.started_at, que el
+// anfitrión reinicia al iniciar y en cada cambio de pregunta, así que
+// todos los dispositivos cuentan el mismo tiempo. Al llegar a cero la
+// pregunta cambia sola (el anfitrión la avanza; si no responde, cualquier
+// jugador hace de respaldo pasados unos segundos extra).
 (function () {
   'use strict';
   var home = document.getElementById('sala-home');
@@ -11,8 +17,8 @@
   var KEY = window.NVISION_SUPABASE_ANON_KEY;
   var lang = (localStorage.getItem('user_lang') || 'es').toLowerCase().indexOf('en') === 0 ? 'en' : 'es';
   var T = {
-    es: { wait: 'Esperando a que el anfitrión inicie…', playing: 'En juego · pregunta ', of: ' de ', finished: '¡Fin del quiz!', lobby: 'En el lobby', players: 'Jugadores', youHost: 'Eres el anfitrión: cuando estén todos, pulsa «Iniciar el quiz».', correct: '¡Correcto! +100', wrong: 'Incorrecto', answered: 'Respuesta registrada. Espera la siguiente pregunta…', noRoom: 'Esa sala no está activa. Revisa el código.', started: 'El quiz ya empezó; espera la próxima sala.', needName: 'Escribe tu nombre para unirte.', badCode: 'El código son 4 letras.', roomGone: 'La sala terminó o el anfitrión la cerró.', podium: 'Podio final', pts: 'pts', q: 'Pregunta', next: 'Siguiente pregunta', podiumBtn: 'Ver el podio' },
-    en: { wait: 'Waiting for the host to start…', playing: 'Playing · question ', of: ' of ', finished: 'Quiz over!', lobby: 'In the lobby', players: 'Players', youHost: 'You are the host: when everyone is in, press "Start the quiz".', correct: 'Correct! +100', wrong: 'Wrong', answered: 'Answer saved. Wait for the next question…', noRoom: 'That room is not active. Check the code.', started: 'The quiz already started; wait for the next room.', needName: 'Type your name to join.', badCode: 'The code is 4 letters.', roomGone: 'The room ended or the host closed it.', podium: 'Final podium', pts: 'pts', q: 'Question', next: 'Next question', podiumBtn: 'See the podium' }
+    es: { wait: 'Esperando a que el anfitrión inicie…', playing: 'En juego · pregunta ', of: ' de ', finished: '¡Fin del quiz!', lobby: 'En el lobby', players: 'Jugadores', youHost: 'Eres el anfitrión: cuando estén todos, pulsa «Iniciar el quiz».', correct: '¡Correcto! +100', wrong: 'Incorrecto', answered: 'Respuesta registrada. Espera la siguiente pregunta…', noRoom: 'Esa sala no está activa. Revisa el código.', started: 'El quiz ya empezó; espera la próxima sala.', needName: 'Escribe tu nombre para unirte.', badCode: 'El código son 4 letras.', roomGone: 'La sala terminó o el anfitrión la cerró.', podium: 'Podio final', pts: 'pts', q: 'Pregunta', next: 'Siguiente pregunta', podiumBtn: 'Ver el podio', timeUp: '¡Se acabó el tiempo!', timeLeft: 'segundos para responder' },
+    en: { wait: 'Waiting for the host to start…', playing: 'Playing · question ', of: ' of ', finished: 'Quiz over!', lobby: 'In the lobby', players: 'Players', youHost: 'You are the host: when everyone is in, press "Start the quiz".', correct: 'Correct! +100', wrong: 'Wrong', answered: 'Answer saved. Wait for the next question…', noRoom: 'That room is not active. Check the code.', started: 'The quiz already started; wait for the next room.', needName: 'Type your name to join.', badCode: 'The code is 4 letters.', roomGone: 'The room ended or the host closed it.', podium: 'Final podium', pts: 'pts', q: 'Question', next: 'Next question', podiumBtn: 'See the podium', timeUp: 'Time is up!', timeLeft: 'seconds to answer' }
   }[lang];
   var BANK = [
     { q: { es: '¿Qué dispositivo conecta varias redes y decide la mejor ruta?', en: 'Which device connects several networks and picks the best route?' }, o: [{ es: 'Switch', en: 'Switch' }, { es: 'Router', en: 'Router' }, { es: 'Hub', en: 'Hub' }, { es: 'Módem USB', en: 'USB modem' }], a: 1 },
@@ -25,7 +31,10 @@
     { q: { es: '¿Qué almacena el SSD que la RAM no?', en: 'What does the SSD store that RAM does not?' }, o: [{ es: 'Datos permanentes', en: 'Permanent data' }, { es: 'Instrucciones de arranque', en: 'Boot instructions' }, { es: 'La hora del sistema', en: 'The system clock' }, { es: 'Nada, son iguales', en: 'Nothing, they are the same' }], a: 0 }
   ];
 
-  var role = null, code = '', myId = null, myPoints = 0, timer = null, answeredFor = -1, lastQ = -1, playersCache = [];
+  var QUESTION_SECONDS = 20; // tiempo límite para responder cada pregunta (para todos a la vez)
+  var FALLBACK_SECONDS = 4;  // si el anfitrión no avanza al vencer el tiempo, un jugador lo hace tras esta espera
+  var role = null, code = '', myId = null, myPoints = 0, timer = null, tickTimer = null, answeredFor = -1, lastQ = -1, playersCache = [];
+  var lastGs = null, expiredFor = -1, advancing = false;
   var $ = function (id) { return document.getElementById(id); };
   var msg = $('sala-msg');
 
@@ -47,10 +56,12 @@
     $('sala-code-out').textContent = code;
     poll();
     timer = setInterval(poll, 1800);
+    tickTimer = setInterval(tick, 250);
   }
   function leave() {
     if (timer) clearInterval(timer); timer = null;
-    role = null; myId = null; myPoints = 0; answeredFor = -1; lastQ = -1;
+    if (tickTimer) clearInterval(tickTimer); tickTimer = null;
+    role = null; myId = null; myPoints = 0; answeredFor = -1; lastQ = -1; lastGs = null; expiredFor = -1; advancing = false;
     $('sala-room').hidden = true; home.hidden = false;
   }
   $('sala-leave').addEventListener('click', leave);
@@ -89,9 +100,63 @@
     req('GET', '/game_state?id=eq.1&select=current_question').then(function (rows) {
       var q = rows && rows[0] ? rows[0].current_question : 0;
       if (q + 1 >= BANK.length) return patchState({ status: 'finished' }).then(poll);
-      return patchState({ current_question: q + 1 }).then(poll);
+      return patchState({ current_question: q + 1, started_at: new Date().toISOString() }).then(poll);
     }).catch(function () {});
   });
+
+  // Cambio automático de pregunta al vencer el temporizador. Solo avanza
+  // si la sala sigue en la misma pregunta y con la misma hora de inicio
+  // que vio este dispositivo (así dos dispositivos no saltan dos preguntas).
+  function autoAdvance(qi, seenStartedAt) {
+    if (advancing) return;
+    advancing = true;
+    req('GET', '/game_state?id=eq.1&select=status,current_question,started_at').then(function (rows) {
+      var gs = rows && rows[0];
+      if (!gs || gs.status !== 'playing' || gs.current_question !== qi || gs.started_at !== seenStartedAt) return null;
+      if (qi + 1 >= BANK.length) return patchState({ status: 'finished' });
+      return patchState({ current_question: qi + 1, started_at: new Date().toISOString() });
+    }).catch(function () {}).then(function () {
+      setTimeout(function () { advancing = false; poll(); }, 800);
+    });
+  }
+
+  // Se acabó el tiempo de esta pregunta en este dispositivo: bloquea las
+  // opciones sin responder y muestra cuál era la correcta.
+  function expireQuestion(qi) {
+    var stage = $('sala-stage');
+    var item = BANK[qi];
+    if (!stage || !item) return;
+    if (role !== 'host' && answeredFor !== qi) {
+      stage.querySelectorAll('.sala-opt').forEach(function (x, xi) { x.disabled = true; if (xi === item.a) x.classList.add('is-correct'); });
+    }
+    var note = document.createElement('p');
+    note.className = 'sala-note-line';
+    note.textContent = T.timeUp;
+    stage.appendChild(note);
+  }
+
+  // Reloj de la pregunta actual: se ejecuta 4 veces por segundo y usa la
+  // hora de inicio guardada en la base, igual para todos los jugadores.
+  function tick() {
+    if (!lastGs || lastGs.status !== 'playing' || !code) return;
+    var qi = lastGs.current_question;
+    var start = Date.parse(lastGs.started_at || '');
+    if (isNaN(start)) { // sala creada antes del temporizador: el anfitrión pone la hora
+      if (role === 'host') patchState({ started_at: new Date().toISOString() }).catch(function () {});
+      return;
+    }
+    var elapsed = (Date.now() - start) / 1000;
+    var left = Math.max(0, Math.ceil(QUESTION_SECONDS - elapsed));
+    var num = document.getElementById('sala-timer-num');
+    var bar = document.getElementById('sala-timer-bar');
+    if (num) { num.textContent = left; num.parentElement.classList.toggle('is-urgent', left <= 5 && left > 0); }
+    if (bar) bar.style.width = (left / QUESTION_SECONDS * 100) + '%';
+    if (elapsed >= QUESTION_SECONDS) {
+      if (expiredFor !== qi) { expiredFor = qi; expireQuestion(qi); }
+      if (role === 'host') autoAdvance(qi, lastGs.started_at);
+      else if (elapsed >= QUESTION_SECONDS + FALLBACK_SECONDS) autoAdvance(qi, lastGs.started_at);
+    }
+  }
   $('sala-end').addEventListener('click', function () {
     req('DELETE', '/live_players?session_id=eq.' + encodeURIComponent(code))
       .then(function () { return patchState({ status: 'lobby', session_id: '', current_question: 0, started_at: null }); })
@@ -114,7 +179,16 @@
     var stage = $('sala-stage');
     var item = BANK[qi];
     if (!item) return;
+    expiredFor = -1;
     stage.innerHTML = '';
+    var timerBox = document.createElement('div');
+    timerBox.className = 'sala-timer';
+    timerBox.setAttribute('role', 'timer');
+    timerBox.setAttribute('aria-label', T.timeLeft);
+    timerBox.innerHTML = '<span class="sala-timer-num" id="sala-timer-num">' + QUESTION_SECONDS + '</span>' +
+      '<div class="sala-timer-track"><div class="sala-timer-bar" id="sala-timer-bar"></div></div>' +
+      '<span class="sala-timer-label">' + T.timeLeft + '</span>';
+    stage.appendChild(timerBox);
     var h = document.createElement('h3');
     h.textContent = T.q + ' ' + (qi + 1) + '/' + BANK.length + ' — ' + item.q[lang];
     stage.appendChild(h);
@@ -149,6 +223,7 @@
     req('GET', '/game_state?id=eq.1&select=*').then(function (rows) {
       var gs = rows && rows[0];
       if (!gs || gs.session_id !== code) { leave(); if (msg) msg.textContent = T.roomGone; return; }
+      lastGs = gs;
       return req('GET', '/live_players?session_id=eq.' + encodeURIComponent(code) + '&select=id,name,points&order=points.desc,created_at.asc&limit=30').then(function (ps) {
         playersCache = ps || [];
         renderPlayers();
