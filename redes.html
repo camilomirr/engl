@@ -6,7 +6,7 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; img-src 'self' data: https://images.unsplash.com https://encrypted-tbn0.gstatic.com https://acf.geeknetic.es https://jensa.vtexassets.com https://www.esmero.com.co https://pisces.bbystatic.com https://placaschinas.com https://th.bing.com https://www.cyberpuerta.mx https://www.legionmac.com https://www.ntcompatible.com https://*.googleusercontent.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://xiuztrujrwdgcpjrruxu.supabase.co https://*.googleusercontent.com; media-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'">
   <title data-i18n="page_title_redes">NVISION - Redes y Simulación</title>
   <!-- Hojas de estilo modular -->
-  <link rel="stylesheet" href="css/styles.css?v=129">
+  <link rel="stylesheet" href="frontend/css/styles.css?v=129">
   <!-- SEO, iconos y vista previa al compartir (Open Graph / Twitter) -->
   <meta name="description" content="Redes en NVISION: clasificación, topologías, simulador de ping, laboratorio de switch, WiFi avanzado y el reto Redes Challenge.">
   <meta name="theme-color" content="#f8fafc">
@@ -36,6 +36,7 @@
 <body>
 
   <!-- Encabezado y Barra de Navegación Adaptativa -->
+    <!-- Encabezado y Barra de Navegación Adaptativa -->
   <header class="site-header">
     <div class="header-container">
       <!-- Marca / Nombre de la página -->
@@ -48,152 +49,35 @@
           <!-- Catálogo 1: Aprende -->
           <li class="nav-item-dropdown">
             <button type="button" class="nav-dropdown-trigger" aria-expanded="false">
-              <span data-i18n="nav_cat_aprende">Aprende</span>
+              <span>Aprende</span>
               <span class="nav-arrow mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
             </button>
             <ul class="nav-submenu">
-              <li><a href="ruta.html" data-i18n="nav_route">Ruta de aprendizaje</a></li>
-              <li><a href="hardware.html" data-i18n="nav_hardware">Hardware</a></li>
-              <li><a href="redes.html" data-i18n="nav_redes">Redes</a></li>
-              <li><a href="wifi.html" data-i18n="nav_wifi">WiFi Avanzado</a></li>
-              <li><a href="mantenimiento-software.html" data-i18n="nav_ms">Mantenimiento por software</a></li>
-              <li><a href="recursos.html#glosario" data-i18n="nav_glossary">Glosario</a></li>
-              <li><a href="foro.html" data-i18n="nav_foro">Foro El Taller</a></li>
-              <li><a href="ingles.html" data-i18n="nav_ingles">Inglés técnico</a></li>
+              <li><a href="hardware.html">Hardware</a></li>
+              <li><a href="redes.html">Redes</a></li>
+              <li><a href="mantenimiento.html">Mantenimiento por software</a></li>
             </ul>
           </li>
 
-          <!-- Catálogo 2: Laboratorios -->
+          <!-- Catálogo 2: Comunidad -->
           <li class="nav-item-dropdown">
             <button type="button" class="nav-dropdown-trigger" aria-expanded="false">
-              <span data-i18n="nav_cat_lab">Laboratorios</span>
+              <span>Comunidad</span>
               <span class="nav-arrow mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
             </button>
             <ul class="nav-submenu">
-              <li><a href="topologia.html" data-i18n="nav_topologia">Simulador de topologías</a></li>
-              <li><a href="redes.html#simulador-red" data-i18n="nav_simulator">Simulador Ping</a></li>
-              <li><a href="redes.html#switch-3d" data-i18n="nav_switch3d">El switch por dentro</a></li>
-              <li><a href="redes.html#herramientas" data-i18n="nav_tools">Herramientas de redes</a></li>
-              <li><a href="terminal.html" data-i18n="nav_terminal">Terminal de redes</a></li>
-              <li><a href="comparador.html" data-i18n="nav_comparador">Comparador</a></li>
-              <li><a href="presupuestos.html" data-i18n="nav_presu">Presupuestos reales</a></li>
-              <li><a href="recursos.html#laboratorio" data-i18n="nav_lab">Laboratorio de Códigos</a></li>
-              <li><a href="pc3d.html#visor-3d" data-i18n="nav_pc3d_viewer">Visor 3D</a></li>
-              <li><a href="pc3d.html#componentes-3d" data-i18n="nav_pc3d_parts">Componentes y tipos</a></li>
-            </ul>
-          </li>
-
-          <!-- Catálogo 3: Juegos -->
-          <li class="nav-item-dropdown">
-            <button type="button" class="nav-dropdown-trigger" aria-expanded="false">
-              <span data-i18n="nav_cat_juegos">Juegos</span>
-              <span class="nav-arrow mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
-            </button>
-            <ul class="nav-submenu">
-              <li><a href="workshop/index.html" data-i18n="nav_workshop">NVISION PC Workshop</a></li>
-              <li><a href="redes_challenge/index.html" class="btn-challenge"><span class="mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 8h10.5a4 4 0 0 1 3.9 4.8l-.6 3.1a3 3 0 0 1-5.4 1.4L13.5 15.5h-3l-1.4 1.8a3 3 0 0 1-5.4-1.4l-.6-3.1A4 4 0 0 1 6.5 8z"/><path d="M8 11v3M6.5 12.5h3"/><circle cx="15.8" cy="11.6" r="0.4" fill="currentColor"/><circle cx="17.8" cy="13.4" r="0.4" fill="currentColor"/></svg></span> Redes Challenge</a></li>
-              <li><a href="sala.html" data-i18n="nav_sala">Quiz en vivo</a></li>
-              <li><a href="pantalla-azul.html" data-i18n="nav_pantalla">Pantalla Azul</a></li>
-            </ul>
-          </li>
-
-          <!-- Catálogo 4: Exámenes y progreso -->
-          <li class="nav-item-dropdown">
-            <button type="button" class="nav-dropdown-trigger" aria-expanded="false">
-              <span data-i18n="nav_cat_examenes">Exámenes</span>
-              <span class="nav-arrow mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
-            </button>
-            <ul class="nav-submenu">
-              <li><a href="examenes.html" data-i18n="nav_exams">Exámenes</a></li>
-              <li><a href="verificar.html" data-i18n="nav_verificar">Verificar certificado</a></li>
-              <li><a href="logros.html" data-i18n="nav_logros">Logros</a></li>
-              <li><a href="ranking.html" data-i18n="nav_ranking">Ranking</a></li>
-            </ul>
-          </li>
-
-          <!-- Catálogo 5: Mi NVISION -->
-          <li class="nav-item-dropdown">
-            <button type="button" class="nav-dropdown-trigger" aria-expanded="false">
-              <span data-i18n="nav_cat_cuenta">Mi NVISION</span>
-              <span class="nav-arrow mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
-            </button>
-            <ul class="nav-submenu">
-              <li><a href="cuenta.html" data-i18n="nav_account">Mi cuenta</a></li>
-              <li><a href="apuntes.html" data-i18n="nav_apuntes">Mis apuntes</a></li>
-              <li><a href="entrevista.html" data-i18n="nav_entrevista">Entrevista técnica</a></li>
-              <li><a href="novedades.html" data-i18n="nav_novedades">Novedades</a></li>
-              <li><a href="privacidad.html" data-i18n="nav_privacidad">Privacidad</a></li>
+              <li><a href="foro.html">Foro El Taller</a></li>
+              <li><a href="pqr.html">PQR y contacto</a></li>
             </ul>
           </li>
         </ul>
       </nav>
 
-      <!-- Botones de acción: Idioma y Menú Hamburguesa en móvil -->
-      <div class="header-actions">
-        <!-- Botón buscador: despliega la barra de búsqueda bajo el encabezado -->
-        <button id="header-search-toggle" class="header-search-btn" type="button" aria-label="Buscar en NVISION" aria-expanded="false" aria-controls="header-search-panel" title="Buscar en NVISION" data-i18n-title="search_toggle_title">
-          <span class="mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
-        </button>
-        <!-- Boton Modo Claro / Oscuro -->
-        <button id="theme-toggle" class="theme-switch-btn" title="Modo Claro / Oscuro" aria-label="Cambiar tema" data-i18n-title="theme_toggle_title">
-          <span id="theme-icon" class="mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span>
-        </button>
-        <a id="account-link" class="theme-switch-btn account-btn" href="cuenta.html" title="Mi cuenta" aria-label="Mi cuenta" data-i18n-title="nav_account">
-          <span class="mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span>
-        </a>
-        <button id="pwa-install-btn" class="theme-switch-btn pwa-install-btn" type="button" title="Instalar app" aria-label="Instalar app" data-i18n-title="nav_install" hidden>
-          <span class="mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></span>
-        </button>
-        <!-- Selector desplegable bilingüe de Idioma (Español / Inglés) -->
-        <div class="lang-dropdown-wrapper" id="lang-dropdown-wrapper">
-          <button id="lang-toggle" class="lang-dropdown-btn" type="button" aria-haspopup="true" aria-expanded="false" title="Seleccionar idioma / Select language">
-            <span class="mono-icon globe-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg></span>
-            <span id="lang-label" class="lang-label-text">ES</span>
-            <span class="lang-chevron mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
-          </button>
-          <div class="lang-dropdown-menu" id="lang-dropdown-menu" role="menu">
-            <div class="lang-dropdown-header" data-i18n="lang_select_title">Seleccionar Idioma</div>
-            <button type="button" class="lang-dropdown-item active" data-lang="es" role="menuitem">
-              <span class="item-code">ES</span>
-              <div class="item-info">
-                <span class="item-name">Español</span>
-                <span class="item-native">Spanish</span>
-              </div>
-              <span class="item-check mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
-            </button>
-            <button type="button" class="lang-dropdown-item" data-lang="en" role="menuitem">
-              <span class="item-code">EN</span>
-              <div class="item-info">
-                <span class="item-name">English</span>
-                <span class="item-native">Inglés</span>
-              </div>
-              <span class="item-check mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
-            </button>
-          </div>
-        </div>
-
+      <div>
         <!-- Botón de tres rayitas (Hamburguesa) para celulares -->
-        <button id="menu-toggle" class="menu-toggle-btn" aria-label="Abrir menú" aria-expanded="false" data-i18n-title="menu_toggle_title">
+        <button id="menu-toggle" class="menu-toggle-btn" aria-label="Abrir menú" aria-expanded="false">
           <span class="menu-icon-inner mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></span>
         </button>
-      </div>
-    </div>
-    <!-- Buscador desplegable del encabezado: mismo buscador del inicio, en una barra que se despliega -->
-    <div class="header-search" id="header-search-panel">
-      <form class="header-search-box" id="header-search-form" role="search" autocomplete="off">
-        <span class="site-search-icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
-        <input type="search" id="header-search-input" class="site-search-input" data-i18n-placeholder="search_placeholder" placeholder="Busca en todo NVISION: RAM, topologías, WiFi, malware…" aria-label="Buscar en NVISION">
-        <button type="button" id="header-search-clear" class="site-search-clear" aria-label="Limpiar búsqueda">×</button>
-        <div class="site-search-results" id="header-search-results"></div>
-      </form>
-      <div class="site-search-popular header-search-popular">
-        <span class="site-search-popular-label" data-i18n="search_popular">Populares:</span>
-        <button type="button" class="site-search-chip" data-q="RAM">RAM</button>
-        <button type="button" class="site-search-chip" data-q="topologías">Topologías</button>
-        <button type="button" class="site-search-chip" data-q="WiFi">WiFi</button>
-        <button type="button" class="site-search-chip" data-q="malware">Malware</button>
-        <button type="button" class="site-search-chip" data-q="visor 3D">Visor 3D</button>
-        <button type="button" class="site-search-chip" data-q="glosario">Glosario</button>
       </div>
     </div>
   </header>
@@ -746,387 +630,52 @@
     </section>
 
     <!-- Redes Challenge: juego de topologías -->
-    <section id="redes-challenge" class="container">
-      <h2 class="section-title">
-        <span class="mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="6" y1="11" x2="10" y2="11"></line><line x1="8" y1="9" x2="8" y2="13"></line><line x1="15" y1="12" x2="15.01" y2="12"></line><line x1="18" y1="10" x2="18.01" y2="10"></line><path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"></path></svg></span> Redes Challenge
-      </h2>
-      <p class="section-desc" data-i18n="red_challenge_desc">
-        Pon a prueba lo aprendido sobre topologías: identifica estrella, bus, anillo, malla y árbol en 10 preguntas, suma puntos y conserva tus 3 vidas. ¿Llegas a los 100 puntos?
-      </p>
-      <p>
-        <a href="redes_challenge/index.html" class="btn-primary"><span class="mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 8h10.5a4 4 0 0 1 3.9 4.8l-.6 3.1a3 3 0 0 1-5.4 1.4L13.5 15.5h-3l-1.4 1.8a3 3 0 0 1-5.4-1.4l-.6-3.1A4 4 0 0 1 6.5 8z"/><path d="M8 11v3M6.5 12.5h3"/><circle cx="15.8" cy="11.6" r="0.4" fill="currentColor"/><circle cx="17.8" cy="13.4" r="0.4" fill="currentColor"/></svg></span> <span data-i18n="red_challenge_play">Jugar Redes Challenge</span></a>
-      </p>
-    </section>
-<section id="simulador-red" class="container">
-      <h2 class="section-title">
-        <span class="mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4.93 19.07a10 10 0 0 1 0-14.14M7.76 16.24a6 6 0 0 1 0-8.48M12 12h.01"></path></svg></span> <span data-i18n="sim_title">Simulador Interactivo de Ping & Tránsito de Paquetes</span>
-      </h2>
-      <p class="section-desc" data-i18n="sim_desc">
-        Visualiza en tiempo real cómo viaja un paquete ICMP (Echo Request & Reply) a través de los componentes físicos: desde la tarjeta NIC del host, pasando por el Switch (Capa 2) y Router (Capa 3), hasta el servidor de destino.
-      </p>
+    
 
-      <div class="simulator-wrapper">
-        <!-- Panel de control de simulación -->
-        <div class="sim-control-bar">
-          <div class="sim-control-group">
-            <label for="sim-source-select" class="sim-label" data-i18n="sim_lbl_source">Host de Origen:</label>
-            <select id="sim-source-select" class="sim-select">
-              <option value="pc1">PC 1 (192.168.1.10 - LAN A)</option>
-              <option value="pc2">PC 2 (192.168.1.20 - LAN A)</option>
-            </select>
-          </div>
 
-          <div class="sim-control-group">
-            <label for="sim-target-select" class="sim-label" data-i18n="sim_lbl_target">Destino:</label>
-            <select id="sim-target-select" class="sim-select">
-              <option value="server" data-i18n="red_sim_opt_server">Servidor Web (10.0.0.80 - WAN / Cloud)</option>
-              <option value="pc2" data-i18n="red_sim_opt_pc2_same">PC 2 (192.168.1.20 - Misma LAN)</option>
-            </select>
-          </div>
 
-          <button id="sim-start-btn" class="sim-btn-run" type="button">
-            <span class="btn-icon"><span class="mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg></span></span>
-            <span data-i18n="sim_btn_ping">Enviar Ping ICMP</span>
-          </button>
+  
 
-          <button id="sim-reset-btn" class="sim-btn-reset" type="button" title="Reiniciar visualizador" data-i18n-title="red_sim_reset_title">
-            <span data-i18n="sim_btn_reset">Reiniciar</span>
-          </button>
-        </div>
-
-        <!-- Escenario de red interactivo -->
-        <div class="sim-stage" id="sim-stage">
-          <!-- Dispositivos de Red (Nodos) -->
-          <div class="sim-nodes-row">
-            <!-- Host PC 1 -->
-            <div class="sim-device" id="node-pc1">
-              <div class="device-icon-wrap pc-icon mono-icon"><svg width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true"><rect x="7" y="6" width="34" height="25" rx="4" fill="currentColor" fill-opacity=".12" stroke="currentColor" stroke-width="1.8"></rect><rect x="11" y="10" width="26" height="17" rx="2" fill="#38bdf8" fill-opacity=".18" stroke="currentColor" stroke-width="1.2"></rect><path d="M19 38h10M24 31v7M14 42h20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><circle cx="34" cy="8" r="1.5" fill="#34d399"></circle></svg></div>
-              <strong class="device-name">PC 1 (Host A)</strong>
-              <span class="device-ip">192.168.1.10</span>
-              <span class="device-mac">MAC: 00:1A:2B:3C:4D:01</span>
-            </div>
-
-            <!-- Host PC 2 -->
-            <div class="sim-device" id="node-pc2">
-              <div class="device-icon-wrap pc-icon mono-icon"><svg width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true"><rect x="7" y="6" width="34" height="25" rx="4" fill="currentColor" fill-opacity=".12" stroke="currentColor" stroke-width="1.8"></rect><rect x="11" y="10" width="26" height="17" rx="2" fill="#38bdf8" fill-opacity=".18" stroke="currentColor" stroke-width="1.2"></rect><path d="M19 38h10M24 31v7M14 42h20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><circle cx="34" cy="8" r="1.5" fill="#34d399"></circle></svg></div>
-              <strong class="device-name">PC 2 (Host B)</strong>
-              <span class="device-ip">192.168.1.20</span>
-              <span class="device-mac">MAC: 00:1A:2B:3C:4D:02</span>
-            </div>
-
-            <!-- Switch Capa 2 -->
-            <div class="sim-device central" id="node-switch">
-              <div class="device-icon-wrap switch-icon mono-icon"><svg width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true"><rect x="4" y="15" width="40" height="18" rx="4" fill="currentColor" fill-opacity=".12" stroke="currentColor" stroke-width="1.8"></rect><path d="M8 20h32M8 28h32" stroke="currentColor" stroke-width="1.2"></path><rect x="10" y="22" width="4" height="3" rx=".7" fill="#67e8f9"></rect><rect x="17" y="22" width="4" height="3" rx=".7" fill="#67e8f9"></rect><rect x="24" y="22" width="4" height="3" rx=".7" fill="#34d399"></rect><rect x="31" y="22" width="4" height="3" rx=".7" fill="#34d399"></rect><circle cx="10" cy="29" r="1.3" fill="#fbbf24"></circle><circle cx="15" cy="29" r="1.3" fill="#34d399"></circle><circle cx="20" cy="29" r="1.3" fill="#34d399"></circle><path d="M15 12v3M24 12v3M33 12v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg></div>
-              <strong class="device-name">Switch LAN</strong>
-              <span class="device-ip" data-i18n="sim_l2_badge">Capa 2 (MAC Table)</span>
-              <span class="device-mac">VLAN 10 Default</span>
-            </div>
-
-            <!-- Router Gateway Capa 3 -->
-            <div class="sim-device router" id="node-router">
-              <div class="device-icon-wrap router-icon mono-icon">
-                <svg width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true">
-                  <path d="M9 22h30v14H9z" fill="currentColor" fill-opacity=".12" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path>
-                  <path d="M14 22V12M34 22V12M11 12h6M31 12h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
-                  <path d="M11 10c1.7-2 4.3-2 6 0M31 10c1.7-2 4.3-2 6 0" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path>
-                  <rect x="13" y="27" width="5" height="3" rx=".7" fill="#67e8f9"></rect>
-                  <rect x="21.5" y="27" width="5" height="3" rx=".7" fill="#67e8f9"></rect>
-                  <rect x="30" y="27" width="5" height="3" rx=".7" fill="#a7f3d0"></rect>
-                  <circle cx="13" cy="33" r="1.2" fill="#fbbf24"></circle>
-                  <circle cx="18" cy="33" r="1.2" fill="#34d399"></circle>
-                  <path d="M21 19h6M24 16v6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path>
-                </svg>
-              </div>
-              <strong class="device-name">Router Gateway</strong>
-              <span class="device-ip">192.168.1.1 / 10.0.0.1</span>
-              <span class="device-mac" data-i18n="sim_l3_badge">Capa 3 (Routing Table)</span>
-            </div>
-
-            <!-- Servidor Web Remoto -->
-            <div class="sim-device server" id="node-server">
-              <div class="device-icon-wrap server-icon mono-icon"><svg width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true"><rect x="10" y="5" width="28" height="38" rx="4" fill="currentColor" fill-opacity=".12" stroke="currentColor" stroke-width="1.8"></rect><path d="M15 14h18M15 24h18M15 34h18" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path><circle cx="19" cy="10" r="1.5" fill="#34d399"></circle><circle cx="19" cy="20" r="1.5" fill="#34d399"></circle><circle cx="19" cy="30" r="1.5" fill="#67e8f9"></circle><path d="M25 10h5M25 20h5M25 30h5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"></path></svg></div>
-              <strong class="device-name">Web Server</strong>
-              <span class="device-ip">10.0.0.80 (HTTP / DNS)</span>
-              <span class="device-mac">MAC: AA:BB:CC:DD:EE:80</span>
-            </div>
-          </div>
-
-          <!-- Pista visual de cables de interconexión física con luces -->
-          <div class="sim-links-svg-wrap">
-            <svg width="1000" height="70" class="sim-links-svg" viewBox="0 0 1000 70" preserveAspectRatio="none">
-              <!-- Enlaces PC1 a Switch, PC2 a Switch, Switch a Router, Router a Server -->
-              <line x1="100" y1="35" x2="500" y2="35" class="sim-wire-back" />
-              <line x1="300" y1="35" x2="500" y2="35" class="sim-wire-back" />
-              <line x1="500" y1="35" x2="700" y2="35" class="sim-wire-back" />
-              <line x1="700" y1="35" x2="900" y2="35" class="sim-wire-back" />
-              
-              <line id="wire-active-pc1" x1="100" y1="35" x2="500" y2="35" class="sim-wire-glow" />
-              <line id="wire-active-pc2" x1="300" y1="35" x2="500" y2="35" class="sim-wire-glow" />
-              <line id="wire-active-sr" x1="500" y1="35" x2="700" y2="35" class="sim-wire-glow" />
-              <line id="wire-active-dest" x1="700" y1="35" x2="900" y2="35" class="sim-wire-glow" />
-            </svg>
-          </div>
-
-          <!-- Indicador de paquete viajero animado -->
-          <div class="packet-traveler" id="sim-packet" hidden>
-            <span class="packet-badge" id="packet-type-text" data-i18n="red_sim_packet_sending">Enviando datos</span>
-            <span class="packet-arrow"><span class="mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg></span></span>
-          </div>
-        </div>
-
-        <!-- Consola de inspección del paquete en tiempo real -->
-        <div class="sim-terminal-wrap">
-          <div class="sim-terminal-header">
-            <span class="term-dot red"></span>
-            <span class="term-dot yellow"></span>
-            <span class="term-dot green"></span>
-            <span class="term-title" data-i18n="sim_term_title">Monitor de Tráfico de Red (Wireshark / CLI Ping Log)</span>
-            <span id="sim-status-tag" class="sim-status-idle" data-i18n="sim_status_ready">LISTO</span>
-          </div>
-
-          <div class="sim-console-body" id="sim-console">
-            <p class="console-line info" data-i18n="red_sim_console_init">[SISTEMA] Simulador inicializado. Selecciona host origen y destino, luego pulsa 'Enviar Ping ICMP'.</p>
-          </div>
-
-          <!-- Inspección del encabezado de trama / paquete -->
-          <div class="packet-inspector-grid">
-            <div class="inspector-box">
-              <span class="insp-title" data-i18n="insp_l2_title">Capa 2 - Trama Ethernet (MAC)</span>
-              <p id="insp-l2-info" data-i18n="red_insp_l2_init">Origen: -- &nbsp;|&nbsp; Destino: --</p>
-            </div>
-            <div class="inspector-box">
-              <span class="insp-title" data-i18n="insp_l3_title">Capa 3 - Paquete IP (Protocolo 1 ICMP)</span>
-              <p id="insp-l3-info">IP Src: -- &nbsp;|&nbsp; IP Dst: -- &nbsp;|&nbsp; TTL: --</p>
-            </div>
-            <div class="inspector-box">
-              <span class="insp-title" data-i18n="insp_stat_title">Métricas de Conectividad</span>
-              <p id="insp-stat-info" data-i18n="red_insp_stat_init">RTT: -- ms &nbsp;|&nbsp; Pérdida: 0% &nbsp;|&nbsp; Estado: Esperando</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-<section id="switch-3d" class="container">
-      <h2 class="section-title">
-        <span class="mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="7" width="18" height="10" rx="2"></rect><path d="M7 11h.01M11 11h.01M15 11h.01M19 11h.01M7 15h.01M11 15h.01M15 15h.01"></path></svg></span> <span data-i18n="switch3d_title">El switch por dentro: cómo decide a dónde va cada trama</span>
-      </h2>
-      <p class="section-desc" data-i18n="switch3d_desc">
-        Envía tramas entre los equipos y observa, paso a paso, cómo el switch aprende las direcciones MAC y decide por qué puerto sale cada trama. Compáralo con un hub y verás la diferencia.
-      </p>
-
-      <div class="swl-wrapper">
-        <div class="swl-stage">
-          <svg width="760" height="420" id="swl-svg" viewBox="0 0 760 420" role="img" aria-label="Switch con cuatro computadores conectados por cable" data-i18n-title="red_swl_svg_aria">
-            <g class="swl-device">
-              <rect x="140" y="30" width="500" height="80" rx="12"></rect>
-              <text id="swl-device-name" class="swl-device-title" x="390" y="64" text-anchor="middle">SWITCH</text>
-              <text class="swl-device-sub" x="390" y="86" text-anchor="middle" data-i18n="red_swl_device_sub">NV-SW 08 · capa 2</text>
-              <g class="swl-port" id="swl-port-1">
-                <text class="swl-port-num" x="180" y="100" text-anchor="middle">1</text>
-                <rect x="167" y="104" width="26" height="16" rx="3"></rect>
-              </g>
-              <g class="swl-port" id="swl-port-2">
-                <text class="swl-port-num" x="320" y="100" text-anchor="middle">2</text>
-                <rect x="307" y="104" width="26" height="16" rx="3"></rect>
-              </g>
-              <g class="swl-port" id="swl-port-3">
-                <text class="swl-port-num" x="460" y="100" text-anchor="middle">3</text>
-                <rect x="447" y="104" width="26" height="16" rx="3"></rect>
-              </g>
-              <g class="swl-port" id="swl-port-4">
-                <text class="swl-port-num" x="600" y="100" text-anchor="middle">4</text>
-                <rect x="587" y="104" width="26" height="16" rx="3"></rect>
-              </g>
-            </g>
-            <line class="swl-cable" x1="180" y1="120" x2="180" y2="298"></line>
-            <line class="swl-cable" x1="320" y1="120" x2="320" y2="298"></line>
-            <line class="swl-cable" x1="460" y1="120" x2="460" y2="298"></line>
-            <line class="swl-cable" x1="600" y1="120" x2="600" y2="298"></line>
-            <g class="swl-pc" id="swl-pc-0">
-              <rect class="swl-pc-body" x="126" y="298" width="108" height="62" rx="8"></rect>
-              <rect class="swl-pc-screen" x="134" y="306" width="92" height="38" rx="4"></rect>
-              <text class="swl-pc-name" x="180" y="331" text-anchor="middle">PC1</text>
-              <line class="swl-pc-stand" x1="180" y1="360" x2="180" y2="372"></line>
-              <line class="swl-pc-stand" x1="160" y1="374" x2="200" y2="374"></line>
-              <rect class="swl-mac-pill" x="120" y="381" width="120" height="34" rx="5"></rect>
-              <text class="swl-pc-mac swl-mac-hi" x="180" y="395" text-anchor="middle">AA:BB:CC</text>
-              <text class="swl-pc-mac swl-mac-lo" x="180" y="408" text-anchor="middle">00:00:01</text>
-            </g>
-            <g class="swl-pc" id="swl-pc-1">
-              <rect class="swl-pc-body" x="266" y="298" width="108" height="62" rx="8"></rect>
-              <rect class="swl-pc-screen" x="274" y="306" width="92" height="38" rx="4"></rect>
-              <text class="swl-pc-name" x="320" y="331" text-anchor="middle">PC2</text>
-              <line class="swl-pc-stand" x1="320" y1="360" x2="320" y2="372"></line>
-              <line class="swl-pc-stand" x1="300" y1="374" x2="340" y2="374"></line>
-              <rect class="swl-mac-pill" x="260" y="381" width="120" height="34" rx="5"></rect>
-              <text class="swl-pc-mac swl-mac-hi" x="320" y="395" text-anchor="middle">AA:BB:CC</text>
-              <text class="swl-pc-mac swl-mac-lo" x="320" y="408" text-anchor="middle">00:00:02</text>
-            </g>
-            <g class="swl-pc" id="swl-pc-2">
-              <rect class="swl-pc-body" x="406" y="298" width="108" height="62" rx="8"></rect>
-              <rect class="swl-pc-screen" x="414" y="306" width="92" height="38" rx="4"></rect>
-              <text class="swl-pc-name" x="460" y="331" text-anchor="middle">PC3</text>
-              <line class="swl-pc-stand" x1="460" y1="360" x2="460" y2="372"></line>
-              <line class="swl-pc-stand" x1="440" y1="374" x2="480" y2="374"></line>
-              <rect class="swl-mac-pill" x="400" y="381" width="120" height="34" rx="5"></rect>
-              <text class="swl-pc-mac swl-mac-hi" x="460" y="395" text-anchor="middle">AA:BB:CC</text>
-              <text class="swl-pc-mac swl-mac-lo" x="460" y="408" text-anchor="middle">00:00:03</text>
-            </g>
-            <g class="swl-pc" id="swl-pc-3">
-              <rect class="swl-pc-body" x="546" y="298" width="108" height="62" rx="8"></rect>
-              <rect class="swl-pc-screen" x="554" y="306" width="92" height="38" rx="4"></rect>
-              <text class="swl-pc-name" x="600" y="331" text-anchor="middle">PC4</text>
-              <line class="swl-pc-stand" x1="600" y1="360" x2="600" y2="372"></line>
-              <line class="swl-pc-stand" x1="580" y1="374" x2="620" y2="374"></line>
-              <rect class="swl-mac-pill" x="540" y="381" width="120" height="34" rx="5"></rect>
-              <text class="swl-pc-mac swl-mac-hi" x="600" y="395" text-anchor="middle">AA:BB:CC</text>
-              <text class="swl-pc-mac swl-mac-lo" x="600" y="408" text-anchor="middle">00:00:04</text>
-            </g>
-            <g id="swl-frames"></g>
-          </svg>
-          <div class="swl-caption" id="swl-caption" aria-live="polite" data-i18n="swl_caption_idle">Elige quién envía y quién recibe, y pulsa «Enviar trama». Mira cómo el switch va aprendiendo las MAC en su tabla.</div>
-        </div>
-
-        <aside class="swl-panel">
-          <div class="swl-panel-head">
-            <span class="network-badge" data-i18n="switch3d_badge">Laboratorio L2</span>
-            <div class="swl-mode" role="group" aria-label="Modo del dispositivo" data-i18n-title="red_swl_mode_aria">
-              <button type="button" id="swl-mode-switch" class="swl-mode-btn is-active" data-i18n="swl_mode_switch">Modo switch</button>
-              <button type="button" id="swl-mode-hub" class="swl-mode-btn" data-i18n="swl_mode_hub">Modo hub</button>
-            </div>
-          </div>
-
-          <div class="swl-controls">
-            <label><span data-i18n="swl_from">Envía</span>
-              <select id="swl-from">
-                <option value="0" selected>PC1</option>
-                <option value="1">PC2</option>
-                <option value="2">PC3</option>
-                <option value="3">PC4</option>
-              </select>
-            </label>
-            <label><span data-i18n="swl_to">Recibe</span>
-              <select id="swl-to">
-                <option value="0">PC1</option>
-                <option value="1">PC2</option>
-                <option value="2" selected>PC3</option>
-                <option value="3">PC4</option>
-              </select>
-            </label>
-          </div>
-
-          <button type="button" class="sim-btn-run" id="swl-send"><span data-i18n="swl_send">Enviar trama</span></button>
-
-          <div class="swl-table-wrap">
-            <h3 data-i18n="swl_table_title">Tabla MAC (lo que el switch ha aprendido)</h3>
-            <table class="swl-table">
-              <thead><tr><th data-i18n="swl_col_port">Puerto</th><th data-i18n="swl_col_mac">MAC</th><th>PC</th></tr></thead>
-              <tbody id="swl-mac-body"></tbody>
-            </table>
-          </div>
-
-          <button type="button" class="swl-reset" id="swl-reset" data-i18n="swl_reset">Borrar tabla MAC</button>
-        </aside>
-      </div>
-    </section>
-
-  <section id="herramientas" class="container">
-    <h2 class="section-title">
-      <span class="mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4.5 4.5 0 0 0-6 6L3 18l3 3 5.7-5.7a4.5 4.5 0 0 0 6-6L14 13l-3-3 3.7-3.7z"/></svg></span> <span data-i18n="tools_title">Herramientas de Redes</span>
-    </h2>
-    <p class="section-subtitle" data-i18n="tools_sub">Calcula subredes y convierte entre binario, decimal y hexadecimal sin salir de NVISION.</p>
-
-    <div class="tools-grid">
-      <div class="tool-panel">
-        <h3 data-i18n="subnet_title">Calculadora de subredes</h3>
-        <div class="tool-field">
-          <label for="rt-ip" data-i18n="subnet_ip">Dirección IP</label>
-          <input type="text" id="rt-ip" value="192.168.1.10" inputmode="decimal" autocomplete="off" spellcheck="false">
-        </div>
-        <div class="tool-field">
-          <label for="rt-prefix" data-i18n="subnet_prefix">Prefijo CIDR</label>
-          <div class="tool-prefix-row">
-            <input type="range" id="rt-prefix" min="0" max="32" step="1" value="24">
-            <output id="rt-prefix-val">/24</output>
-          </div>
-          <p class="tool-mask-line"><span data-i18n="subnet_mask">Máscara de subred</span>: <b id="rt-mask">255.255.255.0</b></p>
-        </div>
-        <p class="tool-error" id="rt-error" role="alert"></p>
-        <dl class="tool-results">
-          <div class="tr-item"><dt data-i18n="r_net">Dirección de red</dt><dd id="rt-net">—</dd></div>
-          <div class="tr-item"><dt data-i18n="r_bcast">Broadcast</dt><dd id="rt-bcast">—</dd></div>
-          <div class="tr-item"><dt data-i18n="r_first">Primera IP útil</dt><dd id="rt-first">—</dd></div>
-          <div class="tr-item"><dt data-i18n="r_last">Última IP útil</dt><dd id="rt-last">—</dd></div>
-          <div class="tr-item"><dt data-i18n="r_hosts">Hosts utilizables</dt><dd id="rt-hosts">—</dd></div>
-          <div class="tr-item"><dt data-i18n="r_wild">Wildcard</dt><dd id="rt-wild">—</dd></div>
-          <div class="tr-item"><dt data-i18n="r_class">Clase</dt><dd id="rt-class">—</dd></div>
-          <div class="tr-item"><dt data-i18n="r_type">Tipo</dt><dd id="rt-type">—</dd></div>
-          <div class="tr-item tr-wide"><dt data-i18n="r_bin">La IP en binario</dt><dd id="rt-bin">—</dd></div>
-        </dl>
-      </div>
-
-      <div class="tool-panel">
-        <h3 data-i18n="conv_title">Conversor de bases</h3>
-        <div class="tool-field">
-          <label for="rt-conv-value" data-i18n="conv_value">Valor</label>
-          <input type="text" id="rt-conv-value" value="192" autocomplete="off" spellcheck="false">
-        </div>
-        <div class="tool-field">
-          <label for="rt-conv-base" data-i18n="conv_base">Base de entrada</label>
-          <select id="rt-conv-base">
-            <option value="dec" selected data-i18n="conv_dec">Decimal</option>
-            <option value="bin" data-i18n="conv_bin">Binario</option>
-            <option value="hex" data-i18n="conv_hex">Hexadecimal</option>
-            <option value="oct" data-i18n="conv_oct">Octal</option>
-          </select>
-        </div>
-        <p class="tool-error" id="rt-conv-error" role="alert"></p>
-        <dl class="tool-results">
-          <div class="tr-item"><dt data-i18n="conv_dec">Decimal</dt><dd id="rt-c-dec">—</dd></div>
-          <div class="tr-item"><dt data-i18n="conv_hex">Hexadecimal</dt><dd id="rt-c-hex">—</dd></div>
-          <div class="tr-item"><dt data-i18n="conv_oct">Octal</dt><dd id="rt-c-oct">—</dd></div>
-          <div class="tr-item tr-wide"><dt data-i18n="conv_bin">Binario</dt><dd id="rt-c-bin">—</dd></div>
-        </dl>
-      </div>
-      <div class="tool-panel tool-panel-wide" id="cable-panel">
-        <h3 data-i18n="cable_title">Juego de cableado: ordena los hilos</h3>
-        <p class="tool-hint" data-i18n="cable_hint">Toca un hilo de la bandeja para colocarlo en el siguiente pin del conector RJ45. Arma el cable según la norma elegida.</p>
-        <div class="cable-controls">
-          <label><span data-i18n="cable_norm">Norma</span>
-            <select id="cb-norm"><option value="B">T568B</option><option value="A">T568A</option></select></label>
-          <button type="button" class="tool-btn" id="cb-check" data-i18n="cable_check">Comprobar</button>
-          <button type="button" class="tool-btn tool-btn-ghost" id="cb-reset" data-i18n="cable_reset">Mezclar de nuevo</button>
-          <span class="cable-tries" id="cb-tries"></span>
-        </div>
-        <div class="cable-slots" id="cb-slots" aria-label="Pines del conector"></div>
-        <div class="cable-tray" id="cb-tray" aria-label="Hilos"></div>
-        <p class="cable-msg" id="cb-msg" role="status"></p>
-      </div>
+  <section class="container" id="comentarios" data-pagina="redes" aria-label="Comentarios">
+    <div class="mejora-card">
+      <h2>Comentarios</h2>
+      <form class="comentarios-form">
+        <label class="mejora-label" for="com-nombre-redes">Tu nombre</label>
+        <input class="mejora-input" id="com-nombre-redes" name="nombre" type="text" maxlength="60" required>
+        <label class="mejora-label" for="com-mensaje-redes">Tu comentario</label>
+        <textarea class="mejora-textarea" id="com-mensaje-redes" name="mensaje" maxlength="500" required></textarea>
+        <button type="submit" class="tool-btn">Publicar comentario</button>
+      </form>
+      <div class="comentarios-lista"></div>
     </div>
   </section>
 </main>
 
   <!-- Footer -->
-  <footer class="site-footer">
+    <footer class="site-footer">
     <nav class="footer-nav" aria-label="Enlaces del sitio">
-      <a href="index.html" data-i18n="nav_home">Inicio</a>
-      <a href="ruta.html" data-i18n="nav_route">Ruta de aprendizaje</a>
-      <a href="examenes.html" data-i18n="nav_exams">Exámenes</a>
-      <a href="ranking.html" data-i18n="nav_ranking">Ranking</a>
-      <a href="verificar.html" data-i18n="nav_verificar">Verificar certificado</a>
-      <a href="privacidad.html" data-i18n="nav_privacidad">Privacidad</a>
+      <a href="index.html">Inicio</a>
+      <a href="hardware.html">Hardware</a>
+      <a href="redes.html">Redes</a>
+      <a href="mantenimiento.html">Mantenimiento</a>
+      <a href="foro.html">Foro</a>
+      <a href="pqr.html">PQR</a>
     </nav>
-    <p class="footer-contact" data-i18n-html="footer_contact">¿Dudas o sugerencias? Conoce el proyecto en su <a href="https://github.com/camilomirr/engl" target="_blank" rel="noopener">repositorio de GitHub</a> o gestiona tu cuenta en <a href="cuenta.html">Mi cuenta</a>.</p>
-    <p>© 2026 - <span data-i18n="footer_text">NVISION</span></p>
+    <p class="footer-contact">¿Dudas o sugerencias? Escríbenos desde la sección de <a href="pqr.html">PQR y contacto</a>.</p>
+    <p>© 2026 - <span>NVISION</span></p>
   </footer>
 
   <!-- Script interactivo bilingüe y menú móvil -->
-  <script src="js/redes-tools.js?v=80"></script>
-  <script src="js/main.js?v=144"></script>
-  <script src="js/site-search.js?v=85"></script>
-  <script src="js/analytics.js?v=1" defer></script>
-  <script src="js/cableado.js?v=3"></script>
-  <script src="js/tutor.js?v=3" defer></script>
-  <script src="js/foro-boton.js?v=3" defer></script>
+  
+  
+  
+  
+  
+  
+  
+  <script src="frontend/js/interfaz.js"></script>
+  <script src="backend/config.js"></script>
+  <script src="backend/supabase.js"></script>
+  <script src="backend/comentarios.js"></script>
 </body>
 </html>

@@ -11,7 +11,7 @@
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <title data-i18n="page_title_index">NVISION - Hardware y Computadores</title>
   <!-- Hojas de estilo modular -->
-  <link rel="stylesheet" href="css/styles.css?v=129">
+  <link rel="stylesheet" href="frontend/css/styles.css?v=129">
   <!-- SEO, iconos y vista previa al compartir (Open Graph / Twitter) -->
   <meta name="description" content="NVISION: aprende hardware, redes y mantenimiento de PC con simuladores interactivos, un taller 3D de armado, glosario con tarjetas y retos. Gratis y en español.">
   <meta name="theme-color" content="#f8fafc">
@@ -37,16 +37,12 @@
   <meta name="twitter:title" content="NVISION - Hardware y Computadores">
   <meta name="twitter:description" content="NVISION: aprende hardware, redes y mantenimiento de PC con simuladores interactivos, un taller 3D de armado, glosario con tarjetas y retos. Gratis y en español.">
   <meta name="twitter:image" content="https://nvision.social/assets/og-image.jpg">
-  <script type="application/ld+json">
-  {"@context":"https://schema.org","@graph":[
-    {"@type":"Organization","@id":"https://nvision.social/#org","name":"NVISION","url":"https://nvision.social/","logo":"https://nvision.social/assets/icons/icon-512.png","description":"Plataforma gratuita en español para aprender hardware, redes y mantenimiento de PC."},
-    {"@type":"WebSite","@id":"https://nvision.social/#web","url":"https://nvision.social/","name":"NVISION","publisher":{"@id":"https://nvision.social/#org"},"inLanguage":"es"}
-  ]}
-  </script>
+  
 </head>
 <body>
 
   <!-- Encabezado y Barra de Navegación Adaptativa -->
+    <!-- Encabezado y Barra de Navegación Adaptativa -->
   <header class="site-header">
     <div class="header-container">
       <!-- Marca / Nombre de la página -->
@@ -59,153 +55,35 @@
           <!-- Catálogo 1: Aprende -->
           <li class="nav-item-dropdown">
             <button type="button" class="nav-dropdown-trigger" aria-expanded="false">
-              <span data-i18n="nav_cat_aprende">Aprende</span>
+              <span>Aprende</span>
               <span class="nav-arrow mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
             </button>
             <ul class="nav-submenu">
-              <li><a href="ruta.html" data-i18n="nav_route">Ruta de aprendizaje</a></li>
-              <li><a href="hardware.html" data-i18n="nav_hardware">Hardware</a></li>
-              <li><a href="redes.html" data-i18n="nav_redes">Redes</a></li>
-              <li><a href="wifi.html" data-i18n="nav_wifi">WiFi Avanzado</a></li>
-              <li><a href="mantenimiento-software.html" data-i18n="nav_ms">Mantenimiento por software</a></li>
-              <li><a href="recursos.html#glosario" data-i18n="nav_glossary">Glosario</a></li>
-              <li><a href="foro.html" data-i18n="nav_foro">Foro El Taller</a></li>
-              <li><a href="ingles.html" data-i18n="nav_ingles">Inglés técnico</a></li>
+              <li><a href="hardware.html">Hardware</a></li>
+              <li><a href="redes.html">Redes</a></li>
+              <li><a href="mantenimiento.html">Mantenimiento por software</a></li>
             </ul>
           </li>
 
-          <!-- Catálogo 2: Laboratorios -->
+          <!-- Catálogo 2: Comunidad -->
           <li class="nav-item-dropdown">
             <button type="button" class="nav-dropdown-trigger" aria-expanded="false">
-              <span data-i18n="nav_cat_lab">Laboratorios</span>
+              <span>Comunidad</span>
               <span class="nav-arrow mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
             </button>
             <ul class="nav-submenu">
-              <li><a href="topologia.html" data-i18n="nav_topologia">Simulador de topologías</a></li>
-              <li><a href="redes.html#simulador-red" data-i18n="nav_simulator">Simulador Ping</a></li>
-              <li><a href="redes.html#switch-3d" data-i18n="nav_switch3d">El switch por dentro</a></li>
-              <li><a href="redes.html#herramientas" data-i18n="nav_tools">Herramientas de redes</a></li>
-              <li><a href="terminal.html" data-i18n="nav_terminal">Terminal de redes</a></li>
-              <li><a href="comparador.html" data-i18n="nav_comparador">Comparador</a></li>
-              <li><a href="presupuestos.html" data-i18n="nav_presu">Presupuestos reales</a></li>
-              <li><a href="recursos.html#laboratorio" data-i18n="nav_lab">Laboratorio de Códigos</a></li>
-              <li><a href="pc3d.html#visor-3d" data-i18n="nav_pc3d_viewer">Visor 3D</a></li>
-              <li><a href="pc3d.html#componentes-3d" data-i18n="nav_pc3d_parts">Componentes y tipos</a></li>
-            </ul>
-          </li>
-
-          <!-- Catálogo 3: Juegos -->
-          <li class="nav-item-dropdown">
-            <button type="button" class="nav-dropdown-trigger" aria-expanded="false">
-              <span data-i18n="nav_cat_juegos">Juegos</span>
-              <span class="nav-arrow mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
-            </button>
-            <ul class="nav-submenu">
-              <li><a href="workshop/index.html" data-i18n="nav_workshop">NVISION PC Workshop</a></li>
-              <li><a href="redes_challenge/index.html" class="btn-challenge"><span class="mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 8h10.5a4 4 0 0 1 3.9 4.8l-.6 3.1a3 3 0 0 1-5.4 1.4L13.5 15.5h-3l-1.4 1.8a3 3 0 0 1-5.4-1.4l-.6-3.1A4 4 0 0 1 6.5 8z"/><path d="M8 11v3M6.5 12.5h3"/><circle cx="15.8" cy="11.6" r="0.4" fill="currentColor"/><circle cx="17.8" cy="13.4" r="0.4" fill="currentColor"/></svg></span> Redes Challenge</a></li>
-              <li><a href="sala.html" data-i18n="nav_sala">Quiz en vivo</a></li>
-              <li><a href="pantalla-azul.html" data-i18n="nav_pantalla">Pantalla Azul</a></li>
-            </ul>
-          </li>
-
-          <!-- Catálogo 4: Exámenes y progreso -->
-          <li class="nav-item-dropdown">
-            <button type="button" class="nav-dropdown-trigger" aria-expanded="false">
-              <span data-i18n="nav_cat_examenes">Exámenes</span>
-              <span class="nav-arrow mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
-            </button>
-            <ul class="nav-submenu">
-              <li><a href="examenes.html" data-i18n="nav_exams">Exámenes</a></li>
-              <li><a href="verificar.html" data-i18n="nav_verificar">Verificar certificado</a></li>
-              <li><a href="logros.html" data-i18n="nav_logros">Logros</a></li>
-              <li><a href="ranking.html" data-i18n="nav_ranking">Ranking</a></li>
-            </ul>
-          </li>
-
-          <!-- Catálogo 5: Mi NVISION -->
-          <li class="nav-item-dropdown">
-            <button type="button" class="nav-dropdown-trigger" aria-expanded="false">
-              <span data-i18n="nav_cat_cuenta">Mi NVISION</span>
-              <span class="nav-arrow mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
-            </button>
-            <ul class="nav-submenu">
-              <li><a href="cuenta.html" data-i18n="nav_account">Mi cuenta</a></li>
-              <li><a href="apuntes.html" data-i18n="nav_apuntes">Mis apuntes</a></li>
-              <li><a href="entrevista.html" data-i18n="nav_entrevista">Entrevista técnica</a></li>
-              <li><a href="novedades.html" data-i18n="nav_novedades">Novedades</a></li>
-              <li><a href="privacidad.html" data-i18n="nav_privacidad">Privacidad</a></li>
+              <li><a href="foro.html">Foro El Taller</a></li>
+              <li><a href="pqr.html">PQR y contacto</a></li>
             </ul>
           </li>
         </ul>
       </nav>
 
-      <!-- Botones de acción: Idioma y Menú Hamburguesa en móvil -->
-      <div class="header-actions">
-        <!-- Botón buscador: despliega la barra de búsqueda bajo el encabezado -->
-        <button id="header-search-toggle" class="header-search-btn" type="button" aria-label="Buscar en NVISION" aria-expanded="false" aria-controls="header-search-panel" title="Buscar en NVISION" data-i18n-title="search_toggle_title">
-          <span class="mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
-        </button>
-        <!-- Boton Modo Claro / Oscuro -->
-        <button id="theme-toggle" class="theme-switch-btn" title="Modo Claro / Oscuro" aria-label="Cambiar tema" data-i18n-title="theme_toggle_title">
-          <span id="theme-icon" class="mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span>
-        </button>
-        <a id="account-link" class="theme-switch-btn account-btn" href="cuenta.html" title="Mi cuenta" aria-label="Mi cuenta" data-i18n-title="nav_account">
-          <span class="mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span>
-        </a>
-        <button id="pwa-install-btn" class="theme-switch-btn pwa-install-btn" type="button" title="Instalar app" aria-label="Instalar app" data-i18n-title="nav_install" hidden>
-          <span class="mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></span>
-        </button>
-        <!-- Selector desplegable bilingüe de Idioma (Español / Inglés) -->
-        <div class="lang-dropdown-wrapper" id="lang-dropdown-wrapper">
-          <button id="lang-toggle" class="lang-dropdown-btn" type="button" aria-haspopup="true" aria-expanded="false" title="Seleccionar idioma / Select language">
-            <span class="mono-icon globe-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg></span>
-            <span id="lang-label" class="lang-label-text">ES</span>
-            <span class="lang-chevron mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
-          </button>
-          <div class="lang-dropdown-menu" id="lang-dropdown-menu" role="menu">
-            <div class="lang-dropdown-header" data-i18n="lang_select_title">Seleccionar Idioma</div>
-            <button type="button" class="lang-dropdown-item active" data-lang="es" role="menuitem">
-              <span class="item-code">ES</span>
-              <div class="item-info">
-                <span class="item-name">Español</span>
-                <span class="item-native">Spanish</span>
-              </div>
-              <span class="item-check mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
-            </button>
-            <button type="button" class="lang-dropdown-item" data-lang="en" role="menuitem">
-              <span class="item-code">EN</span>
-              <div class="item-info">
-                <span class="item-name">English</span>
-                <span class="item-native">Inglés</span>
-              </div>
-              <span class="item-check mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
-            </button>
-          </div>
-        </div>
-
+      <div>
         <!-- Botón de tres rayitas (Hamburguesa) para celulares -->
-        <button id="menu-toggle" class="menu-toggle-btn" aria-label="Abrir menú" aria-expanded="false" data-i18n-title="menu_toggle_title">
+        <button id="menu-toggle" class="menu-toggle-btn" aria-label="Abrir menú" aria-expanded="false">
           <span class="menu-icon-inner mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></span>
         </button>
-      </div>
-    </div>
-
-    <!-- Buscador desplegable del encabezado: mismo buscador del inicio, en una barra que se despliega -->
-    <div class="header-search" id="header-search-panel">
-      <form class="header-search-box" id="header-search-form" role="search" autocomplete="off">
-        <span class="site-search-icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
-        <input type="search" id="header-search-input" class="site-search-input" data-i18n-placeholder="search_placeholder" placeholder="Busca en todo NVISION: RAM, topologías, WiFi, malware…" aria-label="Buscar en NVISION">
-        <button type="button" id="header-search-clear" class="site-search-clear" aria-label="Limpiar búsqueda">×</button>
-        <div class="site-search-results" id="header-search-results"></div>
-      </form>
-      <div class="site-search-popular header-search-popular">
-        <span class="site-search-popular-label" data-i18n="search_popular">Populares:</span>
-        <button type="button" class="site-search-chip" data-q="RAM">RAM</button>
-        <button type="button" class="site-search-chip" data-q="topologías">Topologías</button>
-        <button type="button" class="site-search-chip" data-q="WiFi">WiFi</button>
-        <button type="button" class="site-search-chip" data-q="malware">Malware</button>
-        <button type="button" class="site-search-chip" data-q="visor 3D">Visor 3D</button>
-        <button type="button" class="site-search-chip" data-q="glosario">Glosario</button>
       </div>
     </div>
   </header>
@@ -214,10 +92,10 @@
   <header class="hero-section">
     <div class="hero-content">
       <h1 class="hero-title" data-i18n="hero_title">Arquitectura y Evolución de los Computadores</h1>
-      <p class="hero-subtitle" data-i18n="hero_desc">Aprende hardware, redes y mantenimiento de PC desde cero, gratis y en español: simuladores interactivos, un taller 3D, exámenes y certificado al aprobar.</p>
+      <p class="hero-subtitle" data-i18n="hero_desc">Aprende hardware, redes y mantenimiento de PC desde cero, gratis y en español: módulos claros y directos, el foro de la comunidad y atención de PQR.</p>
       <div class="hero-buttons">
-        <a href="ruta.html" class="btn-primary"><span data-i18n="hero_cta_start">Empieza tu ruta gratis</span></a>
-        <a href="examenes.html" class="btn-secondary"><span data-i18n="nav_exams">Exámenes</span></a>
+        <a href="hardware.html" class="btn-primary"><span data-i18n="hero_cta_start">Empezar a aprender</span></a>
+        <a href="foro.html" class="btn-secondary"><span>Foro El Taller</span></a>
       </div>
 
     </div>
@@ -297,38 +175,10 @@
       </a>
 
       <!-- Card: Recursos -->
-      <a class="nv-card" href="recursos.html#glosario">
-        <div class="nv-card-media">
-          <img src="assets/card-recursos.jpg" alt="Persona aprendiendo con una computadora portátil" loading="lazy" decoding="async">
-          <span class="nv-card-chip">
-          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="8" y="6" width="32" height="36" rx="3"/>
-            <line x1="15" y1="16" x2="33" y2="16"/>
-            <line x1="15" y1="22" x2="33" y2="22"/>
-            <line x1="15" y1="28" x2="25" y2="28"/>
-            <rect x="26" y="30" width="10" height="7" rx="1.5" fill="rgba(56,189,248,0.15)" stroke="#38bdf8"/>
-            <line x1="28.5" y1="33.5" x2="33.5" y2="33.5" stroke="#38bdf8" stroke-width="1.2"/>
-          </svg>
-          </span>
-        </div>
-        <div class="nv-card-body">
-          <h3 class="nv-card-title" data-i18n-html="idx_card_res_title">Recursos de<br>Aprendizaje</h3>
-          <p class="nv-card-desc" data-i18n="idx_card_res_desc">Glosario técnico y laboratorio práctico para seguir aprendiendo a tu ritmo.</p>
-        </div>
-        <div class="nv-card-footer">
-          <span class="nv-card-cta" data-i18n="idx_card_cta">Explorar</span>
-          <span class="nv-card-arrow">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="3" y1="10" x2="17" y2="10"/>
-              <polyline points="11 4 17 10 11 16"/>
-            </svg>
-          </span>
-        </div>
-        <div class="nv-card-bar"></div>
-      </a>
+      
 
       <!-- Card: Mantenimiento por software -->
-      <a class="nv-card" href="mantenimiento-software.html">
+      <a class="nv-card" href="mantenimiento.html">
         <div class="nv-card-media">
           <img src="assets/card-mantenimiento.jpg" alt="Torre de computador con ventiladores de luz azul" loading="lazy" decoding="async">
           <span class="nv-card-chip">
@@ -356,91 +206,16 @@
       </a>
 
       <!-- Card: WiFi -->
-      <a class="nv-card" href="wifi.html">
-        <div class="nv-card-media">
-          <img src="assets/card-wifi.jpg" alt="Router WiFi blanco con antenas y cable de red" loading="lazy" decoding="async">
-          <span class="nv-card-chip">
-          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M2.84 18a32 32 0 0 1 42.32 0"/>
-            <path d="M10 25.1a22 22 0 0 1 28.16 0"/>
-            <path d="M17.06 32.22a12 12 0 0 1 13.9 0"/>
-            <circle cx="24" cy="40" r="2.2" fill="rgba(56,189,248,0.15)" stroke="#38bdf8"/>
-          </svg>
-          </span>
-        </div>
-        <div class="nv-card-body">
-          <h3 class="nv-card-title" data-i18n-html="idx_card_wifi_title">WiFi<br>Avanzado</h3>
-          <p class="nv-card-desc" data-i18n="idx_card_wifi_desc">WiFi explicado paso a paso: el router, la señal inalámbrica y cómo instalar el módem.</p>
-        </div>
-        <div class="nv-card-footer">
-          <span class="nv-card-cta" data-i18n="idx_card_cta">Explorar</span>
-          <span class="nv-card-arrow">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="3" y1="10" x2="17" y2="10"/>
-              <polyline points="11 4 17 10 11 16"/>
-            </svg>
-          </span>
-        </div>
-        <div class="nv-card-bar"></div>
-      </a>
+      
 
       <!-- Card: PC 3D -->
-      <a class="nv-card" href="pc3d.html#visor-3d">
-        <div class="nv-card-media">
-          <img src="assets/card-pc3d.jpg" alt="Torre de PC abierta con placa base, disipador, memorias RAM y ventiladores" loading="lazy" decoding="async">
-          <span class="nv-card-chip">
-          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M42 32V16a4 4 0 0 0-2-3.46l-14-8a4 4 0 0 0-4 0l-14 8A4 4 0 0 0 6 16v16a4 4 0 0 0 2 3.46l14 8a4 4 0 0 0 4 0l14-8A4 4 0 0 0 42 32z"/>
-            <polyline points="6.54 13.92 24 24.02 41.46 13.92"/>
-            <line x1="24" y1="44.16" x2="24" y2="24"/>
-          </svg>
-          </span>
-        </div>
-        <div class="nv-card-body">
-          <h3 class="nv-card-title" data-i18n-html="idx_card_pc3d_title">PC 3D<br>Interactivo</h3>
-          <p class="nv-card-desc" data-i18n="idx_card_pc3d_desc">Arma y desarma un computador pieza por pieza en el visor 3D interactivo.</p>
-        </div>
-        <div class="nv-card-footer">
-          <span class="nv-card-cta" data-i18n="idx_card_cta">Explorar</span>
-          <span class="nv-card-arrow">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="3" y1="10" x2="17" y2="10"/>
-              <polyline points="11 4 17 10 11 16"/>
-            </svg>
-          </span>
-        </div>
-        <div class="nv-card-bar"></div>
-      </a>
+      
 
       <!-- Card: Reto de Redes -->
-      <a class="nv-card" href="redes_challenge/index.html">
-        <div class="nv-card-media">
-          <img src="assets/card-reto.jpg" alt="Cables Ethernet de colores conectados a un switch de red con las luces encendidas" loading="lazy" decoding="async">
-          <span class="nv-card-chip">
-          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="24" cy="16" r="12"/>
-            <path d="M30.95 25.78 34 44l-10-6-10 6 3.05-18.22"/>
-          </svg>
-          </span>
-        </div>
-        <div class="nv-card-body">
-          <h3 class="nv-card-title" data-i18n-html="idx_card_reto_title">Reto de<br>Redes</h3>
-          <p class="nv-card-desc" data-i18n="idx_card_reto_desc">Juega estilo Kahoot: responde contra el tiempo, compite en vivo y entra al TOP 5.</p>
-        </div>
-        <div class="nv-card-footer">
-          <span class="nv-card-cta" data-i18n="idx_card_cta">Explorar</span>
-          <span class="nv-card-arrow">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="3" y1="10" x2="17" y2="10"/>
-              <polyline points="11 4 17 10 11 16"/>
-            </svg>
-          </span>
-        </div>
-        <div class="nv-card-bar"></div>
-      </a>
+      
 
       <!-- Card: Taller de PC -->
-      <a class="nv-card" href="workshop/index.html">
+      <a class="nv-card" href="foro.html">
         <div class="nv-card-media">
           <img src="assets/card-taller.jpg" alt="Técnica trabajando con un portátil entre cables y equipos en un taller" loading="lazy" decoding="async">
           <span class="nv-card-chip">
@@ -450,8 +225,8 @@
           </span>
         </div>
         <div class="nv-card-body">
-          <h3 class="nv-card-title" data-i18n-html="idx_card_taller_title">Taller<br>de PC</h3>
-          <p class="nv-card-desc" data-i18n="idx_card_taller_desc">Simulador de armado de PC: compra piezas, atiende pedidos de clientes y enciende el equipo.</p>
+          <h3 class="nv-card-title" data-i18n-html="idx_card_taller_title">Foro<br>El Taller</h3>
+          <p class="nv-card-desc" data-i18n="idx_card_taller_desc">Pregunta tus dudas de los módulos y ayuda a los demás: la comunidad responde.</p>
         </div>
         <div class="nv-card-footer">
           <span class="nv-card-cta" data-i18n="idx_card_cta">Explorar</span>
@@ -466,47 +241,25 @@
       </a>
 
       <!-- Card: Seguridad digital -->
-      <a class="nv-card" href="pc3d.html#malware">
-        <div class="nv-card-media">
-          <img src="assets/card-seguridad.jpg" alt="Pantalla de computador con un escudo y la palabra Security: protección antivirus y seguridad digital" loading="lazy" decoding="async">
-          <span class="nv-card-chip">
-          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M24 3l16 6v11c0 10.5-6.5 17.5-16 21C14.5 37.5 8 30.5 8 20V9z"/>
-            <polyline points="17 24 22 29 31 19" stroke="#38bdf8" stroke-width="2"/>
-          </svg>
-          </span>
-        </div>
-        <div class="nv-card-body">
-          <h3 class="nv-card-title" data-i18n-html="idx_card_sec_title">Seguridad<br>digital</h3>
-          <p class="nv-card-desc" data-i18n="idx_card_sec_desc">Malware, virus y ransomware: cómo entran, qué señales dejan y cómo proteger tu equipo.</p>
-        </div>
-        <div class="nv-card-footer">
-          <span class="nv-card-cta" data-i18n="idx_card_cta">Explorar</span>
-          <span class="nv-card-arrow">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="3" y1="10" x2="17" y2="10"/>
-              <polyline points="11 4 17 10 11 16"/>
-            </svg>
-          </span>
-        </div>
-        <div class="nv-card-bar"></div>
-      </a>
+      
 
     </div>
   </section>
 
-  <section class="container" aria-label="Pregunta del día">
-    <div class="pd-card" id="pregunta-dia">
-      <p class="pd-kicker" data-i18n="pd_kicker">Cada día, una pregunta</p>
-    </div>
-  </section>
+  
 
-  <section class="container" aria-label="Reto de la semana">
-    <div class="pd-card reto-card" id="reto-semana"></div>
-  </section>
+  
 
   <!-- Fondo de pantalla NVISION para PC: la imagen se muestra y el botón solo la descarga -->
-  <section class="container wallpaper-section" aria-label="Fondo de pantalla NVISION">
+  
+  <section class="container" aria-label="Novedades">
+    <div class="nov-wrap">
+      <h2 class="section-title">Novedades</h2>
+      <p class="section-desc">Avisos del equipo NVISION.</p>
+      <div class="nov-list" id="avisos"></div>
+    </div>
+  </section>
+<section class="container wallpaper-section" aria-label="Fondo de pantalla NVISION">
     <div class="pd-card wallpaper-card">
       <p class="pd-kicker" data-i18n="wp_kicker">Para tu PC</p>
       <h3 data-i18n="wp_title">Fondo de pantalla NVISION</h3>
@@ -514,28 +267,47 @@
       <a class="btn-primary wallpaper-btn" href="assets/nvision-wallpaper.jpg" download="fondo-pantalla-nvision.jpg" data-i18n="wp_btn">Descargar fondo de pantalla</a>
     </div>
   </section>
+
+  <section class="container" id="comentarios" data-pagina="inicio" aria-label="Comentarios">
+    <div class="mejora-card">
+      <h2>Comentarios</h2>
+      <form class="comentarios-form">
+        <label class="mejora-label" for="com-nombre-inicio">Tu nombre</label>
+        <input class="mejora-input" id="com-nombre-inicio" name="nombre" type="text" maxlength="60" required>
+        <label class="mejora-label" for="com-mensaje-inicio">Tu comentario</label>
+        <textarea class="mejora-textarea" id="com-mensaje-inicio" name="mensaje" maxlength="500" required></textarea>
+        <button type="submit" class="tool-btn">Publicar comentario</button>
+      </form>
+      <div class="comentarios-lista"></div>
+    </div>
+  </section>
 </main>
 
   <!-- Footer -->
-  <footer class="site-footer">
+    <footer class="site-footer">
     <nav class="footer-nav" aria-label="Enlaces del sitio">
-      <a href="index.html" data-i18n="nav_home">Inicio</a>
-      <a href="ruta.html" data-i18n="nav_route">Ruta de aprendizaje</a>
-      <a href="examenes.html" data-i18n="nav_exams">Exámenes</a>
-      <a href="ranking.html" data-i18n="nav_ranking">Ranking</a>
-      <a href="verificar.html" data-i18n="nav_verificar">Verificar certificado</a>
-      <a href="privacidad.html" data-i18n="nav_privacidad">Privacidad</a>
+      <a href="index.html">Inicio</a>
+      <a href="hardware.html">Hardware</a>
+      <a href="redes.html">Redes</a>
+      <a href="mantenimiento.html">Mantenimiento</a>
+      <a href="foro.html">Foro</a>
+      <a href="pqr.html">PQR</a>
     </nav>
-    <p class="footer-contact" data-i18n-html="footer_contact">¿Dudas o sugerencias? Conoce el proyecto en su <a href="https://github.com/camilomirr/engl" target="_blank" rel="noopener">repositorio de GitHub</a> o gestiona tu cuenta en <a href="cuenta.html">Mi cuenta</a>.</p>
-    <p>© 2026 - <span data-i18n="footer_text">NVISION</span></p>
+    <p class="footer-contact">¿Dudas o sugerencias? Escríbenos desde la sección de <a href="pqr.html">PQR y contacto</a>.</p>
+    <p>© 2026 - <span>NVISION</span></p>
   </footer>
 
   <!-- Script interactivo bilingüe y menú móvil -->
-  <script src="js/main.js?v=144"></script>
-  <script src="js/site-search.js?v=85"></script>
-  <script src="js/analytics.js?v=1" defer></script>
-  <script src="js/pregunta.js?v=2"></script>
-  <script src="js/reto.js?v=2"></script>
-  <script src="js/foro-boton.js?v=3" defer></script>
+  
+  
+  
+  
+  
+  
+  <script src="frontend/js/interfaz.js"></script>
+  <script src="backend/config.js"></script>
+  <script src="backend/supabase.js"></script>
+  <script src="backend/avisos.js"></script>
+  <script src="backend/comentarios.js"></script>
 </body>
 </html>
