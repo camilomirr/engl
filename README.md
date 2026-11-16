@@ -38,13 +38,35 @@ los comentarios, los PQR y los avisos — nada de puntajes.
 ## Cómo se pone a funcionar
 
 Ya funciona: la base de datos está creada (proyecto `nvision-nuevo` en
-Supabase, esquema aplicado) y `backend/config.js` ya trae la conexión.
-Solo abre `index.html` en el navegador (o sirve la carpeta con cualquier
-servidor estático / GitHub Pages).
+Supabase, esquema aplicado) y la conexión ya viene puesta en
+`backend/config.js` y `backend/config.php`.
+
+El proyecto trae **las dos versiones de las páginas**, con el mismo
+diseño y la misma base de datos:
+
+- **En línea (`.html`):** la publicada en **https://nvision.social**
+  (GitHub Pages, repo `engl`). Las páginas `.html` se conectan a la
+  base desde el navegador con el backend JavaScript de `backend/`.
+- **Local con XAMPP (`.php`):** las mismas páginas en PHP
+  (`index.php`, `hardware.php`, `redes.php`, `mantenimiento.php`,
+  `foro.php`, `pqr.php`), con el backend PHP de `backend/`
+  (`config.php` + `bd.php`) y las partes comunes en `includes/`
+  (`header.php`, `footer.php`, comentarios). En esta versión el foro,
+  los comentarios, los avisos y el PQR se procesan en el servidor.
+
+### Para presentarlo local con XAMPP
+
+1. Instala XAMPP y abre su panel de control.
+2. Copia esta carpeta dentro de `C:\xampp\htdocs\` (por ejemplo,
+   `C:\xampp\htdocs\nvision`).
+3. Enciende **Apache** (Start) en el panel de XAMPP.
+4. Abre en el navegador: **http://localhost/nvision/index.php**
+   (si la carpeta quedó con otro nombre, usa ese nombre).
+5. Necesitas internet: la base de datos está en Supabase (la nube).
 
 Si algún día se crea otro proyecto de Supabase, el procedimiento está en
 `base-de-datos/README.md`: correr `esquema.sql` y cambiar los dos datos
-de `backend/config.js`.
+de conexión en `backend/config.js` y `backend/config.php`.
 
 ## Estructura
 

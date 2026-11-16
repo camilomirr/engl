@@ -112,10 +112,15 @@
   if (form) form.addEventListener("submit", async function (ev) {
     ev.preventDefault();
     try {
+      /* El select del diseño original trae valores en minúscula
+         (hardware, redes, software, wifi, otros); la base guarda
+         la etiqueta con su nombre bonito. Aquí se traduce. */
+      var mapaEtiqueta = { hardware: "Hardware", redes: "Redes", software: "Mantenimiento", wifi: "Redes", otros: "Otro" };
+      var etq = document.getElementById("foro-etiqueta").value;
       await BD.crear("foro_preguntas", {
         nombre: document.getElementById("foro-nombre").value.trim(),
         titulo: document.getElementById("foro-titulo").value.trim(),
-        etiqueta: document.getElementById("foro-etiqueta").value,
+        etiqueta: mapaEtiqueta[etq] || "Otro",
         mensaje: document.getElementById("foro-cuerpo").value.trim()
       });
       form.reset();

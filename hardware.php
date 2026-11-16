@@ -1,0 +1,591 @@
+<?php
+/* NVISION — versión PHP para XAMPP: comentarios de esta página. */
+$PAGINA_COMENTARIOS = 'hardware';
+require __DIR__ . '/includes/comentarios_ctrl.php';
+?>
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; img-src 'self' data: https://images.unsplash.com https://encrypted-tbn0.gstatic.com https://acf.geeknetic.es https://jensa.vtexassets.com https://www.esmero.com.co https://pisces.bbystatic.com https://placaschinas.com https://th.bing.com https://www.cyberpuerta.mx https://www.legionmac.com https://www.ntcompatible.com https://*.googleusercontent.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://xiuztrujrwdgcpjrruxu.supabase.co https://*.googleusercontent.com; media-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'">
+  <title data-i18n="page_title_hardware">NVISION - Hardware y Evolución</title>
+  <!-- Hojas de estilo modular -->
+  <link rel="stylesheet" href="frontend/css/styles.css?v=129">
+    <link rel="preload" as="image" href="assets/external/960px-2023_P_yta_g__wna_ASRock_A320M-DVS.jpg">
+    <link rel="preload" as="image" href="assets/external/960px-AMD_Ryzen_9_7900X.jpg">
+    <link rel="preload" as="image" href="assets/external/960px-RAM_Module__SDRAM-DDR4_.jpg">
+    <link rel="preload" as="image" href="assets/external/960px-2017_Dysk_SSD_Plextor_M8Pe_Y__256GB.jpg">
+    <link rel="preload" as="image" href="assets/external/960px-Ethernet_NIC_100Mbit_PCI.jpg">
+    <link rel="preload" as="image" href="assets/external/960px-ATX_Computer_power_supply_unit.jpg">
+    <link rel="preload" as="image" href="assets/external/960px-CPU_liquid_cooling_example.jpg">
+    <link rel="preload" as="image" href="assets/external/960px-Asus_Strix_RTX_4090_operational.jpg">
+    <link rel="preload" as="image" href="assets/external/960px-Sony_CRX310S-Internal-PC-DVD-Drive-Opened.jpg">
+  <!-- SEO, iconos y vista previa al compartir (Open Graph / Twitter) -->
+  <meta name="description" content="Hardware y evolución en NVISION: conoce los componentes de un computador, su historia y cómo han evolucionado, con explorador 3D interactivo.">
+  <meta name="theme-color" content="#f8fafc">
+  <link rel="canonical" href="https://nvision.social/hardware.php">
+  <link rel="icon" href="/favicon.ico?v=4" sizes="any">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=4">
+  <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png?v=4">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="NVISION">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="NVISION">
+  <meta property="og:locale" content="es_CO">
+  <meta property="og:title" content="NVISION - Hardware y Evolución">
+  <meta property="og:description" content="Hardware y evolución en NVISION: conoce los componentes de un computador, su historia y cómo han evolucionado, con explorador 3D interactivo.">
+  <meta property="og:url" content="https://nvision.social/hardware.php">
+  <meta property="og:image" content="https://nvision.social/assets/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="NVISION - Hardware y Evolución">
+  <meta name="twitter:description" content="Hardware y evolución en NVISION: conoce los componentes de un computador, su historia y cómo han evolucionado, con explorador 3D interactivo.">
+  <meta name="twitter:image" content="https://nvision.social/assets/og-image.jpg">
+</head>
+<body>
+
+  <!-- Encabezado y Barra de Navegación Adaptativa -->
+    <!-- Encabezado y Barra de Navegación Adaptativa -->
+  <?php include __DIR__ . '/includes/header.php'; ?>
+
+  <!-- Hero Section -->
+  <main>
+  <section class="container">
+      <h1 class="section-title"><span data-i18n="page_h1_hardware">Hardware y Evolución</span></h1>
+    </section>
+<section id="historia" class="container">
+      <h2 class="section-title">
+        <span class="mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></span> <span data-i18n="hist_title">Computadores Históricos (Antes de 1980)</span>
+      </h2>
+      <p class="section-desc" data-i18n="hist_desc">
+        Los primeros hitos de la computación que sentaron las bases para las redes y la microcomputación moderna.
+      </p>
+
+      <div class="timeline-container">
+        <!-- Item 1: ENIAC (Con detalle expandible / acordeón) -->
+        <article class="timeline-item timeline-expandable" id="eniac-card">
+          <div class="timeline-main-view">
+            <div class="timeline-img-wrap">
+              <img src="assets/external/Classic_shot_of_the_ENIAC.jpg" alt="ENIAC Computer" class="timeline-img" loading="eager" decoding="async">
+            </div>
+            <div class="timeline-body">
+              <div class="timeline-header">
+                <h3 data-i18n="eniac_title">ENIAC - Primer Computador Electrónico de Propósito General</h3>
+                <span class="timeline-year">1945</span>
+              </div>
+              <p data-i18n="eniac_desc">
+                Ocupaba una habitación entera y empleaba más de 17.000 válvulas de vacío. Fue crucial para el cálculo balístico y científico.
+              </p>
+              <div class="timeline-action-wrap">
+                <button type="button" class="btn-expand-history" id="toggle-eniac-btn" aria-expanded="false" aria-controls="eniac-detail-box">
+                  <span class="btn-expand-icon"><span class="mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg></span></span>
+                  <span class="btn-expand-text" data-i18n="btn_see_full_history">Ver historia completa y pioneros</span>
+                  <span class="expand-arrow mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cuadro desplegable con scroll vertical interno adaptativo -->
+          <div class="history-detail-panel" id="eniac-detail-box" hidden>
+            <div class="history-scroll-box">
+              <div class="detail-header-badge">
+                <span class="badge-tag" data-i18n="badge_origin">Hito Histórico Fundacional</span>
+                <span class="detail-time">1943 - 1946</span>
+              </div>
+
+              <h4 class="detail-section-heading" data-i18n="heading_how_created">¿Cómo y por qué nació el ENIAC?</h4>
+              <p class="detail-text" data-i18n="text_eniac_history_1">
+                Durante la Segunda Guerra Mundial, el ejército estadounidense enfrentaba la necesidad crítica de calcular con rapidez y precisión complejas tablas balísticas de tiro para artillería pesada. En 1943, el Laboratorio de Investigación Balística del Ejército financió en secreto el proyecto en la Moore School of Electrical Engineering de la Universidad de Pensilvania bajo el nombre clave <strong>Project PX</strong>.
+              </p>
+              <p class="detail-text" data-i18n="text_eniac_history_2">
+                Concluido formalmente en 1945 y presentado al público en febrero de 1946, el ENIAC (Electronic Numerical Integrator and Computer) pesaba más de 27 toneladas, ocupaba una superficie de 167 m², requería 150 kW de energía y constaba de más de 17.468 tubos de vacío, 7.200 diodos de cristal y 5 millones de uniones soldadas a mano.
+              </p>
+
+              <h4 class="detail-section-heading" data-i18n="heading_pioneers">Pioneros y Creadores Clave</h4>
+              <div class="pioneers-list">
+                <div class="pioneer-card">
+                  <div class="pioneer-info">
+                    <strong class="pioneer-name">John Mauchly</strong>
+                    <span class="pioneer-role" data-i18n="role_mauchly">Físico y Diseñador Conceptual Principal</span>
+                    <p data-i18n="desc_mauchly">Ideó la arquitectura electrónica básica tras comprender que los circuitos con válvulas podían realizar operaciones aritméticas a velocidades impensables para los relés mecánicos.</p>
+                  </div>
+                </div>
+
+                <div class="pioneer-card">
+                  <div class="pioneer-info">
+                    <strong class="pioneer-name">J. Presper Eckert</strong>
+                    <span class="pioneer-role" data-i18n="role_eckert">Ingeniero Eléctrico Jefe</span>
+                    <p data-i18n="desc_eckert">El genio detrás del diseño de ingeniería y la fiabilidad del hardware. Diseñó los circuitos que evitaron que los miles de tubos de vacío fallaran constantemente.</p>
+                  </div>
+                </div>
+
+                <div class="pioneer-card">
+                  <div class="pioneer-info">
+                    <strong class="pioneer-name" data-i18n="pioneers_programmers_title">Las 6 Programadoras Pioneras del ENIAC</strong>
+                    <span class="pioneer-role" data-i18n="role_programmers">Kay McNulty, Betty Jennings, Betty Snyder, Marlyn Wescoff, Ruth Lichterman y Frances Bilas</span>
+                    <p data-i18n="desc_programmers">Programaban el ENIAC sin lenguajes de programación ni sistemas operativos: configuraban a mano cientos de cables, paneles de conmutación y diagramas lógicos para calcular trayectorias balísticas.</p>
+                  </div>
+                </div>
+
+                <div class="pioneer-card">
+                  <div class="pioneer-info">
+                    <strong class="pioneer-name">John von Neumann</strong>
+                    <span class="pioneer-role" data-i18n="role_von_neumann">Consultor Matemático</span>
+                    <p data-i18n="desc_von_neumann">Se unió como consultor y, a partir del aprendizaje del ENIAC, formuló en 1945 el concepto de programa almacenado (Arquitectura Von Neumann) que hoy rige a casi todas las computadoras modernas.</p>
+                  </div>
+                </div>
+              </div>
+
+              <h4 class="detail-section-heading" data-i18n="heading_legacy">Impacto y Legado Tecnológico</h4>
+              <p class="detail-text" data-i18n="text_eniac_legacy">
+                El ENIAC demostró al mundo que el cálculo electrónico a gran escala era viable. Aunque no almacenaba el programa en memoria como hoy (se recableaba manualmente para cada tarea), redujo cálculos de balística de 20 horas a tan solo 30 segundos, abriendo la era digital moderna.
+              </p>
+            </div>
+          </div>
+        </article>
+
+        <!-- Item 2: IBM 7090 -->
+        <article class="timeline-item timeline-expandable" id="ibm7090-card">
+          <div class="timeline-main-view">
+            <div class="timeline-img-wrap">
+              <img src="assets/external/IBM_7090_computer.jpg" alt="IBM 7090 Computer" class="timeline-img" loading="eager" decoding="async">
+            </div>
+            <div class="timeline-body">
+              <div class="timeline-header">
+                <h3 data-i18n="ibm7090_title">IBM 7090 - Sistema Central Transistorizado</h3>
+                <span class="timeline-year">1959</span>
+              </div>
+              <p data-i18n="ibm7090_desc">
+                Reemplazó las válvulas de vacío por transistores, multiplicando por 6 la velocidad de cálculo y reduciendo el consumo eléctrico.
+              </p>
+              <div class="timeline-action-wrap">
+                <button type="button" class="btn-expand-history" data-target="ibm7090-detail-box" aria-expanded="false" aria-controls="ibm7090-detail-box">
+                  <span class="btn-expand-icon"><span class="mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg></span></span>
+                  <span class="btn-expand-text" data-i18n="btn_see_full_history">Ver historia completa y pioneros</span>
+                  <span class="expand-arrow mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cuadro desplegable con scroll vertical interno adaptativo (25rem de alto) -->
+          <div class="history-detail-panel" id="ibm7090-detail-box" hidden>
+            <div class="history-scroll-box">
+              <div class="detail-header-badge">
+                <span class="badge-tag" data-i18n="hw_ibm_badge">Mainframe de 2ª Generación</span>
+                <span class="detail-time">1958 - 1969</span>
+              </div>
+
+              <h4 class="detail-section-heading" data-i18n="hw_ibm_how_title">¿Cómo y por qué nació el IBM 7090?</h4>
+              <p class="detail-text" data-i18n="hw_ibm_how_text">
+                En plena Guerra Fría y con el auge del programa espacial estadounidense, la Fuerza Aérea de EE.UU. y agencias científicas requerían procesar señales de radar en tiempo real para el sistema de alerta temprana de misiles balísticos (BMEWS). IBM transformó su arquitectura previa basada en tubos (el IBM 709) reemplazando cada válvula por módulos de transistores miniaturizados, creando el computador científico comercial más poderoso de su época.
+              </p>
+
+              <h4 class="detail-section-heading" data-i18n="hw_tech_specs_title">Características Técnicas</h4>
+              <p class="detail-text" data-i18n="hw_ibm_specs_text">
+                Constaba de más de 50.000 transistores de germanio, operaba con palabras de 36 bits y una velocidad de ciclo de memoria de 2,18 microsegundos, capaz de ejecutar 229.000 instrucciones por segundo. Su memoria de núcleos magnéticos ofrecía 32.768 palabras (equivalente a unos 144 KB), reduciendo el consumo de energía y calentamiento drásticamente frente a las válvulas.
+              </p>
+
+              <h4 class="detail-section-heading" data-i18n="hw_ibm_team_title">Creador y Equipo de Diseño</h4>
+              <div class="pioneers-list">
+                <div class="pioneer-card">
+                  <div class="pioneer-info">
+                    <strong class="pioneer-name" data-i18n="hw_ibm_amdahl_name">Gene Amdahl & Equipo de Ingeniería de IBM</strong>
+                    <span class="pioneer-role" data-i18n="hw_ibm_amdahl_role">Arquitectura y Lógica Central</span>
+                    <p data-i18n="hw_ibm_amdahl_desc">Lideraron la transición de la computación electrónica de válvulas hacia los circuitos integrados discretos por transistores (SMS cards).</p>
+                  </div>
+                </div>
+                <div class="pioneer-card">
+                  <div class="pioneer-info">
+                    <strong class="pioneer-name">Thomas J. Watson Jr.</strong>
+                    <span class="pioneer-role" data-i18n="hw_ibm_watson_role">Director Ejecutivo de IBM</span>
+                    <p data-i18n="hw_ibm_watson_desc">Impulsó la millonaria inversión de la compañía para sustituir definitivamente la tecnología de bulbos por transistores de estado sólido.</p>
+                  </div>
+                </div>
+              </div>
+
+              <h4 class="detail-section-heading" data-i18n="hw_milestones_title">Hitos y Cosas Importantes</h4>
+              <p class="detail-text" data-i18n="hw_ibm_milestones_text">
+                Fue la computadora utilizada por la NASA en los programas espaciales Mercury y Gemini para calcular las órbitas de los primeros astronautas estadounidenses, incluidos John Glenn. Además, fue el sistema pionero en el desarrollo de lenguajes como FORTRAN y LISP, y en él se creó la primera versión de síntesis de voz por computadora ("Daisy Bell") en los laboratorios Bell.
+              </p>
+            </div>
+          </div>
+        </article>
+
+        <!-- Item 3: Altair 8800 -->
+        <article class="timeline-item timeline-expandable" id="altair-card">
+          <div class="timeline-main-view">
+            <div class="timeline-img-wrap">
+              <img src="assets/external/Altair_8800_Computer.jpg" alt="Altair 8800 Microcomputer" class="timeline-img" loading="eager" decoding="async">
+            </div>
+            <div class="timeline-body">
+              <div class="timeline-header">
+                <h3 data-i18n="altair_title">Altair 8800 - Primer Microcomputador Comercial</h3>
+                <span class="timeline-year">1974</span>
+              </div>
+              <p data-i18n="altair_desc">
+                Basado en el procesador Intel 8080. Dio origen al software de microcomputadoras y al inicio de la informática personal.
+              </p>
+              <div class="timeline-action-wrap">
+                <button type="button" class="btn-expand-history" data-target="altair-detail-box" aria-expanded="false" aria-controls="altair-detail-box">
+                  <span class="btn-expand-icon"><span class="mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg></span></span>
+                  <span class="btn-expand-text" data-i18n="btn_see_full_history">Ver historia completa y pioneros</span>
+                  <span class="expand-arrow mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cuadro desplegable con scroll vertical interno adaptativo (25rem de alto) -->
+          <div class="history-detail-panel" id="altair-detail-box" hidden>
+            <div class="history-scroll-box">
+              <div class="detail-header-badge">
+                <span class="badge-tag" data-i18n="hw_altair_badge">Génesis del Microcomputador</span>
+                <span class="detail-time">1974 - 1975</span>
+              </div>
+
+              <h4 class="detail-section-heading" data-i18n="hw_altair_how_title">¿Cómo y por qué nació el Altair 8800?</h4>
+              <p class="detail-text" data-i18n-html="hw_altair_how_text">
+                La pequeña empresa MITS (Micro Instrumentation and Telemetry Systems) en Albuquerque, Nuevo México, estaba al borde de la quiebra vendiendo kits de calculadoras. Al conocer el nuevo microprocesador Intel 8080 de 8 bits, decidieron crear un computador en kit asequible para aficionados a la electrónica por menos de 400 dólares, presentándolo en la portada de la revista <em>Popular Electronics</em> de enero de 1975.
+              </p>
+
+              <h4 class="detail-section-heading" data-i18n="hw_tech_specs_title">Características Técnicas</h4>
+              <p class="detail-text" data-i18n="hw_altair_specs_text">
+                Montaba el CPU Intel 8080 a 2 MHz con apenas 256 bytes de memoria RAM básica (expandible a 64 KB). No incluía teclado, monitor ni almacenamiento: se programaba manualmente introduciendo código binario interruptor por interruptor en el panel frontal y leyendo las respuestas a través de luces LED parpadeantes.
+              </p>
+
+              <h4 class="detail-section-heading" data-i18n="hw_altair_creators_title">Creador y Pioneros</h4>
+              <div class="pioneers-list">
+                <div class="pioneer-card">
+                  <div class="pioneer-info">
+                    <strong class="pioneer-name">Ed Roberts</strong>
+                    <span class="pioneer-role" data-i18n="hw_altair_roberts_role">Fundador de MITS y Creador del Altair</span>
+                    <p data-i18n="hw_altair_roberts_desc">Médico e ingeniero considerado el 'padre del computador personal'. Diseñó el sistema y el legendario bus de expansión S-100.</p>
+                  </div>
+                </div>
+                <div class="pioneer-card">
+                  <div class="pioneer-info">
+                    <strong class="pioneer-name" data-i18n="hw_altair_gates_name">Bill Gates y Paul Allen</strong>
+                    <span class="pioneer-role" data-i18n="hw_altair_gates_role">Desarrolladores de Altair BASIC</span>
+                    <p data-i18n="hw_altair_gates_desc">Escribieron el primer intérprete BASIC para el Altair 8800, hito que los llevó a fundar formalmente Micro-Soft en 1975.</p>
+                  </div>
+                </div>
+              </div>
+
+              <h4 class="detail-section-heading" data-i18n="hw_milestones_title">Hitos y Cosas Importantes</h4>
+              <p class="detail-text" data-i18n="hw_altair_milestones_text">
+                El Altair 8800 desató la revolución del software y hardware abierto: motivó la creación del Homebrew Computer Club en Silicon Valley (donde Steve Wozniak diseñó el Apple I), definió el bus S-100 como estándar industrial y demostró que una persona común podía poseer su propia computadora.
+              </p>
+            </div>
+          </div>
+        </article>
+
+        <!-- Item 4: Apple II -->
+        <article class="timeline-item timeline-expandable" id="apple2-card">
+          <div class="timeline-main-view">
+            <div class="timeline-img-wrap">
+              <img src="assets/external/Apple-II.jpg" alt="Apple II Computer" class="timeline-img" loading="eager" decoding="async">
+            </div>
+            <div class="timeline-body">
+              <div class="timeline-header">
+                <h3 data-i18n="apple2_title">Apple II - Microcomputador Personal Integrado</h3>
+                <span class="timeline-year">1977</span>
+              </div>
+              <p data-i18n="apple2_desc">
+                Uno de los primeros microcomputadores producidos en masa con teclado integrado, gráficos a color y ranuras de expansión.
+              </p>
+              <div class="timeline-action-wrap">
+                <button type="button" class="btn-expand-history" data-target="apple2-detail-box" aria-expanded="false" aria-controls="apple2-detail-box">
+                  <span class="btn-expand-icon"><span class="mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg></span></span>
+                  <span class="btn-expand-text" data-i18n="btn_see_full_history">Ver historia completa y pioneros</span>
+                  <span class="expand-arrow mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cuadro desplegable con scroll vertical interno adaptativo (25rem de alto) -->
+          <div class="history-detail-panel" id="apple2-detail-box" hidden>
+            <div class="history-scroll-box">
+              <div class="detail-header-badge">
+                <span class="badge-tag" data-i18n="hw_apple_badge">Computación Personal de Consumo</span>
+                <span class="detail-time">1977 - 1993</span>
+              </div>
+
+              <h4 class="detail-section-heading" data-i18n="hw_apple_how_title">¿Cómo y por qué nació el Apple II?</h4>
+              <p class="detail-text" data-i18n="hw_apple_how_text">
+                Tras el éxito artesanal del Apple I en placas sin chasis ni teclado, Steve Wozniak y Steve Jobs concibieron una computadora completamente integrada, lista para usar nada más sacarla de la caja por cualquier usuario, sin necesidad de saber electrónica. Fue presentada en la feria West Coast Computer Faire en abril de 1977.
+              </p>
+
+              <h4 class="detail-section-heading" data-i18n="hw_tech_specs_title">Características Técnicas</h4>
+              <p class="detail-text" data-i18n="hw_apple_specs_text">
+                Equipado con el microprocesador MOS Technology 6502 a 1,023 MHz, entre 4 KB y 48 KB de memoria RAM, teclado integrado en un gabinete de plástico beige moldeado, sonido integrado, ROM con Integer BASIC y una controladora de video capaz de generar gráficos a color en un televisor estándar. Incluía 8 ranuras internas de expansión (slots).
+              </p>
+
+              <h4 class="detail-section-heading" data-i18n="hw_apple_creators_title">Creadores Clave</h4>
+              <div class="pioneers-list">
+                <div class="pioneer-card">
+                  <div class="pioneer-info">
+                    <strong class="pioneer-name">Steve Wozniak (Woz)</strong>
+                    <span class="pioneer-role" data-i18n="hw_apple_wozniak_role">Ingeniero y Diseñador de Hardware</span>
+                    <p data-i18n="hw_apple_wozniak_desc">Diseñó por completo los circuitos electrónicos, la arquitectura de video en color y la ultra-eficiente controladora de disquete Disk II.</p>
+                  </div>
+                </div>
+                <div class="pioneer-card">
+                  <div class="pioneer-info">
+                    <strong class="pioneer-name">Steve Jobs</strong>
+                    <span class="pioneer-role" data-i18n="hw_apple_jobs_role">Visión de Producto y Diseño</span>
+                    <p data-i18n="hw_apple_jobs_desc">Insistió en que tuviese una estética de electrodoméstico amigable con chasis plástico sin ventilador ruidoso para el hogar y la escuela.</p>
+                  </div>
+                </div>
+              </div>
+
+              <h4 class="detail-section-heading" data-i18n="hw_milestones_title">Hitos y Cosas Importantes</h4>
+              <p class="detail-text" data-i18n-html="hw_apple_milestones_text">
+                El Apple II transformó la computación de un pasatiempo de ingenieros a una herramienta masiva en hogares, escuelas y negocios. En 1979 se lanzó para Apple II la hoja de cálculo <em>VisiCalc</em>, la primera 'killer application' de la historia que catapultó la venta de computadores personales en el sector corporativo.
+              </p>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+<section id="componentes" class="container">
+      <h2 class="section-title">
+        <span class="mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></span> <span data-i18n="comp_title">Componentes de un Computador</span>
+      </h2>
+      <p class="section-desc" data-i18n="comp_desc">
+        Los pilares del hardware que permiten procesar datos, ejecutar programas y comunicarse en red.
+      </p>
+
+      <div class="components-grid">
+        <!-- Tarjeta Madre -->
+        <div class="component-card" id="card-mb">
+          <span class="card-icon mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="2"></rect><rect x="6" y="6" width="4" height="4"></rect><path d="M14 6h4M14 10h4M6 14h4M6 18h4M14 14h4v4h-4z"></path></svg></span>
+          <h3 class="card-title" data-i18n="mb_title">Placa Madre (Motherboard)</h3>
+          <span class="card-detail" data-i18n="mb_sub">Conectividad & Buses</span>
+          <p data-i18n="mb_desc">
+            El circuito principal que interconecta el procesador, memorias, tarjetas de red y dispositivos de almacenamiento.
+          </p>
+          <button type="button" class="btn-component-expand" data-target="box-mb" aria-expanded="false">
+            <span class="comp-btn-icon"><span class="mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg></span></span>
+            <span class="comp-btn-text" data-i18n="btn_view_component_img">Ver imagen e info</span>
+            <span class="comp-arrow mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+          </button>
+          <div class="component-detail-box" id="box-mb" hidden>
+            <div class="component-scroll-content">
+              <div class="component-img-frame">
+                <img src="assets/external/960px-2023_P_yta_g__wna_ASRock_A320M-DVS.jpg" alt="Motherboard circuitry" loading="eager" class="component-img" decoding="async">
+              </div>
+              <span class="component-caption" data-i18n="caption_mb">Esquema y pistas de circuito en una placa base para interconectar CPU, ranuras PCIe, RAM y chipset.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CPU -->
+        <div class="component-card" id="card-cpu">
+          <span class="card-icon mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="16" height="16" rx="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="15" x2="23" y2="15"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="15" x2="4" y2="15"></line></svg></span>
+          <h3 class="card-title" data-i18n="cpu_title">Procesador (CPU)</h3>
+          <span class="card-detail" data-i18n="cpu_sub">Unidad Central de Procesamiento</span>
+          <p data-i18n="cpu_desc">
+            El cerebro del sistema encargado de ejecutar instrucciones, realizar cálculos lógicos y coordinar periféricos.
+          </p>
+          <button type="button" class="btn-component-expand" data-target="box-cpu" aria-expanded="false">
+            <span class="comp-btn-icon"><span class="mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg></span></span>
+            <span class="comp-btn-text" data-i18n="btn_view_component_img">Ver imagen e info</span>
+            <span class="comp-arrow mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+          </button>
+          <div class="component-detail-box" id="box-cpu" hidden>
+            <div class="component-scroll-content">
+              <div class="component-img-frame">
+                <img src="assets/external/960px-AMD_Ryzen_9_7900X.jpg" alt="CPU Processor" loading="eager" class="component-img" decoding="async">
+              </div>
+              <span class="component-caption" data-i18n="caption_cpu">Microprocesador de alto rendimiento montado con pines de contacto para socket de CPU.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Memoria RAM -->
+        <div class="component-card" id="card-ram">
+          <span class="card-icon mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="10" rx="1"></rect><line x1="6" y1="17" x2="6" y2="20"></line><line x1="10" y1="17" x2="10" y2="20"></line><line x1="14" y1="17" x2="14" y2="20"></line><line x1="18" y1="17" x2="18" y2="20"></line><rect x="5" y="10" width="3" height="4"></rect><rect x="10" y="10" width="3" height="4"></rect><rect x="15" y="10" width="3" height="4"></rect></svg></span>
+          <h3 class="card-title" data-i18n="ram_title">Memoria RAM</h3>
+          <span class="card-detail" data-i18n="ram_sub">Memoria de Acceso Aleatorio</span>
+          <p data-i18n="ram_desc">
+            Almacenamiento de alta velocidad y temporal donde se cargan los programas en ejecución y los búferes de red.
+          </p>
+          <button type="button" class="btn-component-expand" data-target="box-ram" aria-expanded="false">
+            <span class="comp-btn-icon"><span class="mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg></span></span>
+            <span class="comp-btn-text" data-i18n="btn_view_component_img">Ver imagen e info</span>
+            <span class="comp-arrow mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+          </button>
+          <div class="component-detail-box" id="box-ram" hidden>
+            <div class="component-scroll-content">
+              <div class="component-img-frame">
+                <img src="assets/external/960px-RAM_Module__SDRAM-DDR4_.jpg" alt="RAM Memory Module" loading="eager" class="component-img" decoding="async">
+              </div>
+              <span class="component-caption" data-i18n="caption_ram">Módulo de memoria DDR para transferencia de datos en tiempo real entre programas y el procesador.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Almacenamiento -->
+        <div class="component-card" id="card-storage">
+          <span class="card-icon mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="22" y1="12" x2="2" y2="12"></line><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path><line x1="6" y1="16" x2="6.01" y2="16"></line><line x1="10" y1="16" x2="10.01" y2="16"></line></svg></span>
+          <h3 class="card-title" data-i18n="storage_title">Almacenamiento (SSD / HDD)</h3>
+          <span class="card-detail" data-i18n="storage_sub">Persistencia de Datos</span>
+          <p data-i18n="storage_desc">
+            Memoria persistente donde se almacena el sistema operativo, controladores, datos y servicios de red.
+          </p>
+          <button type="button" class="btn-component-expand" data-target="box-storage" aria-expanded="false">
+            <span class="comp-btn-icon"><span class="mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg></span></span>
+            <span class="comp-btn-text" data-i18n="btn_view_component_img">Ver imagen e info</span>
+            <span class="comp-arrow mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+          </button>
+          <div class="component-detail-box" id="box-storage" hidden>
+            <div class="component-scroll-content">
+              <div class="component-img-frame">
+                <img src="assets/external/960px-2017_Dysk_SSD_Plextor_M8Pe_Y__256GB.jpg" alt="Internal Hard Disk Drive" loading="eager" class="component-img" decoding="async">
+              </div>
+              <span class="component-caption" data-i18n="caption_storage">Unidad de almacenamiento para retención permanente de archivos del sistema y servicios.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Adaptador de Red (NIC) -->
+        <div class="component-card" id="card-nic">
+          <span class="card-icon mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="6" width="20" height="12" rx="2"></rect><circle cx="6" cy="12" r="1.5"></circle><circle cx="12" cy="12" r="1.5"></circle><line x1="16" y1="10" x2="18" y2="10"></line><line x1="16" y1="14" x2="18" y2="14"></line></svg></span>
+          <h3 class="card-title" data-i18n="nic_title">Adaptador de Red (NIC)</h3>
+          <span class="card-detail" data-i18n="nic_sub">Interfaz LAN / WLAN</span>
+          <p data-i18n="nic_desc">
+            Hardware clave en estructura de redes para conectar el host a redes Ethernet LAN o inalámbricas Wi-Fi.
+          </p>
+          <button type="button" class="btn-component-expand" data-target="box-nic" aria-expanded="false">
+            <span class="comp-btn-icon"><span class="mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg></span></span>
+            <span class="comp-btn-text" data-i18n="btn_view_component_img">Ver imagen e info</span>
+            <span class="comp-arrow mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+          </button>
+          <div class="component-detail-box" id="box-nic" hidden>
+            <div class="component-scroll-content">
+              <div class="component-img-frame">
+                <img src="assets/external/960px-Ethernet_NIC_100Mbit_PCI.jpg" alt="Network Interface Port and RJ45" loading="eager" class="component-img" decoding="async">
+              </div>
+              <span class="component-caption" data-i18n="caption_nic">Puerto de red cableada RJ-45 Ethernet conectando la controladora NIC con el medio físico LAN.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Fuente de Poder -->
+        <div class="component-card" id="card-psu">
+          <span class="card-icon mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="12" cy="12" r="4"></circle><line x1="12" y1="8" x2="12" y2="12"></line></svg></span>
+          <h3 class="card-title" data-i18n="psu_title">Fuente de Poder (PSU)</h3>
+          <span class="card-detail" data-i18n="psu_sub">Distribución Eléctrica</span>
+          <p data-i18n="psu_desc">
+            Convierte la corriente alterna en los voltajes continuos que alimentan con estabilidad a cada circuito del equipo.
+          </p>
+          <button type="button" class="btn-component-expand" data-target="box-psu" aria-expanded="false">
+            <span class="comp-btn-icon"><span class="mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg></span></span>
+            <span class="comp-btn-text" data-i18n="btn_view_component_img">Ver imagen e info</span>
+            <span class="comp-arrow mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+          </button>
+          <div class="component-detail-box" id="box-psu" hidden>
+            <div class="component-scroll-content">
+              <div class="component-img-frame">
+                <img src="assets/external/960px-ATX_Computer_power_supply_unit.jpg" alt="Power Supply and PC Hardware" loading="eager" class="component-img" decoding="async">
+              </div>
+              <span class="component-caption" data-i18n="caption_psu">Unidad de alimentación y refrigeración eléctrica para suministrar energía a los componentes internos.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Refrigeración Líquida (AIO Cooler) -->
+        <div class="component-card" id="card-cooling">
+          <span class="card-icon mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"></circle><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6L5.6 18.4"></path></svg></span>
+          <h3 class="card-title" data-i18n="cooling_title">Refrigeración Líquida (AIO Liquid Cooler)</h3>
+          <span class="card-detail" data-i18n="cooling_sub">Disipación Térmica & Control de Temperatura</span>
+          <p data-i18n="cooling_desc">
+            Disipa el calor extremo generado por el procesador (CPU) mediante un circuito cerrado de líquido refrigerante, radiador y ventiladores de alta presión estática.
+          </p>
+          <button type="button" class="btn-component-expand" data-target="box-cooling" aria-expanded="false">
+            <span class="comp-btn-icon"><span class="mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg></span></span>
+            <span class="comp-btn-text" data-i18n="btn_view_component_img">Ver imagen e info</span>
+            <span class="comp-arrow mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+          </button>
+          <div class="component-detail-box" id="box-cooling" hidden>
+            <div class="component-scroll-content">
+              <div class="component-img-frame">
+                <img src="assets/external/960px-CPU_liquid_cooling_example.jpg" alt="Corsair AIO Liquid CPU Cooler" loading="eager" class="component-img" decoding="async">
+              </div>
+              <span class="component-caption" data-i18n="caption_cooling">Sistema AIO con bloque de bomba con iluminación RGB sobre el socket de la CPU, mangueras trenzadas y radiador de doble ventilador para evitar estrangulamiento térmico (thermal throttling).</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tarjeta Gráfica Dedicada (GPU) -->
+        <div class="component-card" id="card-gpu">
+          <span class="card-icon mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="2"></rect><circle cx="8" cy="12" r="3"></circle><circle cx="16" cy="12" r="3"></circle><path d="M2 9h20M2 15h20"></path></svg></span>
+          <h3 class="card-title" data-i18n="gpu_title">Tarjeta Gráfica (GPU)</h3>
+          <span class="card-detail" data-i18n="gpu_sub">Procesamiento Gráfico & Paralelo</span>
+          <p data-i18n="gpu_desc">
+            Circuito dedicado de alto rendimiento para el renderizado 3D acelerado, modelado por computadora, inteligencia artificial y cálculo intensivo.
+          </p>
+          <button type="button" class="btn-component-expand" data-target="box-gpu" aria-expanded="false">
+            <span class="comp-btn-icon"><span class="mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg></span></span>
+            <span class="comp-btn-text" data-i18n="btn_view_component_img">Ver imagen e info</span>
+            <span class="comp-arrow mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+          </button>
+          <div class="component-detail-box" id="box-gpu" hidden>
+            <div class="component-scroll-content">
+              <div class="component-img-frame">
+                <img src="assets/external/960px-Asus_Strix_RTX_4090_operational.jpg" alt="Dedicated Graphics Processing Unit GPU" loading="eager" class="component-img" decoding="async">
+              </div>
+              <span class="component-caption" data-i18n="caption_gpu">Tarjeta gráfica para ranura PCIe con disipador térmico masivo, ventiladores axiales y memoria de video dedicada VRAM GDDR6X para renderizado y aceleración por hardware.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Unidad Óptica (CD / DVD / Blu-ray) -->
+        <div class="component-card" id="card-optical">
+          <span class="card-icon mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle></svg></span>
+          <h3 class="card-title" data-i18n="optical_title">Unidad de Disco Óptico (ODD)</h3>
+          <span class="card-detail" data-i18n="optical_sub">Medio Extraíble & Láser Óptico</span>
+          <p data-i18n="optical_desc">
+            Dispositivo de almacenamiento que utiliza diodos láser de luz infrarroja o azul para leer y escribir datos en discos compactos CD, DVD y Blu-ray.
+          </p>
+          <button type="button" class="btn-component-expand" data-target="box-optical" aria-expanded="false">
+            <span class="comp-btn-icon"><span class="mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg></span></span>
+            <span class="comp-btn-text" data-i18n="btn_view_component_img">Ver imagen e info</span>
+            <span class="comp-arrow mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+          </button>
+          <div class="component-detail-box" id="box-optical" hidden>
+            <div class="component-scroll-content">
+              <div class="component-img-frame">
+                <img src="assets/external/960px-Sony_CRX310S-Internal-PC-DVD-Drive-Opened.jpg" alt="Unidad Optica de Disco CD DVD" data-i18n-alt="hw_optical_alt" loading="eager" class="component-img" decoding="async">
+              </div>
+              <span class="component-caption" data-i18n="caption_optical">Lector y grabador de discos ópticos con mecanismo interno de bandeja, servomotor y cabezal láser de lectura óptica para distribución de software y copias de seguridad.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+  
+  <?php include __DIR__ . '/includes/comentarios.php'; ?>
+</main>
+
+  <!-- Footer -->
+    <?php include __DIR__ . '/includes/footer.php'; ?>
+
+  <!-- Script interactivo bilingüe y menú móvil -->
+  
+  
+  
+  
+  <script src="frontend/js/interfaz.js"></script>
+</body>
+</html>
