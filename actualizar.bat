@@ -3,12 +3,13 @@ chcp 65001 >nul
 setlocal EnableDelayedExpansion
 REM ============================================================
 REM  NVISION - Actualizar la copia local desde GitHub
-REM  Version 3: antes de bajar nada, pregunta a GitHub si hay
-REM  un commit nuevo. Si no hay, no baja ni escribe NADA. Si
-REM  hay cambios, compara archivo por archivo por su CONTENIDO
-REM  (no por la fecha) y solo escribe los que cambiaron.
+REM  Version 4: usa Git si el PC lo tiene, instalado o PORTABLE
+REM  (carpeta git-portable en tu usuario, sin permisos de
+REM  administrador). Con Git, actualizar es hacer pull: solo
+REM  baja lo que cambio. Sin Git, usa el ZIP con comparacion
+REM  por contenido. Antes de bajar nada, pregunta a GitHub si
+REM  hay un commit nuevo; si no hay, no baja ni escribe NADA.
 REM  Repositorio: https://github.com/camilomirr/engl
-REM  No necesita permisos de administrador.
 REM ============================================================
 
 REM Direccion del repo y de su ZIP completo (respaldo sin Git).
@@ -53,19 +54,30 @@ if exist "%MARCADOR%" set /p SHA_LOCAL=<"%MARCADOR%"
 if defined SHAREMOTO if "%SHAREMOTO%"=="%SHA_LOCAL%" if exist "%DEST%\tienda.php" goto AlDia
 
 REM ------------------------------------------------------------
-REM  Obtener los cambios: con Git si el PC lo tiene (solo baja
-REM  lo que cambio); si no, con el ZIP completo.
+REM  Buscar Git: primero el PORTABLE de tu carpeta de usuario,
+REM  despues uno instalado en el sistema. Si no hay ninguno,
+REM  se trabaja con el ZIP.
 REM ------------------------------------------------------------
-where git >nul 2>nul
-if errorlevel 1 goto ModoZip
+set "GIT="
+if exist "%USERPROFILE%\git-portable\cmd\git.exe" (
+  set "GIT=%USERPROFILE%\git-portable\cmd\git.exe"
+  set "MODO=Git portable"
+) else (
+  where git >nul 2>nul
+  if not errorlevel 1 (
+    set "GIT=git"
+    set "MODO=Git"
+  )
+)
+if not defined GIT goto ModoZip
 
-REM Modo Git: si el espejo ya es un clon, pull; si no, se clona.
-set "MODO=Git"
+REM Modo Git: si el espejo ya es un clon, pull (solo baja lo
+REM que cambio); si no, se clona la primera vez.
 if exist "%ESPEJO%\.git" (
-  git -C "%ESPEJO%" pull --quiet
+  "%GIT%" -C "%ESPEJO%" pull --quiet
 ) else (
   if exist "%ESPEJO%" rmdir /s /q "%ESPEJO%"
-  git clone --depth 1 --quiet %REPO% "%ESPEJO%"
+  "%GIT%" clone --depth 1 --quiet %REPO% "%ESPEJO%"
 )
 if errorlevel 1 (
   echo.
