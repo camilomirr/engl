@@ -3,11 +3,11 @@ chcp 65001 >nul
 setlocal EnableDelayedExpansion
 REM ============================================================
 REM  NVISION - Actualizar la copia local desde GitHub
-REM  Version 2: actualizacion INCREMENTAL. Solo se baja y se
-REM  escribe lo que cambio desde la ultima vez; lo demas no
-REM  se toca. Doble clic y la carpeta del proyecto en tu
-REM  XAMPP queda al dia con el repositorio:
-REM  https://github.com/camilomirr/engl
+REM  Version 3: antes de bajar nada, pregunta a GitHub si hay
+REM  un commit nuevo. Si no hay, no baja ni escribe NADA. Si
+REM  hay cambios, compara archivo por archivo por su CONTENIDO
+REM  (no por la fecha) y solo escribe los que cambiaron.
+REM  Repositorio: https://github.com/camilomirr/engl
 REM  No necesita permisos de administrador.
 REM ============================================================
 
@@ -32,8 +32,10 @@ if exist "%DEST%\.escribible" (
 )
 
 REM Carpeta espejo: aqui queda guardado el repo en este PC.
-REM La primera vez se baja completo; despues solo los cambios.
 set "ESPEJO=%USERPROFILE%\nvision-repo"
+
+REM Archivo marcador: guarda el ultimo commit ya sincronizado.
+set "MARCADOR=%USERPROFILE%\.nvision-commit"
 
 echo.
 echo Actualizando NVISION desde GitHub...
@@ -41,8 +43,18 @@ echo Carpeta local: %DEST%
 echo.
 
 REM ------------------------------------------------------------
+REM  Consulta rapida a GitHub: cual es el ultimo commit.
+REM  Si es el mismo de la ultima vez, no hay nada que hacer.
+REM ------------------------------------------------------------
+set "SHAREMOTO="
+for /f "delims=" %%S in ('powershell -NoProfile -ExecutionPolicy Bypass -Command "(Invoke-RestMethod -Uri 'https://api.github.com/repos/camilomirr/engl/commits/main' -UseBasicParsing).sha"') do set "SHAREMOTO=%%S"
+set "SHA_LOCAL="
+if exist "%MARCADOR%" set /p SHA_LOCAL=<"%MARCADOR%"
+if defined SHAREMOTO if "%SHAREMOTO%"=="%SHA_LOCAL%" if exist "%DEST%\tienda.php" goto AlDia
+
+REM ------------------------------------------------------------
 REM  Obtener los cambios: con Git si el PC lo tiene (solo baja
-REM  lo que cambio); si no, con el ZIP completo de siempre.
+REM  lo que cambio); si no, con el ZIP completo.
 REM ------------------------------------------------------------
 where git >nul 2>nul
 if errorlevel 1 goto ModoZip
@@ -62,6 +74,7 @@ if errorlevel 1 (
   pause
   exit /b 1
 )
+set "SRC=%ESPEJO%"
 goto Copiar
 
 :ModoZip
@@ -84,28 +97,34 @@ if errorlevel 1 (
   pause
   exit /b 1
 )
+set "SRC=%ESPEJO%"
 
 :Copiar
 REM ------------------------------------------------------------
-REM  Copia incremental con robocopy (viene con Windows): solo
-REM  escribe los archivos nuevos o cambiados; los que estan
-REM  iguales ni se tocan. Se copia solo el proyecto PHP: las
-REM  paginas, includes, frontend, assets, la base de datos y
-REM  del backend unicamente los .php.
+REM  Copia por CONTENIDO: se compara la huella (hash) de cada
+REM  archivo del espejo con la del que ya esta en la carpeta
+REM  local; solo se copian los nuevos o diferentes, y al final
+REM  se dice cuantos archivos se actualizaron. Se copia solo
+REM  el proyecto PHP: paginas, includes, frontend, assets, la
+REM  base de datos y del backend unicamente los .php.
 REM ------------------------------------------------------------
-robocopy "%ESPEJO%" "%DEST%" *.php /NJH /NJS /NDL /NFL /NC /NS /NP /R:1 /W:1 >nul
-robocopy "%ESPEJO%\includes" "%DEST%\includes" /E /NJH /NJS /NDL /NFL /NC /NS /NP /R:1 /W:1 >nul
-robocopy "%ESPEJO%\frontend" "%DEST%\frontend" /E /NJH /NJS /NDL /NFL /NC /NS /NP /R:1 /W:1 >nul
-robocopy "%ESPEJO%\base-de-datos" "%DEST%\base-de-datos" /E /NJH /NJS /NDL /NFL /NC /NS /NP /R:1 /W:1 >nul
-robocopy "%ESPEJO%\assets" "%DEST%\assets" /E /NJH /NJS /NDL /NFL /NC /NS /NP /R:1 /W:1 >nul
-robocopy "%ESPEJO%\backend" "%DEST%\backend" *.php /NJH /NJS /NDL /NFL /NC /NS /NP /R:1 /W:1 >nul
-if errorlevel 8 (
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$src = $env:SRC; $dst = $env:DEST; $lista = @(); $lista += Get-ChildItem (Join-Path $src '*.php') -File; $lista += Get-ChildItem (Join-Path $src 'includes') -Recurse -File; $lista += Get-ChildItem (Join-Path $src 'frontend') -Recurse -File; $lista += Get-ChildItem (Join-Path $src 'base-de-datos') -Recurse -File; $lista += Get-ChildItem (Join-Path $src 'assets') -Recurse -File; $lista += Get-ChildItem (Join-Path $src 'backend\*.php') -File; $n = 0; foreach ($f in $lista) { $rel = $f.FullName.Substring($src.Length).TrimStart('\'); $d = Join-Path $dst $rel; if ((Test-Path $d) -and ((Get-FileHash $f.FullName).Hash -eq (Get-FileHash $d).Hash)) { continue }; New-Item -ItemType Directory -Force -Path (Split-Path $d) | Out-Null; Copy-Item $f.FullName $d -Force; $n++ }; Write-Host ('Archivos actualizados: ' + $n)"
+if errorlevel 1 (
   echo.
   echo ERROR: algo fallo copiando los archivos.
   pause
   exit /b 1
 )
 
+REM Se anota el commit sincronizado para la proxima vez.
+if defined SHAREMOTO echo %SHAREMOTO%> "%MARCADOR%"
+goto PasoBD
+
+:AlDia
+set "MODO=Ninguno, ya estaba al dia"
+echo Ya tienes la ultima version: no bajo ni escribio nada.
+
+:PasoBD
 REM Paso final, solo si hace falta: si XAMPP esta en la ruta
 REM normal y MySQL esta encendido, se crea la base de datos
 REM nvision y se importa el SQL. Si la tabla productos ya
