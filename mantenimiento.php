@@ -1,6 +1,12 @@
 <?php
 /* NVISION — versión PHP para XAMPP: comentarios de esta página. */
+/* Página de Mantenimiento por software: contenido (tareas,
+   rutina y programas recomendados); su único contacto con la
+   base de datos son los comentarios, con pagina 'mantenimiento'. */
+// Valor con el que esta página se distingue en la tabla comentarios.
 $PAGINA_COMENTARIOS = 'mantenimiento';
+// Se incluye el controlador antes del HTML para poder redirigir
+// después de comentar o eliminar (patrón Post/Redirect/Get).
 require __DIR__ . '/includes/comentarios_ctrl.php';
 ?>
 <!DOCTYPE html>
@@ -45,6 +51,7 @@ require __DIR__ . '/includes/comentarios_ctrl.php';
   <?php include __DIR__ . '/includes/header.php'; ?>
 
 <main>
+  <!-- Portada de la página: qué es el mantenimiento por software y los botones que bajan a las tareas y a la rutina -->
   <section class="ms-hero">
     <div>
       <span class="ms-eyebrow" data-i18n="ms_eyebrow">Mantenimiento / Por software</span>
@@ -61,12 +68,14 @@ require __DIR__ . '/includes/comentarios_ctrl.php';
     </figure>
   </section>
 
+  <!-- Franja de cifras resumen: 6 tareas, la regla de la copia primero y las 4 frecuencias de la rutina -->
   <div class="ms-stats" aria-label="Resumen del mantenimiento">
     <div class="ms-stat"><strong>06</strong><span data-i18n="ms_stat1">tareas esenciales, en orden y sin herramientas costosas</span></div>
     <div class="ms-stat"><strong>01</strong><span data-i18n="ms_stat2">regla de oro: primero la copia de seguridad, después cualquier cambio</span></div>
     <div class="ms-stat"><strong>04</strong><span data-i18n="ms_stat3">frecuencias: semanal, mensual, trimestral y semestral</span></div>
   </div>
 
+  <!-- Sección 01 · Qué es: la idea de prevenir y las tres tarjetas de beneficios (fallos, velocidad y seguridad) -->
   <section id="que-es" class="ms-section">
     <span class="ms-kicker" data-i18n="ms_que_kicker">01 / Qué es</span>
     <h2 data-i18n="ms_que_title">Prevenir es más barato que reparar</h2>
@@ -90,6 +99,7 @@ require __DIR__ . '/includes/comentarios_ctrl.php';
     </div>
   </section>
 
+  <!-- Sección 02 · Las 6 tareas: cada tarjeta trae qué es la tarea, sus pasos y cada cuánto se hace -->
   <section id="tareas" class="ms-section">
     <span class="ms-kicker" data-i18n="ms_tasks_kicker">02 / Las 6 tareas</span>
     <h2 data-i18n="ms_tasks_title">Todo lo que hay que revisar, sin perderse</h2>
@@ -189,6 +199,7 @@ require __DIR__ . '/includes/comentarios_ctrl.php';
     </div>
   </section>
 
+  <!-- Sección 03 · Rutina recomendada: la tabla reparte las tareas en semanal, mensual, trimestral y semestral -->
   <section id="rutina" class="ms-section">
     <span class="ms-kicker" data-i18n="ms_routine_kicker">03 / Rutina recomendada</span>
     <h2 data-i18n="ms_routine_title">Una rutina corta, que sí se cumple</h2>
@@ -206,6 +217,7 @@ require __DIR__ . '/includes/comentarios_ctrl.php';
     </div>
   </section>
 
+  <!-- Sección 04 · Paso a paso: el orden seguro en 6 pasos, de la copia de seguridad a la comprobación final -->
   <section id="paso-a-paso" class="ms-section">
     <span class="ms-kicker" data-i18n="ms_steps_kicker">04 / Paso a paso</span>
     <h2 data-i18n="ms_steps_title">El orden seguro, en 6 pasos</h2>
@@ -220,6 +232,7 @@ require __DIR__ . '/includes/comentarios_ctrl.php';
     </div>
   </section>
 
+  <!-- Sección 05 · Alertas: señales de que algo anda mal (nota de advertencia) y lo que nunca se debe hacer (nota de buenas prácticas) -->
   <section id="alertas" class="ms-section">
     <span class="ms-kicker" data-i18n="ms_alerts_kicker">05 / Alertas</span>
     <h2 data-i18n="ms_alerts_title">Señales de que algo anda mal, y qué no hacer</h2>
@@ -245,12 +258,14 @@ require __DIR__ . '/includes/comentarios_ctrl.php';
     </div>
     <p class="ms-credit" data-i18n="ms_credit">Imágenes: Unsplash (placa, portátil con código y portátil en la oscuridad), MakeUseOf (análisis antivirus), Avast (limpieza de disco) y Telkom University (copia en la nube). Las imágenes se cargan desde sus sitios originales, como en el resto de NVISION.</p>
   </section>
+  <!-- Sección 06 · Programas recomendados: podio por criterio, tabla comparativa con estrellas y combinaciones sugeridas -->
   <section id="programas" class="ms-section">
     <span class="ms-kicker" data-i18n="ms_prog_kicker">06 / Programas recomendados</span>
     <h2 data-i18n="ms_prog_title">Los mejores programas, clasificados sin rodeos</h2>
     <p data-i18n="ms_prog_desc">No hace falta instalar diez programas. Esta clasificación usa tres criterios claros: Mejor es la valoración general para mantenimiento preventivo, Costo es lo que pagas por el uso básico y Eficiencia es lo ligero y rápido que va en un equipo normal. Las estrellas son orientativas, no un laboratorio: el mejor programa es el que vas a mantener actualizado.</p>
     <p data-i18n="ms_prog_note">Cómo leer la tabla: <span class="rating"><svg width="24" height="24" class="rating-star" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="24" height="24" class="rating-star" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="24" height="24" class="rating-star" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="24" height="24" class="rating-star" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="24" height="24" class="rating-star" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span> es excelente, <span class="rating"><svg width="24" height="24" class="rating-star" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="24" height="24" class="rating-star" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="24" height="24" class="rating-star" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="24" height="24" class="rating-star" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="24" height="24" class="rating-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span> es muy bueno y <span class="rating"><svg width="24" height="24" class="rating-star" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="24" height="24" class="rating-star" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="24" height="24" class="rating-star" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="24" height="24" class="rating-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="24" height="24" class="rating-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span> es correcto, pero con límites. “Gratis” significa que el uso básico no cuesta nada; algunos ofrecen una versión de pago con más funciones.</p>
 
+    <!-- El podio: mejor en general, mejor costo y más eficiente, un programa (o dúo) por criterio -->
     <div class="ms-rank-grid">
       <article class="ms-rank-card ms-rank-best">
         <span class="ms-rank-badge" data-i18n="ms_prog_best_badge"><span class="mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M7 6H4.5a2.5 2.5 0 0 0 0 5H7"/><path d="M17 6h2.5a2.5 2.5 0 0 1 0 5H17"/></svg></span> Mejor en general</span>
@@ -273,6 +288,7 @@ require __DIR__ . '/includes/comentarios_ctrl.php';
     </div>
 
     <div class="ms-table-wrap">
+      <!-- Tabla comparativa de los 8 programas: para qué sirve cada uno y sus notas de Mejor, Costo y Eficiencia -->
       <table class="ms-table ms-prog-table">
         <thead><tr><th data-i18n="ms_prog_th_prog">Programa</th><th data-i18n="ms_prog_th_use">Para qué sirve</th><th data-i18n="ms_prog_th_best">Mejor</th><th data-i18n="ms_prog_th_cost">Costo</th><th data-i18n="ms_prog_th_eff">Eficiencia</th><th data-i18n="ms_prog_th_for">Recomendado para</th></tr></thead>
         <tbody>
@@ -310,6 +326,7 @@ require __DIR__ . '/includes/comentarios_ctrl.php';
 
 
   
+  <!-- Sección de comentarios de Mantenimiento: vista compartida con la lista que preparó el controlador -->
   <?php include __DIR__ . '/includes/comentarios.php'; ?>
 </main>
 

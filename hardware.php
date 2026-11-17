@@ -1,6 +1,13 @@
 <?php
 /* NVISION — versión PHP para XAMPP: comentarios de esta página. */
+/* Página de Hardware y Evolución. Es una página de contenido:
+   lo único que hace el PHP aquí es manejar sus comentarios,
+   que viven en la tabla «comentarios» con pagina 'hardware'. */
+// Esa marca es la que el controlador usa para traer y guardar
+// SOLO los comentarios de esta página, sin mezclarlos con otros.
 $PAGINA_COMENTARIOS = 'hardware';
+// El controlador corre antes de todo el HTML: procesa el POST
+// de comentar/eliminar y deja la lista en $listaComentarios.
 require __DIR__ . '/includes/comentarios_ctrl.php';
 ?>
 <!DOCTYPE html>
@@ -12,6 +19,8 @@ require __DIR__ . '/includes/comentarios_ctrl.php';
   <title data-i18n="page_title_hardware">NVISION - Hardware y Evolución</title>
   <!-- Hojas de estilo modular -->
   <link rel="stylesheet" href="frontend/css/styles.css?v=129">
+    <!-- Precarga de las fotos de los componentes: son las imágenes
+         grandes de esta página y así no aparecen a saltos al bajar -->
     <link rel="preload" as="image" href="assets/external/960px-2023_P_yta_g__wna_ASRock_A320M-DVS.jpg">
     <link rel="preload" as="image" href="assets/external/960px-AMD_Ryzen_9_7900X.jpg">
     <link rel="preload" as="image" href="assets/external/960px-RAM_Module__SDRAM-DDR4_.jpg">
@@ -58,6 +67,7 @@ require __DIR__ . '/includes/comentarios_ctrl.php';
   <section class="container">
       <h1 class="section-title"><span data-i18n="page_h1_hardware">Hardware y Evolución</span></h1>
     </section>
+<!-- Sección de historia: línea de tiempo de los computadores anteriores a 1980, cada hito con su detalle desplegable -->
 <section id="historia" class="container">
       <h2 class="section-title">
         <span class="mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></span> <span data-i18n="hist_title">Computadores Históricos (Antes de 1980)</span>
@@ -355,6 +365,7 @@ require __DIR__ . '/includes/comentarios_ctrl.php';
         </article>
       </div>
     </section>
+<!-- Sección de componentes: la cuadrícula de tarjetas (placa madre, CPU, RAM…) con foto e información expandible -->
 <section id="componentes" class="container">
       <h2 class="section-title">
         <span class="mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></span> <span data-i18n="comp_title">Componentes de un Computador</span>
@@ -575,6 +586,7 @@ require __DIR__ . '/includes/comentarios_ctrl.php';
 
 
   
+  <!-- Sección de comentarios de Hardware: se incluye la vista que usa $listaComentarios del controlador -->
   <?php include __DIR__ . '/includes/comentarios.php'; ?>
 </main>
 

@@ -5,9 +5,16 @@
    bd_avisos() y la página también trae sus comentarios
    (controlador de comentarios con $PAGINA_COMENTARIOS).
    ============================================================ */
+// Se cargan las funciones de la base (bd_avisos y compañía).
 require_once __DIR__ . '/backend/bd.php';
+// Los avisos de «Novedades» se consultan ANTES de imprimir el
+// HTML, para que el ciclo de abajo solo tenga que pintarlos.
 $listaAvisos = bd_avisos();
+// Esta página es «inicio»: con ese valor la tabla comentarios
+// separa los comentarios de la portada de los de cada módulo.
 $PAGINA_COMENTARIOS = 'inicio';
+// El controlador procesa si llegó un comentario nuevo (o una
+// orden de eliminar) y deja la lista lista en $listaComentarios.
 require __DIR__ . '/includes/comentarios_ctrl.php';
 ?>
 <!DOCTYPE html>
@@ -71,6 +78,7 @@ require __DIR__ . '/includes/comentarios_ctrl.php';
   </header>
 
 <main>
+  <!-- Sección «Explora NVISION»: las tarjetas que llevan a cada módulo de aprendizaje -->
   <section class="container landing-overview">
     <h2 class="section-title"><span class="mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg></span><span data-i18n="idx_explore_title">Explora NVISION</span></h2>
     <p class="section-desc" data-i18n="idx_explore_desc">Selecciona un área para conocer la historia del hardware, entender las redes o practicar con recursos interactivos.</p>
@@ -221,18 +229,22 @@ require __DIR__ . '/includes/comentarios_ctrl.php';
 
   <!-- Fondo de pantalla NVISION para PC: la imagen se muestra y el botón solo la descarga -->
   
+  <!-- Sección de novedades: aquí se pintan los avisos que salieron de la tabla «avisos» -->
   <section class="container" aria-label="Novedades">
     <div class="nov-wrap">
       <h2 class="section-title">Novedades</h2>
       <p class="section-desc">Avisos del equipo NVISION.</p>
       <div class="nov-list" id="avisos">
 <?php foreach ($listaAvisos as $a): ?>
+        <!-- Tarjeta de UN aviso: fecha en formato corto y título y contenido escapados con e() -->
         <article class="nov-card"><div class="nov-head"><span class="nov-tag">Aviso</span><span><?php echo e(fecha_corta($a['fecha'])); ?></span></div><h2><?php echo e($a['titulo']); ?></h2><p><?php echo e($a['contenido']); ?></p></article>
 <?php endforeach; ?>
+<!-- Si la tabla avisos está vacía, se avisa en vez de dejar el hueco -->
 <?php if (!$listaAvisos): ?><p>No hay avisos por ahora.</p><?php endif; ?>
       </div>
     </div>
   </section>
+<!-- Sección del fondo de pantalla descargable para el PC del visitante -->
 <section class="container wallpaper-section" aria-label="Fondo de pantalla NVISION">
     <div class="pd-card wallpaper-card">
       <p class="pd-kicker" data-i18n="wp_kicker">Para tu PC</p>
@@ -243,6 +255,7 @@ require __DIR__ . '/includes/comentarios_ctrl.php';
   </section>
 
   
+  <!-- Sección de comentarios de la portada (pagina 'inicio' en la tabla) -->
   <?php include __DIR__ . '/includes/comentarios.php'; ?>
 </main>
 

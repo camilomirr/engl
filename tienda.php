@@ -12,12 +12,17 @@
    recarga (patrón Post/Redirect/Get). Las funciones de la
    base están en backend/bd.php.
    ============================================================ */
+// Se cargan las funciones del CRUD de productos (bd_productos,
+// bd_producto_crear, bd_producto_actualizar, bd_producto_eliminar).
 require_once __DIR__ . '/backend/bd.php';
 
 // ===== AYUDAS DE VALIDACIÓN =====
 /* Las categorías válidas son las mismas de la columna
    «categoria» de la tabla productos. */
 function producto_categoria_valida($categoria) {
+    // in_array con el tercer parámetro en true compara también el
+    // tipo: solo pasa si el texto es EXACTAMENTE una de las cuatro
+    // categorías del ENUM, ni «redes» en minúscula ni otra inventada.
     return in_array($categoria, array('Componentes', 'Periféricos', 'Redes', 'Accesorios'), true);
 }
 
@@ -26,18 +31,27 @@ function producto_categoria_valida($categoria) {
    está mal: el nombre es obligatorio y el precio y la
    cantidad deben ser números enteros de cero en adelante. */
 function producto_datos_formulario() {
+    // Nombre del producto, sin espacios sobrantes de las puntas.
     $nombre      = trim($_POST['nombre'] ?? '');
+    // Si el formulario no manda categoría, se asume «Componentes».
     $categoria   = $_POST['categoria'] ?? 'Componentes';
+    // La descripción es opcional, pero igual se lee limpia.
     $descripcion = trim($_POST['descripcion'] ?? '');
+    // Precio y cantidad llegan como texto del formulario…
     $precioTxt   = trim($_POST['precio'] ?? '');
     $cantidadTxt = trim($_POST['cantidad'] ?? '');
+    // …y aquí se comprueba que sí sean enteros: FILTER_VALIDATE_INT
+    // devuelve el número o false si traía letras o decimales.
     $precio   = filter_var($precioTxt, FILTER_VALIDATE_INT);
     $cantidad = filter_var($cantidadTxt, FILTER_VALIDATE_INT);
+    // Cualquier falla devuelve null: nombre muy corto, categoría
+    // fuera del ENUM, o precio/cantidad que no sean enteros de 0 en adelante.
     if (mb_strlen($nombre) < 2 || !producto_categoria_valida($categoria)
         || $precio === false || $precio < 0
         || $cantidad === false || $cantidad < 0) {
         return null;
     }
+    // Todo válido: se entrega el paquete listo para bd.php.
     return array(
         'nombre'      => $nombre,
         'categoria'   => $categoria,
@@ -48,29 +62,42 @@ function producto_datos_formulario() {
 }
 
 // ===== ACCIONES QUE LLEGAN POR POST =====
+// Solo se procesa algo cuando la petición llegó enviando un formulario.
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // El campo oculto «accion» dice si es crear, actualizar o eliminar.
     $accion = $_POST['accion'] ?? '';
 
     // ----- CREAR: registrar un producto -----
     if ($accion === 'crear') {
+        // Primero se validan los datos con la ayuda de arriba.
         $d = producto_datos_formulario();
         if ($d !== null) {
+            // Datos buenos: se inserta la fila en la tabla productos.
             bd_producto_crear($d['nombre'], $d['categoria'], $d['descripcion'], $d['precio'], $d['cantidad']);
+            // Se recarga la tienda con el aviso de «registrado».
             header('Location: tienda.php?creado=1');
         } else {
+            // Datos malos: se vuelve a la tienda con el aviso de error.
             header('Location: tienda.php?error=1');
         }
+        // Después de redirigir no se sigue ejecutando la página.
         exit;
     }
 
     // ----- ACTUALIZAR: guardar el producto editado -----
     if ($accion === 'actualizar') {
+        // El id del producto que se está editando viene oculto en el form.
         $pid = (int)($_POST['id'] ?? 0);
+        // Los datos nuevos pasan por la misma validación del crear.
         $d = producto_datos_formulario();
         if ($pid > 0 && $d !== null) {
+            // Se sobrescribe la fila de ese id en productos.
             bd_producto_actualizar($pid, $d['nombre'], $d['categoria'], $d['descripcion'], $d['precio'], $d['cantidad']);
+            // De vuelta al catálogo, con el aviso de «actualizado».
             header('Location: tienda.php?actualizado=1');
         } else {
+            // Si algo falló se regresa AL MISMO formulario de
+            // edición (con su ?editar=) para corregir sin perder el producto.
             header('Location: tienda.php?editar=' . $pid . '&error=1');
         }
         exit;
@@ -78,10 +105,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // ----- ELIMINAR: borrar un producto -----
     if ($accion === 'eliminar') {
+        // El botón Eliminar de cada tarjeta manda el id en oculto.
         $pid = (int)($_POST['id'] ?? 0);
+        // Solo se borra si el id es un número positivo real.
         if ($pid > 0) {
             bd_producto_eliminar($pid);
         }
+        // Catálogo recargado, ya sin el producto, con su aviso.
         header('Location: tienda.php?eliminado=1');
         exit;
     }
@@ -90,11 +120,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // ===== CONSULTAR: datos para la vista =====
 // Producto cargado en el formulario cuando se va a editar
 // (tienda.php?editar=ID); si no hay edición, es null.
+// Por defecto el formulario va en modo «registrar», vacío.
 $editarProducto = null;
+// Si la URL trae ?editar=ID (el enlace Editar de una tarjeta)…
 if (isset($_GET['editar'])) {
+    // …se busca ese producto y el formulario se carga con sus datos.
     $editarProducto = bd_producto((int)$_GET['editar']);
 }
 // El catálogo completo del inventario.
+// Se consulta siempre, haya edición en curso o no, porque las
+// tarjetas de abajo se pintan con estas filas.
 $productos = bd_productos();
 ?>
 <!DOCTYPE html>
@@ -143,6 +178,8 @@ $productos = bd_productos();
   </section>
 
   <section class="mejora-wrap">
+<!-- Avisos según el parámetro que traiga la URL después de cada
+     redirección: ?creado, ?actualizado, ?eliminado o ?error -->
 <?php if (isset($_GET['creado'])): ?>
     <div class="mejora-card"><p class="mejora-msg">¡Producto registrado! Ya aparece en el catálogo.</p></div>
 <?php endif; ?>
@@ -166,24 +203,32 @@ $productos = bd_productos();
 <?php if ($editarProducto && isset($_GET['error'])): ?>
       <p class="mejora-msg">No se pudo guardar. Revisa el nombre y que el precio y la cantidad sean números de cero en adelante.</p>
 <?php endif; ?>
+      <!-- El formulario se envía a esta misma página; validaciones.js lo revisa antes (id form-producto) -->
       <form method="post" action="tienda.php" id="form-producto">
+        <!-- Campo oculto que le dice al PHP de arriba si debe crear o actualizar -->
         <input type="hidden" name="accion" value="<?php echo $editarProducto ? 'actualizar' : 'crear'; ?>">
 <?php if ($editarProducto): ?>
+        <!-- Solo en edición: el id del producto que se está modificando -->
         <input type="hidden" name="id" value="<?php echo e($editarProducto['id']); ?>">
 <?php endif; ?>
         <label class="mejora-label" for="prod-nombre">Nombre del producto</label>
+        <!-- maxlength 120 es el mismo tope de la columna nombre (VARCHAR 120); al editar se rellena con el nombre guardado -->
         <input class="mejora-input" id="prod-nombre" name="nombre" type="text" maxlength="120" required value="<?php echo e($editarProducto['nombre'] ?? ''); ?>">
         <label class="mejora-label" for="prod-categoria">Categoría</label>
         <select class="mejora-select" id="prod-categoria" name="categoria">
 <?php foreach (array('Componentes', 'Periféricos', 'Redes', 'Accesorios') as $cat): ?>
+          <!-- Una opción por valor del ENUM; al editar queda marcada la categoría que el producto ya tenía -->
           <option value="<?php echo $cat; ?>"<?php echo ($editarProducto['categoria'] ?? 'Componentes') === $cat ? ' selected' : ''; ?>><?php echo $cat; ?></option>
 <?php endforeach; ?>
         </select>
         <label class="mejora-label" for="prod-descripcion">Descripción</label>
+        <!-- Descripción corta del producto (la columna admite 300 caracteres) -->
         <textarea class="mejora-textarea" id="prod-descripcion" name="descripcion" maxlength="300"><?php echo e($editarProducto['descripcion'] ?? ''); ?></textarea>
         <label class="mejora-label" for="prod-precio">Precio (pesos)</label>
+        <!-- type number con min 0 y paso 1: el navegador tampoco deja escribir precios negativos ni con decimales -->
         <input class="mejora-input" id="prod-precio" name="precio" type="number" min="0" step="1" required value="<?php echo e($editarProducto['precio'] ?? ''); ?>">
         <label class="mejora-label" for="prod-cantidad">Cantidad en inventario</label>
+        <!-- El stock: 0 es válido y significa que el producto está agotado -->
         <input class="mejora-input" id="prod-cantidad" name="cantidad" type="number" min="0" step="1" required value="<?php echo e($editarProducto['cantidad'] ?? ''); ?>">
         <button type="submit" class="tool-btn"><?php echo $editarProducto ? 'Guardar cambios' : 'Registrar producto'; ?></button>
 <?php if ($editarProducto): ?>
@@ -197,16 +242,21 @@ $productos = bd_productos();
       <h2>Catálogo de productos</h2>
       <div id="tienda-catalogo">
 <?php if (!$productos): ?>
+        <!-- Inventario vacío: se invita a registrar el primer producto -->
         <p>Todavía no hay productos. ¡Registra el primero con el formulario!</p>
 <?php else: ?>
 <?php foreach ($productos as $prod): ?>
+        <!-- Tarjeta de UN producto: todo lo que se imprime pasa por e() para escapar el texto -->
         <article class="foro-item">
           <span class="foro-tag mejora-chip"><?php echo e($prod['categoria']); ?></span>
           <h3 class="foro-q-title"><?php echo e($prod['nombre']); ?></h3>
           <p><?php echo e($prod['descripcion']); ?></p>
+          <!-- precio_cop() convierte 85000 en «$ 85.000»; si la cantidad es 0 la tarjeta dice Agotado en vez del stock -->
           <p class="foro-meta">Precio: <strong><?php echo e(precio_cop($prod['precio'])); ?></strong> · <?php echo (int)$prod['cantidad'] > 0 ? 'Stock: ' . (int)$prod['cantidad'] . ' unidades' : '<strong>Agotado</strong>'; ?></p>
           <!-- ACTUALIZAR / ELIMINAR este producto -->
+          <!-- Editar es un enlace GET: recarga la tienda con el formulario cargado de este producto -->
           <a class="tool-btn tool-btn-ghost" href="tienda.php?editar=<?php echo e($prod['id']); ?>">Editar</a>
+          <!-- Eliminar es un mini formulario POST; la clase form-confirmar hace que validaciones.js pregunte antes de borrar -->
           <form method="post" action="tienda.php" class="form-confirmar" data-confirm="¿Seguro que quieres eliminar «<?php echo e($prod['nombre']); ?>» del inventario?">
             <input type="hidden" name="accion" value="eliminar">
             <input type="hidden" name="id" value="<?php echo e($prod['id']); ?>">

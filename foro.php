@@ -13,30 +13,45 @@
    pregunta se abre con foro.php?ver=ID.
    Las funciones de la base están en backend/bd.php.
    ============================================================ */
+// Se cargan las funciones del foro: bd_foro_preguntas,
+// bd_foro_crear_pregunta, bd_foro_eliminar_respuesta, etc.
 require_once __DIR__ . '/backend/bd.php';
 
 // ===== AYUDAS DE VALIDACIÓN =====
 /* Los temas válidos son los mismos de la columna «tema». */
 function foro_tema_valido($tema) {
+    // Comparación estricta contra los cuatro valores del ENUM
+    // «tema»: cualquier otro texto que llegue se rechaza.
     return in_array($tema, array('Hardware', 'Redes', 'Mantenimiento', 'Otro'), true);
 }
 
 // ===== ACCIONES QUE LLEGAN POR POST =====
+// Este bloque solo corre cuando un formulario del foro se envió.
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // El campo oculto «accion» distingue publicar, responder,
+    // actualizar y los dos tipos de eliminar.
     $accion = $_POST['accion'] ?? '';
 
     // ----- CREAR: publicar una pregunta -----
     if ($accion === 'publicar') {
+        // Autor de la pregunta, limpio de espacios en las puntas.
         $nombre    = trim($_POST['nombre'] ?? '');
+        // Título que se verá en la lista de preguntas.
         $titulo    = trim($_POST['titulo'] ?? '');
+        // Tema elegido en el <select>; si no llega, queda «Otro».
         $tema      = $_POST['tema'] ?? 'Otro';
+        // La explicación completa del problema.
         $contenido = trim($_POST['contenido'] ?? '');
         // Validación en PHP: ningún campo obligatorio puede faltar.
+        // Mínimos: nombre 2, título 4 y contenido 4 caracteres.
         if (mb_strlen($nombre) >= 2 && mb_strlen($titulo) >= 4
             && foro_tema_valido($tema) && mb_strlen($contenido) >= 4) {
+            // Se inserta la fila en foro_preguntas.
             bd_foro_crear_pregunta($nombre, $titulo, $tema, $contenido);
+            // Recarga con el aviso verde de «pregunta publicada».
             header('Location: foro.php?publicada=1');
         } else {
+            // Algo venía corto o inválido: vuelta con aviso de error.
             header('Location: foro.php?error=1');
         }
         exit;
@@ -44,14 +59,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // ----- CREAR: responder una pregunta -----
     if ($accion === 'responder') {
+        // Id de la pregunta que se está respondiendo (campo oculto).
         $pid       = (int)($_POST['pregunta_id'] ?? 0);
+        // Nombre de quien ayuda con la respuesta.
         $nombre    = trim($_POST['nombre'] ?? '');
+        // Texto de la ayuda que se va a guardar.
         $contenido = trim($_POST['contenido'] ?? '');
+        // Además de los mínimos de texto, se comprueba que la
+        // pregunta exista de verdad: no se puede responder a un
+        // id inventado (bd_foro_pregunta devuelve null si no está).
         if ($pid > 0 && bd_foro_pregunta($pid) !== null
             && mb_strlen($nombre) >= 2 && mb_strlen($contenido) >= 2) {
+            // La respuesta queda guardada con el pregunta_id de su pregunta.
             bd_foro_crear_respuesta($pid, $nombre, $contenido);
+            // Se regresa al detalle de la misma pregunta, donde la
+            // respuesta nueva aparece al final de la conversación.
             header('Location: foro.php?ver=' . $pid);
         } else {
+            // Mismo detalle, pero con el aviso de que no se guardó.
             header('Location: foro.php?ver=' . $pid . '&error=1');
         }
         exit;
@@ -59,15 +84,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // ----- ACTUALIZAR: guardar la pregunta editada -----
     if ($accion === 'actualizar') {
+        // Id de la pregunta editada (el nombre del autor no se edita).
         $pid       = (int)($_POST['id'] ?? 0);
+        // Nuevos valores de título, tema y contenido.
         $titulo    = trim($_POST['titulo'] ?? '');
         $tema      = $_POST['tema'] ?? 'Otro';
         $contenido = trim($_POST['contenido'] ?? '');
+        // Se exigen los mismos mínimos que al publicar la pregunta.
         if ($pid > 0 && mb_strlen($titulo) >= 4
             && foro_tema_valido($tema) && mb_strlen($contenido) >= 4) {
+            // UPDATE sobre la fila de foro_preguntas con ese id.
             bd_foro_actualizar_pregunta($pid, $titulo, $tema, $contenido);
+            // Al detalle, para ver la pregunta ya con los cambios.
             header('Location: foro.php?ver=' . $pid . '&actualizada=1');
         } else {
+            // Falla la validación: de vuelta al formulario de edición.
             header('Location: foro.php?editar=' . $pid . '&error=1');
         }
         exit;
@@ -75,21 +106,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // ----- ELIMINAR: borrar una pregunta (y sus respuestas) -----
     if ($accion === 'eliminar_pregunta') {
+        // Id de la pregunta a borrar, desde su formulario de eliminar.
         $pid = (int)($_POST['pregunta_id'] ?? 0);
         if ($pid > 0) {
+            // Al borrar la pregunta, sus respuestas caen solas
+            // por el ON DELETE CASCADE de foro_respuestas.
             bd_foro_eliminar_pregunta($pid);
         }
+        // A la lista general, con el aviso de «pregunta eliminada».
         header('Location: foro.php?eliminada=1');
         exit;
     }
 
     // ----- ELIMINAR: borrar una respuesta -----
     if ($accion === 'eliminar_respuesta') {
+        // $rid es la respuesta a borrar y $pid la pregunta dueña:
+        // se necesitan los dos, uno para borrar y otro para volver.
         $rid = (int)($_POST['respuesta_id'] ?? 0);
         $pid = (int)($_POST['pregunta_id'] ?? 0);
         if ($rid > 0) {
             bd_foro_eliminar_respuesta($rid);
         }
+        // Se regresa al detalle de la pregunta, ya sin esa respuesta.
         header('Location: foro.php?ver=' . $pid);
         exit;
     }
@@ -97,20 +135,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // ===== CONSULTAR: datos para la vista =====
 // Detalle de una pregunta (foro.php?ver=ID) con sus respuestas.
+// Sin ?ver en la URL, $detalle queda en null y no se pinta el detalle.
 $detalle = null;
+// Las respuestas del detalle arrancan como arreglo vacío.
 $respuestasDetalle = array();
 if (isset($_GET['ver'])) {
+    // Se busca la pregunta pedida por la URL.
     $detalle = bd_foro_pregunta((int)$_GET['ver']);
     if ($detalle !== null) {
+        // Solo si existe se consultan sus respuestas en orden.
         $respuestasDetalle = bd_foro_respuestas((int)$detalle['id']);
     }
 }
 // Pregunta cargada en el formulario de edición (foro.php?editar=ID).
 $editar = null;
 if (isset($_GET['editar'])) {
+    // Misma consulta que el detalle: la vista la usa para
+    // rellenar los campos del formulario de edición.
     $editar = bd_foro_pregunta((int)$_GET['editar']);
 }
 // Lista de preguntas (cada fila ya trae su conteo de respuestas).
+// Se consulta siempre: la lista se muestra en todos los casos.
 $preguntas = bd_foro_preguntas();
 ?>
 <!DOCTYPE html>
@@ -179,13 +224,16 @@ $preguntas = bd_foro_preguntas();
     <!-- ===== CREAR: formulario para publicar una pregunta ===== -->
     <div class="mejora-card">
       <h2>Publica tu problema</h2>
+      <!-- validaciones.js revisa este formulario con el id form-foro-publicar antes de enviarlo -->
       <form method="post" action="foro.php" id="form-foro-publicar">
+        <!-- La acción «publicar» es la que el bloque POST de arriba reconoce -->
         <input type="hidden" name="accion" value="publicar">
         <label class="mejora-label" for="foro-nombre">Tu nombre</label>
         <input class="mejora-input" id="foro-nombre" name="nombre" type="text" maxlength="60" required>
         <label class="mejora-label" for="foro-titulo">Título del problema</label>
         <input class="mejora-input" id="foro-titulo" name="titulo" type="text" maxlength="120" required>
         <label class="mejora-label" for="foro-tema">Tema</label>
+        <!-- Las cuatro opciones son, una por una, los valores del ENUM «tema» de foro_preguntas -->
         <select class="mejora-select" id="foro-tema" name="tema">
           <option value="Hardware">Hardware</option>
           <option value="Redes">Redes</option>
@@ -203,13 +251,17 @@ $preguntas = bd_foro_preguntas();
       <h2>Preguntas de la comunidad</h2>
       <div id="foro-list">
 <?php if (!$preguntas): ?>
+        <!-- Tabla vacía: todavía nadie ha publicado en el foro -->
         <p>Todavía no hay preguntas. ¡Publica la primera!</p>
 <?php else: ?>
 <?php foreach ($preguntas as $p): ?>
+        <!-- Tarjeta de UNA pregunta de la lista: tema, título, autor, fecha corta y su conteo de respuestas -->
         <article class="foro-item">
           <span class="foro-tag mejora-chip"><?php echo e($p['tema'] ?? 'Otro'); ?></span>
           <h3 class="foro-q-title"><?php echo e($p['titulo']); ?></h3>
+          <!-- «respuestas» no es una columna: es el COUNT que calculó el LEFT JOIN de bd_foro_preguntas() -->
           <p class="foro-meta">por <?php echo e($p['nombre']); ?> · <?php echo e(fecha_corta($p['fecha'])); ?> · <?php echo (int)$p['respuestas']; ?> respuestas</p>
+          <!-- El enlace lleva el id en la URL: así foro.php sabe qué detalle abrir -->
           <a class="tool-btn tool-btn-ghost" href="foro.php?ver=<?php echo e($p['id']); ?>">Ver y responder</a>
         </article>
 <?php endforeach; ?>
@@ -227,6 +279,7 @@ $preguntas = bd_foro_preguntas();
 <?php if (isset($_GET['error'])): ?>
       <p class="mejora-msg">No se pudo guardar la respuesta. Revisa los datos e inténtalo de nuevo.</p>
 <?php endif; ?>
+      <!-- Cuerpo del detalle: todo sale de la fila $detalle que trajo bd_foro_pregunta(), escapado con e() -->
       <div id="foro-detail-body">
         <span class="foro-tag mejora-chip"><?php echo e($detalle['tema'] ?? 'Otro'); ?></span>
         <h2><?php echo e($detalle['titulo']); ?></h2>
@@ -248,6 +301,7 @@ $preguntas = bd_foro_preguntas();
         <p>Sin respuestas todavía. ¡Sé la primera persona en ayudar!</p>
 <?php else: ?>
 <?php foreach ($respuestasDetalle as $r): ?>
+        <!-- Bloque de UNA respuesta: quién la escribió, cuándo y qué dijo -->
         <div class="foro-answer">
           <p class="foro-meta"><?php echo e($r['nombre']); ?> · <?php echo e(fecha_corta($r['fecha'])); ?></p>
           <p><?php echo e($r['contenido']); ?></p>
@@ -292,6 +346,7 @@ $preguntas = bd_foro_preguntas();
         <label class="mejora-label" for="editar-tema">Tema</label>
         <select class="mejora-select" id="editar-tema" name="tema">
 <?php foreach (array('Hardware', 'Redes', 'Mantenimiento', 'Otro') as $t): ?>
+          <!-- Se genera una opción por tema y la que coincide con el tema guardado lleva «selected» -->
           <option value="<?php echo $t; ?>"<?php echo $editar['tema'] === $t ? ' selected' : ''; ?>><?php echo $t; ?></option>
 <?php endforeach; ?>
         </select>

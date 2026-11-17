@@ -8,6 +8,7 @@
         <span class="brand-text">NVISION</span>
       </a>
 
+      <!-- Navegación principal: en pantallas angostas la muestra y la esconde el botón hamburguesa vía interfaz.js -->
       <nav id="nav-menu" class="nav-menu">
         <ul class="nav-links">
           <!-- Catálogo 1: Aprende -->
@@ -16,6 +17,7 @@
               <span>Aprende</span>
               <span class="nav-arrow mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
             </button>
+            <!-- Submenú de Aprende: los tres módulos de contenido del sitio -->
             <ul class="nav-submenu">
               <li><a href="hardware.php">Hardware</a></li>
               <li><a href="redes.php">Redes</a></li>
@@ -34,6 +36,7 @@
               <span>Comunidad</span>
               <span class="nav-arrow mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
             </button>
+            <!-- Submenú de Comunidad: el foro y el formulario de PQR -->
             <ul class="nav-submenu">
               <li><a href="foro.php">Foro El Taller</a></li>
               <li><a href="pqr.php">PQR y contacto</a></li>

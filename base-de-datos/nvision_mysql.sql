@@ -28,9 +28,13 @@ SET NAMES utf8mb4;
 -- 1) AVISOS — novedades del inicio (se publican desde phpMyAdmin)
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS avisos (
+  -- Identificador del aviso: lo genera MySQL solo, de 1 en adelante.
   id        INT AUTO_INCREMENT PRIMARY KEY,
+  -- Titular corto del aviso, el que se ve en la tarjeta de Novedades.
   titulo    VARCHAR(120) NOT NULL,
+  -- Texto completo del aviso (admite hasta 600 caracteres).
   contenido VARCHAR(600) NOT NULL,
+  -- Momento de publicación: si no se manda, se llena con la fecha actual.
   fecha     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -38,12 +42,19 @@ CREATE TABLE IF NOT EXISTS avisos (
 -- 2) FORO — preguntas
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS foro_preguntas (
+  -- Id de la pregunta: con él se abre el detalle (foro.php?ver=ID).
   id        INT AUTO_INCREMENT PRIMARY KEY,
+  -- Nombre de la persona que publica la pregunta.
   nombre    VARCHAR(60) NOT NULL,
+  -- Título del problema, el texto grande de la tarjeta en la lista.
   titulo    VARCHAR(120) NOT NULL,
+  -- Tema cerrado con ENUM: solo uno de estos cuatro valores;
+  -- si no se indica, la pregunta queda clasificada como «Otro».
   tema      ENUM('Hardware', 'Redes', 'Mantenimiento', 'Otro')
             NOT NULL DEFAULT 'Otro',
+  -- Explicación completa del problema (hasta 2000 caracteres).
   contenido VARCHAR(2000) NOT NULL,
+  -- Fecha y hora en que se publicó la pregunta.
   fecha     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -53,11 +64,20 @@ CREATE TABLE IF NOT EXISTS foro_preguntas (
 --    gracias a ON DELETE CASCADE.
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS foro_respuestas (
+  -- Id propio de cada respuesta.
   id          INT AUTO_INCREMENT PRIMARY KEY,
+  -- A qué pregunta pertenece: es la llave foránea de abajo y
+  -- sin ella la respuesta quedaría suelta, sin conversación.
   pregunta_id INT NOT NULL,
+  -- Nombre de la persona que responde.
   nombre      VARCHAR(60) NOT NULL,
+  -- Texto de la ayuda o respuesta (hasta 1000 caracteres).
   contenido   VARCHAR(1000) NOT NULL,
+  -- Fecha de la respuesta: la vista las ordena de vieja a nueva.
   fecha       DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  -- La llave foránea con nombre propio: pregunta_id debe existir
+  -- en foro_preguntas y, si esa pregunta se borra, el
+  -- ON DELETE CASCADE elimina sus respuestas en la misma operación.
   CONSTRAINT fk_respuestas_pregunta
     FOREIGN KEY (pregunta_id)
     REFERENCES foro_preguntas (id)
@@ -69,11 +89,19 @@ CREATE TABLE IF NOT EXISTS foro_respuestas (
 --    (pagina: inicio, hardware, redes o mantenimiento)
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS comentarios (
+  -- Id del comentario, único en toda la tabla.
   id        INT AUTO_INCREMENT PRIMARY KEY,
+  -- En qué página se escribió ('inicio', 'hardware', 'redes' o
+  -- 'mantenimiento'): es el filtro de todas las consultas.
   pagina    VARCHAR(30) NOT NULL,
+  -- Nombre de quien comenta.
   nombre    VARCHAR(60) NOT NULL,
+  -- El comentario en sí, máximo 500 caracteres como el formulario.
   contenido VARCHAR(500) NOT NULL,
+  -- Cuándo se publicó; la vista los muestra del nuevo al viejo.
   fecha     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  -- Índice sobre «pagina»: casi siempre se busca por página,
+  -- así MySQL no tiene que recorrer toda la tabla.
   INDEX idx_comentarios_pagina (pagina)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -84,14 +112,25 @@ CREATE TABLE IF NOT EXISTS comentarios (
 --    en «Pendiente» y el equipo lo cambia desde phpMyAdmin.
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS pqr (
+  -- Id interno de la fila (la persona nunca lo ve).
   id       INT AUTO_INCREMENT PRIMARY KEY,
+  -- El radicado de 8 caracteres que se le entrega a la persona:
+  -- es UNIQUE porque es su llave para consultar el caso; dos
+  -- PQR jamás pueden compartir radicado.
   radicado VARCHAR(8) NOT NULL UNIQUE,
+  -- Nombre de quien radica la PQR.
   nombre   VARCHAR(80) NOT NULL,
+  -- Correo de contacto: ahí se avisa cuando el caso se resuelva.
   correo   VARCHAR(120) NOT NULL,
+  -- Clase de mensaje, cerrada con ENUM; por defecto «Petición».
   tipo     ENUM('Petición', 'Queja', 'Reclamo', 'Sugerencia')
            NOT NULL DEFAULT 'Petición',
+  -- El mensaje completo de la petición, queja o reclamo.
   mensaje  VARCHAR(2000) NOT NULL,
+  -- Estado del caso: nace en «Pendiente» y el equipo lo pasa a
+  -- «En revisión» y luego a «Resuelto» desde phpMyAdmin.
   estado   VARCHAR(20) NOT NULL DEFAULT 'Pendiente',
+  -- Fecha y hora en que quedó radicada la PQR.
   fecha    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -103,13 +142,22 @@ CREATE TABLE IF NOT EXISTS pqr (
 --    centavos) y «cantidad» es el stock disponible.
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS productos (
+  -- Id del producto: es el que viaja en tienda.php?editar=ID.
   id          INT AUTO_INCREMENT PRIMARY KEY,
+  -- Nombre comercial del producto, el título de su tarjeta.
   nombre      VARCHAR(120) NOT NULL,
+  -- Familia del producto, cerrada con ENUM para que el catálogo
+  -- se pueda ordenar por categoría sin textos inventados.
   categoria   ENUM('Componentes', 'Periféricos', 'Redes', 'Accesorios')
               NOT NULL DEFAULT 'Componentes',
+  -- Descripción corta; puede ir vacía (de ahí el DEFAULT '').
   descripcion VARCHAR(300) NOT NULL DEFAULT '',
+  -- Precio en pesos colombianos como entero, sin centavos:
+  -- 85000 significa $ 85.000 en la tienda.
   precio      INT NOT NULL DEFAULT 0,
+  -- Stock disponible: cuando llega a 0 la tarjeta dice «Agotado».
   cantidad    INT NOT NULL DEFAULT 0,
+  -- Fecha en que el producto entró al inventario.
   fecha       DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -132,10 +180,12 @@ INSERT INTO productos (nombre, categoria, descripcion, precio, cantidad) VALUES
   ('Cable de red Cat6 (3 m)', 'Accesorios',
    'Cable UTP categoría 6 de 3 metros con conectores RJ45.', 18000, 30);
 
+-- El aviso de bienvenida que se ve en «Novedades» al instalar.
 INSERT INTO avisos (titulo, contenido) VALUES
   ('¡Bienvenidos a la nueva NVISION!',
    'Estrenamos página: mismo diseño, menos vueltas. Aprende en los módulos, pregunta en el foro y envía tus PQR desde la sección de contacto.');
 
+-- Una primera pregunta del equipo para que el foro no nazca vacío.
 INSERT INTO foro_preguntas (nombre, titulo, tema, contenido) VALUES
   ('Equipo NVISION', '¿Dudas con un tema? Pregunta aquí', 'Otro',
    'Este es el foro El Taller: deja tu pregunta sobre hardware, redes o mantenimiento y la comunidad te responde.');

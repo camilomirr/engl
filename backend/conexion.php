@@ -33,14 +33,22 @@ define('BD_CLAVE', '');
    base no responde, se muestra un mensaje sencillo en vez de
    dejar la página en blanco. */
 function conectar() {
+    // La conexión queda guardada en esta variable estática: la
+    // primera llamada la crea y las demás la reutilizan tal cual.
     static $pdo = null;
+    // Solo se entra a conectar de verdad cuando $pdo sigue en null,
+    // es decir, la primera vez que una página pide la base.
     if ($pdo === null) {
         // DSN: la «dirección» completa de la base, con utf8mb4
         // para que los acentos y las ñ se guarden bien.
         $dsn = 'mysql:host=' . BD_SERVIDOR
              . ';dbname=' . BD_NOMBRE
              . ';charset=utf8mb4';
+        // Se intenta abrir la conexión; si MySQL está apagado o
+        // un dato está mal escrito, PHP salta directo al catch.
         try {
+            // Aquí nace el objeto PDO con la dirección ($dsn), el
+            // usuario y la clave definidos arriba.
             $pdo = new PDO($dsn, BD_USUARIO, BD_CLAVE, array(
                 // Los errores de la base se lanzan como excepción
                 // (así no pasan en silencio).
@@ -57,5 +65,7 @@ function conectar() {
               . 'de backend/conexion.php sean correctos.');
         }
     }
+    // Se entrega la conexión ya abierta para que las funciones
+    // de backend/bd.php hagan sus consultas sobre ella.
     return $pdo;
 }

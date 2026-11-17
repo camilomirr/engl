@@ -10,35 +10,55 @@
               (solo lectura: tipo, estado y fecha).
    Las funciones de la base están en backend/bd.php.
    ============================================================ */
+// bd_pqr_crear() y bd_pqr_consultar() son las dos funciones
+// que esta página necesita de backend/bd.php.
 require_once __DIR__ . '/backend/bd.php';
 
 // ===== CREAR: radicar una PQR nueva =====
+// Este bloque corre únicamente cuando se envía el formulario.
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Nombre de la persona que escribe, sin espacios sobrantes.
     $nombre  = trim($_POST['nombre'] ?? '');
+    // Su correo: es el dato al que luego se le avisa la respuesta.
     $correo  = trim($_POST['correo'] ?? '');
+    // Tipo elegido en el <select>; por defecto, «Petición».
     $tipo    = $_POST['tipo'] ?? 'Petición';
+    // El texto completo del mensaje.
     $mensaje = trim($_POST['mensaje'] ?? '');
+    // Los únicos tipos que acepta la columna ENUM «tipo» de la tabla pqr.
     $tiposValidos = array('Petición', 'Queja', 'Reclamo', 'Sugerencia');
     // Validación en PHP: campos completos y correo con formato válido.
+    // Si el correo no pasa FILTER_VALIDATE_EMAIL, la PQR no se
+    // guarda y la persona ve el aviso de error de la vista.
     if (mb_strlen($nombre) >= 2
         && filter_var($correo, FILTER_VALIDATE_EMAIL) !== false
         && in_array($tipo, $tiposValidos, true)
         && mb_strlen($mensaje) >= 10) {
+        // Se guarda la fila y la función devuelve el radicado creado.
         $radicado = bd_pqr_crear($nombre, $correo, $tipo, $mensaje);
         if ($radicado !== null) {
+            // Se vuelve a la página llevando el radicado en la URL
+            // para mostrarlo en grande: hay que guardarlo.
             header('Location: pqr.php?radicado=' . $radicado);
             exit;
         }
     }
+    // Cualquier validación falló (o no hubo radicado): aviso de error.
     header('Location: pqr.php?error=1');
     exit;
 }
 
 // ===== CONSULTAR: buscar una PQR por su radicado =====
+// $consultaPqr guarda la fila encontrada (o null) y
+// $consultaBuscada recuerda si ya se hizo una búsqueda, para
+// que la vista sepa si debe mostrar el resultado o el «no existe».
 $consultaPqr = null;
 $consultaBuscada = false;
+// El formulario de consulta manda el radicado por GET.
 if (isset($_GET['consultar'])) {
     $consultaBuscada = true;
+    // bd_pqr_consultar limpia el código (mayúsculas, sin espacios)
+    // y lo busca en la columna «radicado» de la tabla pqr.
     $consultaPqr = bd_pqr_consultar($_GET['consultar']);
 }
 ?>
@@ -104,12 +124,16 @@ if (isset($_GET['consultar'])) {
 <?php if (isset($_GET['error'])): ?>
       <p class="mejora-msg">No se pudo enviar. Revisa que todos los campos estén completos y que el correo sea válido.</p>
 <?php endif; ?>
+      <!-- Formulario de radicar: validaciones.js lo cuida con el id form-pqr -->
       <form method="post" action="pqr.php" id="form-pqr">
         <label class="mejora-label" for="pqr-nombre">Tu nombre</label>
+        <!-- El maxlength 80 es el tamaño de la columna «nombre» de la tabla pqr -->
         <input class="mejora-input" id="pqr-nombre" name="nombre" type="text" maxlength="80" required>
         <label class="mejora-label" for="pqr-correo">Tu correo</label>
+        <!-- type="email" hace que el propio navegador revise el formato antes de enviar -->
         <input class="mejora-input" id="pqr-correo" name="correo" type="email" maxlength="120" placeholder="nombre@correo.com" required>
         <label class="mejora-label" for="pqr-tipo">Tipo de mensaje</label>
+        <!-- Las opciones calcan los valores del ENUM «tipo»: Petición, Queja, Reclamo y Sugerencia -->
         <select class="mejora-select" id="pqr-tipo" name="tipo">
           <option>Petición</option>
           <option>Queja</option>
@@ -126,18 +150,23 @@ if (isset($_GET['consultar'])) {
     <div class="mejora-card">
       <h2>Consultar mi PQR</h2>
       <p>Escribe el radicado que recibiste al enviar tu mensaje y mira en qué estado va tu caso.</p>
+      <!-- La consulta va por GET: el radicado queda en la URL y la página se puede compartir o recargar -->
       <form method="get" action="pqr.php" id="form-pqr-consulta">
         <label class="mejora-label" for="pqr-radicado">Número de radicado</label>
+        <!-- maxlength 8 porque el radicado siempre tiene 8 caracteres; el campo se rellena con lo último consultado -->
         <input class="mejora-input" id="pqr-radicado" name="consultar" type="text" maxlength="8" placeholder="Ej: A3F9C1D2" value="<?php echo e($_GET['consultar'] ?? ''); ?>">
         <button type="submit" class="tool-btn">Consultar</button>
       </form>
 <?php if ($consultaBuscada && $consultaPqr !== null): ?>
+      <!-- Se encontró: se muestra el estado que el equipo haya puesto en la columna «estado» (Pendiente, En revisión o Resuelto) -->
       <p class="mejora-msg">Radicado <?php echo e($consultaPqr['radicado']); ?> · Tipo: <?php echo e($consultaPqr['tipo']); ?> · Estado: <strong><?php echo e($consultaPqr['estado']); ?></strong> · Radicada el <?php echo e(fecha_corta($consultaPqr['fecha'])); ?>.</p>
 <?php elseif ($consultaBuscada): ?>
+      <!-- Se buscó pero ningún radicado coincidió en la tabla -->
       <p class="mejora-msg">No encontramos ninguna PQR con ese radicado. Revisa el código e inténtalo de nuevo.</p>
 <?php endif; ?>
     </div>
 
+    <!-- Tarjeta informativa: explica qué significa cada estado que puede mostrar la consulta -->
     <div class="mejora-card">
       <h2>¿Cómo se atienden?</h2>
       <p><strong>Pendiente:</strong> tu mensaje entró a la base de datos con su radicado.<br>

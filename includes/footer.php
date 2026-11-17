@@ -6,6 +6,7 @@
    la línea en cada página. */
 ?>
 <footer class="site-footer">
+    <!-- Mapa rápido: los mismos destinos del menú superior, por si se llega al final de la página -->
     <nav class="footer-nav" aria-label="Enlaces del sitio">
       <a href="index.php">Inicio</a>
       <a href="hardware.php">Hardware</a>

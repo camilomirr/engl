@@ -1,6 +1,11 @@
 <?php
 /* NVISION — versión PHP para XAMPP: comentarios de esta página. */
+/* Página de Redes y Simulación: contenido educativo (tipos de
+   red y topologías); el PHP solo interviene en los comentarios,
+   que en la tabla «comentarios» se guardan con pagina 'redes'. */
+// Marca de esta página para filtrar sus comentarios en la base.
 $PAGINA_COMENTARIOS = 'redes';
+// Controlador de comentarios: atiende el POST y prepara la lista.
 require __DIR__ . '/includes/comentarios_ctrl.php';
 ?>
 <!DOCTYPE html>
@@ -49,6 +54,7 @@ require __DIR__ . '/includes/comentarios_ctrl.php';
   <section class="container">
       <h1 class="section-title"><span data-i18n="page_h1_redes">Redes y Simulación</span></h1>
     </section>
+<!-- Sección puente: cómo el hardware se enlaza con la red (dirección MAC, IP y los conceptos de enlace) -->
 <section id="redes" class="container">
       <h2 class="section-title">
         <span class="mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></span> <span data-i18n="net_title">Del Hardware a la Red</span>
@@ -83,6 +89,7 @@ require __DIR__ . '/includes/comentarios_ctrl.php';
         </div>
       </div>
     </section>
+<!-- Sección de alcance: los tipos de red ordenados de la más pequeña a la más grande (BAN, PAN, LAN, CAN, MAN, WAN y GAN) -->
 <section id="alcance-redes" class="container">
       <h2 class="section-title">
         <span class="mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg></span> <span data-i18n="scope_title">Tipos de Redes según su Cobertura Geográfica</span>
@@ -297,6 +304,7 @@ require __DIR__ . '/includes/comentarios_ctrl.php';
         </article>
       </div>
     </section>
+<!-- Sección de topologías: la forma física/lógica de conectar los nodos (estrella, bus, anillo, malla, árbol e híbrida) -->
 <section id="topologias" class="container">
       <h2 class="section-title">
         <span class="mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg></span> <span data-i18n="topol_title">Topologías de Redes</span>
@@ -599,6 +607,7 @@ require __DIR__ . '/includes/comentarios_ctrl.php';
   
 
   
+  <!-- Sección de comentarios de Redes: misma vista compartida, filtrada por pagina 'redes' -->
   <?php include __DIR__ . '/includes/comentarios.php'; ?>
 </main>
 
