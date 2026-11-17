@@ -1,57 +1,117 @@
 <?php
 /* ============================================================
-   NVISION — Foro «El Taller» (PHP)
-   Publicar y responder llegan por POST, se guardan en Supabase
-   y la página se recarga (Post/Redirect/Get). El detalle de una
+   NVISION — Foro «El Taller» (PHP + MySQL)
+   ------------------------------------------------------------
+   CRUD completo del foro:
+     CREAR      publicar una pregunta y responder preguntas
+     CONSULTAR  la lista de preguntas y el detalle de cada una
+     ACTUALIZAR editar una pregunta (foro.php?editar=ID)
+     ELIMINAR   borrar una pregunta (con sus respuestas) o
+                borrar una respuesta suelta
+   Todo llega por POST, se guarda en MySQL y la página se
+   recarga (patrón Post/Redirect/Get). El detalle de una
    pregunta se abre con foro.php?ver=ID.
+   Las funciones de la base están en backend/bd.php.
    ============================================================ */
 require_once __DIR__ . '/backend/bd.php';
 
+// ===== AYUDAS DE VALIDACIÓN =====
+/* Los temas válidos son los mismos de la columna «tema». */
+function foro_tema_valido($tema) {
+    return in_array($tema, array('Hardware', 'Redes', 'Mantenimiento', 'Otro'), true);
+}
+
+// ===== ACCIONES QUE LLEGAN POR POST =====
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $accion = $_POST['accion'] ?? '';
+
+    // ----- CREAR: publicar una pregunta -----
     if ($accion === 'publicar') {
-        /* El select trae valores en minúscula; la base guarda el nombre bonito. */
-        $mapa = array('hardware' => 'Hardware', 'redes' => 'Redes',
-                      'software' => 'Mantenimiento', 'wifi' => 'Redes', 'otros' => 'Otro');
-        $etq = $mapa[$_POST['etiqueta'] ?? 'otros'] ?? 'Otro';
-        $ok = bd_crear('foro_preguntas', array(
-            'nombre'   => trim($_POST['nombre'] ?? ''),
-            'titulo'   => trim($_POST['titulo'] ?? ''),
-            'etiqueta' => $etq,
-            'mensaje'  => trim($_POST['mensaje'] ?? '')
-        ));
-        header('Location: foro.php?' . ($ok ? 'publicada=1' : 'error=1'));
+        $nombre    = trim($_POST['nombre'] ?? '');
+        $titulo    = trim($_POST['titulo'] ?? '');
+        $tema      = $_POST['tema'] ?? 'Otro';
+        $contenido = trim($_POST['contenido'] ?? '');
+        // Validación en PHP: ningún campo obligatorio puede faltar.
+        if (mb_strlen($nombre) >= 2 && mb_strlen($titulo) >= 4
+            && foro_tema_valido($tema) && mb_strlen($contenido) >= 4) {
+            bd_foro_crear_pregunta($nombre, $titulo, $tema, $contenido);
+            header('Location: foro.php?publicada=1');
+        } else {
+            header('Location: foro.php?error=1');
+        }
         exit;
     }
+
+    // ----- CREAR: responder una pregunta -----
     if ($accion === 'responder') {
-        $pid = $_POST['pregunta_id'] ?? '';
-        bd_crear('foro_respuestas', array(
-            'pregunta_id' => $pid,
-            'nombre' => trim($_POST['nombre'] ?? ''),
-            'mensaje' => trim($_POST['mensaje'] ?? '')
-        ));
-        header('Location: foro.php?ver=' . urlencode($pid));
+        $pid       = (int)($_POST['pregunta_id'] ?? 0);
+        $nombre    = trim($_POST['nombre'] ?? '');
+        $contenido = trim($_POST['contenido'] ?? '');
+        if ($pid > 0 && bd_foro_pregunta($pid) !== null
+            && mb_strlen($nombre) >= 2 && mb_strlen($contenido) >= 2) {
+            bd_foro_crear_respuesta($pid, $nombre, $contenido);
+            header('Location: foro.php?ver=' . $pid);
+        } else {
+            header('Location: foro.php?ver=' . $pid . '&error=1');
+        }
+        exit;
+    }
+
+    // ----- ACTUALIZAR: guardar la pregunta editada -----
+    if ($accion === 'actualizar') {
+        $pid       = (int)($_POST['id'] ?? 0);
+        $titulo    = trim($_POST['titulo'] ?? '');
+        $tema      = $_POST['tema'] ?? 'Otro';
+        $contenido = trim($_POST['contenido'] ?? '');
+        if ($pid > 0 && mb_strlen($titulo) >= 4
+            && foro_tema_valido($tema) && mb_strlen($contenido) >= 4) {
+            bd_foro_actualizar_pregunta($pid, $titulo, $tema, $contenido);
+            header('Location: foro.php?ver=' . $pid . '&actualizada=1');
+        } else {
+            header('Location: foro.php?editar=' . $pid . '&error=1');
+        }
+        exit;
+    }
+
+    // ----- ELIMINAR: borrar una pregunta (y sus respuestas) -----
+    if ($accion === 'eliminar_pregunta') {
+        $pid = (int)($_POST['pregunta_id'] ?? 0);
+        if ($pid > 0) {
+            bd_foro_eliminar_pregunta($pid);
+        }
+        header('Location: foro.php?eliminada=1');
+        exit;
+    }
+
+    // ----- ELIMINAR: borrar una respuesta -----
+    if ($accion === 'eliminar_respuesta') {
+        $rid = (int)($_POST['respuesta_id'] ?? 0);
+        $pid = (int)($_POST['pregunta_id'] ?? 0);
+        if ($rid > 0) {
+            bd_foro_eliminar_respuesta($rid);
+        }
+        header('Location: foro.php?ver=' . $pid);
         exit;
     }
 }
 
+// ===== CONSULTAR: datos para la vista =====
+// Detalle de una pregunta (foro.php?ver=ID) con sus respuestas.
 $detalle = null;
 $respuestasDetalle = array();
 if (isset($_GET['ver'])) {
-    $fila = bd_listar('foro_preguntas', array('igual' => array('id' => $_GET['ver'])));
-    if ($fila) {
-        $detalle = $fila[0];
-        $respuestasDetalle = bd_listar('foro_respuestas', array(
-            'orden' => 'created_at.asc', 'limite' => 200,
-            'igual' => array('pregunta_id' => $detalle['id'])
-        ));
+    $detalle = bd_foro_pregunta((int)$_GET['ver']);
+    if ($detalle !== null) {
+        $respuestasDetalle = bd_foro_respuestas((int)$detalle['id']);
     }
 }
-$preguntas = bd_listar('foro_preguntas', array('orden' => 'created_at.desc', 'limite' => 50));
-$conteo = array();
-foreach (bd_listar('foro_respuestas', array('limite' => 500)) as $r) {
-    $conteo[$r['pregunta_id']] = ($conteo[$r['pregunta_id']] ?? 0) + 1;
+// Pregunta cargada en el formulario de edición (foro.php?editar=ID).
+$editar = null;
+if (isset($_GET['editar'])) {
+    $editar = bd_foro_pregunta((int)$_GET['editar']);
 }
+// Lista de preguntas (cada fila ya trae su conteo de respuestas).
+$preguntas = bd_foro_preguntas();
 ?>
 <!DOCTYPE html>
 <html lang="es" data-theme="light">
@@ -109,32 +169,36 @@ foreach (bd_listar('foro_respuestas', array('limite' => 500)) as $r) {
 <?php if (isset($_GET['publicada'])): ?>
     <div class="mejora-card"><p class="mejora-msg">¡Pregunta publicada! Ya aparece en la lista de abajo.</p></div>
 <?php endif; ?>
-<?php if (isset($_GET['error'])): ?>
-    <div class="mejora-card"><p class="mejora-msg">No se pudo publicar. Revisa los datos e inténtalo de nuevo.</p></div>
+<?php if (isset($_GET['eliminada'])): ?>
+    <div class="mejora-card"><p class="mejora-msg">Pregunta eliminada.</p></div>
+<?php endif; ?>
+<?php if (isset($_GET['error']) && !$detalle && !$editar): ?>
+    <div class="mejora-card"><p class="mejora-msg">No se pudo guardar. Revisa que todos los campos estén completos e inténtalo de nuevo.</p></div>
 <?php endif; ?>
 
+    <!-- ===== CREAR: formulario para publicar una pregunta ===== -->
     <div class="mejora-card">
       <h2>Publica tu problema</h2>
-      <form method="post" action="foro.php">
+      <form method="post" action="foro.php" id="form-foro-publicar">
         <input type="hidden" name="accion" value="publicar">
         <label class="mejora-label" for="foro-nombre">Tu nombre</label>
         <input class="mejora-input" id="foro-nombre" name="nombre" type="text" maxlength="60" required>
         <label class="mejora-label" for="foro-titulo">Título del problema</label>
         <input class="mejora-input" id="foro-titulo" name="titulo" type="text" maxlength="120" required>
-        <label class="mejora-label" for="foro-etiqueta">Tema</label>
-        <select class="mejora-select" id="foro-etiqueta" name="etiqueta">
-          <option value="hardware">Hardware</option>
-          <option value="redes">Redes</option>
-          <option value="software">Software</option>
-          <option value="wifi">WiFi</option>
-          <option value="otros">Otros</option>
+        <label class="mejora-label" for="foro-tema">Tema</label>
+        <select class="mejora-select" id="foro-tema" name="tema">
+          <option value="Hardware">Hardware</option>
+          <option value="Redes">Redes</option>
+          <option value="Mantenimiento">Mantenimiento</option>
+          <option value="Otro">Otro</option>
         </select>
         <label class="mejora-label" for="foro-cuerpo">Cuéntanos qué pasa (qué hiciste, qué error sale, desde cuándo)</label>
-        <textarea class="mejora-textarea" id="foro-cuerpo" name="mensaje" maxlength="2000" required></textarea>
+        <textarea class="mejora-textarea" id="foro-cuerpo" name="contenido" maxlength="2000" required></textarea>
         <button type="submit" class="tool-btn">Publicar pregunta</button>
       </form>
     </div>
 
+    <!-- ===== CONSULTAR: lista de preguntas ===== -->
     <div class="mejora-card">
       <h2>Preguntas de la comunidad</h2>
       <div id="foro-list">
@@ -143,9 +207,9 @@ foreach (bd_listar('foro_respuestas', array('limite' => 500)) as $r) {
 <?php else: ?>
 <?php foreach ($preguntas as $p): ?>
         <article class="foro-item">
-          <span class="foro-tag mejora-chip"><?php echo e($p['etiqueta'] ?? 'Otro'); ?></span>
+          <span class="foro-tag mejora-chip"><?php echo e($p['tema'] ?? 'Otro'); ?></span>
           <h3 class="foro-q-title"><?php echo e($p['titulo']); ?></h3>
-          <p class="foro-meta">por <?php echo e($p['nombre']); ?> · <?php echo e(fecha_corta($p['created_at'])); ?> · <?php echo (int)($conteo[$p['id']] ?? 0); ?> respuestas</p>
+          <p class="foro-meta">por <?php echo e($p['nombre']); ?> · <?php echo e(fecha_corta($p['fecha'])); ?> · <?php echo (int)$p['respuestas']; ?> respuestas</p>
           <a class="tool-btn tool-btn-ghost" href="foro.php?ver=<?php echo e($p['id']); ?>">Ver y responder</a>
         </article>
 <?php endforeach; ?>
@@ -154,14 +218,30 @@ foreach (bd_listar('foro_respuestas', array('limite' => 500)) as $r) {
     </div>
 
 <?php if ($detalle): ?>
+    <!-- ===== CONSULTAR: detalle de la pregunta, con sus respuestas ===== -->
     <div class="mejora-card" id="foro-detail">
       <a class="tool-btn tool-btn-ghost" href="foro.php">← Volver a las preguntas</a>
+<?php if (isset($_GET['actualizada'])): ?>
+      <p class="mejora-msg">¡Pregunta actualizada!</p>
+<?php endif; ?>
+<?php if (isset($_GET['error'])): ?>
+      <p class="mejora-msg">No se pudo guardar la respuesta. Revisa los datos e inténtalo de nuevo.</p>
+<?php endif; ?>
       <div id="foro-detail-body">
-        <span class="foro-tag mejora-chip"><?php echo e($detalle['etiqueta'] ?? 'Otro'); ?></span>
+        <span class="foro-tag mejora-chip"><?php echo e($detalle['tema'] ?? 'Otro'); ?></span>
         <h2><?php echo e($detalle['titulo']); ?></h2>
-        <p class="foro-meta">por <?php echo e($detalle['nombre']); ?> · <?php echo e(fecha_corta($detalle['created_at'])); ?></p>
-        <p><?php echo e($detalle['mensaje']); ?></p>
+        <p class="foro-meta">por <?php echo e($detalle['nombre']); ?> · <?php echo e(fecha_corta($detalle['fecha'])); ?></p>
+        <p><?php echo e($detalle['contenido']); ?></p>
       </div>
+      <!-- ACTUALIZAR / ELIMINAR la pregunta -->
+      <p>
+        <a class="tool-btn tool-btn-ghost" href="foro.php?editar=<?php echo e($detalle['id']); ?>">Editar pregunta</a>
+      </p>
+      <form method="post" action="foro.php" class="form-confirmar" data-confirm="¿Seguro que quieres eliminar esta pregunta? También se borran sus respuestas.">
+        <input type="hidden" name="accion" value="eliminar_pregunta">
+        <input type="hidden" name="pregunta_id" value="<?php echo e($detalle['id']); ?>">
+        <button type="submit" class="tool-btn tool-btn-ghost">Eliminar pregunta</button>
+      </form>
       <h3>Respuestas</h3>
       <div id="foro-answers">
 <?php if (!$respuestasDetalle): ?>
@@ -169,20 +249,55 @@ foreach (bd_listar('foro_respuestas', array('limite' => 500)) as $r) {
 <?php else: ?>
 <?php foreach ($respuestasDetalle as $r): ?>
         <div class="foro-answer">
-          <p class="foro-meta"><?php echo e($r['nombre']); ?> · <?php echo e(fecha_corta($r['created_at'])); ?></p>
-          <p><?php echo e($r['mensaje']); ?></p>
+          <p class="foro-meta"><?php echo e($r['nombre']); ?> · <?php echo e(fecha_corta($r['fecha'])); ?></p>
+          <p><?php echo e($r['contenido']); ?></p>
+          <!-- ELIMINAR esta respuesta -->
+          <form method="post" action="foro.php" class="form-confirmar" data-confirm="¿Seguro que quieres eliminar esta respuesta?">
+            <input type="hidden" name="accion" value="eliminar_respuesta">
+            <input type="hidden" name="respuesta_id" value="<?php echo e($r['id']); ?>">
+            <input type="hidden" name="pregunta_id" value="<?php echo e($detalle['id']); ?>">
+            <button type="submit" class="tool-btn tool-btn-ghost">Eliminar respuesta</button>
+          </form>
         </div>
 <?php endforeach; ?>
 <?php endif; ?>
       </div>
-      <form method="post" action="foro.php">
+      <!-- CREAR: formulario para responder -->
+      <form method="post" action="foro.php" id="form-foro-responder">
         <input type="hidden" name="accion" value="responder">
         <input type="hidden" name="pregunta_id" value="<?php echo e($detalle['id']); ?>">
         <label class="mejora-label" for="foro-answer-nombre">Tu nombre</label>
         <input class="mejora-input" id="foro-answer-nombre" name="nombre" type="text" maxlength="60" required>
         <label class="mejora-label" for="foro-answer-text">Tu respuesta</label>
-        <textarea class="mejora-textarea" id="foro-answer-text" name="mensaje" maxlength="2000" required></textarea>
+        <textarea class="mejora-textarea" id="foro-answer-text" name="contenido" maxlength="2000" required></textarea>
         <button type="submit" class="tool-btn">Enviar respuesta</button>
+      </form>
+    </div>
+<?php endif; ?>
+
+<?php if ($editar): ?>
+    <!-- ===== ACTUALIZAR: formulario de edición con los datos cargados ===== -->
+    <div class="mejora-card" id="foro-edit">
+      <a class="tool-btn tool-btn-ghost" href="foro.php?ver=<?php echo e($editar['id']); ?>">← Volver a la pregunta</a>
+      <h2>Editar pregunta</h2>
+<?php if (isset($_GET['error'])): ?>
+      <p class="mejora-msg">No se pudo guardar. Revisa que todos los campos estén completos e inténtalo de nuevo.</p>
+<?php endif; ?>
+      <form method="post" action="foro.php" id="form-foro-editar">
+        <input type="hidden" name="accion" value="actualizar">
+        <input type="hidden" name="id" value="<?php echo e($editar['id']); ?>">
+        <p class="foro-meta">Pregunta de <?php echo e($editar['nombre']); ?> · <?php echo e(fecha_corta($editar['fecha'])); ?></p>
+        <label class="mejora-label" for="editar-titulo">Título del problema</label>
+        <input class="mejora-input" id="editar-titulo" name="titulo" type="text" maxlength="120" required value="<?php echo e($editar['titulo']); ?>">
+        <label class="mejora-label" for="editar-tema">Tema</label>
+        <select class="mejora-select" id="editar-tema" name="tema">
+<?php foreach (array('Hardware', 'Redes', 'Mantenimiento', 'Otro') as $t): ?>
+          <option value="<?php echo $t; ?>"<?php echo $editar['tema'] === $t ? ' selected' : ''; ?>><?php echo $t; ?></option>
+<?php endforeach; ?>
+        </select>
+        <label class="mejora-label" for="editar-cuerpo">Cuéntanos qué pasa</label>
+        <textarea class="mejora-textarea" id="editar-cuerpo" name="contenido" maxlength="2000" required><?php echo e($editar['contenido']); ?></textarea>
+        <button type="submit" class="tool-btn">Guardar cambios</button>
       </form>
     </div>
 <?php endif; ?>

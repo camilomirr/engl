@@ -23,6 +23,11 @@
             </ul>
           </li>
 
+          <!-- Tienda: el inventario de productos (CRUD principal) -->
+          <li>
+            <a href="tienda.php"><span>Tienda</span></a>
+          </li>
+
           <!-- Catálogo 2: Comunidad -->
           <li class="nav-item-dropdown">
             <button type="button" class="nav-dropdown-trigger" aria-expanded="false">

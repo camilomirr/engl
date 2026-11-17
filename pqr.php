@@ -1,28 +1,45 @@
 <?php
 /* ============================================================
-   NVISION — PQR (PHP)
-   El mensaje se guarda en la tabla pqr (la página solo puede
-   crear: por privacidad nadie lee los PQR desde la web) y el
-   visitante recibe su radicado.
+   NVISION — PQR (PHP + MySQL)
+   ------------------------------------------------------------
+   CREAR:     el visitante envía su petición, queja, reclamo o
+              sugerencia; se guarda en la tabla «pqr» de MySQL y
+              recibe un radicado (código de 8 caracteres).
+   CONSULTAR: con ese radicado puede ver el estado de su caso
+              en el bloque «Consultar mi PQR» de esta misma página
+              (solo lectura: tipo, estado y fecha).
+   Las funciones de la base están en backend/bd.php.
    ============================================================ */
 require_once __DIR__ . '/backend/bd.php';
 
+// ===== CREAR: radicar una PQR nueva =====
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $uuid = generar_uuid();
-    $ok = bd_crear('pqr', array(
-        'id' => $uuid,
-        'nombre' => trim($_POST['nombre'] ?? ''),
-        'correo' => trim($_POST['correo'] ?? ''),
-        'tipo' => $_POST['tipo'] ?? 'Petición',
-        'asunto' => trim($_POST['asunto'] ?? ''),
-        'mensaje' => trim($_POST['mensaje'] ?? '')
-    ), true);
-    if ($ok) {
-        header('Location: pqr.php?radicado=' . strtoupper(substr($uuid, 0, 8)));
-    } else {
-        header('Location: pqr.php?error=1');
+    $nombre  = trim($_POST['nombre'] ?? '');
+    $correo  = trim($_POST['correo'] ?? '');
+    $tipo    = $_POST['tipo'] ?? 'Petición';
+    $mensaje = trim($_POST['mensaje'] ?? '');
+    $tiposValidos = array('Petición', 'Queja', 'Reclamo', 'Sugerencia');
+    // Validación en PHP: campos completos y correo con formato válido.
+    if (mb_strlen($nombre) >= 2
+        && filter_var($correo, FILTER_VALIDATE_EMAIL) !== false
+        && in_array($tipo, $tiposValidos, true)
+        && mb_strlen($mensaje) >= 10) {
+        $radicado = bd_pqr_crear($nombre, $correo, $tipo, $mensaje);
+        if ($radicado !== null) {
+            header('Location: pqr.php?radicado=' . $radicado);
+            exit;
+        }
     }
+    header('Location: pqr.php?error=1');
     exit;
+}
+
+// ===== CONSULTAR: buscar una PQR por su radicado =====
+$consultaPqr = null;
+$consultaBuscada = false;
+if (isset($_GET['consultar'])) {
+    $consultaBuscada = true;
+    $consultaPqr = bd_pqr_consultar($_GET['consultar']);
 }
 ?>
 <!DOCTYPE html>
@@ -78,15 +95,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </section>
 
   <section class="mejora-wrap">
+    <!-- ===== CREAR: formulario para radicar una PQR ===== -->
     <div class="mejora-card">
       <h2>Envía tu mensaje</h2>
 <?php if (isset($_GET['radicado'])): ?>
-      <p class="mejora-msg">¡Recibido! Tu número de radicado es <?php echo e($_GET['radicado']); ?>. Guárdalo: con él puedes preguntar por el estado de tu caso en el foro.</p>
+      <p class="mejora-msg">¡Recibido! Tu número de radicado es <?php echo e($_GET['radicado']); ?>. Guárdalo: con él puedes consultar el estado de tu caso aquí abajo, en «Consultar mi PQR».</p>
 <?php endif; ?>
 <?php if (isset($_GET['error'])): ?>
-      <p class="mejora-msg">No se pudo enviar. Revisa los datos e inténtalo de nuevo.</p>
+      <p class="mejora-msg">No se pudo enviar. Revisa que todos los campos estén completos y que el correo sea válido.</p>
 <?php endif; ?>
-      <form method="post" action="pqr.php">
+      <form method="post" action="pqr.php" id="form-pqr">
         <label class="mejora-label" for="pqr-nombre">Tu nombre</label>
         <input class="mejora-input" id="pqr-nombre" name="nombre" type="text" maxlength="80" required>
         <label class="mejora-label" for="pqr-correo">Tu correo</label>
@@ -98,17 +116,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <option>Reclamo</option>
           <option>Sugerencia</option>
         </select>
-        <label class="mejora-label" for="pqr-asunto">Asunto</label>
-        <input class="mejora-input" id="pqr-asunto" name="asunto" type="text" maxlength="120" required>
         <label class="mejora-label" for="pqr-mensaje">Mensaje</label>
         <textarea class="mejora-textarea" id="pqr-mensaje" name="mensaje" maxlength="2000" required></textarea>
         <button type="submit" class="tool-btn">Enviar PQR</button>
       </form>
     </div>
 
+    <!-- ===== CONSULTAR: estado de una PQR por su radicado ===== -->
+    <div class="mejora-card">
+      <h2>Consultar mi PQR</h2>
+      <p>Escribe el radicado que recibiste al enviar tu mensaje y mira en qué estado va tu caso.</p>
+      <form method="get" action="pqr.php" id="form-pqr-consulta">
+        <label class="mejora-label" for="pqr-radicado">Número de radicado</label>
+        <input class="mejora-input" id="pqr-radicado" name="consultar" type="text" maxlength="8" placeholder="Ej: A3F9C1D2" value="<?php echo e($_GET['consultar'] ?? ''); ?>">
+        <button type="submit" class="tool-btn">Consultar</button>
+      </form>
+<?php if ($consultaBuscada && $consultaPqr !== null): ?>
+      <p class="mejora-msg">Radicado <?php echo e($consultaPqr['radicado']); ?> · Tipo: <?php echo e($consultaPqr['tipo']); ?> · Estado: <strong><?php echo e($consultaPqr['estado']); ?></strong> · Radicada el <?php echo e(fecha_corta($consultaPqr['fecha'])); ?>.</p>
+<?php elseif ($consultaBuscada): ?>
+      <p class="mejora-msg">No encontramos ninguna PQR con ese radicado. Revisa el código e inténtalo de nuevo.</p>
+<?php endif; ?>
+    </div>
+
     <div class="mejora-card">
       <h2>¿Cómo se atienden?</h2>
-      <p><strong>Recibido:</strong> tu mensaje entró a la base de datos con su radicado.<br>
+      <p><strong>Pendiente:</strong> tu mensaje entró a la base de datos con su radicado.<br>
       <strong>En revisión:</strong> el equipo lo está mirando.<br>
       <strong>Resuelto:</strong> ya se atendió; si dejaste tu correo, te avisamos ahí.</p>
       <p>Para dudas rápidas de los temas, mejor el <a href="foro.php">foro</a>: ahí responde toda la comunidad.</p>

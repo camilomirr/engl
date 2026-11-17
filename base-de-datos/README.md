@@ -1,50 +1,91 @@
-# Base de datos — NVISION (Supabase / PostgreSQL)
+# Base de datos — NVISION
 
-La base guarda lo que la página necesita de verdad: el **foro**, los
-**comentarios**, los **PQR** y los **avisos**. Nada de juegos ni cuentas.
+El proyecto usa **dos bases**, una por versión de las páginas:
 
-> **Estado:** ya está creada y conectada — proyecto **`nvision-nuevo`**
-> en Supabase, con este esquema aplicado y la página funcionando.
-> Los pasos de abajo son solo por si se quiere montar otra desde cero.
+| Versión | Base de datos | Archivo del esquema |
+|---|---|---|
+| **PHP** (XAMPP e InfinityFree) | **MySQL / MariaDB** | `nvision_mysql.sql` |
+| HTML (nvision.social) | Supabase / PostgreSQL | `esquema_supabase.sql` |
 
-## Puesta en marcha (15 minutos)
+Las dos guardan lo mismo: el **foro**, los **comentarios**, los
+**PQR** y los **avisos**. Nada de juegos ni cuentas.
 
-1. Entra a [supabase.com](https://supabase.com) y crea un proyecto gratis
-   (nombre sugerido: `nvision`).
-2. En el panel del proyecto ve a **SQL Editor → New query**, pega todo el
-   contenido de `esquema.sql` y pulsa **Run**. Debe terminar sin errores.
-3. Ve a **Settings → API** y copia dos datos:
-   - **Project URL** (ej: `https://abcd1234.supabase.co`)
-   - **anon public key** (la llave larga que dice `anon`)
-4. Pégalos en `backend/config.js`. Con eso el foro, los comentarios,
-   los avisos y el formulario PQR quedan funcionando.
+---
 
-## Tablas
+## 1) MySQL — la base de la versión PHP
 
-| Tabla | Para qué | Quién lee | Quién escribe |
-|---|---|---|---|
-| `foro_preguntas` | Preguntas del foro El Taller | Todo el mundo | Todo el mundo |
-| `foro_respuestas` | Respuestas de cada pregunta | Todo el mundo | Todo el mundo |
-| `comentarios` | Comentarios por página (`pagina`: inicio, hardware, redes, mantenimiento) | Todo el mundo | Todo el mundo |
-| `pqr` | Peticiones, quejas, reclamos y sugerencias, con `estado` | **Solo el equipo** (panel) | La página solo envía |
-| `avisos` | Novedades de la página principal | Todo el mundo | **Solo el equipo** (panel) |
+### Puesta en marcha en XAMPP (local)
 
-Además hay una vista `foro_resumen` con el conteo de respuestas por pregunta.
+1. Enciende **Apache** y **MySQL** en el panel de XAMPP.
+2. Abre **http://localhost/phpmyadmin** y crea una base de datos
+   llamada **`nvision`** (cotejamiento `utf8mb4_general_ci`).
+3. Entra a la base → pestaña **Importar** → elige
+   **`nvision_mysql.sql`** → **Continuar**. Se crean las 5 tablas
+   con sus datos semilla.
+4. La conexión ya viene puesta en `backend/conexion.php` con los
+   valores de XAMPP (`localhost`, `nvision`, `root`, sin clave).
 
-## Trabajo diario del encargado de la base
+### Puesta en marcha en InfinityFree (internet)
 
-- **Revisar PQR:** Table Editor → `pqr`. Cambia el `estado` de
-  `Recibido` → `En revisión` → `Resuelto` a medida que se atienden.
-  El radicado que recibe el visitante son los primeros 8 caracteres
-  del `id` de su fila: búscalo con ese dato cuando pregunte por su caso.
-- **Publicar un aviso:** Table Editor → `avisos` → *Insert row* con
-  título y contenido. Aparece solo en la página principal.
-- **Moderar:** si un comentario o pregunta del foro no va, se borra la
-  fila desde el Table Editor (borrar una pregunta borra sus respuestas).
+1. En el panel del hosting, crea una **base de datos MySQL**.
+2. Entra al **phpMyAdmin** de esa base e importa
+   **`nvision_mysql.sql`** (el archivo no crea la base, solo las
+   tablas: por eso sirve igual en los dos lados).
+3. En la copia del proyecto **que está en el hosting**, cambia los
+   4 datos de `backend/conexion.php` por los del panel.
 
-## Seguridad (RLS)
+> ⚠️ Los datos de conexión del hosting **no se suben al
+> repositorio**: en el repo quedan siempre los de XAMPP.
 
-Todas las tablas tienen Row Level Security activado. Las políticas están
-al final de `esquema.sql` y dicen exactamente quién puede hacer qué.
-La tabla `pqr` no tiene política de lectura pública a propósito: guarda
-correos personales.
+### Tablas (MySQL)
+
+| Tabla | Para qué |
+|---|---|
+| `productos` | **El inventario de la tienda** (`nombre`, `categoria`, `descripcion`, `precio` en pesos, `cantidad` de stock): el CRUD principal, desde `tienda.php` |
+| `foro_preguntas` | Preguntas del foro El Taller (`nombre`, `titulo`, `tema`, `contenido`, `fecha`) |
+| `foro_respuestas` | Respuestas de cada pregunta; si se borra la pregunta, se borran solas (`ON DELETE CASCADE`) |
+| `comentarios` | Comentarios por página (`pagina`: inicio, hardware, redes, mantenimiento) |
+| `pqr` | Peticiones, quejas, reclamos y sugerencias, con `radicado` único y `estado` (arranca en `Pendiente`) |
+| `avisos` | Novedades de la página principal |
+
+### Trabajo diario del encargado de la base (phpMyAdmin)
+
+- **Revisar PQR:** abre la tabla `pqr`. Cambia el `estado` de
+  `Pendiente` → `En revisión` → `Resuelto` a medida que se
+  atienden. El visitante consulta su caso con el `radicado`.
+- **Publicar un aviso:** tabla `avisos` → *Insertar* con título y
+  contenido. Aparece solo en la página principal.
+- **Moderar:** el foro y los comentarios se pueden editar y borrar
+  desde la misma página; también se puede borrar la fila aquí.
+
+### El CRUD, ¿dónde está?
+
+Todo está en `backend/bd.php` con PDO y **sentencias preparadas**:
+
+- **Crear:** `bd_producto_crear`, `bd_foro_crear_pregunta`,
+  `bd_foro_crear_respuesta`, `bd_comentario_crear`, `bd_pqr_crear`.
+- **Consultar:** `bd_productos`, `bd_producto`,
+  `bd_foro_preguntas`, `bd_foro_pregunta`, `bd_foro_respuestas`,
+  `bd_comentarios`, `bd_pqr_consultar`, `bd_avisos`.
+- **Actualizar:** `bd_producto_actualizar` (editar producto) y
+  `bd_foro_actualizar_pregunta` (editar pregunta).
+- **Eliminar:** `bd_producto_eliminar`,
+  `bd_foro_eliminar_pregunta`, `bd_foro_eliminar_respuesta`,
+  `bd_comentario_eliminar`.
+
+---
+
+## 2) Supabase — la base de la versión HTML
+
+> **Estado:** ya está creada y conectada — proyecto
+> **`nvision-nuevo`** en Supabase, con `esquema_supabase.sql`
+> aplicado y la versión HTML funcionando. Estos pasos son solo
+> por si se quiere montar otra desde cero.
+
+1. Entra a [supabase.com](https://supabase.com) y crea un proyecto.
+2. En **SQL Editor**, pega `esquema_supabase.sql` y pulsa **Run**.
+3. En **Settings → API** copia la **Project URL** y la **anon key**.
+4. Pégalas en `backend/config.js`.
+
+Esa base tiene las mismas 5 tablas (en PostgreSQL) y su seguridad
+es por políticas RLS, explicadas al final del propio archivo SQL.

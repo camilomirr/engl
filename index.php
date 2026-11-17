@@ -1,7 +1,12 @@
 <?php
-/* NVISION — versión PHP para XAMPP: avisos y comentarios del inicio. */
+/* ============================================================
+   NVISION — Página principal (PHP + MySQL)
+   Los avisos de «Novedades» se consultan en MySQL con
+   bd_avisos() y la página también trae sus comentarios
+   (controlador de comentarios con $PAGINA_COMENTARIOS).
+   ============================================================ */
 require_once __DIR__ . '/backend/bd.php';
-$listaAvisos = bd_listar('avisos', array('orden' => 'created_at.desc', 'limite' => 5));
+$listaAvisos = bd_avisos();
 $PAGINA_COMENTARIOS = 'inicio';
 require __DIR__ . '/includes/comentarios_ctrl.php';
 ?>
@@ -222,7 +227,7 @@ require __DIR__ . '/includes/comentarios_ctrl.php';
       <p class="section-desc">Avisos del equipo NVISION.</p>
       <div class="nov-list" id="avisos">
 <?php foreach ($listaAvisos as $a): ?>
-        <article class="nov-card"><div class="nov-head"><span class="nov-tag">Aviso</span><span><?php echo e(fecha_corta($a['created_at'])); ?></span></div><h2><?php echo e($a['titulo']); ?></h2><p><?php echo e($a['contenido']); ?></p></article>
+        <article class="nov-card"><div class="nov-head"><span class="nov-tag">Aviso</span><span><?php echo e(fecha_corta($a['fecha'])); ?></span></div><h2><?php echo e($a['titulo']); ?></h2><p><?php echo e($a['contenido']); ?></p></article>
 <?php endforeach; ?>
 <?php if (!$listaAvisos): ?><p>No hay avisos por ahora.</p><?php endif; ?>
       </div>
