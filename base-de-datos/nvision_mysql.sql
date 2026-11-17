@@ -14,11 +14,12 @@
 --
 -- Tablas:
 --   productos        inventario de la tienda (el CRUD principal)
+--   ventas           compras hechas desde el carrito
+--   venta_detalles   renglones de cada venta (qué se compró)
 --   avisos           novedades que se muestran en el inicio
 --   foro_preguntas   preguntas del foro «El Taller»
 --   foro_respuestas  respuestas de cada pregunta
 --   comentarios      comentarios de las páginas de aprendizaje
---   pqr              peticiones, quejas, reclamos y sugerencias
 -- ============================================================
 
 -- Los acentos y las ñ se guardan bien con utf8mb4.
@@ -106,36 +107,7 @@ CREATE TABLE IF NOT EXISTS comentarios (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ------------------------------------------------------------
--- 5) PQR — peticiones, quejas, reclamos y sugerencias
---    El radicado es único: es el código que el visitante usa
---    para consultar el estado de su caso. El estado arranca
---    en «Pendiente» y el equipo lo cambia desde phpMyAdmin.
--- ------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS pqr (
-  -- Id interno de la fila (la persona nunca lo ve).
-  id       INT AUTO_INCREMENT PRIMARY KEY,
-  -- El radicado de 8 caracteres que se le entrega a la persona:
-  -- es UNIQUE porque es su llave para consultar el caso; dos
-  -- PQR jamás pueden compartir radicado.
-  radicado VARCHAR(8) NOT NULL UNIQUE,
-  -- Nombre de quien radica la PQR.
-  nombre   VARCHAR(80) NOT NULL,
-  -- Correo de contacto: ahí se avisa cuando el caso se resuelva.
-  correo   VARCHAR(120) NOT NULL,
-  -- Clase de mensaje, cerrada con ENUM; por defecto «Petición».
-  tipo     ENUM('Petición', 'Queja', 'Reclamo', 'Sugerencia')
-           NOT NULL DEFAULT 'Petición',
-  -- El mensaje completo de la petición, queja o reclamo.
-  mensaje  VARCHAR(2000) NOT NULL,
-  -- Estado del caso: nace en «Pendiente» y el equipo lo pasa a
-  -- «En revisión» y luego a «Resuelto» desde phpMyAdmin.
-  estado   VARCHAR(20) NOT NULL DEFAULT 'Pendiente',
-  -- Fecha y hora en que quedó radicada la PQR.
-  fecha    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- ------------------------------------------------------------
--- 6) PRODUCTOS — inventario de la tienda NVISION
+-- 5) PRODUCTOS — inventario de la tienda NVISION
 --    Es el módulo CRUD principal del proyecto: registrar,
 --    consultar, actualizar y eliminar productos desde
 --    tienda.php. El precio va en pesos colombianos (sin
@@ -157,8 +129,56 @@ CREATE TABLE IF NOT EXISTS productos (
   precio      INT NOT NULL DEFAULT 0,
   -- Stock disponible: cuando llega a 0 la tarjeta dice «Agotado».
   cantidad    INT NOT NULL DEFAULT 0,
+  -- Foto del producto: es la RUTA local de la imagen (ej:
+  -- 'frontend/img/productos/ram.jpg'), no la imagen en sí.
+  -- Puede ser NULL: si un producto no tiene foto, la tienda
+  -- muestra un recuadro con su emoji en vez de la imagen.
+  imagen      VARCHAR(255) NULL,
   -- Fecha en que el producto entró al inventario.
   fecha       DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ------------------------------------------------------------
+-- 6) VENTAS — las compras que se finalizan en carrito.php
+--    La venta guarda solo el total y la fecha; el detalle de
+--    qué productos se llevaron va en venta_detalles.
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS ventas (
+  -- Id de la venta: es el «número de venta» que se le muestra
+  -- al comprador al finalizar la compra.
+  id         INT AUTO_INCREMENT PRIMARY KEY,
+  -- Total pagado en pesos (la suma de los renglones del detalle).
+  total      INT NOT NULL,
+  -- Momento en que se hizo la compra.
+  creado_en  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ------------------------------------------------------------
+-- 7) VENTA_DETALLES — un renglón por cada producto comprado
+--    Se guarda el nombre y el precio DEL MOMENTO de la venta:
+--    si mañana el producto se edita o se borra del inventario,
+--    el historial de la venta no cambia ni se rompe.
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS venta_detalles (
+  -- Id propio de cada renglón.
+  id          INT AUTO_INCREMENT PRIMARY KEY,
+  -- A qué venta pertenece este renglón: llave foránea con
+  -- cascada, si se borra la venta se borran sus renglones.
+  venta_id    INT NOT NULL,
+  -- Id del producto comprado. OJO: aquí NO hay llave foránea
+  -- a propósito: si el producto se elimina del inventario, el
+  -- renglón de la venta debe sobrevivir como historial.
+  producto_id INT NOT NULL,
+  -- Nombre del producto tal como estaba al venderlo.
+  nombre      VARCHAR(120) NOT NULL,
+  -- Precio unitario al momento de la venta, en pesos.
+  precio      INT NOT NULL,
+  -- Cuántas unidades de ese producto se llevaron.
+  cantidad    INT NOT NULL,
+  CONSTRAINT fk_detalles_venta
+    FOREIGN KEY (venta_id)
+    REFERENCES ventas (id)
+    ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ------------------------------------------------------------
@@ -166,24 +186,44 @@ CREATE TABLE IF NOT EXISTS productos (
 -- se pueden borrar o cambiar desde phpMyAdmin)
 -- ------------------------------------------------------------
 -- Productos de ejemplo (datos ficticios) de la tienda.
-INSERT INTO productos (nombre, categoria, descripcion, precio, cantidad) VALUES
+-- La columna imagen trae la ruta de la foto de cada producto,
+-- guardada en frontend/img/productos/.
+INSERT INTO productos (nombre, categoria, descripcion, precio, cantidad, imagen) VALUES
   ('Memoria RAM DDR4 8GB', 'Componentes',
-   'Módulo de memoria DDR4 de 8 GB a 3200 MHz para PC de escritorio.', 85000, 12),
+   'Módulo de memoria DDR4 de 8 GB a 3200 MHz para PC de escritorio.', 85000, 12,
+   'frontend/img/productos/ram.jpg'),
   ('SSD NVMe 256GB', 'Componentes',
-   'Unidad de estado sólido NVMe PCIe de 256 GB, lectura hasta 3.500 MB/s.', 145000, 8),
+   'Unidad de estado sólido NVMe PCIe de 256 GB, lectura hasta 3.500 MB/s.', 145000, 8,
+   'frontend/img/productos/ssd.jpg'),
   ('Mouse inalámbrico', 'Periféricos',
-   'Mouse óptico inalámbrico 2.4 GHz con receptor USB y 1600 DPI.', 45000, 20),
+   'Mouse óptico inalámbrico 2.4 GHz con receptor USB y 1600 DPI.', 45000, 20,
+   'frontend/img/productos/mouse.jpg'),
   ('Teclado mecánico', 'Periféricos',
-   'Teclado mecánico con interruptores azules y retroiluminación LED.', 120000, 0),
+   'Teclado mecánico con interruptores azules y retroiluminación LED.', 120000, 0,
+   'frontend/img/productos/teclado.jpg'),
   ('Router WiFi doble banda', 'Redes',
-   'Router AC1200 doble banda 2.4/5 GHz con 4 antenas externas.', 135000, 5),
+   'Router AC1200 doble banda 2.4/5 GHz con 4 antenas externas.', 135000, 5,
+   'frontend/img/productos/router.jpg'),
   ('Cable de red Cat6 (3 m)', 'Accesorios',
-   'Cable UTP categoría 6 de 3 metros con conectores RJ45.', 18000, 30);
+   'Cable UTP categoría 6 de 3 metros con conectores RJ45.', 18000, 30,
+   'frontend/img/productos/cable.jpg'),
+  ('Monitor LED 24 pulgadas', 'Periféricos',
+   'Monitor LED Full HD de 24 pulgadas (1920×1080) con entradas HDMI y VGA.', 420000, 6,
+   'frontend/img/productos/monitor.jpg'),
+  ('Diadema gamer con micrófono', 'Periféricos',
+   'Diadema gamer con micrófono flexible, sonido envolvente y conexión 3.5 mm.', 95000, 15,
+   'frontend/img/productos/diadema.jpg'),
+  ('Disco duro externo 1TB', 'Accesorios',
+   'Disco duro externo de 1 TB con conexión USB 3.0, ideal para copias de seguridad.', 180000, 10,
+   'frontend/img/productos/disco.jpg'),
+  ('Fuente de poder 600W', 'Componentes',
+   'Fuente de poder ATX de 600W con certificación 80 Plus y ventilador silencioso de 120 mm.', 160000, 7,
+   'frontend/img/productos/fuente.jpg');
 
 -- El aviso de bienvenida que se ve en «Novedades» al instalar.
 INSERT INTO avisos (titulo, contenido) VALUES
   ('¡Bienvenidos a la nueva NVISION!',
-   'Estrenamos página: mismo diseño, menos vueltas. Aprende en los módulos, pregunta en el foro y envía tus PQR desde la sección de contacto.');
+   'Estrenamos página: mismo diseño, menos vueltas. Aprende en los módulos, pregunta en el foro y compra en la tienda.');
 
 -- Una primera pregunta del equipo para que el foro no nazca vacío.
 INSERT INTO foro_preguntas (nombre, titulo, tema, contenido) VALUES

@@ -1,0 +1,248 @@
+/* ============================================================
+   NVISION — Estilos de la tienda y el carrito
+   ------------------------------------------------------------
+   Esta hoja SOLO la cargan tienda.php y carrito.php (cada
+   página arma su propio <head>, por eso el <link> va en esas
+   dos). Todo usa las variables del diseño general definidas
+   en modules/variables.css (--bg-card, --accent-cyan, etc.),
+   así la tienda se ve igual al resto del sitio y respeta el
+   tema claro/oscuro sin colores quemados a mano.
+   ============================================================ */
+
+/* ===== ENLACE AL CARRITO (en el encabezado de la tienda) ===== */
+.tienda-carrito-link {
+  /* Un poco más grande que un botón normal: es la entrada a pagar. */
+  font-size: 1.05rem;
+}
+
+/* ===== BUSCADOR Y FILTROS DE LA VITRINA ===== */
+.tienda-filtros {
+  /* Los tres controles en fila, que se acomodan solos en celular. */
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-end;
+  margin-bottom: 1.5rem;
+}
+.tienda-filtros-grupo {
+  /* Cada grupo (etiqueta + campo) crece para repartir el ancho. */
+  flex: 1 1 180px;
+}
+
+/* ===== CUADRÍCULA DE LA VITRINA ===== */
+.tienda-grid {
+  /* Tarjetas en columnas que se ajustan al ancho disponible:
+     mínimo 250px por tarjeta, tantas como quepan. */
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+.tienda-sin-resultados {
+  /* El aviso de «sin resultados» ocupa toda la fila de la cuadrícula. */
+  grid-column: 1 / -1;
+}
+
+/* ===== TARJETA DE PRODUCTO ===== */
+.tienda-card {
+  /* La tarjeta usa la superficie y el borde del diseño general. */
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  transition: var(--transition);
+}
+.tienda-card:hover {
+  /* Al pasar el mouse la tarjeta se levanta un poco, como en
+     cualquier tienda: sombra mayor y borde con el color acento. */
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-hover);
+  transform: translateY(-3px);
+}
+.tienda-card-img {
+  /* Zona de la foto: el position relative permite cruzar el
+     sello «Agotado» encima de la imagen. */
+  position: relative;
+  background: #ffffff;
+}
+.tienda-card-img img {
+  /* La foto llena el ancho y mantiene una altura pareja en
+     todas las tarjetas, recortando lo que sobre (cover). */
+  display: block;
+  width: 100%;
+  height: 210px;
+  object-fit: cover;
+}
+.tienda-card-emoji {
+  /* Recuadro de respaldo cuando el producto no tiene foto:
+     el emoji grande centrado sobre la superficie del tema. */
+  height: 210px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 5rem;
+  background: var(--bg-surface);
+}
+.tienda-agotado {
+  /* Sello rojo cruzado sobre la esquina de la foto. */
+  position: absolute;
+  top: 12px;
+  right: -34px;
+  transform: rotate(38deg);
+  background: #dc2626;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.25rem 2.6rem;
+  box-shadow: var(--shadow-sm);
+}
+.tienda-card-body {
+  /* El texto de la tarjeta: la columna flexible empuja el
+     botón de agregar siempre hasta abajo. */
+  padding: 1rem 1.1rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  flex: 1;
+}
+.tienda-badge {
+  /* La insignia de categoría se acomoda al ancho de su texto. */
+  align-self: flex-start;
+}
+.tienda-card-title {
+  /* El nombre del producto, un poco más grande que el texto. */
+  margin: 0;
+  font-size: 1.12rem;
+  color: var(--text-primary);
+}
+.tienda-card-desc {
+  /* La descripción corta en el color secundario del tema. */
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+  /* Crece para igualar la altura de las tarjetas de su fila. */
+  flex: 1;
+}
+.tienda-precio {
+  /* El precio es lo que más se debe notar de la tarjeta. */
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--accent-blue);
+}
+.tienda-stock {
+  /* El stock en letra pequeña y discreta. */
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+.tienda-agregar-form {
+  /* El formulario del botón ocupa todo el ancho de la tarjeta. */
+  margin-top: 0.4rem;
+}
+.tienda-btn-agregar {
+  /* Botón de compra a todo el ancho de la tarjeta. */
+  width: 100%;
+}
+
+/* ===== PANEL DE INVENTARIO (CRUD) ===== */
+.tienda-panel {
+  /* Separación clara entre la vitrina y la administración. */
+  margin-top: 1rem;
+}
+
+/* ===== TABLAS (panel de inventario y carrito) ===== */
+.tienda-tabla-wrap {
+  /* En pantallas angostas la tabla se desplaza de lado en vez
+     de romperse: el scroll queda dentro de este contenedor. */
+  overflow-x: auto;
+}
+.tienda-tabla {
+  /* Tabla completa con las filas separadas por el borde sutil. */
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+.tienda-tabla th,
+.tienda-tabla td {
+  /* Espacio interno y línea divisoria entre filas. */
+  padding: 0.6rem 0.7rem;
+  border-bottom: 1px solid var(--border-subtle);
+  text-align: left;
+  vertical-align: middle;
+}
+.tienda-tabla th {
+  /* Encabezados en el color secundario, como el resto del sitio. */
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.tienda-thumb {
+  /* Miniatura cuadrada de la foto en las tablas. */
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  display: block;
+}
+.tienda-thumb-emoji {
+  /* Emoji en el lugar de la miniatura cuando no hay foto. */
+  font-size: 2rem;
+  line-height: 56px;
+}
+.tienda-acciones {
+  /* Editar y Eliminar en fila, sin saltos de línea. */
+  white-space: nowrap;
+}
+.tienda-acciones form {
+  /* El mini formulario de eliminar va en línea junto al enlace. */
+  display: inline-block;
+}
+
+/* ===== CARRITO DE COMPRAS ===== */
+.carrito-cantidad-form {
+  /* Cantidad y botón «Actualizar» en una sola fila. */
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+.carrito-cantidad-input {
+  /* El campo de cantidad es corto: alcanza para 3 dígitos. */
+  width: 76px;
+}
+.carrito-total-label {
+  /* La etiqueta del total, alineada a la derecha y en negrita. */
+  text-align: right !important;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.carrito-total-valor {
+  /* El total a pagar: lo más grande de la tabla del carrito. */
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--accent-blue);
+}
+.carrito-acciones {
+  /* Los tres botones finales en fila, con el de pagar al final. */
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 1.2rem;
+}
+.carrito-btn-comprar {
+  /* El botón de pagar se destaca con el degradado del diseño. */
+  background: var(--btn-gradient);
+  font-size: 1.05rem;
+}
+.carrito-compra-ok {
+  /* La tarjeta del comprobante se marca con el borde acento. */
+  border: 1px solid var(--border-glow);
+}

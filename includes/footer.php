@@ -14,9 +14,7 @@
       <a href="mantenimiento.php">Mantenimiento</a>
       <a href="tienda.php">Tienda</a>
       <a href="foro.php">Foro</a>
-      <a href="pqr.php">PQR</a>
     </nav>
-    <p class="footer-contact">¿Dudas o sugerencias? Escríbenos desde la sección de <a href="pqr.php">PQR y contacto</a>.</p>
     <p>© 2026 - <span>NVISION</span></p>
   </footer>
   <!-- Validaciones de formularios del lado del navegador -->

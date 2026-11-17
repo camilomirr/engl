@@ -1,22 +1,31 @@
 <?php
 /* ============================================================
-   NVISION — Tienda · Inventario de productos (PHP + MySQL)
+   NVISION — Tienda · Vitrina, carrito y panel de inventario
    ------------------------------------------------------------
-   Este es el CRUD PRINCIPAL del proyecto (sistema de
-   inventario de una tienda de tecnología):
-     CREAR      registrar un producto con el formulario
-     CONSULTAR  el catálogo en tarjetas, con precio y stock
-     ACTUALIZAR editar un producto (tienda.php?editar=ID)
-     ELIMINAR   borrar un producto (botón con confirmación)
+   Esta página es la tienda completa y tiene dos zonas:
+
+   1) LA VITRINA (lo que ve el cliente): tarjetas con la foto
+      de cada producto, su precio en pesos y su stock, con
+      buscador por nombre, filtro por categoría y orden. Desde
+      cada tarjeta se agrega el producto al CARRITO de compras
+      (el carrito vive en la sesión y se paga en carrito.php).
+
+   2) EL PANEL DE INVENTARIO (el CRUD principal del proyecto):
+      registrar, consultar, editar y eliminar productos. Es el
+      mismo CRUD de siempre, ahora con el campo «imagen» para
+      la ruta de la foto de cada producto.
+
    Todo llega por POST, se guarda en MySQL y la página se
    recarga (patrón Post/Redirect/Get). Las funciones de la
    base están en backend/bd.php.
    ============================================================ */
-// Se cargan las funciones del CRUD de productos (bd_productos,
-// bd_producto_crear, bd_producto_actualizar, bd_producto_eliminar).
+// La sesión se abre antes que nada: el carrito de compras
+// vive en $_SESSION y sin sesión no habría dónde guardarlo.
+session_start();
+// Se cargan las funciones de productos, búsqueda y ventas.
 require_once __DIR__ . '/backend/bd.php';
 
-// ===== AYUDAS DE VALIDACIÓN =====
+// ===== AYUDAS DE LA TIENDA =====
 /* Las categorías válidas son las mismas de la columna
    «categoria» de la tabla productos. */
 function producto_categoria_valida($categoria) {
@@ -26,10 +35,11 @@ function producto_categoria_valida($categoria) {
     return in_array($categoria, array('Componentes', 'Periféricos', 'Redes', 'Accesorios'), true);
 }
 
-/* Lee y valida los datos del formulario de producto.
-   Devuelve el arreglo listo para guardar, o null si algo
-   está mal: el nombre es obligatorio y el precio y la
-   cantidad deben ser números enteros de cero en adelante. */
+/* Lee y valida los datos del formulario de producto del panel.
+   Devuelve el arreglo listo para guardar, o null si algo está
+   mal: el nombre es obligatorio, el precio y la cantidad deben
+   ser enteros de cero en adelante y la ruta de la imagen no
+   puede pasar de 255 caracteres (el tamaño de su columna). */
 function producto_datos_formulario() {
     // Nombre del producto, sin espacios sobrantes de las puntas.
     $nombre      = trim($_POST['nombre'] ?? '');
@@ -37,6 +47,8 @@ function producto_datos_formulario() {
     $categoria   = $_POST['categoria'] ?? 'Componentes';
     // La descripción es opcional, pero igual se lee limpia.
     $descripcion = trim($_POST['descripcion'] ?? '');
+    // Ruta de la foto del producto; vacía significa «sin foto».
+    $imagen      = trim($_POST['imagen'] ?? '');
     // Precio y cantidad llegan como texto del formulario…
     $precioTxt   = trim($_POST['precio'] ?? '');
     $cantidadTxt = trim($_POST['cantidad'] ?? '');
@@ -45,42 +57,155 @@ function producto_datos_formulario() {
     $precio   = filter_var($precioTxt, FILTER_VALIDATE_INT);
     $cantidad = filter_var($cantidadTxt, FILTER_VALIDATE_INT);
     // Cualquier falla devuelve null: nombre muy corto, categoría
-    // fuera del ENUM, o precio/cantidad que no sean enteros de 0 en adelante.
+    // fuera del ENUM, precio/cantidad que no sean enteros de 0 en
+    // adelante, o una ruta de imagen más larga que su columna.
     if (mb_strlen($nombre) < 2 || !producto_categoria_valida($categoria)
         || $precio === false || $precio < 0
-        || $cantidad === false || $cantidad < 0) {
+        || $cantidad === false || $cantidad < 0
+        || mb_strlen($imagen) > 255) {
         return null;
     }
     // Todo válido: se entrega el paquete listo para bd.php.
+    // La imagen vacía se guarda como null («sin foto»).
     return array(
         'nombre'      => $nombre,
         'categoria'   => $categoria,
         'descripcion' => $descripcion,
         'precio'      => $precio,
-        'cantidad'    => $cantidad
+        'cantidad'    => $cantidad,
+        'imagen'      => $imagen === '' ? null : $imagen
     );
+}
+
+/* Cuántos productos lleva el carrito de la sesión, sumando las
+   cantidades de todos los ítems (para el enlace «Carrito (n)»). */
+function carrito_total_items() {
+    // Si el carrito ni siquiera existe, la cuenta es cero.
+    if (empty($_SESSION['carrito'])) {
+        return 0;
+    }
+    // array_sum suma las cantidades: id => cantidad, id => cantidad…
+    return (int)array_sum($_SESSION['carrito']);
+}
+
+/* Emoji de respaldo de una tarjeta: se usa cuando el producto
+   no tiene foto o el archivo de la foto no aparece. Se elige
+   según el nombre del archivo de imagen y, si tampoco hay,
+   según la categoría, para que la tarjeta nunca quede vacía. */
+function producto_emoji($prod) {
+    // Mapa archivo de foto => emoji que lo representa.
+    $porImagen = array(
+        'ram.jpg'     => '💾',
+        'ssd.jpg'     => '💽',
+        'mouse.jpg'   => '🖱️',
+        'teclado.jpg' => '⌨️',
+        'router.jpg'  => '📶',
+        'cable.jpg'   => '🔌',
+        'monitor.jpg' => '🖥️',
+        'diadema.jpg' => '🎧',
+        'disco.jpg'   => '💿',
+        'fuente.jpg'  => '⚡'
+    );
+    // basename() deja solo el nombre del archivo de la ruta.
+    $archivo = basename((string)($prod['imagen'] ?? ''));
+    // Si ese archivo tiene emoji asignado, ese se usa.
+    if (isset($porImagen[$archivo])) {
+        return $porImagen[$archivo];
+    }
+    // Sin imagen conocida: un emoji genérico por categoría.
+    $porCategoria = array(
+        'Componentes' => '🔩',
+        'Periféricos' => '🖱️',
+        'Redes'       => '📶',
+        'Accesorios'  => '🔌'
+    );
+    // Y si ni la categoría calza, una caja de producto.
+    return $porCategoria[$prod['categoria']] ?? '📦';
+}
+
+/* ¿La foto del producto se puede mostrar? Solo si trae ruta
+   escrita Y el archivo existe de verdad en el proyecto: así
+   una ruta mal escrita en el panel no rompe la vitrina,
+   simplemente cae al emoji de respaldo. */
+function producto_tiene_foto($prod) {
+    // Sin ruta no hay foto que buscar.
+    if (empty($prod['imagen'])) {
+        return false;
+    }
+    // file_exists revisa la ruta contra el disco del servidor.
+    return file_exists(__DIR__ . '/' . $prod['imagen']);
+}
+
+/* Reconstruye la parte de la URL con los filtros actuales
+   (buscador, categoría y orden) para que al agregar un producto
+   al carrito la vitrina vuelva tal como estaba, con el aviso. */
+function tienda_url_filtros($extra) {
+    // Los filtros viajan en campos ocultos del formulario de
+    // «Agregar al carrito», porque la acción llega por POST.
+    $params = array(
+        'q'         => $_POST['filtro_q'] ?? '',
+        'categoria' => $_POST['filtro_categoria'] ?? '',
+        'orden'     => $_POST['filtro_orden'] ?? ''
+    );
+    // Se quitan los filtros vacíos para no ensuciar la URL.
+    $params = array_filter($params, function ($v) { return $v !== ''; });
+    // Se suma el parámetro extra (ej: agregado=1) y se arma la URL.
+    $params[$extra] = '1';
+    return 'tienda.php?' . http_build_query($params);
 }
 
 // ===== ACCIONES QUE LLEGAN POR POST =====
 // Solo se procesa algo cuando la petición llegó enviando un formulario.
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // El campo oculto «accion» dice si es crear, actualizar o eliminar.
+    // El campo oculto «accion» dice qué se está pidiendo.
     $accion = $_POST['accion'] ?? '';
 
-    // ----- CREAR: registrar un producto -----
+    // ----- AGREGAR AL CARRITO: un producto de la vitrina -----
+    if ($accion === 'agregar') {
+        // El botón de la tarjeta manda el id del producto.
+        $pid = (int)($_POST['id'] ?? 0);
+        // Se consulta el producto fresco: puede ya no existir o
+        // haberse agotado desde que se pintó la vitrina.
+        $prod = $pid > 0 ? bd_producto($pid) : null;
+        if ($prod !== null) {
+            // El carrito se crea vacío la primera vez que se usa.
+            if (!isset($_SESSION['carrito'])) {
+                $_SESSION['carrito'] = array();
+            }
+            // Cuántas unidades de este producto ya van en el carrito.
+            $lleva = (int)($_SESSION['carrito'][$pid] ?? 0);
+            // Solo se agrega si todavía queda stock para una más:
+            // no se puede vender lo que no hay en el inventario.
+            if ($lleva < (int)$prod['cantidad']) {
+                // Se suma 1 a la cantidad de ese id en la sesión.
+                $_SESSION['carrito'][$pid] = $lleva + 1;
+                // De vuelta a la vitrina (con sus filtros) y aviso.
+                header('Location: ' . tienda_url_filtros('agregado'));
+            } else {
+                // Sin stock suficiente: aviso de error y sin cambios.
+                header('Location: ' . tienda_url_filtros('sinstock'));
+            }
+        } else {
+            // El producto ya no existe: aviso genérico de error.
+            header('Location: tienda.php?error=1');
+        }
+        // Después de redirigir no se sigue ejecutando la página.
+        exit;
+    }
+
+    // ----- CREAR: registrar un producto (panel de inventario) -----
     if ($accion === 'crear') {
         // Primero se validan los datos con la ayuda de arriba.
         $d = producto_datos_formulario();
         if ($d !== null) {
             // Datos buenos: se inserta la fila en la tabla productos.
-            bd_producto_crear($d['nombre'], $d['categoria'], $d['descripcion'], $d['precio'], $d['cantidad']);
+            bd_producto_crear($d['nombre'], $d['categoria'], $d['descripcion'], $d['precio'], $d['cantidad'], $d['imagen']);
             // Se recarga la tienda con el aviso de «registrado».
             header('Location: tienda.php?creado=1');
         } else {
             // Datos malos: se vuelve a la tienda con el aviso de error.
             header('Location: tienda.php?error=1');
         }
-        // Después de redirigir no se sigue ejecutando la página.
         exit;
     }
 
@@ -92,8 +217,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $d = producto_datos_formulario();
         if ($pid > 0 && $d !== null) {
             // Se sobrescribe la fila de ese id en productos.
-            bd_producto_actualizar($pid, $d['nombre'], $d['categoria'], $d['descripcion'], $d['precio'], $d['cantidad']);
-            // De vuelta al catálogo, con el aviso de «actualizado».
+            bd_producto_actualizar($pid, $d['nombre'], $d['categoria'], $d['descripcion'], $d['precio'], $d['cantidad'], $d['imagen']);
+            // De vuelta a la tienda, con el aviso de «actualizado».
             header('Location: tienda.php?actualizado=1');
         } else {
             // Si algo falló se regresa AL MISMO formulario de
@@ -105,32 +230,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // ----- ELIMINAR: borrar un producto -----
     if ($accion === 'eliminar') {
-        // El botón Eliminar de cada tarjeta manda el id en oculto.
+        // El botón Eliminar del panel manda el id en oculto.
         $pid = (int)($_POST['id'] ?? 0);
         // Solo se borra si el id es un número positivo real.
         if ($pid > 0) {
             bd_producto_eliminar($pid);
         }
-        // Catálogo recargado, ya sin el producto, con su aviso.
+        // Tienda recargada, ya sin el producto, con su aviso.
         header('Location: tienda.php?eliminado=1');
         exit;
     }
 }
 
 // ===== CONSULTAR: datos para la vista =====
-// Producto cargado en el formulario cuando se va a editar
-// (tienda.php?editar=ID); si no hay edición, es null.
+// ----- Filtros de la vitrina (llegan por GET) -----
+// Lo que la persona escribió en el buscador (sin espacios de más).
+$buscar = trim($_GET['q'] ?? '');
+// La categoría del filtro: si no es una de las cuatro válidas,
+// bd_producto_buscar() la ignora y muestra todas.
+$filtroCategoria = $_GET['categoria'] ?? '';
+// La clave del orden elegido; la lista blanca está en bd.php.
+$filtroOrden = $_GET['orden'] ?? 'recientes';
+// La vitrina se llena con la búsqueda filtrada y ordenada.
+$productos = bd_producto_buscar($buscar, $filtroCategoria, $filtroOrden);
+// El panel de inventario, en cambio, lista TODO sin filtros,
+// porque ahí se administra el inventario completo.
+$inventario = bd_productos();
+// Cuántos ítems lleva el carrito, para el enlace «Carrito (n)».
+$itemsCarrito = carrito_total_items();
+
+// Producto cargado en el formulario del panel cuando se va a
+// editar (tienda.php?editar=ID); si no hay edición, es null.
 // Por defecto el formulario va en modo «registrar», vacío.
 $editarProducto = null;
-// Si la URL trae ?editar=ID (el enlace Editar de una tarjeta)…
+// Si la URL trae ?editar=ID (el enlace Editar del panel)…
 if (isset($_GET['editar'])) {
     // …se busca ese producto y el formulario se carga con sus datos.
     $editarProducto = bd_producto((int)$_GET['editar']);
 }
-// El catálogo completo del inventario.
-// Se consulta siempre, haya edición en curso o no, porque las
-// tarjetas de abajo se pintan con estas filas.
-$productos = bd_productos();
 ?>
 <!DOCTYPE html>
 <html lang="es" data-theme="light">
@@ -143,11 +280,16 @@ $productos = bd_productos();
        envíos de formularios a sitios ajenos. -->
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; img-src 'self' data: https://images.unsplash.com https://encrypted-tbn0.gstatic.com https://acf.geeknetic.es https://jensa.vtexassets.com https://www.esmero.com.co https://pisces.bbystatic.com https://placaschinas.com https://th.bing.com https://www.cyberpuerta.mx https://www.legionmac.com https://www.ntcompatible.com https://*.googleusercontent.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://xiuztrujrwdgcpjrruxu.supabase.co https://*.googleusercontent.com; media-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <title>NVISION - Tienda: inventario de productos</title>
+  <title>NVISION - Tienda: compra tecnología</title>
   <!-- Hojas de estilo modular -->
   <link rel="stylesheet" href="frontend/css/styles.css?v=129">
+  <!-- Estilos propios de la tienda y el carrito: como cada página
+       arma su propio <head> (includes/header.php es solo la barra
+       de navegación), esta hoja se enlaza aquí y en carrito.php,
+       que son las únicas dos páginas que la necesitan. -->
+  <link rel="stylesheet" href="frontend/css/tienda.css?v=1">
   <!-- SEO, iconos y vista previa al compartir (Open Graph / Twitter) -->
-  <meta name="description" content="Tienda NVISION: inventario de productos de tecnología (componentes, periféricos, redes y accesorios) con precios en pesos y stock en vivo desde la base de datos.">
+  <meta name="description" content="Tienda NVISION: compra componentes, periféricos, redes y accesorios de tecnología con precios en pesos, fotos de los productos y carrito de compras.">
   <meta name="theme-color" content="#f8fafc">
   <link rel="canonical" href="https://nvision.social/tienda.php">
   <link rel="icon" href="/favicon.ico?v=4" sizes="any">
@@ -161,8 +303,8 @@ $productos = bd_productos();
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="NVISION">
   <meta property="og:locale" content="es_CO">
-  <meta property="og:title" content="NVISION - Tienda: inventario de productos">
-  <meta property="og:description" content="Tienda NVISION: inventario de productos de tecnología con precios en pesos y stock en vivo desde la base de datos.">
+  <meta property="og:title" content="NVISION - Tienda: compra tecnología">
+  <meta property="og:description" content="Tienda NVISION: compra tecnología con precios en pesos y stock en vivo desde la base de datos.">
   <meta property="og:url" content="https://nvision.social/tienda.php">
   <meta property="og:image" content="https://nvision.social/assets/og-image.jpg">
 </head>
@@ -173,15 +315,25 @@ $productos = bd_productos();
 <main>
   <section class="topo-hero">
     <p class="ruta-kicker">Tienda</p>
-    <h1>Tienda NVISION · Inventario de productos</h1>
-    <p class="topo-sub">Componentes, periféricos, redes y accesorios: este catálogo sale en vivo de la base de datos y desde aquí mismo se registran, editan y eliminan los productos.</p>
+    <h1>Tienda NVISION · Compra tecnología</h1>
+    <p class="topo-sub">Componentes, periféricos, redes y accesorios con foto, precio en pesos y stock en vivo. Agrega lo que necesites al carrito y finaliza tu compra en un solo paso.</p>
+    <!-- Enlace al carrito: el número entre paréntesis es el total
+         de ítems que la sesión ya lleva guardados. -->
+    <p><a class="tool-btn tienda-carrito-link" href="carrito.php">🛒 Carrito (<?php echo $itemsCarrito; ?>)</a></p>
   </section>
 
   <section class="mejora-wrap">
 <!-- Avisos según el parámetro que traiga la URL después de cada
-     redirección: ?creado, ?actualizado, ?eliminado o ?error -->
+     redirección: ?agregado, ?sinstock, ?creado, ?actualizado,
+     ?eliminado o ?error -->
+<?php if (isset($_GET['agregado'])): ?>
+    <div class="mejora-card"><p class="mejora-msg">¡Producto agregado al carrito! Sigue comprando o <a href="carrito.php">ve al carrito a pagar</a>.</p></div>
+<?php endif; ?>
+<?php if (isset($_GET['sinstock'])): ?>
+    <div class="mejora-card"><p class="mejora-msg">Ya llevas en el carrito todo el stock disponible de ese producto.</p></div>
+<?php endif; ?>
 <?php if (isset($_GET['creado'])): ?>
-    <div class="mejora-card"><p class="mejora-msg">¡Producto registrado! Ya aparece en el catálogo.</p></div>
+    <div class="mejora-card"><p class="mejora-msg">¡Producto registrado! Ya aparece en la vitrina y en el inventario.</p></div>
 <?php endif; ?>
 <?php if (isset($_GET['actualizado'])): ?>
     <div class="mejora-card"><p class="mejora-msg">¡Producto actualizado!</p></div>
@@ -190,18 +342,111 @@ $productos = bd_productos();
     <div class="mejora-card"><p class="mejora-msg">Producto eliminado del inventario.</p></div>
 <?php endif; ?>
 <?php if (isset($_GET['error']) && !$editarProducto): ?>
-    <div class="mejora-card"><p class="mejora-msg">No se pudo guardar. Revisa el nombre y que el precio y la cantidad sean números de cero en adelante.</p></div>
+    <div class="mejora-card"><p class="mejora-msg">No se pudo completar la acción. Revisa los datos e inténtalo de nuevo.</p></div>
 <?php endif; ?>
 
-    <!-- ===== CREAR / ACTUALIZAR: formulario de producto =====
-         El mismo formulario sirve para registrar un producto
-         nuevo y para editar uno existente: si $editarProducto
-         trae datos, el formulario se carga con ellos y al
-         guardar ACTUALIZA en vez de crear. -->
-    <div class="mejora-card">
-      <h2><?php echo $editarProducto ? 'Editar producto' : 'Registrar producto'; ?></h2>
+    <!-- ===== BUSCADOR Y FILTROS DE LA VITRINA =====
+         Viaja por GET: así la búsqueda queda en la URL y se
+         puede recargar o compartir tal como está filtrada. -->
+    <form method="get" action="tienda.php" class="tienda-filtros">
+      <div class="tienda-filtros-grupo">
+        <label class="mejora-label" for="filtro-q">Buscar por nombre</label>
+        <!-- El valor se rellena con lo buscado para no perderlo al filtrar -->
+        <input class="mejora-input" id="filtro-q" name="q" type="search" maxlength="60" placeholder="Ej: SSD, mouse, router…" value="<?php echo e($buscar); ?>">
+      </div>
+      <div class="tienda-filtros-grupo">
+        <label class="mejora-label" for="filtro-categoria">Categoría</label>
+        <select class="mejora-select" id="filtro-categoria" name="categoria">
+          <!-- «Todas» manda el valor vacío: bd_producto_buscar no filtra -->
+          <option value=""<?php echo $filtroCategoria === '' ? ' selected' : ''; ?>>Todas</option>
+<?php foreach (array('Componentes', 'Periféricos', 'Redes', 'Accesorios') as $cat): ?>
+          <!-- Una opción por categoría del ENUM; queda marcada la elegida -->
+          <option value="<?php echo $cat; ?>"<?php echo $filtroCategoria === $cat ? ' selected' : ''; ?>><?php echo $cat; ?></option>
+<?php endforeach; ?>
+        </select>
+      </div>
+      <div class="tienda-filtros-grupo">
+        <label class="mejora-label" for="filtro-orden">Ordenar por</label>
+        <select class="mejora-select" id="filtro-orden" name="orden">
+          <!-- Las claves de este select son las de la lista blanca de bd_producto_buscar() -->
+          <option value="recientes"<?php echo $filtroOrden === 'recientes' ? ' selected' : ''; ?>>Más recientes</option>
+          <option value="precio-menor"<?php echo $filtroOrden === 'precio-menor' ? ' selected' : ''; ?>>Precio: menor a mayor</option>
+          <option value="precio-mayor"<?php echo $filtroOrden === 'precio-mayor' ? ' selected' : ''; ?>>Precio: mayor a menor</option>
+          <option value="nombre"<?php echo $filtroOrden === 'nombre' ? ' selected' : ''; ?>>Nombre (A-Z)</option>
+        </select>
+      </div>
+      <button type="submit" class="tool-btn">Buscar</button>
+      <!-- Limpiar vuelve a la tienda sin ningún parámetro -->
+      <a class="tool-btn tool-btn-ghost" href="tienda.php">Limpiar</a>
+    </form>
+
+    <!-- ===== VITRINA: tarjetas de productos en cuadrícula ===== -->
+    <div class="tienda-grid">
+<?php if (!$productos): ?>
+      <!-- La búsqueda no encontró nada con esos filtros -->
+      <div class="mejora-card tienda-sin-resultados">
+        <p>No se encontraron productos con ese nombre o categoría. Prueba con otra búsqueda o <a href="tienda.php">limpia los filtros</a>.</p>
+      </div>
+<?php else: ?>
+<?php foreach ($productos as $prod): ?>
+      <!-- Tarjeta de UN producto de la vitrina -->
+      <article class="tienda-card">
+        <!-- Zona visual: la foto del producto o su emoji de respaldo -->
+        <div class="tienda-card-img">
+<?php if (producto_tiene_foto($prod)): ?>
+          <!-- La foto sale de la ruta guardada en la columna imagen -->
+          <img src="<?php echo e($prod['imagen']); ?>" alt="<?php echo e($prod['nombre']); ?>" loading="lazy">
+<?php else: ?>
+          <!-- Sin foto válida: recuadro con el emoji del producto -->
+          <div class="tienda-card-emoji" aria-hidden="true"><?php echo producto_emoji($prod); ?></div>
+<?php endif; ?>
+<?php if ((int)$prod['cantidad'] === 0): ?>
+          <!-- Sello de agotado cruzado sobre la imagen -->
+          <span class="tienda-agotado">Agotado</span>
+<?php endif; ?>
+        </div>
+        <div class="tienda-card-body">
+          <!-- Insignia con la categoría del producto -->
+          <span class="foro-tag mejora-chip tienda-badge"><?php echo e($prod['categoria']); ?></span>
+          <h3 class="tienda-card-title"><?php echo e($prod['nombre']); ?></h3>
+          <p class="tienda-card-desc"><?php echo e($prod['descripcion']); ?></p>
+          <!-- precio_cop() convierte 85000 en «$ 85.000» -->
+          <p class="tienda-precio"><?php echo e(precio_cop($prod['precio'])); ?></p>
+          <!-- El stock: si es 0 la tarjeta lo dice en vez de un número -->
+          <p class="tienda-stock"><?php echo (int)$prod['cantidad'] > 0 ? 'Stock: ' . (int)$prod['cantidad'] . ' unidades' : 'Sin unidades disponibles'; ?></p>
+<?php if ((int)$prod['cantidad'] > 0): ?>
+          <!-- AGREGAR AL CARRITO: mini formulario POST por tarjeta.
+               Los campos ocultos filtro_* guardan la búsqueda actual
+               para volver a la misma vitrina después de agregar. -->
+          <form method="post" action="tienda.php" class="tienda-agregar-form">
+            <input type="hidden" name="accion" value="agregar">
+            <input type="hidden" name="id" value="<?php echo e($prod['id']); ?>">
+            <input type="hidden" name="filtro_q" value="<?php echo e($buscar); ?>">
+            <input type="hidden" name="filtro_categoria" value="<?php echo e($filtroCategoria); ?>">
+            <input type="hidden" name="filtro_orden" value="<?php echo e($filtroOrden); ?>">
+            <button type="submit" class="tool-btn tienda-btn-agregar">🛒 Agregar al carrito</button>
+          </form>
+<?php endif; ?>
+        </div>
+      </article>
+<?php endforeach; ?>
+<?php endif; ?>
+    </div>
+
+    <!-- ===== PANEL DE INVENTARIO (CRUD) =====
+         Debajo de la vitrina: aquí se administra el inventario
+         completo (registrar, editar y eliminar productos). -->
+    <div class="mejora-card tienda-panel">
+      <h2>Panel de inventario (CRUD)</h2>
+      <p>Administración de la tienda: desde aquí se registran los productos, se corrigen sus datos (incluida la ruta de la foto) y se retiran los que ya no se venden.</p>
+
+      <!-- CREAR / ACTUALIZAR: el mismo formulario sirve para
+           registrar un producto nuevo y para editar uno
+           existente: si $editarProducto trae datos, se carga
+           con ellos y al guardar ACTUALIZA en vez de crear. -->
+      <h3><?php echo $editarProducto ? 'Editar producto' : 'Registrar producto'; ?></h3>
 <?php if ($editarProducto && isset($_GET['error'])): ?>
-      <p class="mejora-msg">No se pudo guardar. Revisa el nombre y que el precio y la cantidad sean números de cero en adelante.</p>
+      <p class="mejora-msg">No se pudo guardar. Revisa el nombre, que el precio y la cantidad sean números de cero en adelante y que la ruta de la imagen no pase de 255 caracteres.</p>
 <?php endif; ?>
       <!-- El formulario se envía a esta misma página; validaciones.js lo revisa antes (id form-producto) -->
       <form method="post" action="tienda.php" id="form-producto">
@@ -230,41 +475,60 @@ $productos = bd_productos();
         <label class="mejora-label" for="prod-cantidad">Cantidad en inventario</label>
         <!-- El stock: 0 es válido y significa que el producto está agotado -->
         <input class="mejora-input" id="prod-cantidad" name="cantidad" type="number" min="0" step="1" required value="<?php echo e($editarProducto['cantidad'] ?? ''); ?>">
+        <label class="mejora-label" for="prod-imagen">Imagen del producto (ruta)</label>
+        <!-- La ruta de la foto dentro del proyecto, ej: frontend/img/productos/ram.jpg.
+             Si se deja vacía, la tarjeta muestra el emoji de respaldo. -->
+        <input class="mejora-input" id="prod-imagen" name="imagen" type="text" maxlength="255" placeholder="frontend/img/productos/ram.jpg" value="<?php echo e($editarProducto['imagen'] ?? ''); ?>">
         <button type="submit" class="tool-btn"><?php echo $editarProducto ? 'Guardar cambios' : 'Registrar producto'; ?></button>
 <?php if ($editarProducto): ?>
         <a class="tool-btn tool-btn-ghost" href="tienda.php">Cancelar edición</a>
 <?php endif; ?>
       </form>
-    </div>
 
-    <!-- ===== CONSULTAR: catálogo de productos en tarjetas ===== -->
-    <div class="mejora-card">
-      <h2>Catálogo de productos</h2>
-      <div id="tienda-catalogo">
-<?php if (!$productos): ?>
-        <!-- Inventario vacío: se invita a registrar el primer producto -->
-        <p>Todavía no hay productos. ¡Registra el primero con el formulario!</p>
+      <!-- CONSULTAR / ACTUALIZAR / ELIMINAR: la tabla del
+           inventario completo, sin los filtros de la vitrina -->
+      <h3>Inventario actual</h3>
+      <div class="tienda-tabla-wrap">
+        <table class="tienda-tabla">
+          <thead>
+            <tr><th>Foto</th><th>Producto</th><th>Categoría</th><th>Precio</th><th>Stock</th><th>Acciones</th></tr>
+          </thead>
+          <tbody>
+<?php if (!$inventario): ?>
+            <!-- Inventario vacío: se invita a registrar el primer producto -->
+            <tr><td colspan="6">Todavía no hay productos. ¡Registra el primero con el formulario!</td></tr>
 <?php else: ?>
-<?php foreach ($productos as $prod): ?>
-        <!-- Tarjeta de UN producto: todo lo que se imprime pasa por e() para escapar el texto -->
-        <article class="foro-item">
-          <span class="foro-tag mejora-chip"><?php echo e($prod['categoria']); ?></span>
-          <h3 class="foro-q-title"><?php echo e($prod['nombre']); ?></h3>
-          <p><?php echo e($prod['descripcion']); ?></p>
-          <!-- precio_cop() convierte 85000 en «$ 85.000»; si la cantidad es 0 la tarjeta dice Agotado en vez del stock -->
-          <p class="foro-meta">Precio: <strong><?php echo e(precio_cop($prod['precio'])); ?></strong> · <?php echo (int)$prod['cantidad'] > 0 ? 'Stock: ' . (int)$prod['cantidad'] . ' unidades' : '<strong>Agotado</strong>'; ?></p>
-          <!-- ACTUALIZAR / ELIMINAR este producto -->
-          <!-- Editar es un enlace GET: recarga la tienda con el formulario cargado de este producto -->
-          <a class="tool-btn tool-btn-ghost" href="tienda.php?editar=<?php echo e($prod['id']); ?>">Editar</a>
-          <!-- Eliminar es un mini formulario POST; la clase form-confirmar hace que validaciones.js pregunte antes de borrar -->
-          <form method="post" action="tienda.php" class="form-confirmar" data-confirm="¿Seguro que quieres eliminar «<?php echo e($prod['nombre']); ?>» del inventario?">
-            <input type="hidden" name="accion" value="eliminar">
-            <input type="hidden" name="id" value="<?php echo e($prod['id']); ?>">
-            <button type="submit" class="tool-btn tool-btn-ghost">Eliminar</button>
-          </form>
-        </article>
+<?php foreach ($inventario as $prod): ?>
+            <!-- Una fila por producto del inventario -->
+            <tr>
+              <td>
+<?php if (producto_tiene_foto($prod)): ?>
+                <!-- Miniatura de la foto en la tabla del panel -->
+                <img class="tienda-thumb" src="<?php echo e($prod['imagen']); ?>" alt="<?php echo e($prod['nombre']); ?>">
+<?php else: ?>
+                <!-- Sin foto: el emoji ocupa el lugar de la miniatura -->
+                <span class="tienda-thumb-emoji" aria-hidden="true"><?php echo producto_emoji($prod); ?></span>
+<?php endif; ?>
+              </td>
+              <td><?php echo e($prod['nombre']); ?></td>
+              <td><?php echo e($prod['categoria']); ?></td>
+              <td><?php echo e(precio_cop($prod['precio'])); ?></td>
+              <td><?php echo (int)$prod['cantidad']; ?></td>
+              <td class="tienda-acciones">
+                <!-- Editar es un enlace GET: recarga la tienda con el formulario cargado de este producto -->
+                <a class="tool-btn tool-btn-ghost" href="tienda.php?editar=<?php echo e($prod['id']); ?>">Editar</a>
+                <!-- Eliminar es un mini formulario POST; la clase form-confirmar hace que validaciones.js pregunte antes de borrar -->
+                <form method="post" action="tienda.php" class="form-confirmar" data-confirm="¿Seguro que quieres eliminar «<?php echo e($prod['nombre']); ?>» del inventario?">
+                  <input type="hidden" name="accion" value="eliminar">
+                  <input type="hidden" name="id" value="<?php echo e($prod['id']); ?>">
+                  <button type="submit" class="tool-btn tool-btn-ghost">Eliminar</button>
+                </form>
+              </td>
+            </tr>
 <?php endforeach; ?>
 <?php endif; ?>
+          </tbody>
+        </table>
       </div>
     </div>
   </section>

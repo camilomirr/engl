@@ -7,7 +7,7 @@
    mensaje claro junto al formulario.
 
    Ojo: esta validación es solo la primera barrera. PHP vuelve
-   a validar todo en el servidor (foro.php, pqr.php y
+   a validar todo en el servidor (foro.php e
    includes/comentarios_ctrl.php), porque la validación del
    navegador se puede saltar.
 
@@ -17,8 +17,8 @@
      #form-foro-editar     editar una pregunta del foro
      #form-foro-responder  responder en el foro
      #form-comentario      comentarios de las páginas
-     #form-pqr             radicar una PQR
-     #form-pqr-consulta    consultar una PQR por radicado
+     .form-carrito-cantidad  cambiar la cantidad de un ítem
+                           del carrito (entero de 1 en adelante)
      .form-confirmar       formularios de ELIMINAR: piden
                            confirmación antes de borrar
    ============================================================ */
@@ -118,8 +118,53 @@ function validarProducto(form) {
       'La cantidad debe ser un número de cero en adelante.');
     return false;
   }
-  // Nombre, precio y cantidad están bien: el formulario puede viajar.
+  // La ruta de la imagen es opcional (vacía = sin foto), pero si
+  // se escribió no puede pasar de 255 caracteres: es el tamaño
+  // de la columna «imagen» de la tabla productos.
+  if (form.imagen && form.imagen.value.trim().length > 255) {
+    avisarError(form, form.imagen,
+      'La ruta de la imagen es muy larga (máximo 255 caracteres).');
+    return false;
+  }
+  // Nombre, precio, cantidad e imagen están bien: puede viajar.
   return true;
+}
+
+/* ===== VALIDACIÓN: CANTIDADES DEL CARRITO =====
+   Cada renglón del carrito tiene su mini formulario para
+   cambiar la cantidad: debe ser un número ENTERO de 1 en
+   adelante (nada de 0, negativos ni decimales). El tope del
+   stock lo vuelve a revisar carrito.php en el servidor. */
+function validarCantidadCarrito(form) {
+  // Se lee la cantidad escrita en ese renglón.
+  var cantidad = form.cantidad.value.trim();
+  // Number() la pasa a número y el resto % 1 detecta decimales:
+  // si el resto no es 0, el número traía parte fraccionaria.
+  var numero = Number(cantidad);
+  if (cantidad === '' || isNaN(numero) || numero < 1 || numero % 1 !== 0) {
+    avisarError(form, form.cantidad,
+      'La cantidad debe ser un número entero de 1 en adelante.');
+    return false;
+  }
+  // Cantidad buena: el formulario puede viajar a carrito.php.
+  return true;
+}
+
+/* Conecta TODOS los formularios de cantidad del carrito con
+   su validación (hay uno por renglón, por eso se buscan por
+   clase y no por id). */
+function protegerCantidadesCarrito() {
+  // Se juntan los mini formularios de cantidad de la página.
+  var formularios = document.querySelectorAll('.form-carrito-cantidad');
+  formularios.forEach(function (form) {
+    // A cada renglón se le pone su freno antes de enviar.
+    form.addEventListener('submit', function (evento) {
+      // Si la cantidad está mal, el envío se cancela aquí.
+      if (!validarCantidadCarrito(form)) {
+        evento.preventDefault();
+      }
+    });
+  });
 }
 
 /* ===== VALIDACIÓN: PUBLICAR UNA PREGUNTA DEL FORO ===== */
@@ -189,44 +234,6 @@ function validarComentario(form) {
   return true;
 }
 
-/* ===== VALIDACIÓN: RADICAR UNA PQR ===== */
-function validarPqr(form) {
-  // Nombre de la persona que radica la PQR.
-  if (!revisarCampo(form, form.nombre, 2,
-      'Escribe tu nombre (mínimo 2 letras).')) {
-    return false;
-  }
-  /* El correo debe tener forma de correo: algo@algo.algo */
-  // Se toma el correo escrito, sin espacios de las puntas.
-  var correo = form.correo.value.trim();
-  // La expresión regular pide: algo, una @, algo, un punto y algo;
-  // es la misma idea que PHP refuerza con FILTER_VALIDATE_EMAIL.
-  var correoOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo);
-  // Sin correo válido no se radica: es donde se avisa la respuesta.
-  if (!correoOk) {
-    avisarError(form, form.correo,
-      'Escribe un correo válido, por ejemplo nombre@correo.com.');
-    return false;
-  }
-  // El mensaje de la PQR necesita al menos 10 letras de explicación.
-  if (!revisarCampo(form, form.mensaje, 10,
-      'El mensaje necesita mínimo 10 letras para poder atenderlo.')) {
-    return false;
-  }
-  return true;
-}
-
-/* ===== VALIDACIÓN: CONSULTAR UNA PQR ===== */
-function validarConsultaPqr(form) {
-  // El radicado que genera bd_pqr_crear() siempre tiene 8
-  // caracteres: si trae menos, ni vale la pena consultar.
-  if (!revisarCampo(form, form.consultar, 8,
-      'Escribe el radicado completo (8 caracteres).')) {
-    return false;
-  }
-  return true;
-}
-
 /* ===== CONFIRMACIÓN ANTES DE ELIMINAR =====
    Los formularios con class="form-confirmar" (borrar preguntas,
    respuestas y comentarios) muestran su mensaje de
@@ -262,9 +269,8 @@ document.addEventListener('DOMContentLoaded', function () {
   protegerFormulario('form-foro-responder', validarResponder);
   // Los comentarios de inicio, hardware, redes y mantenimiento.
   protegerFormulario('form-comentario', validarComentario);
-  // Radicar una PQR y consultar una PQR son formularios aparte.
-  protegerFormulario('form-pqr', validarPqr);
-  protegerFormulario('form-pqr-consulta', validarConsultaPqr);
+  // Las cantidades del carrito (uno por renglón de carrito.php).
+  protegerCantidadesCarrito();
   // Por último, el seguro de confirmación en todos los «Eliminar».
   protegerConfirmaciones();
 });

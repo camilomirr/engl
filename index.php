@@ -68,7 +68,7 @@ require __DIR__ . '/includes/comentarios_ctrl.php';
   <header class="hero-section">
     <div class="hero-content">
       <h1 class="hero-title" data-i18n="hero_title">Arquitectura y Evolución de los Computadores</h1>
-      <p class="hero-subtitle" data-i18n="hero_desc">Aprende hardware, redes y mantenimiento de PC desde cero, gratis y en español: módulos claros y directos, el foro de la comunidad y atención de PQR.</p>
+      <p class="hero-subtitle" data-i18n="hero_desc">Aprende hardware, redes y mantenimiento de PC desde cero, gratis y en español: módulos claros y directos y el foro de la comunidad.</p>
       <div class="hero-buttons">
         <a href="hardware.php" class="btn-primary"><span data-i18n="hero_cta_start">Empezar a aprender</span></a>
         <a href="foro.php" class="btn-secondary"><span>Foro El Taller</span></a>
