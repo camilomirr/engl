@@ -128,6 +128,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header('Location: carrito.php?error=1');
             exit;
         }
+        // ----- DATOS DE ENTREGA -----
+        // La venta es CONTRA ENTREGA: el formulario pide el
+        // nombre de quien recibe y la dirección, y sin esos
+        // datos no hay compra (la misma validación que hace
+        // validaciones.js, repetida aquí en el servidor).
+        $cliente = trim((string)($_POST['cliente'] ?? ''));
+        $direccion = trim((string)($_POST['direccion'] ?? ''));
+        if (strlen($cliente) < 3 || strlen($direccion) < 5) {
+            header('Location: carrito.php?faltan=1');
+            exit;
+        }
         // Datos FRESCOS de todos los productos del carrito: los
         // precios y el stock se leen de la base en este instante.
         $frescos = bd_productos_por_ids(array_keys($_SESSION['carrito']));
@@ -170,7 +181,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         // Se registra la venta completa en UNA transacción
         // (venta + detalles + descuento de stock, todo o nada).
-        $ventaId = bd_venta_registrar($items, $total);
+        $ventaId = bd_venta_registrar($items, $total, $cliente, $direccion);
         // null significa que la transacción se deshizo (por
         // ejemplo, el stock cambió en el último segundo).
         if ($ventaId === null) {
@@ -179,10 +190,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         // Compra hecha: el carrito queda vacío…
         $_SESSION['carrito'] = array();
-        // …y el comprobante (número de venta y total pagado) se
-        // guarda en la sesión un momento, para mostrarlo tras la
-        // redirección sin exponerlo en la URL.
-        $_SESSION['compra_ok'] = array('venta' => $ventaId, 'total' => $total);
+        // …y el RECIBO completo se guarda en la sesión: número
+        // de venta, fecha, quién recibe, la dirección, el pago
+        // contra entrega, los ítems y el total. La vista lo
+        // muestra en vez del aviso de «carrito vacío» mientras
+        // no se agregue un producto nuevo.
+        $_SESSION['recibo'] = array(
+            'venta'     => $ventaId,
+            'fecha'     => date('d/m/Y h:i a'),
+            'cliente'   => $cliente,
+            'direccion' => $direccion,
+            'pago'      => 'Contra entrega',
+            'items'     => $items,
+            'total'     => $total
+        );
         // Patrón PRG: se recarga la página con ?compra=1.
         header('Location: carrito.php?compra=1');
         exit;
@@ -190,16 +211,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // ===== CONSULTAR: datos para la vista =====
-// El comprobante de la compra recién hecha (si se viene de pagar).
-$compraOk = null;
-// Solo se muestra si la URL trae ?compra=1 Y el comprobante
-// sigue guardado en la sesión (al mostrarlo se borra).
-if (isset($_GET['compra']) && !empty($_SESSION['compra_ok'])) {
-    // Se toma el comprobante para pintarlo en la vista…
-    $compraOk = $_SESSION['compra_ok'];
-    // …y se borra de la sesión: al recargar ya no se repite.
-    unset($_SESSION['compra_ok']);
-}
+// El recibo de la última compra (si lo hay): queda guardado
+// en la sesión y la vista lo muestra mientras el carrito
+// siga vacío; al agregar un producto nuevo, tienda.php lo
+// descarta y el carrito vuelve a su estado normal.
+$recibo = !empty($_SESSION['recibo']) ? $_SESSION['recibo'] : null;
 
 // Los ítems del carrito con sus datos frescos de la base.
 // Cada renglón: la fila del producto + la cantidad del carrito.
@@ -258,7 +274,7 @@ if (!empty($_SESSION['carrito'])) {
        arma su propio <head> (includes/header.php es solo la barra
        de navegación), esta hoja se enlaza aquí y en tienda.php,
        que son las únicas dos páginas que la necesitan. -->
-  <link rel="stylesheet" href="frontend/css/tienda.css?v=4">
+  <link rel="stylesheet" href="frontend/css/tienda.css?v=5">
   <!-- SEO, iconos y vista previa al compartir (Open Graph / Twitter) -->
   <meta name="description" content="Carrito de compras de la Tienda NVISION: revisa tus productos, ajusta las cantidades y finaliza tu compra.">
   <meta name="theme-color" content="#f8fafc">
@@ -291,15 +307,37 @@ if (!empty($_SESSION['carrito'])) {
   </section>
 
   <section class="mejora-wrap">
-<!-- Comprobante de la compra recién finalizada: tarjeta de
-     estado centrada con el símbolo de «listo», el número de
-     venta y el total pagado leídos del aviso de la sesión -->
-<?php if ($compraOk): ?>
-    <div class="mejora-card carrito-estado">
+<!-- RECIBO de la compra recién finalizada: reemplaza al
+     aviso de «carrito vacío» (no se muestran las dos cosas).
+     Trae el número de venta, la fecha, quién recibe, la
+     dirección, el pago contra entrega, los ítems y el total -->
+<?php if ($recibo): ?>
+    <div class="mejora-card recibo">
       <!-- Símbolo de verificación dentro de un círculo verde -->
       <span class="icono-circulo icono-circulo-ok"><?php echo icono_svg('check'); ?></span>
       <h2>¡Compra realizada!</h2>
-      <p class="carrito-estado-texto">Tu número de venta es <strong>#<?php echo (int)$compraOk['venta']; ?></strong> y el total pagado fue <strong><?php echo e(precio_cop($compraOk['total'])); ?></strong>. El stock ya se descontó del inventario. ¡Gracias por comprar en NVISION!</p>
+      <p class="recibo-sub">Recibo de venta <strong>#<?php echo (int)$recibo['venta']; ?></strong> · <?php echo e($recibo['fecha']); ?></p>
+      <!-- Datos de la entrega y del pago -->
+      <div class="recibo-datos">
+        <div class="recibo-dato"><span>Recibe</span><strong><?php echo e($recibo['cliente']); ?></strong></div>
+        <div class="recibo-dato"><span>Dirección de entrega</span><strong><?php echo e($recibo['direccion']); ?></strong></div>
+        <div class="recibo-dato"><span>Pago</span><strong><?php echo e($recibo['pago']); ?></strong></div>
+      </div>
+      <!-- Los productos comprados, renglón por renglón -->
+      <div class="recibo-items">
+        <?php foreach ($recibo['items'] as $ri): ?>
+        <div class="recibo-fila">
+          <span><?php echo e($ri['nombre']); ?> × <?php echo (int)$ri['cantidad']; ?></span>
+          <strong><?php echo e(precio_cop($ri['precio'] * $ri['cantidad'])); ?></strong>
+        </div>
+        <?php endforeach; ?>
+      </div>
+      <!-- El total: se paga en efectivo al recibir -->
+      <div class="recibo-fila recibo-total">
+        <span>Total a pagar al recibir</span>
+        <strong><?php echo e(precio_cop($recibo['total'])); ?></strong>
+      </div>
+      <p class="recibo-nota">Pagas al recibir tu pedido. El stock ya se descontó del inventario. ¡Gracias por comprar en NVISION!</p>
       <p><a class="btn-primary" href="tienda.php">Seguir comprando</a></p>
     </div>
 <?php endif; ?>
@@ -328,8 +366,11 @@ if (!empty($_SESSION['carrito'])) {
 <?php if (isset($_GET['error'])): ?>
     <div class="mejora-card"><p class="mejora-msg">Revisa los datos: las cantidades deben ser números enteros de 1 en adelante.</p></div>
 <?php endif; ?>
+<?php if (isset($_GET['faltan'])): ?>
+    <div class="mejora-card"><p class="mejora-msg">Faltan los datos de entrega: escribe el nombre de quien recibe y la dirección completa.</p></div>
+<?php endif; ?>
 
-<?php if (!$renglones): ?>
+<?php if (!$renglones && !$recibo): ?>
     <!-- Carrito vacío: tarjeta de estado centrada con la bolsa
          en un círculo y el botón de vuelta a la vitrina -->
     <div class="mejora-card carrito-estado">
@@ -418,6 +459,19 @@ if (!empty($_SESSION['carrito'])) {
              transacción y descuenta el stock (id form-comprar) -->
         <form method="post" action="carrito.php" id="form-comprar">
           <input type="hidden" name="accion" value="comprar">
+          <!-- DATOS DE ENTREGA: como el pago es contra entrega,
+               el formulario pide quién recibe y la dirección;
+               validaciones.js los revisa y PHP los repite -->
+          <div class="carrito-campo">
+            <label class="mejora-label" for="f-cliente">Nombre de quien recibe</label>
+            <input class="mejora-input" id="f-cliente" type="text" name="cliente" maxlength="120" required placeholder="Ej.: Camilo Miranda">
+          </div>
+          <div class="carrito-campo">
+            <label class="mejora-label" for="f-direccion">Dirección de entrega</label>
+            <input class="mejora-input" id="f-direccion" type="text" name="direccion" maxlength="255" required placeholder="Ej.: Calle 45 # 12-30, Barranquilla">
+          </div>
+          <!-- La forma de pago, fija: contra entrega -->
+          <p class="carrito-pago">Pago: <strong>contra entrega</strong> — pagas cuando recibas tu pedido.</p>
           <button type="submit" class="btn-primary carrito-btn-pagar"><?php echo icono_svg('carrito', 'icono-btn'); ?> Finalizar compra</button>
         </form>
         <!-- VACIAR: deja el carrito en cero; la clase form-confirmar

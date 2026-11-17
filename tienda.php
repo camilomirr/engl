@@ -153,6 +153,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($lleva < (int)$prod['cantidad']) {
                 // Se suma 1 a la cantidad de ese id en la sesión.
                 $_SESSION['carrito'][$pid] = $lleva + 1;
+                // Empieza una compra nueva: el recibo de la
+                // compra anterior ya no se muestra en el carrito.
+                unset($_SESSION['recibo']);
                 // De vuelta a la vitrina (con sus filtros) y aviso.
                 header('Location: ' . tienda_url_filtros('agregado'));
             } else {
@@ -264,7 +267,7 @@ if (isset($_GET['editar'])) {
        arma su propio <head> (includes/header.php es solo la barra
        de navegación), esta hoja se enlaza aquí y en carrito.php,
        que son las únicas dos páginas que la necesitan. -->
-  <link rel="stylesheet" href="frontend/css/tienda.css?v=4">
+  <link rel="stylesheet" href="frontend/css/tienda.css?v=5">
   <!-- SEO, iconos y vista previa al compartir (Open Graph / Twitter) -->
   <meta name="description" content="Tienda NVISION: compra componentes, periféricos, redes y accesorios de tecnología con precios en pesos, fotos de los productos y carrito de compras.">
   <meta name="theme-color" content="#f8fafc">

@@ -583,3 +583,79 @@
   line-height: 1.65;
   color: var(--text-secondary);
 }
+
+/* ===== RECIBO DE COMPRA (carrito.php tras pagar) ===== */
+.recibo {
+  /* La tarjeta del recibo: centrada, como un recibo de papel. */
+  max-width: 680px;
+  margin: 0 auto 20px;
+  text-align: center;
+}
+.recibo-sub {
+  /* La línea bajo el título: número de venta y fecha. */
+  color: var(--text-muted);
+  margin: 4px 0 18px;
+}
+.recibo-datos {
+  /* Los datos de entrega: tres bloques en fila (recibe,
+     dirección y pago) que se apilan en pantallas chicas. */
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: center;
+  margin-bottom: 18px;
+}
+.recibo-dato {
+  /* Cada dato: etiqueta chica arriba, valor en negrita debajo. */
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 150px;
+}
+.recibo-dato span {
+  /* La etiqueta del dato (Recibe, Dirección, Pago). */
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+.recibo-items {
+  /* La lista de productos del recibo, con línea superior. */
+  border-top: 1px solid var(--border);
+  text-align: left;
+}
+.recibo-fila {
+  /* Un renglón: nombre y cantidad a la izquierda,
+     subtotal a la derecha. */
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 9px 2px;
+  border-bottom: 1px solid var(--border);
+}
+.recibo-total {
+  /* El renglón del total: sin línea inferior y más grande. */
+  border-bottom: none;
+  font-size: 1.12rem;
+  padding-top: 13px;
+}
+.recibo-nota {
+  /* La nota al pie del recibo (pago al recibir). */
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  margin: 12px 0 16px;
+}
+
+/* ===== DATOS DE ENTREGA EN EL RESUMEN ===== */
+.carrito-campo {
+  /* Cada campo del formulario de entrega en el resumen. */
+  margin-bottom: 12px;
+  text-align: left;
+}
+.carrito-pago {
+  /* La línea que anuncia el pago contra entrega. */
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin: 2px 0 12px;
+  text-align: left;
+}

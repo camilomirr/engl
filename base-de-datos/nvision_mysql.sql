@@ -62,6 +62,13 @@ CREATE TABLE IF NOT EXISTS ventas (
   id         INT AUTO_INCREMENT PRIMARY KEY,
   -- Total pagado en pesos (la suma de los renglones del detalle).
   total      INT NOT NULL,
+  -- Nombre de quien recibe el pedido (la venta es contra
+  -- entrega: hay que saber a quién entregarle).
+  cliente    VARCHAR(120) NOT NULL DEFAULT '',
+  -- Dirección de entrega del pedido.
+  direccion  VARCHAR(255) NOT NULL DEFAULT '',
+  -- Forma de pago: esta tienda vende contra entrega.
+  pago       VARCHAR(40) NOT NULL DEFAULT 'Contra entrega',
   -- Momento en que se hizo la compra.
   creado_en  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

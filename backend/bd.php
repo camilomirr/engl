@@ -222,17 +222,37 @@ function bd_productos_por_ids($ids) {
    (rollBack) y se devuelve null: no queda venta a medias ni
    stock descontado sin venta. Si todo sale, devuelve el id
    (número) de la venta. */
-function bd_venta_registrar($items, $total) {
+function bd_venta_registrar($items, $total, $cliente, $direccion) {
     $pdo = conectar();
+    // ----- Paso 0: columnas de entrega al día -----
+    // Las bases creadas con la versión anterior del archivo
+    // SQL no tienen cliente/direccion/pago en la tabla ventas:
+    // si falta alguna columna, se agrega aquí mismo para que
+    // la compra no se caiga por una base vieja.
+    $columnas = $pdo->query('SHOW COLUMNS FROM ventas')->fetchAll(PDO::FETCH_COLUMN);
+    if (!in_array('cliente', $columnas)) {
+        $pdo->exec("ALTER TABLE ventas ADD cliente VARCHAR(120) NOT NULL DEFAULT ''");
+    }
+    if (!in_array('direccion', $columnas)) {
+        $pdo->exec("ALTER TABLE ventas ADD direccion VARCHAR(255) NOT NULL DEFAULT ''");
+    }
+    if (!in_array('pago', $columnas)) {
+        $pdo->exec("ALTER TABLE ventas ADD pago VARCHAR(40) NOT NULL DEFAULT 'Contra entrega'");
+    }
     // Todo lo del try es «o se guarda completo o no se guarda nada».
     try {
         // Abre la transacción: desde aquí ningún cambio es
         // definitivo hasta llegar al commit() del final.
         $pdo->beginTransaction();
 
-        // ----- Paso 1: la venta (solo el total; la fecha la pone la tabla) -----
-        $stmtVenta = $pdo->prepare('INSERT INTO ventas (total) VALUES (?)');
-        $stmtVenta->execute(array((int)$total));
+        // ----- Paso 1: la venta -----
+        // El total y los datos de entrega (quién recibe y
+        // dónde); la fecha la pone la tabla y el pago es
+        // siempre «Contra entrega» en esta tienda.
+        $stmtVenta = $pdo->prepare(
+            'INSERT INTO ventas (total, cliente, direccion, pago) VALUES (?, ?, ?, ?)'
+        );
+        $stmtVenta->execute(array((int)$total, $cliente, $direccion, 'Contra entrega'));
         // El id que MySQL le dio a la venta es su número oficial:
         // lo necesitan los renglones y la confirmación al comprador.
         $ventaId = (int)$pdo->lastInsertId();

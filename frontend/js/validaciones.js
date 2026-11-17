@@ -144,6 +144,17 @@ function validarCantidadCarrito(form) {
   return true;
 }
 
+/* ===== VALIDACIÓN DE FINALIZAR COMPRA (#form-comprar) =====
+   Antes de pagar se revisan los datos de entrega: la venta
+   es contra entrega y sin nombre ni dirección no hay a
+   quién entregarle el pedido. PHP repite la misma revisión. */
+function validarComprar(form) {
+  return validarCampos(form, [
+    { nombre: 'cliente', etiqueta: 'El nombre de quien recibe', min: 3 },
+    { nombre: 'direccion', etiqueta: 'La dirección de entrega', min: 5 }
+  ]);
+}
+
 /* Conecta TODOS los formularios de cantidad del carrito con
    su validación (hay uno por renglón, por eso se buscan por
    clase y no por id). */
@@ -190,6 +201,7 @@ function protegerConfirmaciones() {
 document.addEventListener('DOMContentLoaded', function () {
   // La tienda: registrar y editar productos comparten validación.
   protegerFormulario('form-producto', validarProducto);
+  protegerFormulario('form-comprar', validarComprar);
   // Las cantidades del carrito (uno por ítem de carrito.php).
   protegerCantidadesCarrito();
   // Por último, el seguro de confirmación en todos los «Eliminar».
