@@ -9,6 +9,15 @@
    tema claro/oscuro sin colores quemados a mano.
    ============================================================ */
 
+/* ===== ENCABEZADO DE LA TIENDA ===== */
+.topo-hero .ruta-kicker {
+  /* El rotulito azul sobre el título («Tienda») viene de 0.74rem
+     en el diseño general y se veía diminuto: SOLO en los heroes
+     de la tienda y el carrito crece a 1.1rem, sin tocar el
+     módulo compartido del resto del sitio. */
+  font-size: 1.1rem;
+}
+
 /* ===== ACCIONES DEL ENCABEZADO DE LA TIENDA ===== */
 .tienda-hero-acciones {
   /* Aire entre el texto del hero y su fila de botones: sin este
