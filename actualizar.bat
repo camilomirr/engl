@@ -3,14 +3,17 @@ chcp 65001 >nul
 setlocal EnableDelayedExpansion
 REM ============================================================
 REM  NVISION - Actualizar la copia local desde GitHub
-REM  Doble clic en este archivo y la carpeta del proyecto en
-REM  tu XAMPP queda con la ultima version del repositorio:
+REM  Version 2: actualizacion INCREMENTAL. Solo se baja y se
+REM  escribe lo que cambio desde la ultima vez; lo demas no
+REM  se toca. Doble clic y la carpeta del proyecto en tu
+REM  XAMPP queda al dia con el repositorio:
 REM  https://github.com/camilomirr/engl
-REM  No necesita permisos de administrador ni tener Git.
+REM  No necesita permisos de administrador.
 REM ============================================================
 
-REM La direccion del ZIP con el repo completo, rama main.
-set "REPO=https://github.com/camilomirr/engl/archive/refs/heads/main.zip"
+REM Direccion del repo y de su ZIP completo (respaldo sin Git).
+set "REPO=https://github.com/camilomirr/engl"
+set "REPOZIP=https://github.com/camilomirr/engl/archive/refs/heads/main.zip"
 
 REM Carpeta destino: la del proyecto dentro del htdocs de XAMPP.
 set "DEST=C:\xampp\htdocs\nvision"
@@ -28,22 +31,53 @@ if exist "%DEST%\.escribible" (
   mkdir "%DEST%" 2>nul
 )
 
+REM Carpeta espejo: aqui queda guardado el repo en este PC.
+REM La primera vez se baja completo; despues solo los cambios.
+set "ESPEJO=%USERPROFILE%\nvision-repo"
+
 echo.
 echo Actualizando NVISION desde GitHub...
 echo Carpeta local: %DEST%
 echo.
 
-REM Paso 1: descargar el ZIP del repo a la carpeta temporal.
-powershell -NoProfile -ExecutionPolicy Bypass -Command "Invoke-WebRequest -Uri '%REPO%' -OutFile (Join-Path $env:TEMP 'nvision-repo.zip') -UseBasicParsing"
+REM ------------------------------------------------------------
+REM  Obtener los cambios: con Git si el PC lo tiene (solo baja
+REM  lo que cambio); si no, con el ZIP completo de siempre.
+REM ------------------------------------------------------------
+where git >nul 2>nul
+if errorlevel 1 goto ModoZip
+
+REM Modo Git: si el espejo ya es un clon, pull; si no, se clona.
+set "MODO=Git"
+if exist "%ESPEJO%\.git" (
+  git -C "%ESPEJO%" pull --quiet
+) else (
+  if exist "%ESPEJO%" rmdir /s /q "%ESPEJO%"
+  git clone --depth 1 --quiet %REPO% "%ESPEJO%"
+)
+if errorlevel 1 (
+  echo.
+  echo ERROR: Git no pudo actualizar. Borra la carpeta
+  echo %ESPEJO% y vuelve a correr este archivo.
+  pause
+  exit /b 1
+)
+goto Copiar
+
+:ModoZip
+REM Modo ZIP: se baja el repo completo y se extrae con tar,
+REM que es mucho mas rapido que el descompresor anterior.
+set "MODO=ZIP"
+powershell -NoProfile -ExecutionPolicy Bypass -Command "Invoke-WebRequest -Uri '%REPOZIP%' -OutFile (Join-Path $env:TEMP 'nvision-repo.zip') -UseBasicParsing"
 if errorlevel 1 (
   echo.
   echo ERROR: no se pudo descargar. Revisa tu conexion a internet.
   pause
   exit /b 1
 )
-
-REM Paso 2: descomprimir el ZIP; adentro queda la carpeta engl-main.
-powershell -NoProfile -ExecutionPolicy Bypass -Command "$d = Join-Path $env:TEMP 'nvision-repo'; if (Test-Path $d) { Remove-Item $d -Recurse -Force }; Expand-Archive -Path (Join-Path $env:TEMP 'nvision-repo.zip') -DestinationPath $d -Force"
+if exist "%ESPEJO%" rmdir /s /q "%ESPEJO%"
+mkdir "%ESPEJO%"
+tar -xf "%TEMP%\nvision-repo.zip" -C "%ESPEJO%" --strip-components 1
 if errorlevel 1 (
   echo.
   echo ERROR: no se pudo descomprimir el ZIP descargado.
@@ -51,21 +85,31 @@ if errorlevel 1 (
   exit /b 1
 )
 
-REM Paso 3: copiar SOLO los archivos del proyecto PHP a la carpeta
-REM local: las paginas .php, includes, frontend, assets y la base de datos;
-REM del backend unicamente los .php, porque los .js del repo son
-REM del sitio viejo en HTML y en local no se usan.
-powershell -NoProfile -ExecutionPolicy Bypass -Command "$src = Join-Path $env:TEMP 'nvision-repo\engl-main'; $dst = $env:DEST; 'includes','frontend','base-de-datos','assets','backend' | ForEach-Object { New-Item -ItemType Directory -Force -Path (Join-Path $dst $_) | Out-Null }; Copy-Item (Join-Path $src '*.php') $dst -Force; Copy-Item (Join-Path $src 'includes\*') (Join-Path $dst 'includes') -Recurse -Force; Copy-Item (Join-Path $src 'frontend\*') (Join-Path $dst 'frontend') -Recurse -Force; Copy-Item (Join-Path $src 'base-de-datos\*') (Join-Path $dst 'base-de-datos') -Recurse -Force; Copy-Item (Join-Path $src 'assets\*') (Join-Path $dst 'assets') -Recurse -Force; Get-ChildItem (Join-Path $src 'backend\*.php') | Copy-Item -Destination (Join-Path $dst 'backend') -Force"
-if errorlevel 1 (
+:Copiar
+REM ------------------------------------------------------------
+REM  Copia incremental con robocopy (viene con Windows): solo
+REM  escribe los archivos nuevos o cambiados; los que estan
+REM  iguales ni se tocan. Se copia solo el proyecto PHP: las
+REM  paginas, includes, frontend, assets, la base de datos y
+REM  del backend unicamente los .php.
+REM ------------------------------------------------------------
+robocopy "%ESPEJO%" "%DEST%" *.php /NJH /NJS /NDL /NFL /NC /NS /NP /R:1 /W:1 >nul
+robocopy "%ESPEJO%\includes" "%DEST%\includes" /E /NJH /NJS /NDL /NFL /NC /NS /NP /R:1 /W:1 >nul
+robocopy "%ESPEJO%\frontend" "%DEST%\frontend" /E /NJH /NJS /NDL /NFL /NC /NS /NP /R:1 /W:1 >nul
+robocopy "%ESPEJO%\base-de-datos" "%DEST%\base-de-datos" /E /NJH /NJS /NDL /NFL /NC /NS /NP /R:1 /W:1 >nul
+robocopy "%ESPEJO%\assets" "%DEST%\assets" /E /NJH /NJS /NDL /NFL /NC /NS /NP /R:1 /W:1 >nul
+robocopy "%ESPEJO%\backend" "%DEST%\backend" *.php /NJH /NJS /NDL /NFL /NC /NS /NP /R:1 /W:1 >nul
+if errorlevel 8 (
   echo.
   echo ERROR: algo fallo copiando los archivos.
   pause
   exit /b 1
 )
 
-REM Paso 4, solo si hace falta: si XAMPP esta en la ruta normal y
-REM MySQL esta encendido, se crea la base de datos nvision y se
-REM importa el SQL. Si la tabla productos ya existe, no se toca.
+REM Paso final, solo si hace falta: si XAMPP esta en la ruta
+REM normal y MySQL esta encendido, se crea la base de datos
+REM nvision y se importa el SQL. Si la tabla productos ya
+REM existe, no se toca.
 if exist "C:\xampp\mysql\bin\mysql.exe" (
   "C:\xampp\mysql\bin\mysql.exe" -u root -N -s -e "SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA='nvision' AND TABLE_NAME='productos';" > "%TEMP%\nvision-bd.txt" 2>nul
   if errorlevel 1 (
@@ -87,6 +131,7 @@ if exist "C:\xampp\mysql\bin\mysql.exe" (
 echo.
 echo ============================================
 echo  NVISION actualizado en: %DEST%
+echo  Modo usado: %MODO%
 if defined AVISO (
   echo  OJO: no hubo permiso para escribir en C:\xampp\htdocs,
   echo  por eso quedo en tu carpeta de usuario. Copia la carpeta
