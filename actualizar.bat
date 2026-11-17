@@ -52,10 +52,10 @@ if errorlevel 1 (
 )
 
 REM Paso 3: copiar SOLO los archivos del proyecto PHP a la carpeta
-REM local: las paginas .php, includes, frontend y la base de datos;
+REM local: las paginas .php, includes, frontend, assets y la base de datos;
 REM del backend unicamente los .php, porque los .js del repo son
 REM del sitio viejo en HTML y en local no se usan.
-powershell -NoProfile -ExecutionPolicy Bypass -Command "$src = Join-Path $env:TEMP 'nvision-repo\engl-main'; $dst = $env:DEST; 'includes','frontend','base-de-datos','backend' | ForEach-Object { New-Item -ItemType Directory -Force -Path (Join-Path $dst $_) | Out-Null }; Copy-Item (Join-Path $src '*.php') $dst -Force; Copy-Item (Join-Path $src 'includes\*') (Join-Path $dst 'includes') -Recurse -Force; Copy-Item (Join-Path $src 'frontend\*') (Join-Path $dst 'frontend') -Recurse -Force; Copy-Item (Join-Path $src 'base-de-datos\*') (Join-Path $dst 'base-de-datos') -Recurse -Force; Get-ChildItem (Join-Path $src 'backend\*.php') | Copy-Item -Destination (Join-Path $dst 'backend') -Force"
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$src = Join-Path $env:TEMP 'nvision-repo\engl-main'; $dst = $env:DEST; 'includes','frontend','base-de-datos','assets','backend' | ForEach-Object { New-Item -ItemType Directory -Force -Path (Join-Path $dst $_) | Out-Null }; Copy-Item (Join-Path $src '*.php') $dst -Force; Copy-Item (Join-Path $src 'includes\*') (Join-Path $dst 'includes') -Recurse -Force; Copy-Item (Join-Path $src 'frontend\*') (Join-Path $dst 'frontend') -Recurse -Force; Copy-Item (Join-Path $src 'base-de-datos\*') (Join-Path $dst 'base-de-datos') -Recurse -Force; Copy-Item (Join-Path $src 'assets\*') (Join-Path $dst 'assets') -Recurse -Force; Get-ChildItem (Join-Path $src 'backend\*.php') | Copy-Item -Destination (Join-Path $dst 'backend') -Force"
 if errorlevel 1 (
   echo.
   echo ERROR: algo fallo copiando los archivos.
