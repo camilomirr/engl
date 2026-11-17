@@ -6,14 +6,10 @@
    la línea en cada página. */
 ?>
 <footer class="site-footer">
-    <!-- Mapa rápido: los mismos destinos del menú superior, por si se llega al final de la página -->
+    <!-- Mapa rápido: los destinos de la tienda, por si se llega al final de la página -->
     <nav class="footer-nav" aria-label="Enlaces del sitio">
-      <a href="index.php">Inicio</a>
-      <a href="hardware.php">Hardware</a>
-      <a href="redes.php">Redes</a>
-      <a href="mantenimiento.php">Mantenimiento</a>
       <a href="tienda.php">Tienda</a>
-      <a href="foro.php">Foro</a>
+      <a href="carrito.php">Carrito</a>
     </nav>
     <p>© 2026 - <span>NVISION</span></p>
   </footer>

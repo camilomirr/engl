@@ -161,76 +161,9 @@ function protegerCantidadesCarrito() {
   });
 }
 
-/* ===== VALIDACIÓN: PUBLICAR UNA PREGUNTA DEL FORO ===== */
-function validarPublicar(form) {
-  // Quién publica la pregunta en el foro (columna «nombre»).
-  if (!revisarCampo(form, form.nombre, 2,
-      'Escribe tu nombre (mínimo 2 letras).')) {
-    return false;
-  }
-  // El título es lo que se lee en la lista de preguntas: mínimo 4.
-  if (!revisarCampo(form, form.titulo, 4,
-      'El título del problema necesita mínimo 4 letras.')) {
-    return false;
-  }
-  // La explicación del problema también necesita un mínimo de detalle.
-  if (!revisarCampo(form, form.contenido, 4,
-      'Cuéntanos qué pasa con un poco más de detalle (mínimo 4 letras).')) {
-    return false;
-  }
-  // Los tres campos pasaron: foro.php puede recibir la pregunta.
-  return true;
-}
-
-/* ===== VALIDACIÓN: EDITAR UNA PREGUNTA DEL FORO ===== */
-function validarEditar(form) {
-  // Al editar no se pide el nombre: el autor de la pregunta no cambia.
-  // El nuevo título debe seguir cumpliendo el mínimo de 4 letras.
-  if (!revisarCampo(form, form.titulo, 4,
-      'El título del problema necesita mínimo 4 letras.')) {
-    return false;
-  }
-  // Y el contenido editado tampoco puede quedar casi vacío.
-  if (!revisarCampo(form, form.contenido, 4,
-      'El contenido necesita mínimo 4 letras.')) {
-    return false;
-  }
-  return true;
-}
-
-/* ===== VALIDACIÓN: RESPONDER EN EL FORO ===== */
-function validarResponder(form) {
-  // Nombre de quien responde dentro del detalle de la pregunta.
-  if (!revisarCampo(form, form.nombre, 2,
-      'Escribe tu nombre (mínimo 2 letras).')) {
-    return false;
-  }
-  // La respuesta no puede viajar vacía a foro_respuestas.
-  if (!revisarCampo(form, form.contenido, 2,
-      'Escribe tu respuesta antes de enviarla.')) {
-    return false;
-  }
-  return true;
-}
-
-/* ===== VALIDACIÓN: COMENTARIOS DE LAS PÁGINAS ===== */
-function validarComentario(form) {
-  // Nombre de quien comenta en las páginas de aprendizaje.
-  if (!revisarCampo(form, form.nombre, 2,
-      'Escribe tu nombre (mínimo 2 letras).')) {
-    return false;
-  }
-  // El texto del comentario es el otro campo obligatorio.
-  if (!revisarCampo(form, form.contenido, 2,
-      'Escribe tu comentario antes de publicarlo.')) {
-    return false;
-  }
-  return true;
-}
-
 /* ===== CONFIRMACIÓN ANTES DE ELIMINAR =====
-   Los formularios con class="form-confirmar" (borrar preguntas,
-   respuestas y comentarios) muestran su mensaje de
+   Los formularios con class="form-confirmar" (eliminar un
+   producto del inventario, vaciar el carrito) muestran su
    data-confirm y solo se envían si la persona acepta. */
 function protegerConfirmaciones() {
   // Se juntan todos los formularios de eliminar de la página.
@@ -257,13 +190,7 @@ function protegerConfirmaciones() {
 document.addEventListener('DOMContentLoaded', function () {
   // La tienda: registrar y editar productos comparten validación.
   protegerFormulario('form-producto', validarProducto);
-  // El foro tiene tres formularios distintos y tres revisiones.
-  protegerFormulario('form-foro-publicar', validarPublicar);
-  protegerFormulario('form-foro-editar', validarEditar);
-  protegerFormulario('form-foro-responder', validarResponder);
-  // Los comentarios de inicio, hardware, redes y mantenimiento.
-  protegerFormulario('form-comentario', validarComentario);
-  // Las cantidades del carrito (uno por renglón de carrito.php).
+  // Las cantidades del carrito (uno por ítem de carrito.php).
   protegerCantidadesCarrito();
   // Por último, el seguro de confirmación en todos los «Eliminar».
   protegerConfirmaciones();

@@ -3,43 +3,23 @@
 ?>
 <header class="site-header">
     <div class="header-container">
-      <!-- Marca / Nombre de la página -->
-      <a href="index.php" class="brand-logo" aria-label="NVISION Home">
+      <!-- Marca / Nombre de la tienda: lleva a la vitrina -->
+      <a href="tienda.php" class="brand-logo" aria-label="NVISION Home">
         <span class="brand-text">NVISION</span>
       </a>
 
-      <!-- Navegación principal: en pantallas angostas la muestra y la esconde el botón hamburguesa vía interfaz.js -->
+      <!-- Navegación principal: en pantallas angostas la muestra y la esconde el botón hamburguesa vía interfaz.js.
+           El proyecto es SOLO la tienda: los únicos destinos son la vitrina y el carrito. -->
       <nav id="nav-menu" class="nav-menu">
         <ul class="nav-links">
-          <!-- Catálogo 1: Aprende -->
-          <li class="nav-item-dropdown">
-            <button type="button" class="nav-dropdown-trigger" aria-expanded="false">
-              <span>Aprende</span>
-              <span class="nav-arrow mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
-            </button>
-            <!-- Submenú de Aprende: los tres módulos de contenido del sitio -->
-            <ul class="nav-submenu">
-              <li><a href="hardware.php">Hardware</a></li>
-              <li><a href="redes.php">Redes</a></li>
-              <li><a href="mantenimiento.php">Mantenimiento por software</a></li>
-            </ul>
-          </li>
-
-          <!-- Tienda: el inventario de productos (CRUD principal) -->
+          <!-- Tienda: la vitrina con el inventario (CRUD principal) -->
           <li>
             <a href="tienda.php"><span>Tienda</span></a>
           </li>
 
-          <!-- Catálogo 2: Comunidad -->
-          <li class="nav-item-dropdown">
-            <button type="button" class="nav-dropdown-trigger" aria-expanded="false">
-              <span>Comunidad</span>
-              <span class="nav-arrow mono-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
-            </button>
-            <!-- Submenú de Comunidad: el foro de la comunidad -->
-            <ul class="nav-submenu">
-              <li><a href="foro.php">Foro El Taller</a></li>
-            </ul>
+          <!-- Carrito: la compra que el visitante lleva armada -->
+          <li>
+            <a href="carrito.php"><span>Carrito</span></a>
           </li>
         </ul>
       </nav>
