@@ -98,4 +98,32 @@
     // Y se quita la marca de «hay submenú abierto» de la lista.
     if (links) links.classList.remove("submenu-active");
   });
+
+  /* Botones «Ver imagen e info» (componentes) y de historia:
+     despliegan la caja con la foto y el texto largo de cada
+     tarjeta de hardware.php. El HTML y el CSS ya existían (la
+     caja nace con el atributo hidden y la flecha gira cuando el
+     botón queda en aria-expanded=true), pero faltaba este clic. */
+  // Se conectan los dos tipos de botón desplegable del sitio.
+  document.querySelectorAll(".btn-component-expand, .btn-expand-history").forEach(function (boton) {
+    // Al hacer clic en el botón de una tarjeta…
+    boton.addEventListener("click", function () {
+      // …se busca la caja que le toca: su id viene en data-target
+      // y, en algunos botones de historia, en aria-controls.
+      var idCaja = boton.getAttribute("data-target") || boton.getAttribute("aria-controls");
+      // Sin id no hay caja que desplegar: no se hace nada.
+      if (!idCaja) return;
+      // La caja pareja del botón, identificada por ese id.
+      var caja = document.getElementById(idCaja);
+      // Si la caja no está en la página, tampoco hay nada que hacer.
+      if (!caja) return;
+      // Se anota si la caja estaba escondida antes del clic.
+      var estabaOculta = caja.hidden;
+      // Se invierte: escondida se muestra, visible se esconde.
+      caja.hidden = !estabaOculta;
+      // aria-expanded refleja el nuevo estado (true si se abrió)
+      // y con ese atributo el CSS gira la flecha del botón.
+      boton.setAttribute("aria-expanded", estabaOculta ? "true" : "false");
+    });
+  });
 })();
