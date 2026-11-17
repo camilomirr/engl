@@ -3,7 +3,7 @@ chcp 65001 >nul
 setlocal EnableDelayedExpansion
 REM ============================================================
 REM  NVISION - Actualizar la copia local desde GitHub
-REM  Version 4: usa Git si el PC lo tiene, instalado o PORTABLE
+REM  Version 5: usa Git si el PC lo tiene, instalado o PORTABLE
 REM  (carpeta git-portable en tu usuario, sin permisos de
 REM  administrador). Con Git, actualizar es hacer pull: solo
 REM  baja lo que cambio. Sin Git, usa el ZIP con comparacion
@@ -127,6 +127,22 @@ if errorlevel 1 (
   pause
   exit /b 1
 )
+
+REM ------------------------------------------------------------
+REM  Limpieza: archivos de versiones anteriores que el proyecto
+REM  ya no usa (foro, paginas de aprendizaje, comentarios y el
+REM  SQL incremental viejo). Copiar no borra, asi que sin este
+REM  paso esos archivos quedarian vivos en la carpeta local
+REM  para siempre; si existen, se eliminan.
+REM ------------------------------------------------------------
+if exist "%DEST%\foro.php" del "%DEST%\foro.php"
+if exist "%DEST%\hardware.php" del "%DEST%\hardware.php"
+if exist "%DEST%\redes.php" del "%DEST%\redes.php"
+if exist "%DEST%\mantenimiento.php" del "%DEST%\mantenimiento.php"
+if exist "%DEST%\pqr.php" del "%DEST%\pqr.php"
+if exist "%DEST%\includes\comentarios.php" del "%DEST%\includes\comentarios.php"
+if exist "%DEST%\includes\comentarios_ctrl.php" del "%DEST%\includes\comentarios_ctrl.php"
+if exist "%DEST%\base-de-datos\actualizacion_tienda.sql" del "%DEST%\base-de-datos\actualizacion_tienda.sql"
 
 REM Se anota el commit sincronizado para la proxima vez.
 if defined SHAREMOTO echo %SHAREMOTO%> "%MARCADOR%"
