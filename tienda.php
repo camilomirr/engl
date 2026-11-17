@@ -11,9 +11,10 @@
       (el carrito vive en la sesión y se paga en carrito.php).
 
    2) EL PANEL DE INVENTARIO (el CRUD principal del proyecto):
-      registrar, consultar, editar y eliminar productos. Es el
-      mismo CRUD de siempre, ahora con el campo «imagen» para
-      la ruta de la foto de cada producto.
+      registrar, consultar, editar y eliminar productos. La
+      foto de cada producto NO se escribe a mano en el panel:
+      los productos la traen de su registro y los nuevos se
+      muestran con su símbolo SVG por categoría.
 
    Todo llega por POST, se guarda en MySQL y la página se
    recarga (patrón Post/Redirect/Get). Las funciones de la
@@ -24,6 +25,9 @@
 session_start();
 // Se cargan las funciones de productos, búsqueda y ventas.
 require_once __DIR__ . '/backend/bd.php';
+// Y los símbolos SVG de la tienda (includes/iconos.php): la
+// tienda no usa emojis, dibuja sus íconos en SVG de trazo.
+require_once __DIR__ . '/includes/iconos.php';
 
 // ===== AYUDAS DE LA TIENDA =====
 /* Las categorías válidas son las mismas de la columna
@@ -37,9 +41,11 @@ function producto_categoria_valida($categoria) {
 
 /* Lee y valida los datos del formulario de producto del panel.
    Devuelve el arreglo listo para guardar, o null si algo está
-   mal: el nombre es obligatorio, el precio y la cantidad deben
-   ser enteros de cero en adelante y la ruta de la imagen no
-   puede pasar de 255 caracteres (el tamaño de su columna). */
+   mal: el nombre es obligatorio y el precio y la cantidad
+   deben ser enteros de cero en adelante. La foto NO viene del
+   formulario: al crear queda «sin foto» (la tarjeta muestra el
+   símbolo SVG de su categoría) y al editar se conserva la que
+   el producto ya tenga guardada. */
 function producto_datos_formulario() {
     // Nombre del producto, sin espacios sobrantes de las puntas.
     $nombre      = trim($_POST['nombre'] ?? '');
@@ -47,8 +53,6 @@ function producto_datos_formulario() {
     $categoria   = $_POST['categoria'] ?? 'Componentes';
     // La descripción es opcional, pero igual se lee limpia.
     $descripcion = trim($_POST['descripcion'] ?? '');
-    // Ruta de la foto del producto; vacía significa «sin foto».
-    $imagen      = trim($_POST['imagen'] ?? '');
     // Precio y cantidad llegan como texto del formulario…
     $precioTxt   = trim($_POST['precio'] ?? '');
     $cantidadTxt = trim($_POST['cantidad'] ?? '');
@@ -57,23 +61,23 @@ function producto_datos_formulario() {
     $precio   = filter_var($precioTxt, FILTER_VALIDATE_INT);
     $cantidad = filter_var($cantidadTxt, FILTER_VALIDATE_INT);
     // Cualquier falla devuelve null: nombre muy corto, categoría
-    // fuera del ENUM, precio/cantidad que no sean enteros de 0 en
-    // adelante, o una ruta de imagen más larga que su columna.
+    // fuera del ENUM, o precio/cantidad que no sean enteros de
+    // cero en adelante.
     if (mb_strlen($nombre) < 2 || !producto_categoria_valida($categoria)
         || $precio === false || $precio < 0
-        || $cantidad === false || $cantidad < 0
-        || mb_strlen($imagen) > 255) {
+        || $cantidad === false || $cantidad < 0) {
         return null;
     }
     // Todo válido: se entrega el paquete listo para bd.php.
-    // La imagen vacía se guarda como null («sin foto»).
+    // La imagen va en null: al crear es «sin foto» y al editar
+    // el controlador la reemplaza por la foto ya guardada.
     return array(
         'nombre'      => $nombre,
         'categoria'   => $categoria,
         'descripcion' => $descripcion,
         'precio'      => $precio,
         'cantidad'    => $cantidad,
-        'imagen'      => $imagen === '' ? null : $imagen
+        'imagen'      => null
     );
 }
 
@@ -88,45 +92,15 @@ function carrito_total_items() {
     return (int)array_sum($_SESSION['carrito']);
 }
 
-/* Emoji de respaldo de una tarjeta: se usa cuando el producto
-   no tiene foto o el archivo de la foto no aparece. Se elige
-   según el nombre del archivo de imagen y, si tampoco hay,
-   según la categoría, para que la tarjeta nunca quede vacía. */
-function producto_emoji($prod) {
-    // Mapa archivo de foto => emoji que lo representa.
-    $porImagen = array(
-        'ram.jpg'     => '💾',
-        'ssd.jpg'     => '💽',
-        'mouse.jpg'   => '🖱️',
-        'teclado.jpg' => '⌨️',
-        'router.jpg'  => '📶',
-        'cable.jpg'   => '🔌',
-        'monitor.jpg' => '🖥️',
-        'diadema.jpg' => '🎧',
-        'disco.jpg'   => '💿',
-        'fuente.jpg'  => '⚡'
-    );
-    // basename() deja solo el nombre del archivo de la ruta.
-    $archivo = basename((string)($prod['imagen'] ?? ''));
-    // Si ese archivo tiene emoji asignado, ese se usa.
-    if (isset($porImagen[$archivo])) {
-        return $porImagen[$archivo];
-    }
-    // Sin imagen conocida: un emoji genérico por categoría.
-    $porCategoria = array(
-        'Componentes' => '🔩',
-        'Periféricos' => '🖱️',
-        'Redes'       => '📶',
-        'Accesorios'  => '🔌'
-    );
-    // Y si ni la categoría calza, una caja de producto.
-    return $porCategoria[$prod['categoria']] ?? '📦';
-}
+/* El símbolo de respaldo de una tarjeta (cuando el producto
+   no tiene foto) lo dibuja icono_producto() de
+   includes/iconos.php: un SVG de trazo según el producto,
+   nada de emojis. */
 
 /* ¿La foto del producto se puede mostrar? Solo si trae ruta
    escrita Y el archivo existe de verdad en el proyecto: así
-   una ruta mal escrita en el panel no rompe la vitrina,
-   simplemente cae al emoji de respaldo. */
+   una ruta mal escrita no rompe la vitrina: simplemente
+   cae al símbolo SVG de respaldo. */
 function producto_tiene_foto($prod) {
     // Sin ruta no hay foto que buscar.
     if (empty($prod['imagen'])) {
@@ -216,8 +190,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Los datos nuevos pasan por la misma validación del crear.
         $d = producto_datos_formulario();
         if ($pid > 0 && $d !== null) {
+            // La foto NO se edita desde el formulario: se lee la
+            // fila actual y se conserva la foto que ya tiene.
+            $actual = bd_producto($pid);
             // Se sobrescribe la fila de ese id en productos.
-            bd_producto_actualizar($pid, $d['nombre'], $d['categoria'], $d['descripcion'], $d['precio'], $d['cantidad'], $d['imagen']);
+            bd_producto_actualizar($pid, $d['nombre'], $d['categoria'], $d['descripcion'], $d['precio'], $d['cantidad'], $actual['imagen'] ?? null);
             // De vuelta a la tienda, con el aviso de «actualizado».
             header('Location: tienda.php?actualizado=1');
         } else {
@@ -317,9 +294,17 @@ if (isset($_GET['editar'])) {
     <p class="ruta-kicker">Tienda</p>
     <h1>Tienda NVISION · Compra tecnología</h1>
     <p class="topo-sub">Componentes, periféricos, redes y accesorios con foto, precio en pesos y stock en vivo. Agrega lo que necesites al carrito y finaliza tu compra en un solo paso.</p>
-    <!-- Enlace al carrito: el número entre paréntesis es el total
-         de ítems que la sesión ya lleva guardados. -->
-    <p><a class="tool-btn tienda-carrito-link" href="carrito.php">🛒 Carrito (<?php echo $itemsCarrito; ?>)</a></p>
+    <!-- Acciones del encabezado: la misma fila de botones del
+         hero de la portada (hero-buttons con btn-primary y
+         btn-secondary), para que la tienda se vea parte del
+         sitio y no una página aparte. -->
+    <div class="hero-buttons tienda-hero-acciones">
+      <!-- El carrito como botón principal: el total de ítems que
+           la sesión ya lleva va en la pastilla blanca del botón. -->
+      <a class="btn-primary" href="carrito.php"><?php echo icono_svg('carrito', 'icono-btn'); ?> Carrito <span class="tienda-carrito-badge"><?php echo $itemsCarrito; ?></span></a>
+      <!-- Salto directo al panel de inventario de más abajo. -->
+      <a class="btn-secondary" href="#inventario">Ver inventario</a>
+    </div>
   </section>
 
   <section class="mejora-wrap">
@@ -397,8 +382,8 @@ if (isset($_GET['editar'])) {
           <!-- La foto sale de la ruta guardada en la columna imagen -->
           <img src="<?php echo e($prod['imagen']); ?>" alt="<?php echo e($prod['nombre']); ?>" loading="lazy">
 <?php else: ?>
-          <!-- Sin foto válida: recuadro con el emoji del producto -->
-          <div class="tienda-card-emoji" aria-hidden="true"><?php echo producto_emoji($prod); ?></div>
+          <!-- Sin foto válida: recuadro con el símbolo SVG del producto -->
+          <div class="tienda-card-icono" aria-hidden="true"><?php echo icono_producto($prod); ?></div>
 <?php endif; ?>
 <?php if ((int)$prod['cantidad'] === 0): ?>
           <!-- Sello de agotado cruzado sobre la imagen -->
@@ -424,7 +409,7 @@ if (isset($_GET['editar'])) {
             <input type="hidden" name="filtro_q" value="<?php echo e($buscar); ?>">
             <input type="hidden" name="filtro_categoria" value="<?php echo e($filtroCategoria); ?>">
             <input type="hidden" name="filtro_orden" value="<?php echo e($filtroOrden); ?>">
-            <button type="submit" class="tool-btn tienda-btn-agregar">🛒 Agregar al carrito</button>
+            <button type="submit" class="tool-btn tienda-btn-agregar"><?php echo icono_svg('carrito', 'icono-btn'); ?> Agregar al carrito</button>
           </form>
 <?php endif; ?>
         </div>
@@ -436,9 +421,9 @@ if (isset($_GET['editar'])) {
     <!-- ===== PANEL DE INVENTARIO (CRUD) =====
          Debajo de la vitrina: aquí se administra el inventario
          completo (registrar, editar y eliminar productos). -->
-    <div class="mejora-card tienda-panel">
+    <div class="mejora-card tienda-panel" id="inventario">
       <h2>Panel de inventario (CRUD)</h2>
-      <p>Administración de la tienda: desde aquí se registran los productos, se corrigen sus datos (incluida la ruta de la foto) y se retiran los que ya no se venden.</p>
+      <p>Administración de la tienda: desde aquí se registran los productos, se corrigen sus datos y se retiran los que ya no se venden.</p>
 
       <!-- CREAR / ACTUALIZAR: el mismo formulario sirve para
            registrar un producto nuevo y para editar uno
@@ -446,7 +431,7 @@ if (isset($_GET['editar'])) {
            con ellos y al guardar ACTUALIZA en vez de crear. -->
       <h3><?php echo $editarProducto ? 'Editar producto' : 'Registrar producto'; ?></h3>
 <?php if ($editarProducto && isset($_GET['error'])): ?>
-      <p class="mejora-msg">No se pudo guardar. Revisa el nombre, que el precio y la cantidad sean números de cero en adelante y que la ruta de la imagen no pase de 255 caracteres.</p>
+      <p class="mejora-msg">No se pudo guardar. Revisa el nombre y que el precio y la cantidad sean números de cero en adelante.</p>
 <?php endif; ?>
       <!-- El formulario se envía a esta misma página; validaciones.js lo revisa antes (id form-producto) -->
       <form method="post" action="tienda.php" id="form-producto">
@@ -475,10 +460,9 @@ if (isset($_GET['editar'])) {
         <label class="mejora-label" for="prod-cantidad">Cantidad en inventario</label>
         <!-- El stock: 0 es válido y significa que el producto está agotado -->
         <input class="mejora-input" id="prod-cantidad" name="cantidad" type="number" min="0" step="1" required value="<?php echo e($editarProducto['cantidad'] ?? ''); ?>">
-        <label class="mejora-label" for="prod-imagen">Imagen del producto (ruta)</label>
-        <!-- La ruta de la foto dentro del proyecto, ej: frontend/img/productos/ram.jpg.
-             Si se deja vacía, la tarjeta muestra el emoji de respaldo. -->
-        <input class="mejora-input" id="prod-imagen" name="imagen" type="text" maxlength="255" placeholder="frontend/img/productos/ram.jpg" value="<?php echo e($editarProducto['imagen'] ?? ''); ?>">
+        <!-- Sin campo de imagen: la foto no se escribe a mano.
+             Un producto nuevo se muestra con el símbolo SVG de
+             su categoría y al editar se conserva la foto actual. -->
         <button type="submit" class="tool-btn"><?php echo $editarProducto ? 'Guardar cambios' : 'Registrar producto'; ?></button>
 <?php if ($editarProducto): ?>
         <a class="tool-btn tool-btn-ghost" href="tienda.php">Cancelar edición</a>
@@ -507,7 +491,7 @@ if (isset($_GET['editar'])) {
                 <img class="tienda-thumb" src="<?php echo e($prod['imagen']); ?>" alt="<?php echo e($prod['nombre']); ?>">
 <?php else: ?>
                 <!-- Sin foto: el emoji ocupa el lugar de la miniatura -->
-                <span class="tienda-thumb-emoji" aria-hidden="true"><?php echo producto_emoji($prod); ?></span>
+                <span class="tienda-thumb-icono" aria-hidden="true"><?php echo icono_producto($prod); ?></span>
 <?php endif; ?>
               </td>
               <td><?php echo e($prod['nombre']); ?></td>

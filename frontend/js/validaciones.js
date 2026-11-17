@@ -118,15 +118,9 @@ function validarProducto(form) {
       'La cantidad debe ser un número de cero en adelante.');
     return false;
   }
-  // La ruta de la imagen es opcional (vacía = sin foto), pero si
-  // se escribió no puede pasar de 255 caracteres: es el tamaño
-  // de la columna «imagen» de la tabla productos.
-  if (form.imagen && form.imagen.value.trim().length > 255) {
-    avisarError(form, form.imagen,
-      'La ruta de la imagen es muy larga (máximo 255 caracteres).');
-    return false;
-  }
-  // Nombre, precio, cantidad e imagen están bien: puede viajar.
+  // Nombre, precio y cantidad están bien: puede viajar.
+  // (El formulario ya no trae campo de imagen: la foto no se
+  // escribe a mano, así que aquí no hay nada más que revisar.)
   return true;
 }
 

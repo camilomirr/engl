@@ -19,11 +19,18 @@
    Los precios y el stock NUNCA se toman de la sesión: se
    leen de la base de datos al mostrar la página y otra vez
    al pagar, por si el inventario cambió mientras tanto.
+
+   La vista está rediseñada: los ítems van como TARJETAS en
+   una columna y el resumen de la compra en una tarjeta fija
+   a la derecha; los símbolos son SVG de includes/iconos.php
+   (la tienda no usa emojis).
    ============================================================ */
 // La sesión se abre antes que nada: sin ella no hay carrito.
 session_start();
 // Funciones de la base: productos por ids y registro de ventas.
 require_once __DIR__ . '/backend/bd.php';
+// Los símbolos SVG de la tienda (carrito, productos, listo…).
+require_once __DIR__ . '/includes/iconos.php';
 
 // El carrito se crea vacío la primera vez que se entra aquí.
 if (!isset($_SESSION['carrito'])) {
@@ -31,31 +38,9 @@ if (!isset($_SESSION['carrito'])) {
 }
 
 // ===== AYUDAS DEL CARRITO =====
-/* Emoji de respaldo de un producto, el mismo criterio de la
-   vitrina: se usa si no tiene foto o el archivo no aparece. */
-function carrito_emoji($prod) {
-    // Mapa archivo de foto => emoji que lo representa.
-    $porImagen = array(
-        'ram.jpg'     => '💾',
-        'ssd.jpg'     => '💽',
-        'mouse.jpg'   => '🖱️',
-        'teclado.jpg' => '⌨️',
-        'router.jpg'  => '📶',
-        'cable.jpg'   => '🔌',
-        'monitor.jpg' => '🖥️',
-        'diadema.jpg' => '🎧',
-        'disco.jpg'   => '💿',
-        'fuente.jpg'  => '⚡'
-    );
-    // basename() deja solo el nombre del archivo de la ruta.
-    $archivo = basename((string)($prod['imagen'] ?? ''));
-    // Si ese archivo tiene emoji asignado, ese se usa.
-    if (isset($porImagen[$archivo])) {
-        return $porImagen[$archivo];
-    }
-    // Sin imagen conocida: una caja de producto genérica.
-    return '📦';
-}
+/* El símbolo de respaldo de un producto (cuando no tiene foto)
+   lo dibuja icono_producto() de includes/iconos.php: un SVG
+   de trazo según el producto, nada de emojis. */
 
 /* ¿La foto del producto se puede mostrar? Ruta escrita Y
    archivo existente, igual que en la vitrina de tienda.php. */
@@ -221,6 +206,8 @@ if (isset($_GET['compra']) && !empty($_SESSION['compra_ok'])) {
 $renglones = array();
 // El total general de la compra que se está armando.
 $totalGeneral = 0;
+// Cuántas unidades en total lleva el carrito (para el resumen).
+$numItems = 0;
 // Aviso de que algún producto fue retirado por ya no existir.
 $huboRetirados = false;
 // Solo hay renglones si el carrito tiene algo.
@@ -240,7 +227,7 @@ if (!empty($_SESSION['carrito'])) {
         $prod = $frescos[$pid];
         // Subtotal del renglón: precio actual × cantidad pedida.
         $subtotal = (int)$prod['precio'] * (int)$cant;
-        // El renglón completo que pinta la tabla de abajo.
+        // El renglón completo que pinta la lista de abajo.
         $renglones[] = array(
             'producto' => $prod,
             'cantidad' => (int)$cant,
@@ -248,6 +235,8 @@ if (!empty($_SESSION['carrito'])) {
         );
         // El subtotal se suma al total general.
         $totalGeneral += $subtotal;
+        // Y la cantidad se suma al conteo de unidades del resumen.
+        $numItems += (int)$cant;
     }
 }
 ?>
@@ -297,18 +286,21 @@ if (!empty($_SESSION['carrito'])) {
 <main>
   <section class="topo-hero">
     <p class="ruta-kicker">Tienda</p>
-    <h1>🛒 Tu carrito de compras</h1>
+    <h1>Tu carrito de compras</h1>
     <p class="topo-sub">Revisa los productos, ajusta las cantidades y finaliza tu compra. El stock se descuenta del inventario en el momento de pagar.</p>
   </section>
 
   <section class="mejora-wrap">
-<!-- Comprobante de la compra recién finalizada: número de
-     venta y total pagado, leídos del aviso de la sesión -->
+<!-- Comprobante de la compra recién finalizada: tarjeta de
+     estado centrada con el símbolo de «listo», el número de
+     venta y el total pagado leídos del aviso de la sesión -->
 <?php if ($compraOk): ?>
-    <div class="mejora-card carrito-compra-ok">
-      <h2>¡Compra realizada! 🎉</h2>
-      <p class="mejora-msg">Tu número de venta es <strong>#<?php echo (int)$compraOk['venta']; ?></strong> y el total pagado fue <strong><?php echo e(precio_cop($compraOk['total'])); ?></strong>. El stock ya se descontó del inventario. ¡Gracias por comprar en NVISION!</p>
-      <p><a class="tool-btn" href="tienda.php">Seguir comprando</a></p>
+    <div class="mejora-card carrito-estado">
+      <!-- Símbolo de verificación dentro de un círculo verde -->
+      <span class="icono-circulo icono-circulo-ok"><?php echo icono_svg('check'); ?></span>
+      <h2>¡Compra realizada!</h2>
+      <p class="carrito-estado-texto">Tu número de venta es <strong>#<?php echo (int)$compraOk['venta']; ?></strong> y el total pagado fue <strong><?php echo e(precio_cop($compraOk['total'])); ?></strong>. El stock ya se descontó del inventario. ¡Gracias por comprar en NVISION!</p>
+      <p><a class="btn-primary" href="tienda.php">Seguir comprando</a></p>
     </div>
 <?php endif; ?>
 
@@ -338,96 +330,107 @@ if (!empty($_SESSION['carrito'])) {
 <?php endif; ?>
 
 <?php if (!$renglones): ?>
-    <!-- Carrito vacío: se invita a volver a la vitrina -->
-    <div class="mejora-card">
+    <!-- Carrito vacío: tarjeta de estado centrada con la bolsa
+         en un círculo y el botón de vuelta a la vitrina -->
+    <div class="mejora-card carrito-estado">
+      <!-- Símbolo de bolsa de compras dentro de un círculo suave -->
+      <span class="icono-circulo"><?php echo icono_svg('bolsa'); ?></span>
       <h2>Tu carrito está vacío</h2>
-      <p>Todavía no agregaste ningún producto. Pásate por la vitrina y agrega lo que necesites.</p>
-      <p><a class="tool-btn" href="tienda.php">Ir a la tienda</a></p>
+      <p class="carrito-estado-texto">Todavía no agregaste ningún producto. Pásate por la vitrina y agrega lo que necesites.</p>
+      <p><a class="btn-primary" href="tienda.php">Ir a la tienda</a></p>
     </div>
 <?php else: ?>
-    <!-- ===== TABLA DEL CARRITO =====
-         Un renglón por ítem: foto, nombre, precio unitario,
-         cantidad editable, subtotal y botón de quitar. -->
-    <div class="mejora-card">
-      <h2>Productos en tu carrito</h2>
-      <div class="tienda-tabla-wrap">
-        <table class="tienda-tabla carrito-tabla">
-          <thead>
-            <tr><th>Foto</th><th>Producto</th><th>Precio</th><th>Cantidad</th><th>Subtotal</th><th></th></tr>
-          </thead>
-          <tbody>
+    <!-- ===== CONTENIDO DEL CARRITO =====
+         Dos columnas en pantallas anchas: a la izquierda los
+         ítems como tarjetas y a la derecha el resumen fijo con
+         el total y el botón de pagar. En celular se apilan. -->
+    <div class="carrito-layout">
+
+      <!-- Columna de ítems: una tarjeta por producto -->
+      <div class="carrito-items">
 <?php foreach ($renglones as $renglon): ?>
 <?php $prod = $renglon['producto']; ?>
-            <!-- Renglón de UN ítem del carrito -->
-            <tr>
-              <td>
+        <!-- Tarjeta de UN ítem del carrito -->
+        <article class="carrito-item">
+          <!-- Zona visual: la foto del producto o su símbolo SVG -->
+          <div class="carrito-item-media">
 <?php if (carrito_tiene_foto($prod)): ?>
-                <!-- Foto pequeña del producto en su renglón -->
-                <img class="tienda-thumb" src="<?php echo e($prod['imagen']); ?>" alt="<?php echo e($prod['nombre']); ?>">
+            <!-- La foto sale de la ruta guardada en la columna imagen -->
+            <img src="<?php echo e($prod['imagen']); ?>" alt="<?php echo e($prod['nombre']); ?>">
 <?php else: ?>
-                <!-- Sin foto: el emoji ocupa el lugar de la miniatura -->
-                <span class="tienda-thumb-emoji" aria-hidden="true"><?php echo carrito_emoji($prod); ?></span>
+            <!-- Sin foto: el símbolo SVG ocupa el recuadro -->
+            <span class="carrito-item-icono" aria-hidden="true"><?php echo icono_producto($prod); ?></span>
 <?php endif; ?>
-              </td>
-              <td>
-                <?php echo e($prod['nombre']); ?>
-                <!-- El stock disponible, para saber el tope de la cantidad -->
-                <br><small>Stock disponible: <?php echo (int)$prod['cantidad']; ?></small>
-              </td>
-              <!-- Precio unitario fresco de la base, en pesos -->
-              <td><?php echo e(precio_cop($prod['precio'])); ?></td>
-              <td>
-                <!-- CAMBIAR CANTIDAD: mini formulario por renglón;
-                     validaciones.js revisa que sea un entero de 1
-                     en adelante (clase form-carrito-cantidad) y el
-                     máximo permitido es el stock del producto -->
-                <form method="post" action="carrito.php" class="form-carrito-cantidad carrito-cantidad-form">
-                  <input type="hidden" name="accion" value="cantidad">
-                  <input type="hidden" name="id" value="<?php echo e($prod['id']); ?>">
-                  <input class="mejora-input carrito-cantidad-input" name="cantidad" type="number" min="1" max="<?php echo (int)$prod['cantidad']; ?>" step="1" required value="<?php echo $renglon['cantidad']; ?>">
-                  <button type="submit" class="tool-btn tool-btn-ghost">Actualizar</button>
-                </form>
-              </td>
-              <!-- Subtotal del renglón: precio × cantidad -->
-              <td><strong><?php echo e(precio_cop($renglon['subtotal'])); ?></strong></td>
-              <td>
-                <!-- QUITAR: saca solo este ítem del carrito -->
-                <form method="post" action="carrito.php">
-                  <input type="hidden" name="accion" value="quitar">
-                  <input type="hidden" name="id" value="<?php echo e($prod['id']); ?>">
-                  <button type="submit" class="tool-btn tool-btn-ghost">Quitar</button>
-                </form>
-              </td>
-            </tr>
+          </div>
+          <!-- Datos del ítem: nombre, categoría con su stock y
+               el precio de cada unidad -->
+          <div class="carrito-item-info">
+            <h3><?php echo e($prod['nombre']); ?></h3>
+            <p class="carrito-item-meta"><?php echo e($prod['categoria']); ?> · Stock disponible: <?php echo (int)$prod['cantidad']; ?></p>
+            <p class="carrito-item-precio"><?php echo e(precio_cop($prod['precio'])); ?> <span>cada uno</span></p>
+          </div>
+          <!-- Controles del ítem: cantidad editable, subtotal
+               del renglón y el botón de quitar -->
+          <div class="carrito-item-control">
+            <!-- CAMBIAR CANTIDAD: mini formulario por ítem;
+                 validaciones.js revisa que sea un entero de 1
+                 en adelante (clase form-carrito-cantidad) y el
+                 máximo permitido es el stock del producto -->
+            <form method="post" action="carrito.php" class="form-carrito-cantidad carrito-cantidad-form">
+              <input type="hidden" name="accion" value="cantidad">
+              <input type="hidden" name="id" value="<?php echo e($prod['id']); ?>">
+              <input class="mejora-input carrito-cantidad-input" name="cantidad" type="number" min="1" max="<?php echo (int)$prod['cantidad']; ?>" step="1" required value="<?php echo $renglon['cantidad']; ?>">
+              <button type="submit" class="tool-btn tool-btn-ghost">Actualizar</button>
+            </form>
+            <!-- Subtotal del ítem: precio × cantidad -->
+            <p class="carrito-item-subtotal"><?php echo e(precio_cop($renglon['subtotal'])); ?></p>
+            <!-- QUITAR: saca solo este ítem del carrito -->
+            <form method="post" action="carrito.php">
+              <input type="hidden" name="accion" value="quitar">
+              <input type="hidden" name="id" value="<?php echo e($prod['id']); ?>">
+              <button type="submit" class="carrito-quitar"><?php echo icono_svg('basura', 'icono-btn'); ?> Quitar</button>
+            </form>
+          </div>
+        </article>
 <?php endforeach; ?>
-          </tbody>
-          <tfoot>
-            <!-- Total general: la suma de todos los subtotales -->
-            <tr>
-              <td colspan="4" class="carrito-total-label">Total a pagar</td>
-              <td colspan="2" class="carrito-total-valor"><?php echo e(precio_cop($totalGeneral)); ?></td>
-            </tr>
-          </tfoot>
-        </table>
       </div>
 
-      <!-- ===== ACCIONES FINALES DEL CARRITO ===== -->
-      <div class="carrito-acciones">
-        <!-- Seguir comprando: vuelve a la vitrina sin perder el carrito -->
-        <a class="tool-btn tool-btn-ghost" href="tienda.php">Seguir comprando</a>
-        <!-- VACIAR: deja el carrito en cero; la clase form-confirmar
-             hace que validaciones.js pida confirmación antes -->
-        <form method="post" action="carrito.php" class="form-confirmar" data-confirm="¿Seguro que quieres vaciar todo el carrito?">
-          <input type="hidden" name="accion" value="vaciar">
-          <button type="submit" class="tool-btn tool-btn-ghost">Vaciar carrito</button>
-        </form>
+      <!-- Columna del resumen: tarjeta fija al bajar la página,
+           con el conteo, el total y las acciones de cierre -->
+      <aside class="mejora-card carrito-resumen">
+        <h2>Resumen de la compra</h2>
+        <!-- Fila: cuántas unidades van en total -->
+        <div class="carrito-resumen-fila">
+          <span>Productos</span>
+          <strong><?php echo $numItems; ?></strong>
+        </div>
+        <!-- Fila: el subtotal (la tienda no cobra envío) -->
+        <div class="carrito-resumen-fila">
+          <span>Subtotal</span>
+          <strong><?php echo e(precio_cop($totalGeneral)); ?></strong>
+        </div>
+        <!-- Fila del total: la más grande del resumen -->
+        <div class="carrito-resumen-fila carrito-resumen-total">
+          <span>Total a pagar</span>
+          <strong><?php echo e(precio_cop($totalGeneral)); ?></strong>
+        </div>
         <!-- FINALIZAR COMPRA: guarda la venta en la base con
              transacción y descuenta el stock (id form-comprar) -->
         <form method="post" action="carrito.php" id="form-comprar">
           <input type="hidden" name="accion" value="comprar">
-          <button type="submit" class="tool-btn carrito-btn-comprar">Finalizar compra · <?php echo e(precio_cop($totalGeneral)); ?></button>
+          <button type="submit" class="btn-primary carrito-btn-pagar"><?php echo icono_svg('carrito', 'icono-btn'); ?> Finalizar compra</button>
         </form>
-      </div>
+        <!-- VACIAR: deja el carrito en cero; la clase form-confirmar
+             hace que validaciones.js pida confirmación antes -->
+        <form method="post" action="carrito.php" class="form-confirmar carrito-vaciar" data-confirm="¿Seguro que quieres vaciar todo el carrito?">
+          <input type="hidden" name="accion" value="vaciar">
+          <button type="submit" class="tool-btn tool-btn-ghost">Vaciar carrito</button>
+        </form>
+        <!-- Seguir comprando: vuelve a la vitrina sin perder nada -->
+        <a class="carrito-seguir" href="tienda.php">← Seguir comprando</a>
+        <!-- Nota de cierre: qué pasa con el stock al pagar -->
+        <p class="carrito-resumen-nota">Al pagar, la venta queda guardada en la base de datos y el stock se descuenta del inventario.</p>
+      </aside>
     </div>
 <?php endif; ?>
   </section>

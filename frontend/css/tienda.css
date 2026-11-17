@@ -9,10 +9,74 @@
    tema claro/oscuro sin colores quemados a mano.
    ============================================================ */
 
-/* ===== ENLACE AL CARRITO (en el encabezado de la tienda) ===== */
-.tienda-carrito-link {
-  /* Un poco más grande que un botón normal: es la entrada a pagar. */
-  font-size: 1.05rem;
+/* ===== ACCIONES DEL ENCABEZADO DE LA TIENDA ===== */
+.tienda-hero-acciones {
+  /* Aire entre el texto del hero y su fila de botones: sin este
+     margen los botones quedaban pegados al párrafo. */
+  margin-top: 1.4rem;
+}
+.tienda-carrito-badge {
+  /* Pastilla blanca con el total de ítems, DENTRO del botón azul
+     del carrito: el número se lee de un vistazo y ya no hace
+     falta el «(0)» suelto al lado del texto. */
+  display: inline-flex;
+  /* El número siempre centrado en su pastilla. */
+  align-items: center;
+  justify-content: center;
+  /* Ancho mínimo de pastilla: crece si el número es de 2 dígitos. */
+  min-width: 1.65em;
+  height: 1.65em;
+  padding: 0 0.35em;
+  /* Separación corta entre la palabra «Carrito» y la pastilla. */
+  margin-left: 0.4em;
+  /* Bordes totalmente redondos: forma de pastilla. */
+  border-radius: 999px;
+  /* Blanco sobre el azul del botón, con el texto en azul oscuro. */
+  background: #ffffff;
+  color: #0369a1;
+  /* Número un poco más pequeño que el texto del botón, en negrita. */
+  font-size: 0.85em;
+  font-weight: 800;
+}
+
+/* ===== SÍMBOLOS SVG (includes/iconos.php) ===== */
+.icono-svg {
+  /* Tamaño base de un símbolo suelto: el de un ícono de texto. */
+  width: 24px;
+  height: 24px;
+  /* Nunca se encoge dentro de filas flexibles. */
+  flex: none;
+}
+.icono-btn {
+  /* Símbolo dentro de un botón: al tamaño de la letra, con su
+     separación del texto y centrado con la línea del botón. */
+  width: 1.15em;
+  height: 1.15em;
+  margin-right: 0.45em;
+  flex: none;
+}
+.icono-circulo {
+  /* Círculo suave que enmarca el símbolo grande de las
+     tarjetas de estado (carrito vacío, compra realizada). */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  /* Fondo azul muy suave y símbolo en el azul de la marca. */
+  background: rgba(2, 132, 199, 0.1);
+  color: #0284c7;
+}
+.icono-circulo svg {
+  /* El símbolo dentro del círculo, a mitad del tamaño de este. */
+  width: 42px;
+  height: 42px;
+}
+.icono-circulo-ok {
+  /* La variante de «compra realizada»: círculo verde suave. */
+  background: rgba(22, 163, 74, 0.12);
+  color: #16a34a;
 }
 
 /* ===== BUSCADOR Y FILTROS DE LA VITRINA ===== */
@@ -23,6 +87,15 @@
   gap: 1rem;
   align-items: flex-end;
   margin-bottom: 1.5rem;
+  /* La barra como TARJETA del diseño general (antes los campos
+     quedaban sueltos sobre el fondo y se veía sin terminar):
+     superficie de tarjeta, borde sutil y sombra suave. */
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  /* Aire interior para que los campos no toquen los bordes. */
+  padding: 1rem 1.25rem 1.25rem;
 }
 .tienda-filtros-grupo {
   /* Cada grupo (etiqueta + campo) crece para repartir el ancho. */
@@ -76,15 +149,21 @@
   height: 210px;
   object-fit: cover;
 }
-.tienda-card-emoji {
-  /* Recuadro de respaldo cuando el producto no tiene foto:
-     el emoji grande centrado sobre la superficie del tema. */
+.tienda-card-icono {
+  /* Recuadro de respaldo cuando el producto no tiene foto: el
+     símbolo SVG grande y centrado, en el azul del diseño,
+     sobre un fondo con el degradado suave de la marca. */
   height: 210px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 5rem;
-  background: var(--bg-surface);
+  color: #0284c7;
+  background: radial-gradient(circle at 50% 38%, rgba(56, 189, 248, 0.14), transparent 68%), var(--bg-surface);
+}
+.tienda-card-icono svg {
+  /* El símbolo ocupa buena parte del recuadro, sin deformarse. */
+  width: 92px;
+  height: 92px;
 }
 .tienda-agotado {
   /* Sello rojo cruzado sobre la esquina de la foto. */
@@ -191,10 +270,24 @@
   border-radius: var(--radius-sm);
   display: block;
 }
-.tienda-thumb-emoji {
-  /* Emoji en el lugar de la miniatura cuando no hay foto. */
-  font-size: 2rem;
-  line-height: 56px;
+.tienda-thumb-icono {
+  /* Símbolo SVG en el lugar de la miniatura cuando no hay
+     foto: una cajita del mismo tamaño que la miniatura real,
+     con el símbolo centrado en el azul del diseño. */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface);
+  color: #0284c7;
+  vertical-align: middle;
+}
+.tienda-thumb-icono svg {
+  /* El símbolo dentro de la miniatura, proporcionado. */
+  width: 32px;
+  height: 32px;
 }
 .tienda-acciones {
   /* Editar y Eliminar en fila, sin saltos de línea. */
@@ -216,33 +309,238 @@
   /* El campo de cantidad es corto: alcanza para 3 dígitos. */
   width: 76px;
 }
-.carrito-total-label {
-  /* La etiqueta del total, alineada a la derecha y en negrita. */
-  text-align: right !important;
-  font-weight: 700;
+/* ===== CARRITO: DOS COLUMNAS (ÍTEMS + RESUMEN) ===== */
+.carrito-layout {
+  /* La cuadrícula del carrito: los ítems ocupan el espacio
+     libre y el resumen una columna fija de 330px a la derecha. */
+  display: grid;
+  grid-template-columns: 1fr 330px;
+  gap: 1.5rem;
+  /* Cada columna arranca arriba, sin estirarse a la par. */
+  align-items: start;
+}
+@media (max-width: 900px) {
+  /* En pantallas angostas las dos columnas se apilan: primero
+     los ítems y debajo el resumen completo. */
+  .carrito-layout {
+    grid-template-columns: 1fr;
+  }
+}
+.carrito-items {
+  /* La pila de tarjetas de ítems, con su separación vertical. */
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* ===== TARJETA DE UN ÍTEM DEL CARRITO ===== */
+.carrito-item {
+  /* Tarjeta como las de la vitrina: superficie, borde y sombra
+     del diseño, con foto, datos y controles en una fila. */
+  display: flex;
+  gap: 1.1rem;
+  align-items: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 1rem 1.2rem;
+}
+.carrito-item-media {
+  /* El recuadro visual del ítem: cuadrado fijo que no se encoge. */
+  flex: none;
+  width: 96px;
+  height: 96px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: #ffffff;
+  /* Centra el símbolo SVG cuando el producto no tiene foto. */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.carrito-item-media img {
+  /* La foto llena el recuadro recortando lo que sobre. */
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.carrito-item-icono {
+  /* El símbolo de respaldo dentro del recuadro del ítem. */
+  color: #0284c7;
+  display: inline-flex;
+}
+.carrito-item-icono svg {
+  /* Tamaño del símbolo en el recuadro de 96px. */
+  width: 52px;
+  height: 52px;
+}
+.carrito-item-info {
+  /* La columna de datos crece y empuja los controles al final. */
+  flex: 1;
+  min-width: 0;
+}
+.carrito-item-info h3 {
+  /* El nombre del producto, sin márgenes que descuadren la fila. */
+  margin: 0 0 0.3rem;
+  font-size: 1.08rem;
   color: var(--text-primary);
 }
-.carrito-total-valor {
-  /* El total a pagar: lo más grande de la tabla del carrito. */
-  font-size: 1.25rem;
+.carrito-item-meta {
+  /* Categoría y stock: la línea discreta bajo el nombre. */
+  margin: 0 0 0.35rem;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+.carrito-item-precio {
+  /* El precio unitario en el azul de los precios del sitio. */
+  margin: 0;
   font-weight: 800;
   color: var(--accent-blue);
 }
-.carrito-acciones {
-  /* Los tres botones finales en fila, con el de pagar al final. */
+.carrito-item-precio span {
+  /* El «cada uno» junto al precio: pequeño y sin negrita. */
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+.carrito-item-control {
+  /* Los controles del ítem en columna, alineados a la derecha:
+     cantidad arriba, subtotal en el medio y quitar abajo. */
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.55rem;
+  flex: none;
+}
+.carrito-item-subtotal {
+  /* El subtotal del ítem: lo que más se nota de su columna. */
+  margin: 0;
+  font-size: 1.18rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+.carrito-quitar {
+  /* Botón discreto de quitar: texto con el símbolo de papelera,
+     sin fondo hasta pasar el mouse, cuando se tiñe de rojo. */
+  display: inline-flex;
   align-items: center;
-  justify-content: flex-end;
-  margin-top: 1.2rem;
+  background: none;
+  border: none;
+  padding: 0.2rem 0.3rem;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
 }
-.carrito-btn-comprar {
-  /* El botón de pagar se destaca con el degradado del diseño. */
-  background: var(--btn-gradient);
-  font-size: 1.05rem;
+.carrito-quitar:hover {
+  /* Al pasar el mouse avisa que es una acción de retirar. */
+  color: #dc2626;
+  background: rgba(220, 38, 38, 0.08);
 }
-.carrito-compra-ok {
-  /* La tarjeta del comprobante se marca con el borde acento. */
-  border: 1px solid var(--border-glow);
+@media (max-width: 560px) {
+  /* En celular la tarjeta del ítem se acomoda en columna: la
+     foto arriba y los controles ya no quedan apretados. */
+  .carrito-item {
+    flex-wrap: wrap;
+  }
+  .carrito-item-control {
+    /* Los controles ocupan su propia fila, a la derecha. */
+    width: 100%;
+  }
+}
+
+/* ===== RESUMEN DE LA COMPRA (columna fija) ===== */
+.carrito-resumen {
+  /* El resumen se queda fijo al bajar la página (sticky), para
+     tener el total y el botón de pagar siempre a la vista. */
+  position: sticky;
+  top: 90px;
+}
+.carrito-resumen-fila {
+  /* Cada fila del resumen: etiqueta a la izquierda y valor a
+     la derecha, separados por la línea sutil del diseño. */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+}
+.carrito-resumen-fila strong {
+  /* Los valores del resumen en el color principal. */
+  color: var(--text-primary);
+}
+.carrito-resumen-total {
+  /* La fila del total: sin línea inferior, más grande y en
+     negrita, porque es el número que se va a pagar. */
+  border-bottom: none;
+  font-size: 1.12rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  padding-top: 0.8rem;
+}
+.carrito-resumen-total strong {
+  /* El total en el azul de los precios, el mayor del resumen. */
+  color: var(--accent-blue);
+  font-size: 1.3rem;
+}
+.carrito-btn-pagar {
+  /* El botón de pagar ocupa todo el ancho del resumen.
+     font: inherit porque btn-primary nació para enlaces y un
+     <button> no hereda la fuente del sitio por sí solo. */
+  width: 100%;
+  font: inherit;
+  margin-top: 0.9rem;
+}
+.carrito-vaciar {
+  /* El formulario de vaciar ocupa su fila bajo el botón de pagar. */
+  margin-top: 0.6rem;
+}
+.carrito-vaciar .tool-btn {
+  /* El botón de vaciar también a todo el ancho, en versión fantasma. */
+  width: 100%;
+}
+.carrito-seguir {
+  /* El enlace de seguir comprando, centrado bajo los botones. */
+  display: block;
+  text-align: center;
+  margin-top: 0.9rem;
+  font-weight: 600;
+  color: var(--accent-blue);
+  text-decoration: none;
+}
+.carrito-seguir:hover {
+  /* Subrayado solo al pasar el mouse, como los enlaces del sitio. */
+  text-decoration: underline;
+}
+.carrito-resumen-nota {
+  /* La nota de cierre del resumen: letra pequeña y discreta. */
+  margin: 0.9rem 0 0;
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+
+/* ===== TARJETAS DE ESTADO (vacío y compra realizada) ===== */
+.carrito-estado {
+  /* Las tarjetas de estado van centradas: símbolo en círculo,
+     título, texto corto y un botón principal. */
+  text-align: center;
+  padding: 2.4rem 1.5rem;
+}
+.carrito-estado h2 {
+  /* El título del estado, con su aire tras el círculo. */
+  margin: 1.1rem 0 0.5rem;
+}
+.carrito-estado-texto {
+  /* El texto del estado: centrado y con ancho de lectura. */
+  max-width: 520px;
+  margin: 0 auto 1.3rem;
+  line-height: 1.65;
+  color: var(--text-secondary);
 }
