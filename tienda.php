@@ -264,7 +264,7 @@ if (isset($_GET['editar'])) {
        arma su propio <head> (includes/header.php es solo la barra
        de navegación), esta hoja se enlaza aquí y en carrito.php,
        que son las únicas dos páginas que la necesitan. -->
-  <link rel="stylesheet" href="frontend/css/tienda.css?v=3">
+  <link rel="stylesheet" href="frontend/css/tienda.css?v=4">
   <!-- SEO, iconos y vista previa al compartir (Open Graph / Twitter) -->
   <meta name="description" content="Tienda NVISION: compra componentes, periféricos, redes y accesorios de tecnología con precios en pesos, fotos de los productos y carrito de compras.">
   <meta name="theme-color" content="#f8fafc">

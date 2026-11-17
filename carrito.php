@@ -258,7 +258,7 @@ if (!empty($_SESSION['carrito'])) {
        arma su propio <head> (includes/header.php es solo la barra
        de navegación), esta hoja se enlaza aquí y en tienda.php,
        que son las únicas dos páginas que la necesitan. -->
-  <link rel="stylesheet" href="frontend/css/tienda.css?v=3">
+  <link rel="stylesheet" href="frontend/css/tienda.css?v=4">
   <!-- SEO, iconos y vista previa al compartir (Open Graph / Twitter) -->
   <meta name="description" content="Carrito de compras de la Tienda NVISION: revisa tus productos, ajusta las cantidades y finaliza tu compra.">
   <meta name="theme-color" content="#f8fafc">
