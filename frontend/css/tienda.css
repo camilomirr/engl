@@ -88,6 +88,26 @@
   color: #16a34a;
 }
 
+/* ===== BOTONES DE ACCIÓN: EL COLOR DEL BOTÓN «CARRITO» ===== */
+[data-theme="light"] .tool-btn:not(.tool-btn-ghost) {
+  /* En tema claro, los botones de acción de la tienda (Agregar
+     al carrito, Registrar producto, Buscar…) llevan el MISMO
+     azul oscuro del botón principal «Carrito» (el btn-primary
+     en claro es #0f172a), en vez del degradado celeste que
+     tool-btn trae del diseño general. Los «fantasma» (Limpiar,
+     Cancelar, Actualizar) quedan por fuera: siguen discretos.
+     En tema oscuro no hace falta: allá tool-btn y btn-primary
+     ya comparten el mismo degradado. */
+  background: #0f172a;
+  border-color: #0f172a;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.25);
+}
+[data-theme="light"] .tool-btn:not(.tool-btn-ghost):hover {
+  /* Al pasar el mouse aclara un paso, igual que btn-primary. */
+  background: #1e293b;
+  border-color: #1e293b;
+}
+
 /* ===== BUSCADOR Y FILTROS DE LA VITRINA ===== */
 .tienda-filtros {
   /* Los tres controles en fila, que se acomodan solos en celular. */
