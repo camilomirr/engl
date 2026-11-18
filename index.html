@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Feliz Cumpleaños, Jessica ♥</title>
+<meta name="description" content="Una edición especial para ti: feliz cumpleaños, Jessica. Te amo mucho.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ============ BASE ============ */
+  :root{
+    --fondo:#fff7f9;
+    --fondo-2:#fdeef3;
+    --rosa:#d6336c;
+    --rosa-suave:#f8bbd0;
+    --rosa-palido:#fde7ef;
+    --dorado:#c9a227;
+    --tinta:#4a2436;
+    --tinta-suave:#7a5568;
+    --blanco:#ffffff;
+    --sombra:0 18px 45px rgba(214,51,108,.14);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Quicksand',sans-serif;
+    background:var(--fondo);
+    color:var(--tinta);
+    line-height:1.7;
+    overflow-x:hidden;
+  }
+  ::selection{background:var(--rosa-suave);color:var(--tinta)}
+
+  /* ============ CORAZONES FLOTANTES DEL HERO ============ */
+  .corazones-flotantes{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+  .corazones-flotantes span{
+    position:absolute;bottom:-40px;color:var(--rosa);
+    opacity:0;animation:subir linear infinite;
+  }
+  @keyframes subir{
+    0%{transform:translateY(0) rotate(0deg);opacity:0}
+    12%{opacity:.55}
+    88%{opacity:.4}
+    100%{transform:translateY(-105vh) rotate(40deg);opacity:0}
+  }
+
+  /* ============ HERO / PORTADA ============ */
+  .hero{
+    position:relative;text-align:center;
+    padding:110px 22px 90px;
+    background:linear-gradient(180deg,var(--fondo-2) 0%,var(--fondo) 100%);
+  }
+  .hero .ornamento{color:var(--rosa);letter-spacing:.55em;font-size:1rem}
+  .hero .edicion{
+    margin-top:20px;font-weight:700;letter-spacing:.42em;
+    font-size:.78rem;color:var(--dorado);text-transform:uppercase;
+  }
+  .hero h1{
+    font-family:'Playfair Display',serif;font-weight:700;
+    font-size:clamp(2.2rem,6vw,3.6rem);color:var(--tinta);margin-top:26px;
+  }
+  .hero .nombre{
+    font-family:'Great Vibes',cursive;
+    font-size:clamp(4.2rem,13vw,8rem);line-height:1.05;
+    color:var(--rosa);
+    text-shadow:0 6px 30px rgba(214,51,108,.25);
+  }
+  .hero .te-amo{
+    display:inline-block;margin-top:10px;padding:8px 26px;
+    border:1.5px solid var(--rosa-suave);border-radius:999px;
+    color:var(--rosa);font-weight:700;letter-spacing:.18em;font-size:.95rem;
+    background:var(--blanco);
+  }
+  .hero .intro{max-width:640px;margin:28px auto 0;color:var(--tinta-suave);font-size:1.06rem}
+  .hero .bajar{
+    display:inline-block;margin-top:42px;color:var(--rosa);
+    font-size:1.5rem;text-decoration:none;animation:latido 1.8s ease-in-out infinite;
+  }
+  @keyframes latido{0%,100%{transform:scale(1)}50%{transform:scale(1.25)}}
+
+  /* ============ SECCIONES ============ */
+  section{padding:78px 22px}
+  .contenedor{max-width:860px;margin:0 auto}
+  .kicker{
+    text-align:center;color:var(--dorado);font-weight:700;
+    letter-spacing:.34em;font-size:.74rem;text-transform:uppercase;
+  }
+  .titulo{
+    font-family:'Playfair Display',serif;text-align:center;
+    font-size:clamp(1.7rem,4.5vw,2.5rem);margin:12px 0 8px;color:var(--tinta);
+  }
+  .titulo u{text-decoration-color:var(--rosa-suave);text-decoration-thickness:3px;text-underline-offset:6px}
+  .divisor{text-align:center;color:var(--rosa);letter-spacing:.5em;margin:14px 0 40px}
+
+  /* Aparición suave al bajar la página */
+  .revelar{opacity:0;transform:translateY(26px);transition:opacity .8s ease,transform .8s ease}
+  .revelar.visible{opacity:1;transform:none}
+
+  /* ============ CARTA ============ */
+  .carta{
+    background:var(--blanco);border-radius:22px;box-shadow:var(--sombra);
+    padding:clamp(28px,5vw,54px);border:1px solid var(--rosa-palido);
+  }
+  .carta p{margin-bottom:20px;font-size:1.05rem;color:#5b3547}
+  .carta p:first-of-type::first-letter{
+    font-family:'Great Vibes',cursive;font-size:3.4em;line-height:.8;
+    color:var(--rosa);float:left;margin:6px 10px 0 0;
+  }
+  .carta .firma{
+    font-family:'Great Vibes',cursive;font-size:2rem;color:var(--rosa);
+    text-align:right;margin:6px 0 0;
+  }
+
+  /* ============ POEMAS ============ */
+  .poemas{display:grid;gap:26px}
+  .poema{
+    background:var(--blanco);border-radius:20px;box-shadow:var(--sombra);
+    padding:clamp(24px,4vw,40px);border:1px solid var(--rosa-palido);
+    border-left:6px solid var(--dorado);position:relative;
+  }
+  .poema .numero{
+    font-family:'Playfair Display',serif;font-style:italic;
+    color:var(--rosa-suave);font-size:2rem;font-weight:700;line-height:1;
+  }
+  .poema h3{font-family:'Playfair Display',serif;font-size:1.45rem;margin:4px 0 2px}
+  .poema .inspirado{
+    display:inline-block;font-size:.78rem;font-weight:700;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--dorado);margin-bottom:16px;
+  }
+  .poema .verso{font-style:italic;color:#5b3547;margin-bottom:14px}
+  .poema .verso:last-child{margin-bottom:0}
+
+  /* ============ CUPONES / REGALOS ============ */
+  .cupones{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:22px}
+  .cupon{
+    background:var(--blanco);border:2px dashed var(--rosa-suave);border-radius:18px;
+    padding:26px 24px;text-align:center;position:relative;
+  }
+  .cupon .icono{font-size:1.9rem;color:var(--rosa)}
+  .cupon h3{font-family:'Playfair Display',serif;font-size:1.25rem;margin:8px 0 8px}
+  .cupon p{color:var(--tinta-suave);font-size:.96rem}
+  .cupon .validez{
+    display:inline-block;margin-top:14px;background:var(--rosa-palido);color:var(--rosa);
+    font-weight:700;font-size:.78rem;letter-spacing:.08em;
+    padding:5px 14px;border-radius:999px;text-transform:uppercase;
+  }
+
+  /* ============ 10 RAZONES ============ */
+  .razones{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px 30px}
+  .razon{display:flex;gap:16px;align-items:flex-start;background:var(--blanco);
+    border:1px solid var(--rosa-palido);border-radius:16px;padding:18px 20px}
+  .razon .n{
+    font-family:'Great Vibes',cursive;font-size:2.1rem;line-height:1;
+    color:var(--rosa);min-width:44px;text-align:center;
+  }
+  .razon p{color:#5b3547;font-size:.99rem}
+
+  /* ============ JURAMENTOS Y RECUERDOS ============ */
+  .tarjetas{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:22px}
+  .tarjeta{
+    background:linear-gradient(180deg,var(--blanco),var(--rosa-palido));
+    border-radius:20px;padding:28px 24px;box-shadow:var(--sombra);text-align:center;
+  }
+  .tarjeta .icono{font-size:1.8rem;color:var(--rosa)}
+  .tarjeta h3{font-family:'Playfair Display',serif;font-size:1.2rem;margin:8px 0}
+  .tarjeta p{color:var(--tinta-suave);font-size:.96rem}
+
+  /* ============ CIERRE: LA VELITA ============ */
+  .cierre{text-align:center;background:linear-gradient(180deg,var(--fondo) 0%,var(--fondo-2) 100%)}
+  .pastel{margin:26px auto 8px;width:170px}
+  .vela{width:14px;height:56px;background:linear-gradient(90deg,#f8bbd0,#fff,#f8bbd0);
+    margin:0 auto;border-radius:4px;position:relative}
+  .llama{
+    width:20px;height:30px;margin:0 auto -4px;position:relative;z-index:2;
+    background:radial-gradient(circle at 50% 78%,#fff6c9 0 22%,#ffd93b 42%,#ff9f1a 72%,#ff6d00 100%);
+    border-radius:50% 50% 50% 50%/62% 62% 38% 38%;
+    transform-origin:50% 100%;animation:flama 1s ease-in-out infinite;
+    transition:opacity .5s ease,transform .5s ease;
+  }
+  @keyframes flama{0%,100%{transform:scale(1) rotate(-2deg)}50%{transform:scale(1.08,1.15) rotate(2deg)}}
+  .llama.apagada{opacity:0;transform:scale(.2) translateY(8px);animation:none}
+  .torta{height:52px;background:linear-gradient(180deg,#f48fb1,#ec407a);border-radius:12px;position:relative}
+  .torta::before{content:"";position:absolute;top:0;left:0;right:0;height:16px;
+    background:radial-gradient(circle at 12px -4px,#fff 11px,transparent 12px) repeat-x;background-size:26px 16px}
+  .plato{height:10px;background:var(--dorado);border-radius:6px;margin-top:8px;opacity:.75}
+  .btn-deseo{
+    margin-top:30px;background:var(--rosa);color:#fff;border:none;cursor:pointer;
+    font-family:'Quicksand',sans-serif;font-weight:700;font-size:1rem;letter-spacing:.04em;
+    padding:15px 36px;border-radius:999px;box-shadow:0 12px 28px rgba(214,51,108,.35);
+    transition:transform .2s ease,box-shadow .2s ease;
+  }
+  .btn-deseo:hover{transform:translateY(-2px);box-shadow:0 18px 34px rgba(214,51,108,.4)}
+  .mensaje-deseo{
+    max-width:620px;margin:30px auto 0;color:#5b3547;font-size:1.05rem;
+    opacity:0;transform:translateY(14px);transition:opacity .9s ease,transform .9s ease;
+  }
+  .mensaje-deseo.visible{opacity:1;transform:none}
+  .mensaje-deseo .final{
+    display:block;font-family:'Great Vibes',cursive;font-size:clamp(1.9rem,5vw,2.7rem);
+    color:var(--rosa);margin-top:18px;line-height:1.3;
+  }
+  .confeti{position:fixed;top:-30px;z-index:60;pointer-events:none;animation:caer linear forwards}
+  @keyframes caer{to{transform:translateY(108vh) rotate(320deg)}}
+
+  footer{
+    text-align:center;padding:34px 20px 44px;color:var(--tinta-suave);font-size:.92rem;
+  }
+  footer .corazon{color:var(--rosa)}
+</style>
+</head>
+<body>
+
+<!-- ================= PORTADA ================= -->
+<header class="hero">
+  <div class="corazones-flotantes" id="corazones"></div>
+  <div class="ornamento">✿ ♥ ✿ ♥ ✿</div>
+  <p class="edicion">✦ Edición especial para ti ✦</p>
+  <h1>Happy Birthday</h1>
+  <div class="nombre">Jessica</div>
+  <div><span class="te-amo">❤ TE AMO MUCHO ❤</span></div>
+  <p class="intro">Hoy el mundo brilla más bonito porque celebramos el día en que naciste. Preparé este pequeño libro lleno de palabras desde el corazón y versos inspirados en tus historias favoritas para recordarte lo especial que eres para mí.</p>
+  <a class="bajar" href="#carta" aria-label="Bajar a la carta">♥</a>
+</header>
+
+<!-- ================= CARTA ================= -->
+<section id="carta">
+  <div class="contenedor revelar">
+    <p class="kicker">♥ Para la cumpleañera más hermosa</p>
+    <h2 class="titulo"><u>Un Happy Birthday desde el fondo de mi corazón</u></h2>
+    <div class="divisor">♥ ✿ ♥</div>
+    <article class="carta">
+      <p>Querida Jessica, ¡Feliz Cumpleaños! Hoy no es un día cualquiera en el calendario; hoy es la fecha en la que llegaste a este mundo para llenarlo de luz, dulzura y alegría. Quiero que sepas, antes que cualquier otra cosa, que te amo mucho y que tenerte en mi vida es el regalo más bonito que me ha dado el destino. Cada sonrisa tuya ilumina mis días y cada momento que compartimos se convierte en mi recuerdo favorito.</p>
+      <p>Admiro tu forma de ser, tu ternura, tu fuerza cuando enfrentas cualquier reto y esa chispa única que hace que todo a tu alrededor se sienta más cálido y especial. Eres una persona increíble, auténtica y llena de magia, de esas que dejan huella bonita en el alma sin siquiera intentarlo. En este nuevo año de vida que hoy comienzas, deseo con todo mi corazón que se cumplan cada uno de tus sueños, que nunca te falten motivos para reír a carcajadas y que la felicidad te abrace siempre.</p>
+      <p>Prometo seguir aquí para acompañarte en cada aventura, celebrar tus triunfos, sostener tu mano en los días difíciles y recordarte todos los días lo muchísimo que te amo. Disfruta tu día al máximo, mi vida, porque te mereces todo lo hermoso de este universo y mucho más.</p>
+      <p class="firma">Con todo mi amor ♥</p>
+    </article>
+  </div>
+</section>
+
+<!-- ================= POEMAS ONE PIECE ================= -->
+<section style="background:var(--fondo-2)">
+  <div class="contenedor">
+    <p class="kicker">⚓ Versos del Grand Line para ti</p>
+    <h2 class="titulo"><u>Tres Poemas de Amor: One Piece</u></h2>
+    <div class="divisor">♥ ✿ ♥</div>
+    <div class="poemas">
+
+      <article class="poema revelar">
+        <div class="numero">I.</div>
+        <h3>Magnetismo Eterno</h3>
+        <span class="inspirado">Inspirado en Eustass Kid</span>
+        <p class="verso">Dicen que mi corazón es de hierro, indomable y rebelde como la tormenta,<br>que navego mares bravos sin temerle a ninguna batalla ni marea violenta,</p>
+        <p class="verso">pero bastó una sola mirada tuya, mi dulce Jessica, para cambiar mi destino:<br>eres el imán invencible que atrae cada latido mío hacia tu camino.</p>
+        <p class="verso">Ni todo el acero del mundo podría construir una armadura contra tu encanto,<br>porque en medio del caos del océano, tu risa es mi refugio más santo.</p>
+        <p class="verso">Si tuviera que desafiar al mundo entero para verte feliz en tu cumpleaños,<br>juntaría todas las estrellas del cielo para regalarte tus mejores años.</p>
+      </article>
+
+      <article class="poema revelar">
+        <div class="numero">II.</div>
+        <h3>Dentro de mi «Room»</h3>
+        <span class="inspirado">Inspirado en Trafalgar Law</span>
+        <p class="verso">Suelo guardar silencio, calcular cada paso y mantener la calma frente al mar,<br>pero cuando tú apareces, Jessica, no existe estrategia que me logre salvar.</p>
+        <p class="verso">Extiendo mi Room alrededor de nosotros para detener el tiempo y el ruido,<br>porque en ese espacio donde solo existes tú, mi corazón por fin tiene sentido.</p>
+        <p class="verso">Conocía la ciencia de curar heridas, pero tú sanaste mi alma sin tocarla,<br>robaste mi corazón con tanta suavidad que hoy solo vivo para cuidarla.</p>
+        <p class="verso">Que este cumpleaños sea el inicio de mil capítulos juntos bajo el mismo cielo,<br>pues ser tu compañero de viaje es mi único y más grande anhelo.</p>
+      </article>
+
+      <article class="poema revelar">
+        <div class="numero">III.</div>
+        <h3>Mi Mayor Tesoro</h3>
+        <span class="inspirado">Inspirado en Monkey D. Luffy</span>
+        <p class="verso">He recorrido islas lejanas soñando con encontrar el tesoro más grande del mar,<br>pero al verte sonreír hoy, Jessica, entendí que ya no tengo nada más que buscar.</p>
+        <p class="verso">Mi sombrero de paja guarda promesas, aventuras y ganas de reír sin parar,<br>pero tú eres el verdadero One Piece que toda mi vida quise encontrar.</p>
+        <p class="verso">Estiraría mis brazos hasta el infinito solo para darte el abrazo más sincero,<br>y cruzaría cualquier océano del mundo para decirte de nuevo cuánto te quiero.</p>
+        <p class="verso">¡Feliz cumpleaños, mi aventura favorita! Mientras estés a mi lado,<br>cada día contigo será el viaje más libre, feliz y soñado.</p>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================= POEMAS NARUTO ================= -->
+<section>
+  <div class="contenedor">
+    <p class="kicker">❀ Lazos que trascienden el tiempo</p>
+    <h2 class="titulo"><u>Poemas de Amor: Naruto e Itachi</u></h2>
+    <div class="divisor">♥ ✿ ♥</div>
+    <div class="poemas">
+
+      <article class="poema revelar">
+        <div class="numero">IV.</div>
+        <h3>Mi Promesa Naranja</h3>
+        <span class="inspirado">Inspirado en Naruto Uzumaki</span>
+        <p class="verso">Antes de conocerte había días grises en los que el cielo parecía nublado,<br>pero llegaste tú como un rayo de sol tibio a iluminar todo a mi lado.</p>
+        <p class="verso">Como el lazo rojo que une dos almas destinadas a encontrarse sin importar la distancia,<br>tu amor se volvió mi hogar, mi fuerza y mi más hermosa constancia.</p>
+        <p class="verso">Este es mi camino ninja: no rendirme jamás cuando se trata de hacerte sonreír,<br>cumplir cada promesa que te hago y cuidar cada sueño que quieras vivir.</p>
+        <p class="verso">Porque nunca retrocedo a mi palabra, hoy te juro frente a las estrellas brillar:<br>en este cumpleaños y en todos los que vengan, nunca te dejaré de amar.</p>
+      </article>
+
+      <article class="poema revelar">
+        <div class="numero">V.</div>
+        <h3>Bajo la Luz de la Luna</h3>
+        <span class="inspirado">Inspirado en Itachi Uchiha</span>
+        <p class="verso">No necesito palabras ruidosas para demostrar la profundidad de lo que siento,<br>porque mi amor por ti es silencioso, inmenso y eterno como el firmamento.</p>
+        <p class="verso">Como los cuervos que vuelan bajo la luna llena guardando el secreto más puro,<br>así cuido tu nombre en mi pecho, protegiendo tu sonrisa en cada futuro.</p>
+        <p class="verso">Si alguna vez la noche se vuelve oscura, mira al cielo y recuerda esta verdad:<br>en ningún genjutsu ni sueño existiría alguien con tu misma bondad.</p>
+        <p class="verso">Con un suave toque en tu frente te deseo el cumpleaños más dulce y bendecido:<br>perdóname si a veces me faltan palabras, pero amarte es lo mejor que me ha ocurrido.</p>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================= REGALOS Y PROMESAS ================= -->
+<section style="background:var(--fondo-2)">
+  <div class="contenedor">
+    <p class="kicker">✿ Detalles especiales para celebrar tu día</p>
+    <h2 class="titulo"><u>Regalos y Promesas para Jessica</u></h2>
+    <div class="divisor">♥ ✿ ♥</div>
+    <div class="cupones">
+      <article class="cupon revelar">
+        <div class="icono">♥</div>
+        <h3>Abrazo Infinito</h3>
+        <p>Un abrazo largo y apretado cada vez que quieras sentirte querida y protegida.</p>
+        <span class="validez">Validez: todos los días</span>
+      </article>
+      <article class="cupon revelar">
+        <div class="icono">✿</div>
+        <h3>Cita Soñada</h3>
+        <p>Una salida especial a comer tu postre o comida favorita, elegida 100% por ti.</p>
+        <span class="validez">Validez: cuando tú digas</span>
+      </article>
+      <article class="cupon revelar">
+        <div class="icono">★</div>
+        <h3>Maratón Anime</h3>
+        <p>Tarde de películas o capítulos de One Piece y Naruto con tus dulces favoritos.</p>
+        <span class="validez">Validez: ilimitada</span>
+      </article>
+      <article class="cupon revelar">
+        <div class="icono">❤</div>
+        <h3>Amor Incondicional</h3>
+        <p>Recordarte hoy y siempre que te amo mucho y que eres lo mejor de mi vida.</p>
+        <span class="validez">Validez: para siempre</span>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 10 RAZONES ================= -->
+<section>
+  <div class="contenedor">
+    <p class="kicker">♥ Pequeños detalles que enamoran</p>
+    <h2 class="titulo"><u>10 Razones por las que te amo tanto</u></h2>
+    <div class="divisor">♥ ✿ ♥</div>
+    <div class="razones">
+      <div class="razon revelar"><div class="n">01</div><p>Por esa sonrisa tan linda que logra iluminar hasta el día más gris.</p></div>
+      <div class="razon revelar"><div class="n">02</div><p>Por la ternura y dulzura con la que tratas a las personas que quieres.</p></div>
+      <div class="razon revelar"><div class="n">03</div><p>Porque hablar contigo hace que el tiempo pase volando sin darme cuenta.</p></div>
+      <div class="razon revelar"><div class="n">04</div><p>Por cómo te emocionas hablando de tus series, personajes y cosas favoritas.</p></div>
+      <div class="razon revelar"><div class="n">05</div><p>Por tu fuerza y valentía para salir adelante sin importar qué tan difícil sea el reto.</p></div>
+      <div class="razon revelar"><div class="n">06</div><p>Porque a tu lado me siento en paz, comprendido y completamente feliz.</p></div>
+      <div class="razon revelar"><div class="n">07</div><p>Por tu sentido del humor y esas risas espontáneas que tanto me encantan.</p></div>
+      <div class="razon revelar"><div class="n">08</div><p>Porque tienes el corazón más noble, sincero y bonito que he conocido.</p></div>
+      <div class="razon revelar"><div class="n">09</div><p>Por cada detalle pequeño que tienes conmigo y que guardo como un tesoro.</p></div>
+      <div class="razon revelar"><div class="n">10</div><p>Simplemente por ser tú, Jessica: única, auténtica e irreemplazable en mi vida.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= JURAMENTOS ================= -->
+<section style="background:var(--fondo-2)">
+  <div class="contenedor">
+    <p class="kicker">✦ Juramentos del corazón</p>
+    <h2 class="titulo"><u>Mis Promesas Kawaii y de Anime para Ti</u></h2>
+    <div class="divisor">♥ ✿ ♥</div>
+    <div class="tarjetas">
+      <article class="tarjeta revelar">
+        <div class="icono">✿</div>
+        <h3>Al estilo Hello Kitty</h3>
+        <p>Prometo llenar tus días de ternura, detalles bonitos, dulzura y mucho cariño para que nunca te falte una sonrisa en el rostro.</p>
+      </article>
+      <article class="tarjeta revelar">
+        <div class="icono">⚓</div>
+        <h3>Al estilo One Piece</h3>
+        <p>Prometo ser siempre tu Nakama más fiel, acompañarte en cada aventura por el mar de la vida y proteger tu felicidad como el tesoro más valioso.</p>
+      </article>
+      <article class="tarjeta revelar">
+        <div class="icono">❀</div>
+        <h3>Al estilo Naruto</h3>
+        <p>Prometo cumplir siempre mi palabra, no rendirme jamás cuando se trate de verte bien y cuidar nuestro lazo bajo la luz de cada luna llena.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CÁPSULA DE RECUERDOS ================= -->
+<section>
+  <div class="contenedor">
+    <p class="kicker">♫ Momentos y melodías que me recuerdan a ti</p>
+    <h2 class="titulo"><u>Nuestra Cápsula de Recuerdos</u></h2>
+    <div class="divisor">♥ ✿ ♥</div>
+    <div class="tarjetas">
+      <article class="tarjeta revelar">
+        <div class="icono">♥</div>
+        <h3>Nuestras primeras charlas</h3>
+        <p>El momento en que descubrí lo especial que eres y supe que quería quedarme a tu lado.</p>
+      </article>
+      <article class="tarjeta revelar">
+        <div class="icono">✿</div>
+        <h3>Nuestras risas juntos</h3>
+        <p>Cada vez que reímos sin parar se convierte automáticamente en mi momento favorito del día.</p>
+      </article>
+      <article class="tarjeta revelar">
+        <div class="icono">★</div>
+        <h3>Tu mirada y tu voz</h3>
+        <p>La calma más bonita que siento cada vez que te escucho o te veo sonreír.</p>
+      </article>
+      <article class="tarjeta revelar">
+        <div class="icono">♫</div>
+        <h3>Nuestra canción especial</h3>
+        <p>Cada vez que suena música romántica o los endings de tus animes, mi mente viaja directo hacia ti.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CIERRE: PIDE UN DESEO ================= -->
+<section class="cierre">
+  <div class="contenedor revelar">
+    <p class="kicker">🎂 Cierra los ojos y pide un deseo</p>
+    <h2 class="titulo"><u>Sopla la velita</u></h2>
+    <div class="pastel" aria-hidden="true">
+      <div class="llama" id="llama"></div>
+      <div class="vela"></div>
+      <div class="torta"></div>
+      <div class="plato"></div>
+    </div>
+    <button class="btn-deseo" id="btnDeseo" type="button">Soplar la velita y pedir mi deseo ♥</button>
+    <div class="mensaje-deseo" id="mensajeDeseo">
+      <p>¡Pide tu deseo más grande hoy, mi amor! Que este nuevo año de vida te regale salud, metas cumplidas, mucha alegría y momentos mágicos. Yo estaré siempre a tu lado ayudándote a hacer realidad cada uno de tus sueños.</p>
+      <span class="final">✿ ¡Feliz Cumpleaños, Jessica!<br>Te amo muchísimo hoy, mañana y siempre ✿</span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Para Jessica • Feliz Cumpleaños <span class="corazon">♥</span> Hecho con todo mi amor
+</footer>
+
+<script>
+  // Corazones flotantes del hero: se crean varios ♥ con
+  // tamaños, posiciones y tiempos distintos para que suban
+  // como globitos sobre la portada.
+  (function () {
+    var caja = document.getElementById('corazones');
+    for (var i = 0; i < 16; i++) {
+      var s = document.createElement('span');
+      s.textContent = '♥';
+      s.style.left = (Math.random() * 96) + '%';
+      s.style.fontSize = (14 + Math.random() * 22) + 'px';
+      s.style.animationDuration = (7 + Math.random() * 8) + 's';
+      s.style.animationDelay = (Math.random() * 9) + 's';
+      caja.appendChild(s);
+    }
+  })();
+
+  // Aparición suave de cada bloque cuando entra en pantalla.
+  (function () {
+    var obs = new IntersectionObserver(function (entradas) {
+      entradas.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.revelar').forEach(function (el) { obs.observe(el); });
+  })();
+
+  // La velita: al pulsar el botón la llama se apaga, cae una
+  // lluvia de corazones y aparece el mensaje final.
+  (function () {
+    var btn = document.getElementById('btnDeseo');
+    var llama = document.getElementById('llama');
+    var mensaje = document.getElementById('mensajeDeseo');
+    btn.addEventListener('click', function () {
+      llama.classList.add('apagada');
+      btn.style.display = 'none';
+      mensaje.classList.add('visible');
+      for (var i = 0; i < 36; i++) {
+        var c = document.createElement('span');
+        c.className = 'confeti';
+        c.textContent = ['♥', '✿', '★'][i % 3];
+        c.style.left = (Math.random() * 98) + 'vw';
+        c.style.color = ['#d6336c', '#f48fb1', '#c9a227'][i % 3];
+        c.style.fontSize = (14 + Math.random() * 18) + 'px';
+        c.style.animationDuration = (2.4 + Math.random() * 2.4) + 's';
+        c.style.animationDelay = (Math.random() * 0.7) + 's';
+        document.body.appendChild(c);
+        (function (nodo) { setTimeout(function () { nodo.remove(); }, 6000); })(c);
+      }
+    });
+  })();
+</script>
+</body>
+</html>
