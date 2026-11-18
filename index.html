@@ -208,6 +208,74 @@
     text-align:center;padding:34px 20px 44px;color:var(--tinta-suave);font-size:.92rem;
   }
   footer .corazon{color:var(--rosa)}
+
+  /* ============ CHAT CON LUCÍA ============ */
+  .chat-fab{
+    position:fixed;right:20px;bottom:20px;z-index:80;
+    display:flex;align-items:center;gap:9px;
+    background:var(--rosa);color:#fff;border:none;cursor:pointer;
+    font-family:'Quicksand',sans-serif;font-weight:700;font-size:.95rem;
+    padding:14px 22px;border-radius:999px;
+    box-shadow:0 14px 32px rgba(214,51,108,.42);
+    transition:transform .2s ease;
+  }
+  .chat-fab:hover{transform:translateY(-2px) scale(1.03)}
+  .chat-panel{
+    position:fixed;right:20px;bottom:20px;z-index:90;
+    width:min(92vw,360px);height:min(74vh,520px);
+    background:var(--blanco);border-radius:20px;overflow:hidden;
+    box-shadow:0 24px 60px rgba(74,36,54,.35);
+    display:none;flex-direction:column;border:1px solid var(--rosa-palido);
+  }
+  .chat-panel.abierto{display:flex}
+  .chat-cabeza{
+    background:linear-gradient(120deg,var(--rosa),#e85d8a);color:#fff;
+    padding:14px 18px;display:flex;align-items:center;gap:12px;
+  }
+  .chat-avatar{
+    width:42px;height:42px;border-radius:50%;background:#fff;color:var(--rosa);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Great Vibes',cursive;font-size:1.5rem;flex:none;
+  }
+  .chat-cabeza h3{font-family:'Playfair Display',serif;font-size:1.08rem;line-height:1.2}
+  .chat-cabeza p{font-size:.76rem;opacity:.92}
+  .chat-cerrar{
+    margin-left:auto;background:rgba(255,255,255,.22);border:none;color:#fff;
+    width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:1rem;flex:none;
+  }
+  .chat-mensajes{
+    flex:1;overflow-y:auto;padding:16px 14px;background:var(--fondo);
+    display:flex;flex-direction:column;gap:10px;
+  }
+  .chat-burbuja{
+    max-width:82%;padding:10px 14px;border-radius:16px;
+    font-size:.93rem;line-height:1.5;white-space:pre-wrap;word-wrap:break-word;
+  }
+  .chat-burbuja .chat-nombre{display:block;font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;opacity:.75;margin-bottom:3px}
+  .chat-burbuja.lucia{
+    background:var(--blanco);border:1px solid var(--rosa-palido);
+    border-bottom-left-radius:4px;align-self:flex-start;color:var(--tinta);
+  }
+  .chat-burbuja.visitante{
+    background:var(--rosa);color:#fff;border-bottom-right-radius:4px;align-self:flex-end;
+  }
+  .chat-escribiendo{align-self:flex-start;color:var(--tinta-suave);font-size:.82rem;font-style:italic}
+  .chat-form{border-top:1px solid var(--rosa-palido);padding:10px;background:#fff}
+  .chat-nombre-input{
+    width:100%;border:1px solid var(--rosa-palido);border-radius:10px;
+    padding:8px 11px;font-family:'Quicksand',sans-serif;font-size:.85rem;margin-bottom:8px;
+  }
+  .chat-fila{display:flex;gap:8px}
+  .chat-input{
+    flex:1;border:1px solid var(--rosa-palido);border-radius:999px;
+    padding:11px 16px;font-family:'Quicksand',sans-serif;font-size:.93rem;min-width:0;
+  }
+  .chat-enviar{
+    background:var(--rosa);color:#fff;border:none;border-radius:999px;
+    padding:11px 18px;font-family:'Quicksand',sans-serif;font-weight:700;cursor:pointer;flex:none;
+  }
+  .chat-enviar:disabled{opacity:.55;cursor:wait}
+  .chat-nota{font-size:.72rem;color:var(--tinta-suave);text-align:center;padding-top:8px}
 </style>
 </head>
 <body>
@@ -445,6 +513,28 @@
   </div>
 </section>
 
+<!-- ================= CHAT CON LUCÍA ================= -->
+<button class="chat-fab" id="chatFab" type="button">♥ Chatea con Lucía</button>
+<div class="chat-panel" id="chatPanel" role="dialog" aria-label="Chat con Lucía">
+  <div class="chat-cabeza">
+    <div class="chat-avatar">L</div>
+    <div>
+      <h3>Lucía</h3>
+      <p>Asistente de esta página • respondo en unos minutos</p>
+    </div>
+    <button class="chat-cerrar" id="chatCerrar" type="button" aria-label="Cerrar el chat">✕</button>
+  </div>
+  <div class="chat-mensajes" id="chatMensajes"></div>
+  <form class="chat-form" id="chatForm">
+    <input class="chat-nombre-input" id="chatNombre" type="text" maxlength="40" placeholder="Tu nombre (opcional)">
+    <div class="chat-fila">
+      <input class="chat-input" id="chatInput" type="text" maxlength="500" placeholder="Escribe tu mensaje…" autocomplete="off">
+      <button class="chat-enviar" id="chatEnviar" type="submit">Enviar</button>
+    </div>
+    <p class="chat-nota">Los mensajes quedan guardados en la base de datos de la página para que Lucía pueda leerte y responderte.</p>
+  </form>
+</div>
+
 <footer>
   Para Jessica • Feliz Cumpleaños <span class="corazon">♥</span> Hecho con todo mi amor
 </footer>
@@ -498,6 +588,133 @@
         document.body.appendChild(c);
         (function (nodo) { setTimeout(function () { nodo.remove(); }, 6000); })(c);
       }
+    });
+  })();
+</script>
+<script>
+  /* ============ CHAT CON LUCÍA (Supabase) ============
+     Los mensajes se guardan en la tabla chat_mensajes del
+     proyecto de Supabase de la página. Lucía tiene un
+     vigilante que revisa la tabla seguido y responde:
+     sus respuestas llegan como filas nuevas con rol «lucia»
+     y esta ventana las va mostrando al refrescar. */
+  (function () {
+    var SUPABASE_URL = 'https://wnthvprfkujvxpfwijke.supabase.co';
+    var SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndudGh2cHJma3VqdnhwZndpamtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ4Mzg5MzcsImV4cCI6MjExMDQxNDkzN30.gJNHXIkRkC6uQIvr-_psHbMFr7RVazSA-qj6XAgGryM';
+    var TABLA = SUPABASE_URL + '/rest/v1/chat_mensajes';
+
+    // La sesión identifica la conversación de ESTE navegador:
+    // se crea una vez y queda guardada en el propio navegador.
+    var sesion = localStorage.getItem('jessicaChatSesion');
+    if (!sesion) {
+      sesion = 'web-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 9);
+      localStorage.setItem('jessicaChatSesion', sesion);
+    }
+
+    var fab = document.getElementById('chatFab');
+    var panel = document.getElementById('chatPanel');
+    var cerrar = document.getElementById('chatCerrar');
+    var caja = document.getElementById('chatMensajes');
+    var form = document.getElementById('chatForm');
+    var input = document.getElementById('chatInput');
+    var nombreInput = document.getElementById('chatNombre');
+    var enviarBtn = document.getElementById('chatEnviar');
+    var ultimoId = 0;       // último mensaje ya pintado
+    var temporizador = null;
+
+    nombreInput.value = localStorage.getItem('jessicaChatNombre') || '';
+
+    function cabeceras() {
+      return {
+        'apikey': SUPABASE_ANON,
+        'Authorization': 'Bearer ' + SUPABASE_ANON,
+        'Content-Type': 'application/json'
+      };
+    }
+
+    // Pinta una burbuja. Se usa textContent (nunca innerHTML)
+    // para que ningún mensaje pueda inyectar código.
+    function pintar(fila) {
+      var b = document.createElement('div');
+      b.className = 'chat-burbuja ' + (fila.rol === 'lucia' ? 'lucia' : 'visitante');
+      var n = document.createElement('span');
+      n.className = 'chat-nombre';
+      n.textContent = fila.rol === 'lucia' ? 'Lucía' : (fila.nombre || 'Visitante');
+      var t = document.createElement('span');
+      t.textContent = fila.mensaje;
+      b.appendChild(n);
+      b.appendChild(t);
+      caja.appendChild(b);
+    }
+
+    function bajar() { caja.scrollTop = caja.scrollHeight; }
+
+    // Trae de la base los mensajes de esta sesión que aún
+    // no se han pintado y los agrega en orden.
+    function cargar() {
+      var url = TABLA + '?select=id,nombre,rol,mensaje,creado_en'
+        + '&sesion=eq.' + encodeURIComponent(sesion)
+        + '&id=gt.' + ultimoId + '&order=id.asc';
+      return fetch(url, { headers: cabeceras() })
+        .then(function (r) { return r.json(); })
+        .then(function (filas) {
+          if (Array.isArray(filas) && filas.length) {
+            filas.forEach(function (f) { pintar(f); ultimoId = Math.max(ultimoId, f.id); });
+            bajar();
+          }
+        })
+        .catch(function () { /* sin red: se reintenta en el siguiente ciclo */ });
+    }
+
+    // Mensaje de bienvenida: se pinta local, no va a la base.
+    function bienvenida() {
+      if (ultimoId === 0 && caja.children.length === 0) {
+        pintar({ rol: 'lucia', mensaje: '¡Hola! Soy Lucía, la asistente de esta página ♥ Escríbeme lo que quieras: sobre el cumpleaños de Jessica, la página o lo que se te ocurra. Reviso los mensajes seguido y te respondo en unos minutos.' });
+      }
+    }
+
+    function abrir() {
+      panel.classList.add('abierto');
+      fab.style.display = 'none';
+      bienvenida();
+      cargar();
+      // Mientras el chat está abierto se refresca solo:
+      // así las respuestas de Lucía aparecen sin recargar.
+      if (!temporizador) { temporizador = setInterval(cargar, 3500); }
+      input.focus();
+    }
+
+    function cerrarPanel() {
+      panel.classList.remove('abierto');
+      fab.style.display = 'flex';
+      if (temporizador) { clearInterval(temporizador); temporizador = null; }
+    }
+
+    fab.addEventListener('click', abrir);
+    cerrar.addEventListener('click', cerrarPanel);
+
+    // Enviar: guarda el mensaje en la base y lo pinta al
+    // instante; el vigilante de Lucía lo verá enseguida.
+    form.addEventListener('submit', function (evento) {
+      evento.preventDefault();
+      var texto = input.value.trim();
+      if (!texto) { return; }
+      var nombre = nombreInput.value.trim() || 'Visitante';
+      localStorage.setItem('jessicaChatNombre', nombreInput.value.trim());
+      enviarBtn.disabled = true;
+      fetch(TABLA, {
+        method: 'POST',
+        headers: (function () { var h = cabeceras(); h['Prefer'] = 'return=minimal'; return h; })(),
+        body: JSON.stringify({ sesion: sesion, nombre: nombre, rol: 'visitante', mensaje: texto })
+      }).then(function () {
+        input.value = '';
+        return cargar();
+      }).catch(function () {
+        // Si falló el envío, el texto se queda en el campo.
+      }).then(function () {
+        enviarBtn.disabled = false;
+        input.focus();
+      });
     });
   })();
 </script>
