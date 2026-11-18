@@ -276,6 +276,21 @@
   }
   .chat-enviar:disabled{opacity:.55;cursor:wait}
   .chat-nota{font-size:.72rem;color:var(--tinta-suave);text-align:center;padding-top:8px}
+  .chat-hora{display:block;font-size:.68rem;opacity:.65;margin-top:4px;text-align:right}
+  .chat-badge{
+    position:absolute;top:-7px;right:-7px;min-width:23px;height:23px;
+    background:#fff;color:var(--rosa);border:2px solid var(--rosa);
+    border-radius:999px;font-size:.74rem;font-weight:700;line-height:19px;
+    text-align:center;padding:0 5px;box-shadow:0 4px 10px rgba(214,51,108,.35);
+  }
+  .chat-estado{
+    align-self:center;background:var(--rosa-palido);color:var(--rosa);
+    font-size:.78rem;font-weight:600;text-align:center;
+    padding:6px 14px;border-radius:999px;max-width:92%;
+  }
+  .chat-error{
+    color:#b00020;font-size:.8rem;font-weight:600;text-align:center;padding-top:8px;
+  }
 </style>
 </head>
 <body>
@@ -514,7 +529,7 @@
 </section>
 
 <!-- ================= CHAT CON LUCÍA ================= -->
-<button class="chat-fab" id="chatFab" type="button">♥ Chatea con Lucía</button>
+<button class="chat-fab" id="chatFab" type="button" style="position:fixed">♥ Chatea con Lucía<span class="chat-badge" id="chatBadge" hidden></span></button>
 <div class="chat-panel" id="chatPanel" role="dialog" aria-label="Chat con Lucía">
   <div class="chat-cabeza">
     <div class="chat-avatar">L</div>
@@ -531,6 +546,7 @@
       <input class="chat-input" id="chatInput" type="text" maxlength="500" placeholder="Escribe tu mensaje…" autocomplete="off">
       <button class="chat-enviar" id="chatEnviar" type="submit">Enviar</button>
     </div>
+    <p class="chat-error" id="chatError" hidden>No se pudo enviar tu mensaje. Revisa tu conexión e inténtalo de nuevo.</p>
     <p class="chat-nota">Los mensajes quedan guardados en la base de datos de la página para que Lucía pueda leerte y responderte.</p>
   </form>
 </div>
@@ -619,8 +635,14 @@
     var input = document.getElementById('chatInput');
     var nombreInput = document.getElementById('chatNombre');
     var enviarBtn = document.getElementById('chatEnviar');
+    var badge = document.getElementById('chatBadge');
+    var errorBox = document.getElementById('chatError');
     var ultimoId = 0;       // último mensaje ya pintado
+    // Última respuesta de Lucía que el visitante YA vio pintada:
+    // se guarda entre visitas para saber si hay algo sin leer.
+    var ultimoLeido = parseInt(localStorage.getItem('jessicaChatLeido') || '0', 10);
     var temporizador = null;
+    var estadoNodo = null;  // la notita de «mensaje recibido»
 
     nombreInput.value = localStorage.getItem('jessicaChatNombre') || '';
 
@@ -644,7 +666,29 @@
       t.textContent = fila.mensaje;
       b.appendChild(n);
       b.appendChild(t);
+      // La hora del mensaje, chiquita al final de la burbuja.
+      if (fila.creado_en) {
+        var h = document.createElement('span');
+        h.className = 'chat-hora';
+        h.textContent = new Date(fila.creado_en).toLocaleTimeString('es-CO', { hour: 'numeric', minute: '2-digit' });
+        b.appendChild(h);
+      }
       caja.appendChild(b);
+    }
+
+    // Notita centrada de «mensaje recibido»: le confirma a la
+    // persona que su mensaje SÍ llegó y cuánto suelo tardar.
+    function mostrarEstado() {
+      if (!estadoNodo) {
+        estadoNodo = document.createElement('div');
+        estadoNodo.className = 'chat-estado';
+        estadoNodo.textContent = '✓ Mensaje recibido · Lucía suele responder en unos minutos';
+      }
+      caja.appendChild(estadoNodo);
+      bajar();
+    }
+    function quitarEstado() {
+      if (estadoNodo && estadoNodo.parentNode) { estadoNodo.parentNode.removeChild(estadoNodo); }
     }
 
     function bajar() { caja.scrollTop = caja.scrollHeight; }
@@ -656,15 +700,48 @@
         + '&sesion=eq.' + encodeURIComponent(sesion)
         + '&id=gt.' + ultimoId + '&order=id.asc';
       return fetch(url, { headers: cabeceras() })
-        .then(function (r) { return r.json(); })
+        .then(function (r) { if (!r.ok) { throw new Error('HTTP ' + r.status); } return r.json(); })
         .then(function (filas) {
           if (Array.isArray(filas) && filas.length) {
-            filas.forEach(function (f) { pintar(f); ultimoId = Math.max(ultimoId, f.id); });
+            var llegoRespuesta = false;
+            filas.forEach(function (f) {
+              pintar(f);
+              ultimoId = Math.max(ultimoId, f.id);
+              // Si es respuesta de Lucía, queda marcada como
+              // leída: se apaga el aviso de «recibido» y el
+              // contador del botón.
+              if (f.rol === 'lucia') {
+                llegoRespuesta = true;
+                ultimoLeido = Math.max(ultimoLeido, f.id);
+                localStorage.setItem('jessicaChatLeido', String(ultimoLeido));
+              }
+            });
+            if (llegoRespuesta) { quitarEstado(); badge.hidden = true; }
             bajar();
           }
         })
         .catch(function () { /* sin red: se reintenta en el siguiente ciclo */ });
     }
+
+    // Con el chat CERRADO también se vigila (suave, cada 20 s):
+    // si Lucía respondió algo que aún no se ha visto, el botón
+    // muestra un contador para que la persona vuelva a abrirlo.
+    function revisarBadge() {
+      if (panel.classList.contains('abierto')) { return; }
+      var url = TABLA + '?select=id'
+        + '&sesion=eq.' + encodeURIComponent(sesion)
+        + '&rol=eq.lucia&id=gt.' + ultimoLeido + '&order=id.asc';
+      fetch(url, { headers: cabeceras() })
+        .then(function (r) { if (!r.ok) { throw new Error('HTTP ' + r.status); } return r.json(); })
+        .then(function (filas) {
+          var n = Array.isArray(filas) ? filas.length : 0;
+          badge.textContent = n;
+          badge.hidden = n === 0;
+        })
+        .catch(function () { /* sin red: el contador se queda como está */ });
+    }
+    setInterval(revisarBadge, 20000);
+    revisarBadge();
 
     // Mensaje de bienvenida: se pinta local, no va a la base.
     function bienvenida() {
@@ -695,6 +772,7 @@
 
     // Enviar: guarda el mensaje en la base y lo pinta al
     // instante; el vigilante de Lucía lo verá enseguida.
+    // Si algo falla, el error se VE y el texto no se pierde.
     form.addEventListener('submit', function (evento) {
       evento.preventDefault();
       var texto = input.value.trim();
@@ -702,15 +780,23 @@
       var nombre = nombreInput.value.trim() || 'Visitante';
       localStorage.setItem('jessicaChatNombre', nombreInput.value.trim());
       enviarBtn.disabled = true;
+      errorBox.hidden = true;
       fetch(TABLA, {
         method: 'POST',
         headers: (function () { var h = cabeceras(); h['Prefer'] = 'return=minimal'; return h; })(),
         body: JSON.stringify({ sesion: sesion, nombre: nombre, rol: 'visitante', mensaje: texto })
-      }).then(function () {
+      }).then(function (r) {
+        if (!r.ok) { throw new Error('HTTP ' + r.status); }
         input.value = '';
         return cargar();
+      }).then(function () {
+        // Recién pintado el mensaje propio, se confirma la
+        // recepción con la notita de estado.
+        mostrarEstado();
       }).catch(function () {
-        // Si falló el envío, el texto se queda en el campo.
+        // Falló el envío: se avisa y el texto se queda en
+        // el campo para que pueda reintentar sin reescribir.
+        errorBox.hidden = false;
       }).then(function () {
         enviarBtn.disabled = false;
         input.focus();
