@@ -204,6 +204,53 @@
   .confeti{position:fixed;top:-30px;z-index:60;pointer-events:none;animation:caer linear forwards}
   @keyframes caer{to{transform:translateY(108vh) rotate(320deg)}}
 
+  /* ============ JUEGOS DE CUMPLEAÑOS ============ */
+  .juegos{display:grid;gap:26px}
+  .juego{
+    background:var(--blanco);border-radius:20px;box-shadow:var(--sombra);
+    padding:clamp(24px,4vw,36px);border:1px solid var(--rosa-palido);text-align:center;
+  }
+  .juego h3{font-family:'Playfair Display',serif;font-size:1.4rem;margin-bottom:6px}
+  .juego .descripcion{color:var(--tinta-suave);font-size:.97rem;margin-bottom:18px}
+  .juego .marcador{font-weight:700;color:var(--rosa);margin-bottom:12px}
+  .btn-juego{
+    background:var(--rosa);color:#fff;border:none;cursor:pointer;
+    font-family:'Quicksand',sans-serif;font-weight:700;font-size:.95rem;
+    padding:12px 28px;border-radius:999px;box-shadow:0 10px 24px rgba(214,51,108,.3);
+    transition:transform .2s ease;
+  }
+  .btn-juego:hover{transform:translateY(-2px)}
+  .zona-globos{
+    position:relative;height:220px;background:var(--rosa-palido);
+    border-radius:16px;overflow:hidden;margin-bottom:14px;
+  }
+  .globo{
+    position:absolute;cursor:pointer;font-size:2.2rem;line-height:1;
+    transition:transform .12s ease;user-select:none;
+  }
+  .globo:active{transform:scale(1.4)}
+  .memoria{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:420px;margin:0 auto 14px;
+  }
+  .carta-memoria{
+    aspect-ratio:1;background:var(--rosa-suave);border:none;border-radius:12px;
+    font-size:1.7rem;cursor:pointer;display:flex;align-items:center;justify-content:center;
+    font-family:'Quicksand',sans-serif;
+  }
+  .carta-memoria.encontrada{background:var(--rosa-palido);cursor:default}
+  .quiz-opciones{display:grid;gap:10px;max-width:480px;margin:0 auto}
+  .quiz-opcion{
+    background:var(--blanco);border:2px solid var(--rosa-suave);border-radius:12px;
+    padding:12px 18px;font-family:'Quicksand',sans-serif;font-size:.98rem;
+    color:var(--tinta);cursor:pointer;text-align:left;
+  }
+  .quiz-opcion:hover{border-color:var(--rosa)}
+  .quiz-opcion.correcta{background:#e8f5e9;border-color:#66bb6a}
+  .quiz-opcion.incorrecta{background:#fce4ec;border-color:#e57373}
+  .quiz-opcion:disabled{cursor:default}
+  .quiz-pregunta{font-weight:700;font-size:1.05rem;margin-bottom:14px}
+  .quiz-resultado{font-weight:700;color:var(--rosa);margin-top:14px}
+
   footer{
     text-align:center;padding:34px 20px 44px;color:var(--tinta-suave);font-size:.92rem;
   }
@@ -509,6 +556,42 @@
   </div>
 </section>
 
+<!-- ================= JUEGOS DE CUMPLEAÑOS ================= -->
+<section style="background:var(--fondo-2)">
+  <div class="contenedor">
+    <p class="kicker">🎈 ¡A jugar y celebrar!</p>
+    <h2 class="titulo"><u>Juegos de Happy Birthday</u></h2>
+    <div class="divisor">♥ ✿ ♥</div>
+    <div class="juegos">
+
+      <article class="juego revelar">
+        <h3>🎈 Explota los globos</h3>
+        <p class="descripcion">Tienes 20 segundos: toca todos los globos que puedas. ¡Cada globo vale un punto!</p>
+        <p class="marcador" id="globosMarcador">Puntos: 0 · Tiempo: 20 s</p>
+        <div class="zona-globos" id="zonaGlobos"></div>
+        <button class="btn-juego" id="btnGlobos" type="button">¡A jugar!</button>
+      </article>
+
+      <article class="juego revelar">
+        <h3>🎂 Memoria de cumpleaños</h3>
+        <p class="descripcion">Voltea las tarjetas y encuentra las 6 parejas de la fiesta. ¡Pon a prueba tu memoria!</p>
+        <p class="marcador" id="memoriaMarcador">Intentos: 0 · Parejas: 0 de 6</p>
+        <div class="memoria" id="memoriaTablero"></div>
+        <button class="btn-juego" id="btnMemoria" type="button">Mezclar de nuevo</button>
+      </article>
+
+      <article class="juego revelar">
+        <h3>⭐ Quiz: ¿Cuánto sabes de esta página?</h3>
+        <p class="descripcion">Tres preguntitas sobre los poemas, las razones y los regalos de Jessica.</p>
+        <p class="quiz-pregunta" id="quizPregunta"></p>
+        <div class="quiz-opciones" id="quizOpciones"></div>
+        <p class="quiz-resultado" id="quizResultado"></p>
+      </article>
+
+    </div>
+  </div>
+</section>
+
 <!-- ================= CIERRE: PIDE UN DESEO ================= -->
 <section class="cierre">
   <div class="contenedor revelar">
@@ -605,6 +688,167 @@
         (function (nodo) { setTimeout(function () { nodo.remove(); }, 6000); })(c);
       }
     });
+  })();
+</script>
+<script>
+  // ============ JUEGOS DE CUMPLEAÑOS ============
+
+  // Juego 1: Explota los globos. 20 segundos, cada globo
+  // tocado suma un punto y aparece otro en su lugar.
+  (function () {
+    var zona = document.getElementById('zonaGlobos');
+    var marcador = document.getElementById('globosMarcador');
+    var btn = document.getElementById('btnGlobos');
+    var puntos = 0, tiempo = 20, intervalo = null, jugando = false;
+
+    function ponerGlobo() {
+      var g = document.createElement('span');
+      g.className = 'globo';
+      g.textContent = '🎈';
+      g.style.left = (Math.random() * 82) + '%';
+      g.style.top = (Math.random() * 78) + '%';
+      g.addEventListener('click', function () {
+        if (!jugando) { return; }
+        puntos++;
+        marcador.textContent = 'Puntos: ' + puntos + ' · Tiempo: ' + tiempo + ' s';
+        g.remove();
+        ponerGlobo();
+      });
+      zona.appendChild(g);
+    }
+
+    btn.addEventListener('click', function () {
+      if (jugando) { return; }
+      jugando = true;
+      puntos = 0;
+      tiempo = 20;
+      zona.innerHTML = '';
+      btn.style.display = 'none';
+      marcador.textContent = 'Puntos: 0 · Tiempo: 20 s';
+      ponerGlobo();
+      ponerGlobo();
+      intervalo = setInterval(function () {
+        tiempo--;
+        marcador.textContent = 'Puntos: ' + puntos + ' · Tiempo: ' + tiempo + ' s';
+        if (tiempo <= 0) {
+          clearInterval(intervalo);
+          jugando = false;
+          zona.innerHTML = '';
+          marcador.textContent = '¡Tiempo! Explotaste ' + puntos + ' globos 🎉';
+          btn.style.display = '';
+          btn.textContent = '¡Jugar otra vez!';
+        }
+      }, 1000);
+    });
+  })();
+
+  // Juego 2: Memoria de cumpleaños. 12 tarjetas, 6 parejas
+  // con emojis de la fiesta; se voltean de dos en dos.
+  (function () {
+    var tablero = document.getElementById('memoriaTablero');
+    var marcador = document.getElementById('memoriaMarcador');
+    var btn = document.getElementById('btnMemoria');
+    var simbolos = ['🎂', '🎁', '🎈', '🎉', '🍰', '🎀'];
+    var primera = null, segunda = null, bloqueo = false;
+    var intentos = 0, parejas = 0;
+
+    function mezclar() {
+      var cartas = simbolos.concat(simbolos).sort(function () { return Math.random() - 0.5; });
+      tablero.innerHTML = '';
+      primera = null; segunda = null; bloqueo = false;
+      intentos = 0; parejas = 0;
+      marcador.textContent = 'Intentos: 0 · Parejas: 0 de 6';
+      cartas.forEach(function (simbolo) {
+        var c = document.createElement('button');
+        c.type = 'button';
+        c.className = 'carta-memoria';
+        c.textContent = '♥';
+        c.dataset.simbolo = simbolo;
+        c.addEventListener('click', function () {
+          if (bloqueo || c.classList.contains('encontrada') || c === primera) { return; }
+          c.textContent = simbolo;
+          if (!primera) { primera = c; return; }
+          segunda = c;
+          bloqueo = true;
+          intentos++;
+          if (primera.dataset.simbolo === segunda.dataset.simbolo) {
+            primera.classList.add('encontrada');
+            segunda.classList.add('encontrada');
+            parejas++;
+            marcador.textContent = 'Intentos: ' + intentos + ' · Parejas: ' + parejas + ' de 6';
+            if (parejas === 6) {
+              marcador.textContent = '¡Lo lograste en ' + intentos + ' intentos! 🎉';
+            }
+            primera = null; segunda = null; bloqueo = false;
+          } else {
+            marcador.textContent = 'Intentos: ' + intentos + ' · Parejas: ' + parejas + ' de 6';
+            setTimeout(function () {
+              primera.textContent = '♥';
+              segunda.textContent = '♥';
+              primera = null; segunda = null; bloqueo = false;
+            }, 800);
+          }
+        });
+        tablero.appendChild(c);
+      });
+    }
+
+    btn.addEventListener('click', mezclar);
+    mezclar();
+  })();
+
+  // Juego 3: Quiz sobre la página. Una pregunta a la vez,
+  // con respuesta inmediata y puntaje al final.
+  (function () {
+    var preguntas = [
+      { texto: '¿Qué personaje de One Piece inspiró el poema «Mi Mayor Tesoro»?',
+        opciones: ['Eustass Kid', 'Monkey D. Luffy', 'Trafalgar Law'], correcta: 1 },
+      { texto: '¿Cuántas razones para amar a Jessica hay en la página?',
+        opciones: ['5 razones', '10 razones', '7 razones'], correcta: 1 },
+      { texto: '¿Qué cupón te regala una tarde de anime con dulces?',
+        opciones: ['Abrazo Infinito', 'Cita Soñada', 'Maratón Anime'], correcta: 2 }
+    ];
+    var preguntaEl = document.getElementById('quizPregunta');
+    var opcionesEl = document.getElementById('quizOpciones');
+    var resultadoEl = document.getElementById('quizResultado');
+    var indice = 0, aciertos = 0;
+
+    function mostrar() {
+      var p = preguntas[indice];
+      preguntaEl.textContent = (indice + 1) + '. ' + p.texto;
+      opcionesEl.innerHTML = '';
+      resultadoEl.textContent = '';
+      p.opciones.forEach(function (texto, i) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'quiz-opcion';
+        b.textContent = texto;
+        b.addEventListener('click', function () {
+          var botones = opcionesEl.querySelectorAll('.quiz-opcion');
+          botones.forEach(function (x) { x.disabled = true; });
+          if (i === p.correcta) {
+            b.classList.add('correcta');
+            aciertos++;
+            resultadoEl.textContent = '¡Correcto! ♥';
+          } else {
+            b.classList.add('incorrecta');
+            botones[p.correcta].classList.add('correcta');
+            resultadoEl.textContent = '¡Casi! La correcta era: ' + p.opciones[p.correcta];
+          }
+          setTimeout(function () {
+            indice++;
+            if (indice < preguntas.length) { mostrar(); }
+            else {
+              preguntaEl.textContent = '¡Quiz terminado!';
+              opcionesEl.innerHTML = '';
+              resultadoEl.textContent = 'Acertaste ' + aciertos + ' de ' + preguntas.length + ' 🎉 ¡Feliz cumpleaños, Jessica!';
+            }
+          }, 1600);
+        });
+        opcionesEl.appendChild(b);
+      });
+    }
+    mostrar();
   })();
 </script>
 <script>
